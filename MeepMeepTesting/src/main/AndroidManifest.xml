@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.meepmeeptesting">
+
+    <application>
+        <!-- You don't need any specific content here -->
+    </application>
+</manifest>

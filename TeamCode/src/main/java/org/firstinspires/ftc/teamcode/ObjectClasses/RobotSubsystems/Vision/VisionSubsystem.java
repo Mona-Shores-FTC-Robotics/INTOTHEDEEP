@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision;
 
-import static org.firstinspires.ftc.teamcode.ObjectClasses.Constants.FieldConstants.BLUE_AUDIENCE_START_POSE;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.Constants.FieldConstants.BLUE_BACKSTAGE_START_POSE;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.Constants.FieldConstants.RED_AUDIENCE_START_POSE;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.Constants.FieldConstants.RED_BACKSTAGE_START_POSE;
+import static com.example.sharedconstants.FieldConstants.BLUE_AUDIENCE_START_POSE;
+import static com.example.sharedconstants.FieldConstants.BLUE_BACKSTAGE_START_POSE;
+import static com.example.sharedconstants.FieldConstants.RED_AUDIENCE_START_POSE;
+import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POSE;
+
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_CENTER_TAG;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_LEFT_TAG;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_RIGHT_TAG;

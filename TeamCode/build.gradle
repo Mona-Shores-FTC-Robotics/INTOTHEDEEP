@@ -30,6 +30,8 @@ android {
 }
 
 repositories {
+    google()
+    mavenCentral()
     maven {
         url = 'https://maven.brott.dev/'
     }
@@ -44,5 +46,5 @@ dependencies {
     implementation "com.acmerobotics.roadrunner:actions:1.0.0"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.14"
     implementation 'org.ftclib.ftclib:core:2.1.1' // core
-
+    implementation project(':SharedConstants')
 }

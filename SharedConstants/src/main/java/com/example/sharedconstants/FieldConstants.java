@@ -6,7 +6,7 @@
  * Initially from https://github.com/Mechanical-Advantage/RobotCode2022
  */
 
-package org.firstinspires.ftc.teamcode.ObjectClasses.Constants;
+package com.example.sharedconstants;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
