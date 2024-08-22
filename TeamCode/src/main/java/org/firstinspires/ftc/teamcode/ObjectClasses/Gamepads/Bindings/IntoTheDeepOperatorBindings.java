@@ -26,14 +26,14 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Intake.Intak
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
-public class CenterstageOperatorBindings {
+public class IntoTheDeepOperatorBindings {
 
     public static TriggerReader rightTrigger;
     public static TriggerReader leftTrigger;
     public static ParallelCommandGroup readyToScorePixel;
     public static SequentialCommandGroup releasePixels;
     private static boolean armIsUp = false;
-    public CenterstageOperatorBindings(GamepadEx operatorGamepad) {
+    public IntoTheDeepOperatorBindings(GamepadEx operatorGamepad) {
         VisionSubsystem visionSubsystem = Robot.getInstance().getVisionSubsystem();
         IntakeSubsystem intakeSubsystem = Robot.getInstance().getIntakeSubsystem();
         GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();

@@ -1,29 +1,31 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings;
 
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionProcessors.InitVisionProcessor.AllianceColor.RED;
+import static com.example.sharedconstants.FieldConstants.END_GAME_TIME;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadCommands.IsGamepadActiveCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.TurnToAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DriveWithConstantHeadingCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.RoadRunnerActionToCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeZeroHeadingCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.DroneSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ReleaseDroneCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
-public class VisionDriverBindings {
-    public static Command defaultDriveCommand;
-    public static Command backupFromBackdropCommand;
-    public static Command driveAwayFromBackdropWithConstantHeading;
+public class IntoTheDeepDriverBindings {
+    public Command defaultDriveCommand;
+    public Command slowModeCommand;
+    public Command backupFromBackdropCommand;
+    public Command slowModeZeroHeadingCommand;
 
-    public VisionDriverBindings(GamepadEx gamepad) {
-
+    public IntoTheDeepDriverBindings(GamepadEx gamepad) {
         //Make the commands to use for the bindings
         MakeCommands(gamepad);
 
@@ -36,32 +38,37 @@ public class VisionDriverBindings {
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // RIGHT BUMPER                                         //
+        // RIGHT BUMPER - Slow Mode Zero Heading                //
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        //While held down, drive normally but hold camera heading toward backdrop
+//        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                .whenHeld(slowModeZeroHeadingCommand);
 
         gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenHeld(driveAwayFromBackdropWithConstantHeading);
-
+                .whenHeld(slowModeCommand);
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // LEFT BUMPER                                          //
+        // LEFT BUMPER     - fly drone                          //
         //                                                      //
         //////////////////////////////////////////////////////////
 
+        gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(() -> {
+                    if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
+                        new ReleaseDroneCommand(Robot.getInstance().getDroneSubsystem(), DroneSubsystem.DroneDeployState.FLY).schedule();
+                    }
+                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
         //  Y BUTTON                                            //
         //                                                      //
         //////////////////////////////////////////////////////////
-        // move to just outside the correct color wing?
+        // moves straight back and rotates us toward the wing - can be cancelled to easily grab from the neutral stacks instead
         gamepad.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(backupFromBackdropCommand);
-
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -88,10 +95,13 @@ public class VisionDriverBindings {
         //  B BUTTON                                            //
         //                                                      //
         //////////////////////////////////////////////////////////
+//        gamepad.getGamepadButton(GamepadKeys.Button.B)
+//                .whenPressed(new InstantCommand(() -> {
+//                    Robot.getInstance().getVisionSubsystem().setDeliverLocation(VisionSubsystem.DeliverLocation.RIGHT);
+//                }));
+
         gamepad.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new InstantCommand(() -> {
-                    Robot.getInstance().getVisionSubsystem().setDeliverLocation(VisionSubsystem.DeliverLocation.RIGHT);
-                }));
+                .whenPressed(new RoadRunnerActionToCommand.ActionAsCommand(Robot.getInstance().getDriveSubsystem(), new TurnToAction(0)));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -99,16 +109,18 @@ public class VisionDriverBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        //not sure if this should even be an option
+        //This button sets a flag so the next time we are at the backdrop it does a full gyro reset
+        //The concept here is if we disconnect, this gives us a way to reset our gyro to a known field position
+        //Otherwise, we normally only reset our x/y pose based on the apriltag reading and the heading based on the gyro
+        // because the gyro is much more accurate than the april tag based heading
         gamepad.getGamepadButton(GamepadKeys.Button.BACK)
                 .whenPressed(new InstantCommand(() -> {
-                                Robot.getInstance().getVisionSubsystem().resetHeading=true;
-                            }));
-
+                    Robot.getInstance().getVisionSubsystem().resetHeading=true;
+                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        //  START BUTTON                                        //
+        //  START BUTTON  - FIELD ORIENTED CONTROL              //
         //                                                      //
         //////////////////////////////////////////////////////////
         gamepad.getGamepadButton(GamepadKeys.Button.START)
@@ -128,20 +140,17 @@ public class VisionDriverBindings {
                 gamepad::getRightX
         );
 
-
-        Command driveWhileAt90Heading = new DriveWithConstantHeadingCommand(Robot.getInstance().getDriveSubsystem(),
+        slowModeCommand = new SlowModeCommand(Robot.getInstance().getDriveSubsystem(),
                 gamepad::getLeftY,
                 gamepad::getLeftX,
-                Math.toDegrees(Math.toRadians(0)));
+                gamepad::getRightX
+        );
 
-        Command driveWhileAt270Heading = new DriveWithConstantHeadingCommand(Robot.getInstance().getDriveSubsystem(),
+        slowModeZeroHeadingCommand = new SlowModeZeroHeadingCommand(Robot.getInstance().getDriveSubsystem(),
                 gamepad::getLeftY,
                 gamepad::getLeftX,
-                Math.toDegrees(Math.toRadians(0)));
-
-        if (MatchConfig.finalAllianceColor==RED){
-            driveAwayFromBackdropWithConstantHeading=driveWhileAt270Heading;
-        } else driveAwayFromBackdropWithConstantHeading= driveWhileAt90Heading;
+                0
+        );
 
     }
 }

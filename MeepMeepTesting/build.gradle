@@ -9,10 +9,15 @@ java {
 
 
 repositories {
+    google()
+    mavenCentral()
     maven { url = 'https://maven.brott.dev/' }
 }
 
 dependencies {
-    implementation project(':SharedConstants')  // Depend on SharedConstants for shared logic
-    implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.3'  // MeepMeep for simulation
+    // Add MeepMeep-specific dependencies
+    implementation(project(path: ':SharedConstants')) {
+        exclude group: 'com.acmerobotics.roadrunner', module: 'core'
+    }
+    implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.3'
 }
