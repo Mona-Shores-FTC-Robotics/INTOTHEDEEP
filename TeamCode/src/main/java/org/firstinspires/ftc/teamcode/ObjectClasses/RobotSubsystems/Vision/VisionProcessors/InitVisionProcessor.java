@@ -26,6 +26,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.Visi
 import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
@@ -69,13 +70,6 @@ public class InitVisionProcessor implements VisionProcessor {
     public AllianceColor allianceColorOverride = AllianceColor.RED;
     public SideOfField sideOfFieldOverride = SideOfField.BACKSTAGE;
     public TeamPropLocation teamPropLocationOverride = TeamPropLocation.CENTER;
-
-    /** Our Vision enums **/
-    public enum AllianceColor {BLUE, RED}
-    public enum SideOfField {BACKSTAGE, AUDIENCE}
-    public enum TeamPropLocation {LEFT, CENTER, RIGHT}
-
-
 
     /** Matrices to store the camera images we are changing **/
     private Mat hsvMat       = new Mat();
@@ -279,7 +273,7 @@ public class InitVisionProcessor implements VisionProcessor {
 
         DetermineAllianceColor();
         DetermineSideOfField();
-        DetermineTeamPropLocation();
+//        DetermineTeamPropLocation();
 
         /*
          * Different from OpenCvPipeline, you cannot return
@@ -292,42 +286,42 @@ public class InitVisionProcessor implements VisionProcessor {
         //frame should be in a helpful state due to processing above
 
         //Draw green rectangle to represent where the vision code thinks the prop is located
-        if (teamPropLocation == TeamPropLocation.LEFT)
-        {
-            Imgproc.rectangle(frame, rectL, rectangleColorGreen, 2);
-            Imgproc.rectangle(frame, rectM, rectangleColorWhite, 2);
-            Imgproc.rectangle(frame, rectR, rectangleColorWhite, 2);
-        } else if (teamPropLocation == TeamPropLocation.CENTER)
-
-        {
-            Imgproc.rectangle(frame, rectM, rectangleColorGreen, 2);
-            Imgproc.rectangle(frame, rectL, rectangleColorWhite, 2);
-            Imgproc.rectangle(frame, rectR, rectangleColorWhite, 2);
-        } else if (teamPropLocation == TeamPropLocation.RIGHT)
-        {
-            Imgproc.rectangle(frame, rectR, rectangleColorGreen, 2);
-            Imgproc.rectangle(frame, rectL, rectangleColorWhite, 2);
-            Imgproc.rectangle(frame, rectM, rectangleColorWhite, 2);
-        }
+//        if (teamPropLocation == TeamPropLocation.LEFT)
+//        {
+//            Imgproc.rectangle(frame, rectL, rectangleColorGreen, 2);
+//            Imgproc.rectangle(frame, rectM, rectangleColorWhite, 2);
+//            Imgproc.rectangle(frame, rectR, rectangleColorWhite, 2);
+//        } else if (teamPropLocation == TeamPropLocation.CENTER)
+//
+//        {
+//            Imgproc.rectangle(frame, rectM, rectangleColorGreen, 2);
+//            Imgproc.rectangle(frame, rectL, rectangleColorWhite, 2);
+//            Imgproc.rectangle(frame, rectR, rectangleColorWhite, 2);
+//        } else if (teamPropLocation == TeamPropLocation.RIGHT)
+//        {
+//            Imgproc.rectangle(frame, rectR, rectangleColorGreen, 2);
+//            Imgproc.rectangle(frame, rectL, rectangleColorWhite, 2);
+//            Imgproc.rectangle(frame, rectM, rectangleColorWhite, 2);
+//        }
 
         //Draw colored rectangle where the stage door is to represent
         // we know our alliance color and we know the side of the field we are on
-        if (allianceColor == AllianceColor.RED &&  sideOfField == SideOfField.BACKSTAGE) {
-            Imgproc.rectangle(frame, rectLeftSideOfField, rectangleColorRed, 2);
-            Imgproc.rectangle(frame, rectRightSideOfField, rectangleColorWhite, 2);
-        } else if (allianceColor == AllianceColor.RED && sideOfField == SideOfField.AUDIENCE) {
-            Imgproc.rectangle(frame, rectLeftSideOfField, rectangleColorWhite, 2);
-            Imgproc.rectangle(frame, rectRightSideOfField, rectangleColorRed, 2);
-
-        } else if (allianceColor == AllianceColor.BLUE &&  sideOfField == SideOfField.BACKSTAGE) {
-            Imgproc.rectangle(frame, rectLeftSideOfField, rectangleColorWhite, 2);
-            Imgproc.rectangle(frame, rectRightSideOfField, rectangleColorBlue, 2);
-
-        } else if (allianceColor == AllianceColor.BLUE && sideOfField == SideOfField.AUDIENCE) {
-            Imgproc.rectangle(frame, rectLeftSideOfField, rectangleColorBlue, 2);
-            Imgproc.rectangle(frame, rectRightSideOfField, rectangleColorWhite, 2);
-
-        }
+//        if (allianceColor == AllianceColor.RED &&  sideOfField == SideOfField.BACKSTAGE) {
+//            Imgproc.rectangle(frame, rectLeftSideOfField, rectangleColorRed, 2);
+//            Imgproc.rectangle(frame, rectRightSideOfField, rectangleColorWhite, 2);
+//        } else if (allianceColor == AllianceColor.RED && sideOfField == SideOfField.AUDIENCE) {
+//            Imgproc.rectangle(frame, rectLeftSideOfField, rectangleColorWhite, 2);
+//            Imgproc.rectangle(frame, rectRightSideOfField, rectangleColorRed, 2);
+//
+//        } else if (allianceColor == AllianceColor.BLUE &&  sideOfField == SideOfField.BACKSTAGE) {
+//            Imgproc.rectangle(frame, rectLeftSideOfField, rectangleColorWhite, 2);
+//            Imgproc.rectangle(frame, rectRightSideOfField, rectangleColorBlue, 2);
+//
+//        } else if (allianceColor == AllianceColor.BLUE && sideOfField == SideOfField.AUDIENCE) {
+//            Imgproc.rectangle(frame, rectLeftSideOfField, rectangleColorBlue, 2);
+//            Imgproc.rectangle(frame, rectRightSideOfField, rectangleColorWhite, 2);
+//
+//        }
         //Release all the mats
         hsvMat.release();
         maskedRedMat.release();
@@ -350,38 +344,38 @@ public class InitVisionProcessor implements VisionProcessor {
         return null;
     }
 
-    private void DetermineTeamPropLocation() {
-        if (allianceColor == AllianceColor.RED) {
-            //Figure out and Store the Team Prop Location
-            if (percentLeftZoneRed > percentCenterZoneRed && percentLeftZoneRed > percentRightZoneRed) {
-                // Red Team Prop is on the Left
-                teamPropLocation = TeamPropLocation.LEFT;
-            } else if (percentCenterZoneRed > percentLeftZoneRed && percentCenterZoneRed > percentRightZoneRed) {
-                // Team Prop is in the Middle
-                teamPropLocation = TeamPropLocation.CENTER;
-            } else if (percentRightZoneRed > percentCenterZoneRed && percentRightZoneRed > percentLeftZoneRed) {
-                // Team Prop is on th Right
-                teamPropLocation = TeamPropLocation.RIGHT;
-            } else {
-                teamPropLocation = TeamPropLocation.CENTER;
-            }
-        }
-
-        if (allianceColor == AllianceColor.BLUE) {
-            if (percentLeftZoneBlue > percentCenterZoneBlue && percentLeftZoneBlue > percentRightZoneBlue) {
-                // Red Team Prop is on the Left
-                teamPropLocation = TeamPropLocation.LEFT;
-            } else if (percentCenterZoneBlue > percentLeftZoneBlue && percentCenterZoneBlue > percentRightZoneBlue) {
-                // Team Prop is in the Middle
-                teamPropLocation = TeamPropLocation.CENTER;
-            } else if (percentRightZoneBlue > percentCenterZoneBlue && percentRightZoneBlue > percentLeftZoneBlue) {
-                // Team Prop is on the Right
-                teamPropLocation = TeamPropLocation.RIGHT;
-            } else {
-                teamPropLocation = TeamPropLocation.CENTER;
-            }
-        }
-    }
+//    private void DetermineTeamPropLocation() {
+//        if (allianceColor == AllianceColor.RED) {
+//            //Figure out and Store the Team Prop Location
+//            if (percentLeftZoneRed > percentCenterZoneRed && percentLeftZoneRed > percentRightZoneRed) {
+//                // Red Team Prop is on the Left
+//                teamPropLocation = TeamPropLocation.LEFT;
+//            } else if (percentCenterZoneRed > percentLeftZoneRed && percentCenterZoneRed > percentRightZoneRed) {
+//                // Team Prop is in the Middle
+//                teamPropLocation = TeamPropLocation.CENTER;
+//            } else if (percentRightZoneRed > percentCenterZoneRed && percentRightZoneRed > percentLeftZoneRed) {
+//                // Team Prop is on th Right
+//                teamPropLocation = TeamPropLocation.RIGHT;
+//            } else {
+//                teamPropLocation = TeamPropLocation.CENTER;
+//            }
+//        }
+//
+//        if (allianceColor == AllianceColor.BLUE) {
+//            if (percentLeftZoneBlue > percentCenterZoneBlue && percentLeftZoneBlue > percentRightZoneBlue) {
+//                // Red Team Prop is on the Left
+//                teamPropLocation = TeamPropLocation.LEFT;
+//            } else if (percentCenterZoneBlue > percentLeftZoneBlue && percentCenterZoneBlue > percentRightZoneBlue) {
+//                // Team Prop is in the Middle
+//                teamPropLocation = TeamPropLocation.CENTER;
+//            } else if (percentRightZoneBlue > percentCenterZoneBlue && percentRightZoneBlue > percentLeftZoneBlue) {
+//                // Team Prop is on the Right
+//                teamPropLocation = TeamPropLocation.RIGHT;
+//            } else {
+//                teamPropLocation = TeamPropLocation.CENTER;
+//            }
+//        }
+//    }
 
     private void DetermineSideOfField() {
 
@@ -394,7 +388,7 @@ public class InitVisionProcessor implements VisionProcessor {
         // 4. If only the left box or the right box is over the threshold, then set the side of field based on that using the alliance color
         //      if they are both over the threshold set the side of field to default (Backstage) and flag an error
 
-        if (allianceColor == AllianceColor.RED) {
+        if (finalAllianceColor == AllianceColor.RED) {
             if (percentLeftStageDoorZone >= percentRightStageDoorZone && percentLeftStageDoorZone > STAGE_DOOR_THRESHOLD) {
                 // Stage Door is on the left and we are Red Alliance so we are BACKSTAGE
                 sideOfField = SideOfField.BACKSTAGE;

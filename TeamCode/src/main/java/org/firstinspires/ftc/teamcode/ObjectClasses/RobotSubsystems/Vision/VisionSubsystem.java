@@ -1,10 +1,5 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision;
 
-import static com.example.sharedconstants.FieldConstants.BLUE_AUDIENCE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.BLUE_BACKSTAGE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.RED_AUDIENCE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POSE;
-
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_CENTER_TAG;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_LEFT_TAG;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_RIGHT_TAG;
@@ -35,8 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSlideSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.MecanumDriveMona;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionProcessors.InitVisionProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -45,15 +39,15 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-@Config
+
 public final class VisionSubsystem extends SubsystemBase {
 
     public static TunableVisionConstants tunableVisionConstants = new TunableVisionConstants();
 
+    @Config
     public static class TunableVisionConstants {
         // Adjust these numbers to suit your robot.
         public double DESIRED_DISTANCE = 18; //  this is how close the camera should get to the target for alignment (inches)
-        public double DISTANCE_FOR_SCORING = 5;
         public double DESIRED_DISTANCE_SAFETY = 28; //  this is how close the camera should get to the target for safety(inches)
 
         //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
@@ -79,44 +73,14 @@ public final class VisionSubsystem extends SubsystemBase {
         public double BACKDROP_TURN_THRESHOLD=2;
         public double APRIL_TAG_LAST_SEEN_THRESHOLD_IN_SECONDS = .5;
 
-        public double GYRO_SWITCH_THRESHOLD=.9;
         public int BACKDROP_POSE_COUNT_THRESHOLD=1;
     }
-
-//    // These are from the chassis bot with it working really well
-//    public double DESIRED_DISTANCE = 18; //  this is how close the camera should get to the target for alignment (inches)
-//    public double DISTANCE_FOR_SCORING = 5;
-//    public double DESIRED_DISTANCE_SAFETY = 28; //  this is how close the camera should get to the target for safety(inches)
-//
-//    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
-//    //  applied to the drive motors to correct the error.
-//    //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-//    public double SPEED_GAIN = 0.08;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-//    public double SAFETY_SPEED_GAIN = 0.01;   //
-//    public double STRAFE_GAIN = -0.04;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-//    public double DRIVE_FEEDFORWARD=.08;
-//    public double STRAFE_FEEDFORWARD=.04;
-//    public double TURN_FEEDFORWARD=.04;
-//    public double TURN_GAIN = -0.04;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
-//
-//    public double MAX_AUTO_SPEED = 0.8;   //  Clip the approach speed to this max value (adjust for your robot)
-//    public double MAX_AUTO_STRAFE = 0.8;   //  Clip the approach speed to this max value (adjust for your robot)
-//    public double MAX_AUTO_TURN = 0.8;   //  Clip the turn speed to this max value (adjust for your robot)
-//
-//    public double MAX_MANUAL_BACKDROP_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-//    public double BACKDROP_DRIVE_THRESHOLD=.2;
-//    public double BACKDROP_STRAFE_THRESHOLD=.2;
-//    public double BACKDROP_TURN_THRESHOLD=.2;
-//    public int BACKDROP_POSE_COUNT_THRESHOLD=1;
 
     public double rangeError;
     public double headingError;
     public double yawError;
 
-    private int blueTagFrameCount;
-    private int redTagFrameCount;
     private int backdropPoseCount=0;
-    public boolean switchToGyroTurnValue=false;
     public boolean resetPoseReady=false;
     public boolean resetHeading=false;
     public Pose2d resetPose;
@@ -127,9 +91,6 @@ public final class VisionSubsystem extends SubsystemBase {
     private Telemetry telemetry;
     private LinearOpMode activeOpMode;
     private MecanumDriveMona mecanumDrive;
-
-    private int aprilTagNotSeen =0;
-    public boolean manualOverrideInitSettingsFlag = false;
 
     public void periodic()
     {
@@ -144,18 +105,6 @@ public final class VisionSubsystem extends SubsystemBase {
     public void SwitchToInitVisionProcessor() {
         Robot.getInstance().getVisionSubsystem().getVisionPortal().setProcessorEnabled(this.getInitVisionProcessor(), true);
         Robot.getInstance().getVisionSubsystem().getVisionPortal().setProcessorEnabled(this.getAprilTagProcessor(), false);
-    }
-
-    public void setStartingPose(InitVisionProcessor.AllianceColor allianceColor, InitVisionProcessor.SideOfField sideOfField) {
-        if (allianceColor == InitVisionProcessor.AllianceColor.BLUE && sideOfField == InitVisionProcessor.SideOfField.BACKSTAGE){
-            mecanumDrive.pose = BLUE_BACKSTAGE_START_POSE;
-        } else if (allianceColor == InitVisionProcessor.AllianceColor.BLUE && sideOfField == InitVisionProcessor.SideOfField.AUDIENCE){
-            mecanumDrive.pose = BLUE_AUDIENCE_START_POSE;
-        } else if (allianceColor == InitVisionProcessor.AllianceColor.RED && sideOfField == InitVisionProcessor.SideOfField.BACKSTAGE){
-            mecanumDrive.pose = RED_BACKSTAGE_START_POSE;
-        } else if (allianceColor == InitVisionProcessor.AllianceColor.RED && sideOfField == InitVisionProcessor.SideOfField.AUDIENCE){
-            mecanumDrive.pose = RED_AUDIENCE_START_POSE;
-        }
     }
 
     public enum AprilTagID {
@@ -203,8 +152,6 @@ public final class VisionSubsystem extends SubsystemBase {
         public double getTimestamp() {
             return this.timestamp;
         }
-
-
 
         public void setDetected() {
             this.isDetected = true;
@@ -271,10 +218,6 @@ public final class VisionSubsystem extends SubsystemBase {
         telemetry.addLine("");
 
         setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
-
-        redTagFrameCount=0;
-        blueTagFrameCount=0;
-
     }
 
     public InitVisionProcessor getInitVisionProcessor() {
@@ -347,21 +290,21 @@ public final class VisionSubsystem extends SubsystemBase {
                 telemetry.addLine("");
                 if (myAprilTagDetection.metadata != null) {
                     telemetry.addLine("==== (ID " + myAprilTagDetection.id + ") " + myAprilTagDetection.metadata.name);
-//                    telemetry.addLine("XYZ " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.x, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.y, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.z, 6, 1) + "  (inch)");
-//                    telemetry.addLine("PRY " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.yaw, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.pitch, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.roll, 6, 1) + "  (deg)");
-//                    telemetry.addLine("RBE " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.range, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.bearing, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.elevation, 6, 1) + "  (inch, deg, deg)");
+                    telemetry.addLine("XYZ " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.x, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.y, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.z, 6, 1) + "  (inch)");
+                    telemetry.addLine("PRY " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.yaw, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.pitch, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.roll, 6, 1) + "  (deg)");
+                    telemetry.addLine("RBE " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.range, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.bearing, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.elevation, 6, 1) + "  (inch, deg, deg)");
 
                 } else {
-//                    telemetry.addLine("==== (ID " + myAprilTagDetection.id + ") Unknown");
-//                    telemetry.addLine("Center " + JavaUtil.formatNumber(myAprilTagDetection.center.x, 6, 0) + "" + JavaUtil.formatNumber(myAprilTagDetection.center.y, 6, 0) + " (pixels)");
+                    telemetry.addLine("==== (ID " + myAprilTagDetection.id + ") Unknown");
+                    telemetry.addLine("Center " + JavaUtil.formatNumber(myAprilTagDetection.center.x, 6, 0) + "" + JavaUtil.formatNumber(myAprilTagDetection.center.y, 6, 0) + " (pixels)");
                 }
             }
         }
-//        telemetry.addLine("");
-//        telemetry.addLine("key:");
-//        telemetry.addLine("XYZ = X (Right), Y (Forward), Z (Up) dist.");
-//        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-//        telemetry.addLine("RBE = Range, Bearing & Elevation");
+        telemetry.addLine("");
+        telemetry.addLine("key:");
+        telemetry.addLine("XYZ = X (Right), Y (Forward), Z (Up) dist.");
+        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        telemetry.addLine("RBE = Range, Bearing & Elevation");
     }
 
     public VisionPortal getVisionPortal() {
@@ -389,9 +332,6 @@ public final class VisionSubsystem extends SubsystemBase {
                 double rangeError = (currentTag.detection.ftcPose.range - tunableVisionConstants.DESIRED_DISTANCE_SAFETY);
                 // Pick whichever value is lower
                 double manualDriveLimit = Math.min(rangeError * tunableVisionConstants.SAFETY_SPEED_GAIN, tunableVisionConstants.MAX_MANUAL_BACKDROP_SPEED);
-                if (manualDriveLimit < DriveSubsystem.driveParameters.safetyDriveSpeedFactor) {
-                    DriveSubsystem.driveParameters.safetyDriveSpeedFactor = manualDriveLimit;
-                }
             }
         }
 
@@ -523,9 +463,9 @@ public final class VisionSubsystem extends SubsystemBase {
             double turn = ClipTurn(headingError);
             double strafe = ClipStrafe(yawError);
 
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
 
             MatchConfig.telemetryPacket.put("Range Error", rangeError);
             MatchConfig.telemetryPacket.put("Yaw(strafe) Error", yawError);
@@ -555,9 +495,9 @@ public final class VisionSubsystem extends SubsystemBase {
             double strafe = ClipStrafe(yawError);
 
             // set the drive/turn strafe values for AutoDriving
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
 
             MatchConfig.telemetryPacket.put("Range Error", rangeError);
             MatchConfig.telemetryPacket.put("Yaw(strafe) Error", yawError);
@@ -586,9 +526,9 @@ public final class VisionSubsystem extends SubsystemBase {
             double turn = ClipTurn(headingError);
             double strafe = ClipStrafe(yawError);
 
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
 
             MatchConfig.telemetryPacket.put("Range Error", rangeError);
             MatchConfig.telemetryPacket.put("Yaw(strafe) Error", yawError);
@@ -618,10 +558,10 @@ public final class VisionSubsystem extends SubsystemBase {
             double drive = ClipDrive(rangeError);
             double turn = ClipTurn(headingError);
             double strafe = ClipStrafe(yawError);
-
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
+//
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
 
             MatchConfig.telemetryPacket.put("Range Error", rangeError);
             MatchConfig.telemetryPacket.put("Heading Error", headingError);
@@ -647,9 +587,9 @@ public final class VisionSubsystem extends SubsystemBase {
             double turn = ClipTurn(headingError);
             double strafe = ClipStrafe(yawError);
 
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
 
             MatchConfig.telemetryPacket.put("Range Error", rangeError);
             MatchConfig.telemetryPacket.put("Yaw(strafe) Error", yawError);
@@ -677,9 +617,9 @@ public final class VisionSubsystem extends SubsystemBase {
             double turn = ClipTurn(headingError);
             double strafe = ClipStrafe(yawError);
 
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagDrive = drive;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagStrafe = strafe;
+//            Robot.getInstance().getDriveSubsystem().mecanumDrive.aprilTagTurn = turn;
 
             MatchConfig.telemetryPacket.put("Range Error", rangeError);
             MatchConfig.telemetryPacket.put("Yaw(strafe) Error", yawError);
@@ -737,7 +677,7 @@ public final class VisionSubsystem extends SubsystemBase {
     }
 
     public DeliverLocation getDeliverLocation(){
-        if (initVisionProcessor.allianceColor == InitVisionProcessor.AllianceColor.RED)
+        if (MatchConfig.finalAllianceColor == MatchConfig.AllianceColor.RED)
         {
             return deliverLocationRed;
         } else return deliverLocationBlue;

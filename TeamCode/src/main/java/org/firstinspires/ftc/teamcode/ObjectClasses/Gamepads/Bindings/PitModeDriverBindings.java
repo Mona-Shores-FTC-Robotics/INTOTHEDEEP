@@ -23,16 +23,16 @@ public class PitModeDriverBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        gamepad.getGamepadButton(GamepadKeys.Button.START)
-                .whenPressed(new ReleaseDroneCommand(Robot.getInstance().getDroneSubsystem(), DroneSubsystem.DroneDeployState.FLY));
+//        gamepad.getGamepadButton(GamepadKeys.Button.START)
+//                .whenPressed(new ReleaseDroneCommand(Robot.getInstance().getDroneSubsystem(), DroneSubsystem.DroneDeployState.FLY));
 
         //////////////////////////////////////////////////////////
         //                                                      //
         // RIGHT-BUMPER TO ARM DRONE                            //
         //                                                      //
         //////////////////////////////////////////////////////////
-        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new ReleaseDroneCommand(Robot.getInstance().getDroneSubsystem(), DroneSubsystem.DroneDeployState.HOLD));
+//        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                .whenPressed(new ReleaseDroneCommand(Robot.getInstance().getDroneSubsystem(), DroneSubsystem.DroneDeployState.HOLD));
 
         //////////////////////////////////////////////////////////
         //                                                      //

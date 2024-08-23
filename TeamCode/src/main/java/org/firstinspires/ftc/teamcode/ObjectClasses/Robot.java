@@ -20,7 +20,7 @@ public class Robot {
     private static Robot robot = null;
     public RobotType robotType;
     public OpModeType opModeType;
-    public enum RobotType {ROBOT_CENTERSTAGE, ROBOT_DRIVE_BASE, ROBOT_VISION, ROBOT_SCORING_ARM, ROBOT_INTAKE, ROBOT_PIT_MODE}
+    public enum RobotType {ROBOT_INTOTHEDEEP, ROBOT_DRIVE_BASE, ROBOT_PIT_MODE}
     public enum OpModeType {TELEOP, AUTO}
 
     private static LinearOpMode activeOpMode;
@@ -31,8 +31,6 @@ public class Robot {
     private static GripperSubsystem gripperSubsystem;
     private static LiftSlideSubsystem liftSlideSubsystem;
     private static ShoulderSubsystem shoulderSubsystem;
-    private static DroneSubsystem droneSubsystem;
-
     private static ClimberSubsystem climberSubsystem;
 
     private static boolean hasInit = false;
@@ -50,47 +48,22 @@ public class Robot {
             //Just the drive base
             case ROBOT_DRIVE_BASE: {
                 gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
-                break;
-            }
-
-            case ROBOT_VISION: {
                 visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
-                gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
                 break;
             }
-
-            case ROBOT_SCORING_ARM: {
-                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
-                liftSlideSubsystem = new LiftSlideSubsystem(hardwareMap, "liftslide");
-                shoulderSubsystem = new ShoulderSubsystem(hardwareMap, "shoulder");
-                droneSubsystem = new DroneSubsystem(hardwareMap, "drone");
-                climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
-                break;
-            }
-
-            case ROBOT_INTAKE: {
-                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
-                break;
-            }
-
-            case ROBOT_CENTERSTAGE: {
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
+            case ROBOT_INTOTHEDEEP: {
                 gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
                 visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
-                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
-                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
-                liftSlideSubsystem = new LiftSlideSubsystem(hardwareMap, "liftslide");
-                shoulderSubsystem = new ShoulderSubsystem(hardwareMap, "shoulder");
-                droneSubsystem = new DroneSubsystem(hardwareMap, "drone");
-                climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
-                break;
+                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
+//                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
+//                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
+//                liftSlideSubsystem = new LiftSlideSubsystem(hardwareMap, "liftslide");
+//                shoulderSubsystem = new ShoulderSubsystem(hardwareMap, "shoulder");
+//                climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
             }
+
             case ROBOT_PIT_MODE: {
-
-                droneSubsystem = new DroneSubsystem(hardwareMap, "drone");
-                climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
                 break;
             }
         }
@@ -100,7 +73,7 @@ public class Robot {
     public static Robot createInstance(LinearOpMode opMode, RobotType robotType) {
         //there should only ever be one instance of robot - when we run a new opMode it should delete any previously existing robot object and make a new one
         //MatchConfig can house any data we need between opModes.
-        robot=null;
+        robot = null;
         robot = new Robot(opMode, robotType);
         return robot;
     }
@@ -134,43 +107,23 @@ public class Robot {
         switch (robotType) {
             case ROBOT_DRIVE_BASE: {
                 gyroSubsystem.init();
-                mecanumDriveSubsystem.init();
-                break;
-            }
-            case ROBOT_VISION: {
-                gyroSubsystem.init();
-                mecanumDriveSubsystem.init();
                 visionSubsystem.init();
-                break;
-            }
-            case ROBOT_SCORING_ARM: {
-                gripperSubsystem.init();
-                liftSlideSubsystem.init();
-                shoulderSubsystem.init();
-                droneSubsystem.init();
-                climberSubsystem.init();
-                break;
-            }
-            case ROBOT_INTAKE: {
-                intakeSubsystem.init();
-                break;
-            }
-            case ROBOT_CENTERSTAGE: {
-                visionSubsystem.init();
-                gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
-                intakeSubsystem.init();
-                gripperSubsystem.init();
-                liftSlideSubsystem.init();
-                shoulderSubsystem.init();
-                droneSubsystem.init();
-                climberSubsystem.init();
-                 //Lights for identifying pixels in intake
+                break;
+            }
+
+            case ROBOT_INTOTHEDEEP: {
+                gyroSubsystem.init();
+                visionSubsystem.init();
+                mecanumDriveSubsystem.init();
+//                intakeSubsystem.init();
+//                gripperSubsystem.init();
+//                liftSlideSubsystem.init();
+//                shoulderSubsystem.init();
+//                climberSubsystem.init();
                 break;
             }
             case ROBOT_PIT_MODE: {
-                droneSubsystem.init();
-                climberSubsystem.init();
                 break;
             }
         }
@@ -178,27 +131,15 @@ public class Robot {
 
     private void initAuto() {
         // initialize auto-specific scheduler
-
         switch (robotType) {
-
-            case ROBOT_VISION: {
-                gyroSubsystem.init();
-                mecanumDriveSubsystem.init();
-                visionSubsystem.init();
-                break;
-            }
-
-            case ROBOT_CENTERSTAGE: {
+            case ROBOT_INTOTHEDEEP: {
                 visionSubsystem.init();
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
-                intakeSubsystem.init();
-                gripperSubsystem.init();
-                liftSlideSubsystem.init();
-                shoulderSubsystem.init();
-
-                //todo do any subsystems need to be init during auto?
-
+//                intakeSubsystem.init();
+//                gripperSubsystem.init();
+//                liftSlideSubsystem.init();
+//                shoulderSubsystem.init();
                 break;
             }
         }
@@ -212,8 +153,6 @@ public class Robot {
     public LiftSlideSubsystem getLiftSlideSubsystem()  {return liftSlideSubsystem;}
     public ShoulderSubsystem getShoulderSubsystem()  {return shoulderSubsystem;}
     public LinearOpMode getActiveOpMode()  {return activeOpMode;}
-    public DroneSubsystem getDroneSubsystem(){return droneSubsystem;}
-
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;};
 }
 

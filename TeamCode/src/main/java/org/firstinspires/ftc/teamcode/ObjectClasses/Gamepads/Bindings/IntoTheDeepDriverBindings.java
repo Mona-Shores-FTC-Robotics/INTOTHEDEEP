@@ -10,13 +10,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.TurnToAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.RoadRunnerActionToCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeZeroHeadingCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.DroneSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ReleaseDroneCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
 public class IntoTheDeepDriverBindings {
@@ -57,7 +52,7 @@ public class IntoTheDeepDriverBindings {
         gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(() -> {
                     if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
-                        new ReleaseDroneCommand(Robot.getInstance().getDroneSubsystem(), DroneSubsystem.DroneDeployState.FLY).schedule();
+                        //new ReleaseDroneCommand(Robot.getInstance().getDroneSubsystem(), DroneSubsystem.DroneDeployState.FLY).schedule();
                     }
                 }));
 
@@ -100,8 +95,8 @@ public class IntoTheDeepDriverBindings {
 //                    Robot.getInstance().getVisionSubsystem().setDeliverLocation(VisionSubsystem.DeliverLocation.RIGHT);
 //                }));
 
-        gamepad.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new RoadRunnerActionToCommand.ActionAsCommand(Robot.getInstance().getDriveSubsystem(), new TurnToAction(0)));
+//        gamepad.getGamepadButton(GamepadKeys.Button.B)
+//                .whenPressed(new RoadRunnerActionToCommand.ActionAsCommand(Robot.getInstance().getDriveSubsystem(), new TurnToAction(0)));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -140,17 +135,17 @@ public class IntoTheDeepDriverBindings {
                 gamepad::getRightX
         );
 
-        slowModeCommand = new SlowModeCommand(Robot.getInstance().getDriveSubsystem(),
-                gamepad::getLeftY,
-                gamepad::getLeftX,
-                gamepad::getRightX
-        );
-
-        slowModeZeroHeadingCommand = new SlowModeZeroHeadingCommand(Robot.getInstance().getDriveSubsystem(),
-                gamepad::getLeftY,
-                gamepad::getLeftX,
-                0
-        );
+//        slowModeCommand = new SlowModeCommand(Robot.getInstance().getDriveSubsystem(),
+//                gamepad::getLeftY,
+//                gamepad::getLeftX,
+//                gamepad::getRightX
+//        );
+//
+//        slowModeZeroHeadingCommand = new SlowModeZeroHeadingCommand(Robot.getInstance().getDriveSubsystem(),
+//                gamepad::getLeftY,
+//                gamepad::getLeftX,
+//                0
+//        );
 
     }
 }

@@ -243,7 +243,6 @@ public class MecanumDrive {
         localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick);
                 //new DriveLocalizer();
 
-
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
