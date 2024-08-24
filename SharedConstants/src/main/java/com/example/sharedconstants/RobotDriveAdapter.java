@@ -6,5 +6,4 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
 public interface RobotDriveAdapter {
     TrajectoryActionBuilder actionBuilder(Pose2d startPose);
-
 }

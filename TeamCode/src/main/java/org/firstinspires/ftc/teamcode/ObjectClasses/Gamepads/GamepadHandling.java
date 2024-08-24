@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import com.example.sharedconstants.FieldConstants;
+import static com.example.sharedconstants.FieldConstants.*;
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
@@ -155,8 +155,8 @@ public class GamepadHandling {
 
     public void endGameRumble() {
         //Rumble 3 seconds before end game begins
-        if (teleOpTimer.seconds() > FieldConstants.END_GAME_TIME - 3) {
-            if (teleOpTimer.seconds() < FieldConstants.END_GAME_TIME) {
+        if (teleOpTimer.seconds() > END_GAME_TIME - 3) {
+            if (teleOpTimer.seconds() < END_GAME_TIME) {
                 Robot.getInstance().getActiveOpMode().gamepad1.runRumbleEffect(endGameRumbleEffect);
                 Robot.getInstance().getActiveOpMode().gamepad2.runRumbleEffect(endGameRumbleEffect);
             } else {

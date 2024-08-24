@@ -1,17 +1,17 @@
-package com.example.sharedconstants.Routes;
+package com.example.sharedconstants.Routes.DirectRoutes;
 
 import static com.example.sharedconstants.FieldConstants.*;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.example.sharedconstants.RobotDriveAdapter;
+import com.example.sharedconstants.Routes.Routes;
 
-public class RoutesSpikeBackdropPark {
+public class DirectRoutesExample extends Routes {
 
-    private final RobotDriveAdapter roadRunnerDrive;
-
-    public RoutesSpikeBackdropPark(RobotDriveAdapter roadRunnerDrive) {
-        this.roadRunnerDrive = roadRunnerDrive;
+    public DirectRoutesExample(RobotDriveAdapter roadRunnerDrive) {
+        super(roadRunnerDrive);
     }
 
     //Variables to store routes for team prop center for all four start locations
@@ -21,14 +21,14 @@ public class RoutesSpikeBackdropPark {
     public Action blueAudienceBotTeamPropCenterRoute;
 
     //Variables to store routes for team prop left for all four start locations
-    public Action redBackstageBotTeamPropLeftRoute;
-    public Action blueAudienceBotTeamPropLeftRoute;
     public Action redAudienceBotTeamPropLeftRoute;
+    public Action redBackstageBotTeamPropLeftRoute;
     public Action blueBackstageBotTeamPropLeftRoute;
+    public Action blueAudienceBotTeamPropLeftRoute;
 
     //Variables to store routes for team prop right for all four start locations
-    public Action redBackstageBotTeamPropRightRoute;
     public Action redAudienceBotTeamPropRightRoute;
+    public Action redBackstageBotTeamPropRightRoute;
     public Action blueBackstageBotTeamPropRightRoute;
     public Action blueAudienceBotTeamPropRightRoute;
 
@@ -71,7 +71,7 @@ public class RoutesSpikeBackdropPark {
                 .setReversed(true)
                 .splineToLinearHeading(BLUE_BACKDROP_CENTER, FACE_TOWARD_BACKSTAGE)
                 .strafeTo(PoseToVector(BLUE_BACKSTAGE_PARK_LANE_A))
-                                .build();
+                .build();
 
         redBackstageBotTeamPropCenterRoute = roadRunnerDrive.actionBuilder(RED_BACKSTAGE_START_POSE)
                 .splineToLinearHeading(RED_BACKSTAGE_SPIKE_C, TANGENT_TOWARD_BLUE)
@@ -161,7 +161,65 @@ public class RoutesSpikeBackdropPark {
                 .strafeTo(PoseToVector(RED_BACKSTAGE_PARK_LANE_D))
                 .turnTo(FACE_315_DEGREES)
                 .build();
+    }
+    @Override
+    public Action getBlueBackstageBotTeamPropLeftRoute() {
+        return blueBackstageBotTeamPropLeftRoute;
+    }
 
+    @Override
+    public Action getBlueAudienceBotTeamPropLeftRoute() {
+        return blueAudienceBotTeamPropLeftRoute;
+    }
+
+    @Override
+    public Action getBlueBackstageBotTeamPropCenterRoute() {
+        return blueBackstageBotTeamPropCenterRoute;
+    }
+
+    @Override
+    public Action getBlueAudienceBotTeamPropCenterRoute() {
+        return blueAudienceBotTeamPropCenterRoute;
+    }
+
+    @Override
+    public Action getBlueBackstageBotTeamPropRightRoute() {
+        return blueBackstageBotTeamPropRightRoute;
+    }
+
+    @Override
+    public Action getBlueAudienceBotTeamPropRightRoute() {
+        return blueAudienceBotTeamPropRightRoute;
+    }
+
+    @Override
+    public Action getRedBackstageBotTeamPropLeftRoute() {
+        return redBackstageBotTeamPropLeftRoute;
+    }
+
+    @Override
+    public Action getRedAudienceBotTeamPropLeftRoute() {
+        return redAudienceBotTeamPropLeftRoute;
+    }
+
+    @Override
+    public Action getRedBackstageBotTeamPropCenterRoute() {
+        return redBackstageBotTeamPropCenterRoute;
+    }
+
+    @Override
+    public Action getRedAudienceBotTeamPropCenterRoute() {
+        return redAudienceBotTeamPropCenterRoute;
+    }
+
+    @Override
+    public Action getRedBackstageBotTeamPropRightRoute() {
+        return redBackstageBotTeamPropRightRoute;
+    }
+
+    @Override
+    public Action getRedAudienceBotTeamPropRightRoute() {
+        return redAudienceBotTeamPropRightRoute;
     }
 
 }

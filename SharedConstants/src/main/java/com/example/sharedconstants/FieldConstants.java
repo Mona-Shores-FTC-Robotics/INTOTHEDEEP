@@ -11,12 +11,16 @@ package com.example.sharedconstants;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
-public class FieldConstants {
-    //bannana2
-    public static double END_GAME_TIME=90;
+import java.util.HashMap;
+import java.util.Map;
 
-    public static double ROBOT_LENGTH = 18.0;
-    public static double HALF_ROBOT_LENGTH = ROBOT_LENGTH/2;
+public class FieldConstants {
+    public static enum AllianceColor {BLUE, RED}
+    public static enum SideOfField {BACKSTAGE, AUDIENCE}
+    public static enum TeamPropLocation {LEFT, CENTER, RIGHT}
+
+
+    public static double END_GAME_TIME=90;
 
     public static double HALF_FIELD = 72.0;
     public static double TILE = 23.5;
@@ -24,6 +28,8 @@ public class FieldConstants {
     public static double QUARTER_TILE = TILE/4;
     public static double EIGHTH_TILE = TILE/8;
     public static double THREE_QUARTER_TILE = TILE*.75;
+    public static double ROBOT_LENGTH = 18.0;
+    public static double HALF_ROBOT_LENGTH = ROBOT_LENGTH/2;
 
     public static double FACE_TOWARD_BACKSTAGE = Math.toRadians(0);
     public static double FACE_30_DEGREES = Math.toRadians(30);
@@ -37,6 +43,23 @@ public class FieldConstants {
     public static double FACE_TOWARD_RED = Math.toRadians(270);
     public static double FACE_315_DEGREES = Math.toRadians(315);
     public static double FACE_340_DEGREES = Math.toRadians(340);
+
+    public enum StartingPosition {
+        BLUE_AUDIENCE(FieldConstants.BLUE_AUDIENCE_START_POSE),
+        BLUE_BACKSTAGE(FieldConstants.BLUE_BACKSTAGE_START_POSE),
+        RED_AUDIENCE(FieldConstants.RED_AUDIENCE_START_POSE),
+        RED_BACKSTAGE(FieldConstants.RED_BACKSTAGE_START_POSE);
+
+        private final Pose2d startPose;
+
+        StartingPosition(Pose2d startPose) {
+            this.startPose = startPose;
+        }
+
+        public Pose2d getStartPose() {
+            return startPose;
+        }
+    }
 
     public static double TANGENT_TOWARD_BACKSTAGE = Math.toRadians(0);
     public static double TANGENT_45_DEGREES = Math.toRadians(45);

@@ -27,6 +27,9 @@ import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
+
+import static com.example.sharedconstants.FieldConstants.*;
+
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;

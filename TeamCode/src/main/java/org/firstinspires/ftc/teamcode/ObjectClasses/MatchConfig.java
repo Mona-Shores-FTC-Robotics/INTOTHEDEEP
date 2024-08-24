@@ -2,12 +2,10 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
+import static com.example.sharedconstants.FieldConstants.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MatchConfig {
-    public enum AllianceColor {BLUE, RED}
-    public enum SideOfField {BACKSTAGE, AUDIENCE}
-    public enum TeamPropLocation {LEFT, CENTER, RIGHT}
 
     public static AllianceColor finalAllianceColor = AllianceColor.BLUE;
     public static SideOfField finalSideOfField = SideOfField.BACKSTAGE;
@@ -24,7 +22,5 @@ public class MatchConfig {
     public static ElapsedTime timestampTimer;
 
     public static TelemetryPacket telemetryPacket;
-
-
 
 }

@@ -14,6 +14,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import static com.example.sharedconstants.FieldConstants.*;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -677,7 +678,7 @@ public final class VisionSubsystem extends SubsystemBase {
     }
 
     public DeliverLocation getDeliverLocation(){
-        if (MatchConfig.finalAllianceColor == MatchConfig.AllianceColor.RED)
+        if (MatchConfig.finalAllianceColor == AllianceColor.RED)
         {
             return deliverLocationRed;
         } else return deliverLocationBlue;

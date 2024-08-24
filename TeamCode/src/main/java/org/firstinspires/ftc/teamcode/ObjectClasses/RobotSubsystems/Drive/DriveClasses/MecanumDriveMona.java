@@ -8,13 +8,14 @@ import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.example.sharedconstants.RobotDriveAdapter;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-public class MecanumDriveMona extends MecanumDrive {
+public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter  {
     private double drive, strafe, turn;
     private double last_drive=0, last_strafe=0, last_turn=0;
     private double current_drive_ramp = 0, current_strafe_ramp=0, current_turn_ramp=0;
@@ -158,7 +159,6 @@ public class MecanumDriveMona extends MecanumDrive {
 //
 //        leftYAdjusted = Math.min( leftYAdjusted * 1.1, 1);  // Counteract imperfect strafing
 //    }
-
 
 
 }

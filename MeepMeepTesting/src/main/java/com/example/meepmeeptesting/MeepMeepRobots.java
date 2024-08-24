@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Action;
+import com.example.sharedconstants.Routes.Routes;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
@@ -127,48 +128,43 @@ public class MeepMeepRobots {
      * METHODS TO SET SIMPLE ROUTES FOR ALL TEAM PROP LOCATIONS
      **/
 
-    public static void setTeamPropCenterRoutes(Action blueBackstageRoute, Action blueAudienceRoute, Action redBackstageRoute, Action redAudienceRoute) {
-        blueBackstageBot.runAction(blueBackstageRoute);
-        blueAudienceBot.runAction(blueAudienceRoute);
-        redBackstageBot.runAction(redBackstageRoute);
-        redAudienceBot.runAction(redAudienceRoute);
+    public static void setTeamPropCenterRoutes(Routes routes) {
+        blueBackstageBot.runAction(routes.getBlueBackstageBotTeamPropCenterRoute());
+        blueAudienceBot.runAction(routes.getBlueAudienceBotTeamPropCenterRoute());
+        redBackstageBot.runAction(routes.getRedBackstageBotTeamPropCenterRoute());
+        redAudienceBot.runAction(routes.getRedAudienceBotTeamPropCenterRoute());
     }
 
-    public static void setTeamPropLeftRoutes(Action blueBackstageTeamPropLeftRoute, Action blueAudienceTeamPropLeftRoute, Action redBackstageTeamPropLeftRoute, Action redAudienceTeamPropLeftRoute) {
-        blueBackstageBot.runAction(blueBackstageTeamPropLeftRoute);
-        blueAudienceBot.runAction(blueAudienceTeamPropLeftRoute);
-        redBackstageBot.runAction(redBackstageTeamPropLeftRoute);
-        redAudienceBot.runAction(redAudienceTeamPropLeftRoute);
+    public static void setTeamPropLeftRoutes(Routes routes) {
+        blueBackstageBot.runAction(routes.getBlueBackstageBotTeamPropLeftRoute());
+        blueAudienceBot.runAction(routes.getBlueAudienceBotTeamPropLeftRoute());
+        redBackstageBot.runAction(routes.getRedBackstageBotTeamPropLeftRoute());
+        redAudienceBot.runAction(routes.getRedAudienceBotTeamPropLeftRoute());
     }
 
-    public static void setTeamPropRightRoutes(Action blueBackstageRoute, Action blueAudienceRoute, Action redBackstageRoute, Action redAudienceRoute) {
-        blueBackstageBot.runAction(blueBackstageRoute);
-        blueAudienceBot.runAction(blueAudienceRoute);
-        redBackstageBot.runAction(redBackstageRoute);
-        redAudienceBot.runAction(redAudienceRoute);
+    public static void setTeamPropRightRoutes(Routes routes) {
+        blueBackstageBot.runAction(routes.getBlueBackstageBotTeamPropRightRoute());
+        blueAudienceBot.runAction(routes.getBlueAudienceBotTeamPropRightRoute());
+        redBackstageBot.runAction(routes.getRedBackstageBotTeamPropRightRoute());
+        redAudienceBot.runAction(routes.getRedAudienceBotTeamPropRightRoute());
     }
 
-    public static void setTeamPropAllRoutes(
-            Action blueBackstageBotTeamPropLeftRoute, Action blueBackstageBotTeamPropCenterRoute, Action blueBackstageBotTeamPropRightRoute,
-            Action blueAudienceBotTeamPropCenterRoute, Action blueAudienceBotTeamPropLeftRoute, Action blueAudienceBotTeamPropRightSequentialAction,
-            Action redBackstageBotTeamPropCenterRoute, Action redBackstageBotTeamPropLeftRoute, Action redBackstageBotTeamPropRightRoute,
-            Action redAudienceBotTeamPropCenterRoute, Action redAudienceBotTeamPropLeftRoute, Action redAudienceBotTeamPropRightRoute)
-        {
-        blueBackstageBot.runAction(blueBackstageBotTeamPropCenterRoute);
-        blueBackstageBotLeft.runAction(blueBackstageBotTeamPropLeftRoute);
-        blueBackstageBotRight.runAction(blueBackstageBotTeamPropRightRoute);
+    public static void setTeamPropAllRoutes(Routes routes) {
+        blueBackstageBot.runAction(routes.getBlueBackstageBotTeamPropCenterRoute());
+        blueBackstageBotLeft.runAction(routes.getBlueBackstageBotTeamPropLeftRoute());
+        blueBackstageBotRight.runAction(routes.getBlueBackstageBotTeamPropRightRoute());
 
-        blueAudienceBot.runAction(blueAudienceBotTeamPropCenterRoute);
-        blueAudienceBotLeft.runAction(blueAudienceBotTeamPropLeftRoute);
-        blueAudienceBotRight.runAction(blueAudienceBotTeamPropRightSequentialAction);
+        blueAudienceBot.runAction(routes.getBlueAudienceBotTeamPropCenterRoute());
+        blueAudienceBotLeft.runAction(routes.getBlueAudienceBotTeamPropLeftRoute());
+        blueAudienceBotRight.runAction(routes.getBlueAudienceBotTeamPropRightRoute());
 
-        redBackstageBot.runAction(redBackstageBotTeamPropCenterRoute);
-        redBackstageBotLeft.runAction(redBackstageBotTeamPropLeftRoute);
-        redBackstageBotRight.runAction(redBackstageBotTeamPropRightRoute);
+        redBackstageBot.runAction(routes.getRedBackstageBotTeamPropCenterRoute());
+        redBackstageBotLeft.runAction(routes.getRedBackstageBotTeamPropLeftRoute());
+        redBackstageBotRight.runAction(routes.getRedBackstageBotTeamPropRightRoute());
 
-        redAudienceBot.runAction(redAudienceBotTeamPropCenterRoute);
-        redAudienceBotLeft.runAction(redAudienceBotTeamPropLeftRoute);
-        redAudienceBotRight.runAction(redAudienceBotTeamPropRightRoute);
+        redAudienceBot.runAction(routes.getRedAudienceBotTeamPropCenterRoute());
+        redAudienceBotLeft.runAction(routes.getRedAudienceBotTeamPropLeftRoute());
+        redAudienceBotRight.runAction(routes.getRedAudienceBotTeamPropRightRoute());
     }
 
 }

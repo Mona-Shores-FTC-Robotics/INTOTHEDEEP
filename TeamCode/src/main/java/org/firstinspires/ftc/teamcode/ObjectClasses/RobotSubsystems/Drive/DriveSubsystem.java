@@ -8,6 +8,7 @@ import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POS
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.example.sharedconstants.RobotDriveAdapter;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
@@ -53,6 +54,12 @@ public class DriveSubsystem extends SubsystemBase {
 
     private void DashboardTelemetryDriveTrain() {
         //Add code to help with telemetry
+    }
+
+
+    public MecanumDriveMona getMecanumDrive()
+    {
+       return mecanumDrive;
     }
 }
 
