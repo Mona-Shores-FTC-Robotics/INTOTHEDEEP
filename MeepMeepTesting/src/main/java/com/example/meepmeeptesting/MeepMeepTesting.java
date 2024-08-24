@@ -1,57 +1,160 @@
 package com.example.meepmeeptesting;
 
-import static com.example.sharedconstants.FieldConstants.BLUE_AUDIENCE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.BLUE_BACKSTAGE_START_POSE;
+import static com.example.meepmeeptesting.MeepMeepRobots.*;
 
-import com.acmerobotics.roadrunner.Vector2d;
-import com.example.sharedconstants.FieldConstants;
+import com.example.sharedconstants.Routes.RoutesBasic;
+import com.example.sharedconstants.Routes.RoutesSpikeBackdropPark;
+import com.example.sharedconstants.RobotDriveAdapter;
 import com.noahbres.meepmeep.MeepMeep;
-import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
-import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
-import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
-import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import com.noahbres.meepmeep.roadrunner.DriveShim;
+
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
+
+    /**
+     * SET TO PICK WHICH ROUTES TO RUN:
+     * Prop Location: LEFT, RIGHT, OR CENTER
+     * Routes:
+     *      SPIKE_BACKDROP_PARK,
+     **/
+
+    public static TeamPropLocation teamPropLocation = TeamPropLocation.ALL;
+    public static RoutesToRun routesToRunSelection = RoutesToRun.BASIC;
+
+    /** Set which robots should show up **/
+    public static boolean SHOW_BLUE_AUDIENCE_BOT = true;
+    public static boolean SHOW_BLUE_BACKSTAGE_BOT = true;
+    public static boolean SHOW_RED_AUDIENCE_BOT = true;
+    public static boolean SHOW_RED_BACKSTAGE_BOT = true;
+
+    public enum TeamPropLocation {LEFT, CENTER, RIGHT, ALL}
+    enum RoutesToRun {SPIKE_BACKDROP_PARK, BASIC}
+
     public static void main(String[] args) {
 
-        MeepMeep meepMeep = new MeepMeep(1000);
+        MeepMeep meepMeep = new MeepMeep(800);
 
-        // Declare our first bot
-        RoadRunnerBotEntity myFirstBot = new DefaultBotBuilder(meepMeep)
-                // We set this bot to be blue
-                .setColorScheme(new ColorSchemeBlueDark())
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), FieldConstants.FACE_TOWARD_RED)
-                .build();
+        //This method makes 4 robots (2 red robots and 2 blue robots)
+        MeepMeepRobots.createRobots(meepMeep);
 
-        myFirstBot.runAction(myFirstBot.getDrive().actionBuilder(BLUE_AUDIENCE_START_POSE)
-                .splineToLinearHeading(FieldConstants.BLUE_AUDIENCE_SPIKE_C, FieldConstants.FACE_TOWARD_RED)
-                .splineToLinearHeading(FieldConstants.BLUE_BACKDROP_CENTER, FieldConstants.FACE_TOWARD_BACKSTAGE)
-                .build());
+        //This sets the drive for a "dummy robot"
+        DriveShim driveShim = MeepMeepRobots.roadRunnerBot.getDrive();
 
-        // Declare out second bot
-//        RoadRunnerBotEntity mySecondBot = new DefaultBotBuilder(meepMeep)
-//                // We set this bot to be red
-//                .setColorScheme(new ColorSchemeRedDark())
-//                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-//                .build();
+        // Use the adapter
+        RobotDriveAdapter robotDriveAdapter = new MeepMeepDriveAdapter(driveShim);
 
-//        mySecondBot.runAction(mySecondBot.getDrive().actionBuilder(new Pose2d(30, 30, Math.toRadians(180)))
-//                .lineToX(0)
-//                .turn(Math.toRadians(90))
-//                .lineToY(0)
-//                .turn(Math.toRadians(90))
-//                .lineToX(30)
-//                .turn(Math.toRadians(90))
-//                .lineToY(30)
-//                .turn(Math.toRadians(90))
-//                .build());
+        //Set the routes that will be run
+        if (routesToRunSelection == RoutesToRun.SPIKE_BACKDROP_PARK) {
+            RoutesSpikeBackdropPark routesSpikeBackdropPark = new RoutesSpikeBackdropPark(robotDriveAdapter);
+            routesSpikeBackdropPark.BuildRoutes();
+            if (teamPropLocation == TeamPropLocation.LEFT)
+                MeepMeepRobots.setTeamPropLeftRoutes(
+                        routesSpikeBackdropPark.blueBackstageBotTeamPropLeftRoute,
+                        routesSpikeBackdropPark.blueAudienceBotTeamPropLeftRoute,
+                        routesSpikeBackdropPark.redBackstageBotTeamPropLeftRoute,
+                        routesSpikeBackdropPark.redAudienceBotTeamPropLeftRoute);
+            if (teamPropLocation == TeamPropLocation.CENTER)
+                MeepMeepRobots.setTeamPropCenterRoutes(
+                        routesSpikeBackdropPark.blueBackstageBotTeamPropCenterRoute,
+                        routesSpikeBackdropPark.blueAudienceBotTeamPropCenterRoute,
+                        routesSpikeBackdropPark.redBackstageBotTeamPropCenterRoute,
+                        routesSpikeBackdropPark.redAudienceBotTeamPropCenterRoute);
+            if (teamPropLocation == TeamPropLocation.RIGHT)
+                MeepMeepRobots.setTeamPropCenterRoutes(
+                        routesSpikeBackdropPark.blueBackstageBotTeamPropRightRoute,
+                        routesSpikeBackdropPark.blueAudienceBotTeamPropRightRoute,
+                        routesSpikeBackdropPark.redBackstageBotTeamPropRightRoute,
+                        routesSpikeBackdropPark.redAudienceBotTeamPropRightRoute);
+            if (teamPropLocation == TeamPropLocation.ALL)
+                MeepMeepRobots.setTeamPropAllRoutes(
+                        routesSpikeBackdropPark.blueBackstageBotTeamPropLeftRoute, routesSpikeBackdropPark.blueBackstageBotTeamPropCenterRoute, routesSpikeBackdropPark.blueBackstageBotTeamPropRightRoute,
+                        routesSpikeBackdropPark.blueAudienceBotTeamPropCenterRoute, routesSpikeBackdropPark.blueAudienceBotTeamPropLeftRoute, routesSpikeBackdropPark.blueAudienceBotTeamPropRightRoute,
+                        routesSpikeBackdropPark.redBackstageBotTeamPropCenterRoute, routesSpikeBackdropPark.redBackstageBotTeamPropLeftRoute, routesSpikeBackdropPark.redBackstageBotTeamPropRightRoute,
+                        routesSpikeBackdropPark.redAudienceBotTeamPropCenterRoute, routesSpikeBackdropPark.redAudienceBotTeamPropLeftRoute, routesSpikeBackdropPark.redAudienceBotTeamPropRightRoute);
+        }
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_LIGHT)
-                .setDarkMode(false)
-                .setBackgroundAlpha(0.95f)
-                // Add both of our declared bot entities
-                .addEntity(myFirstBot)
-//                .addEntity(mySecondBot)
-                .start();
+        if (routesToRunSelection == RoutesToRun.BASIC) {
+            RoutesBasic routesBasic = new RoutesBasic(robotDriveAdapter);
+            routesBasic.BuildRoutes();
+            if (teamPropLocation == TeamPropLocation.LEFT)
+                MeepMeepRobots.setTeamPropLeftRoutes(
+                        routesBasic.blueBackstageBotTeamPropLeftRoute,
+                        routesBasic.blueAudienceBotTeamPropLeftRoute,
+                        routesBasic.redBackstageBotTeamPropLeftRoute,
+                        routesBasic.redAudienceBotTeamPropLeftRoute);
+            if (teamPropLocation == TeamPropLocation.CENTER)
+                MeepMeepRobots.setTeamPropCenterRoutes(
+                        routesBasic.blueBackstageBotTeamPropCenterRoute,
+                        routesBasic.blueAudienceBotTeamPropCenterRoute,
+                        routesBasic.redBackstageBotTeamPropCenterRoute,
+                        routesBasic.redAudienceBotTeamPropCenterRoute);
+            if (teamPropLocation == TeamPropLocation.RIGHT)
+                MeepMeepRobots.setTeamPropCenterRoutes(
+                        routesBasic.blueBackstageBotTeamPropRightRoute,
+                        routesBasic.blueAudienceBotTeamPropRightRoute,
+                        routesBasic.redBackstageBotTeamPropRightRoute,
+                        routesBasic.redAudienceBotTeamPropRightRoute);
+            if (teamPropLocation == TeamPropLocation.ALL)
+                MeepMeepRobots.setTeamPropAllRoutes(
+                        routesBasic.blueBackstageBotTeamPropLeftRoute, routesBasic.blueBackstageBotTeamPropCenterRoute, routesBasic.blueBackstageBotTeamPropRightRoute,
+                        routesBasic.blueAudienceBotTeamPropCenterRoute, routesBasic.blueAudienceBotTeamPropLeftRoute, routesBasic.blueAudienceBotTeamPropRightRoute,
+                        routesBasic.redBackstageBotTeamPropCenterRoute, routesBasic.redBackstageBotTeamPropLeftRoute, routesBasic.redBackstageBotTeamPropRightRoute,
+                        routesBasic.redAudienceBotTeamPropCenterRoute, routesBasic.redAudienceBotTeamPropLeftRoute, routesBasic.redAudienceBotTeamPropRightRoute);
+        }
+        addRobotsToField(meepMeep);
     }
+
+    private static void addRobotsToField(MeepMeep meepMeep_local) {
+        if (teamPropLocation != TeamPropLocation.ALL) {
+            if (SHOW_BLUE_AUDIENCE_BOT) meepMeep_local.addEntity(blueAudienceBot);
+            if (SHOW_BLUE_BACKSTAGE_BOT) meepMeep_local.addEntity(blueBackstageBot);
+            if (SHOW_RED_AUDIENCE_BOT) meepMeep_local.addEntity(redAudienceBot);
+            if (SHOW_RED_BACKSTAGE_BOT) meepMeep_local.addEntity(redBackstageBot);
+        }
+        if (teamPropLocation == TeamPropLocation.ALL)
+        {
+            if (SHOW_BLUE_BACKSTAGE_BOT){
+                meepMeep_local.addEntity(blueBackstageBot);
+                meepMeep_local.addEntity(blueBackstageBotLeft);
+                meepMeep_local.addEntity(blueBackstageBotRight);
+            }
+            if (SHOW_BLUE_AUDIENCE_BOT){
+                meepMeep_local.addEntity(blueAudienceBot);
+                meepMeep_local.addEntity(blueAudienceBotLeft);
+                meepMeep_local.addEntity(blueAudienceBotRight);
+            }
+            if (SHOW_RED_BACKSTAGE_BOT){
+                meepMeep_local.addEntity(redBackstageBot);
+                meepMeep_local.addEntity(redBackstageBotLeft);
+                meepMeep_local.addEntity(redBackstageBotRight);
+            }
+            if (SHOW_RED_AUDIENCE_BOT){
+                meepMeep_local.addEntity(redAudienceBot);
+                meepMeep_local.addEntity(redAudienceBotLeft);
+                meepMeep_local.addEntity(redAudienceBotRight);
+            }
+        }
+
+        String filePath = "CenterstageRotated.png";
+        System.out.println(new File(".").getAbsolutePath());
+        Image img = null;
+        try {
+            img = ImageIO.read(new File(filePath));
+        } catch (IOException e) {
+        }
+
+
+        meepMeep_local.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)
+                .setDarkMode(false)
+                .setBackgroundAlpha(.95f)
+                .start();
+
+    }
+
 }
+
