@@ -19,7 +19,6 @@ public class FieldConstants {
     public static enum SideOfField {BACKSTAGE, AUDIENCE}
     public static enum TeamPropLocation {LEFT, CENTER, RIGHT}
 
-
     public static double END_GAME_TIME=90;
 
     public static double HALF_FIELD = 72.0;
