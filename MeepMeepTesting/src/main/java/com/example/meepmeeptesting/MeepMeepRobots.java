@@ -167,4 +167,8 @@ public class MeepMeepRobots {
         redAudienceBotRight.runAction(routes.getRedAudienceBotTeamPropRightRoute());
     }
 
+    public static void setRoutes(Routes routes) {
+        redAudienceBot.runAction(routes.getRedAudienceBotRoute());
+    }
+
 }

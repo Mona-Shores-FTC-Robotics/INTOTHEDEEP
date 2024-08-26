@@ -30,6 +30,8 @@ public abstract class Routes {
     protected Action blueBackstageBotTeamPropRightRoute;
     protected Action blueAudienceBotTeamPropRightRoute;
 
+    protected Action redAudienceBotRoute;
+
     public Action getRoute(AllianceColor allianceColor, SideOfField sideOfField, TeamPropLocation teamPropLocation) {
         switch (allianceColor) {
             case BLUE:
@@ -131,5 +133,9 @@ public abstract class Routes {
 
     public Action getRedAudienceBotTeamPropRightRoute() {
         return redAudienceBotTeamPropRightRoute;
+    }
+
+    public Action getRedAudienceBotRoute() {
+        return redAudienceBotRoute;
     }
 }

@@ -2,6 +2,7 @@ package com.example.meepmeeptesting;
 
 import static com.example.meepmeeptesting.MeepMeepRobots.*;
 
+import com.example.sharedconstants.Routes.DirectRoutes.RRPathGenExample;
 import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
 import com.example.sharedconstants.Routes.Routes;
 import com.example.sharedconstants.Routes.DirectRoutes.DirectRoutesExample;
@@ -24,8 +25,8 @@ public class MeepMeepTesting {
      *      SPIKE_BACKDROP_PARK,
      **/
 
-    public static TeamPropLocation teamPropLocation = TeamPropLocation.ALL;
-    public static RoutesToRun routesToRunSelection = RoutesToRun.FUNCTIONAL_ROUTES_EXAMPLE;
+    public static TeamPropLocation teamPropLocation = TeamPropLocation.NONE;
+    public static RoutesToRun routesToRunSelection = RoutesToRun.RRPATHGEN;
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = true;
@@ -33,8 +34,8 @@ public class MeepMeepTesting {
     public static boolean SHOW_RED_AUDIENCE_BOT = true;
     public static boolean SHOW_RED_BACKSTAGE_BOT = true;
 
-    public enum TeamPropLocation {LEFT, CENTER, RIGHT, ALL}
-    enum RoutesToRun {DIRECT_ROUTES_EXAMPLE, FUNCTIONAL_ROUTES_EXAMPLE}
+    public enum TeamPropLocation {LEFT, CENTER, RIGHT, ALL, NONE}
+    enum RoutesToRun {DIRECT_ROUTES_EXAMPLE, FUNCTIONAL_ROUTES_EXAMPLE, RRPATHGEN}
 
     public static void main(String[] args) {
 
@@ -55,7 +56,10 @@ public class MeepMeepTesting {
 
         if (routesToRunSelection == RoutesToRun.DIRECT_ROUTES_EXAMPLE) {
             routes = new DirectRoutesExample(robotDriveAdapter);
-        } else { //if(routesToRunSelection == RoutesToRun.FUNCTIONAL_ROUTES_EXAMPLE){
+        } else if (routesToRunSelection == RoutesToRun.RRPATHGEN){
+            routes = new RRPathGenExample(robotDriveAdapter);
+        }
+        else { //if(routesToRunSelection == RoutesToRun.FUNCTIONAL_ROUTES_EXAMPLE){
             routes = new FunctionalRoutesExample(robotDriveAdapter);
         }
 
@@ -76,38 +80,50 @@ public class MeepMeepTesting {
             case ALL:
                 MeepMeepRobots.setTeamPropAllRoutes(routes);
                 break;
+            case NONE:
+                MeepMeepRobots.setRoutes(routes);
+                break;
         }
         addRobotsToField(meepMeep);
     }
 
     private static void addRobotsToField(MeepMeep meepMeep_local) {
-        if (teamPropLocation != TeamPropLocation.ALL) {
-            if (SHOW_BLUE_AUDIENCE_BOT) meepMeep_local.addEntity(blueAudienceBot);
-            if (SHOW_BLUE_BACKSTAGE_BOT) meepMeep_local.addEntity(blueBackstageBot);
-            if (SHOW_RED_AUDIENCE_BOT) meepMeep_local.addEntity(redAudienceBot);
-            if (SHOW_RED_BACKSTAGE_BOT) meepMeep_local.addEntity(redBackstageBot);
-        }
-        if (teamPropLocation == TeamPropLocation.ALL)
+
+        if (teamPropLocation== TeamPropLocation.NONE)
         {
-            if (SHOW_BLUE_BACKSTAGE_BOT){
-                meepMeep_local.addEntity(blueBackstageBot);
-                meepMeep_local.addEntity(blueBackstageBotLeft);
-                meepMeep_local.addEntity(blueBackstageBotRight);
+//            if (SHOW_BLUE_AUDIENCE_BOT) meepMeep_local.addEntity(blueAudienceBot);
+//            if (SHOW_BLUE_BACKSTAGE_BOT) meepMeep_local.addEntity(blueBackstageBot);
+            if (SHOW_RED_AUDIENCE_BOT) meepMeep_local.addEntity(redAudienceBot);
+//            if (SHOW_RED_BACKSTAGE_BOT) meepMeep_local.addEntity(redBackstageBot);
+        } else {
+
+            if (teamPropLocation != TeamPropLocation.ALL) {
+                if (SHOW_BLUE_AUDIENCE_BOT) meepMeep_local.addEntity(blueAudienceBot);
+                if (SHOW_BLUE_BACKSTAGE_BOT) meepMeep_local.addEntity(blueBackstageBot);
+                if (SHOW_RED_AUDIENCE_BOT) meepMeep_local.addEntity(redAudienceBot);
+                if (SHOW_RED_BACKSTAGE_BOT) meepMeep_local.addEntity(redBackstageBot);
             }
-            if (SHOW_BLUE_AUDIENCE_BOT){
-                meepMeep_local.addEntity(blueAudienceBot);
-                meepMeep_local.addEntity(blueAudienceBotLeft);
-                meepMeep_local.addEntity(blueAudienceBotRight);
-            }
-            if (SHOW_RED_BACKSTAGE_BOT){
-                meepMeep_local.addEntity(redBackstageBot);
-                meepMeep_local.addEntity(redBackstageBotLeft);
-                meepMeep_local.addEntity(redBackstageBotRight);
-            }
-            if (SHOW_RED_AUDIENCE_BOT){
-                meepMeep_local.addEntity(redAudienceBot);
-                meepMeep_local.addEntity(redAudienceBotLeft);
-                meepMeep_local.addEntity(redAudienceBotRight);
+            if (teamPropLocation == TeamPropLocation.ALL) {
+                if (SHOW_BLUE_BACKSTAGE_BOT) {
+                    meepMeep_local.addEntity(blueBackstageBot);
+                    meepMeep_local.addEntity(blueBackstageBotLeft);
+                    meepMeep_local.addEntity(blueBackstageBotRight);
+                }
+                if (SHOW_BLUE_AUDIENCE_BOT) {
+                    meepMeep_local.addEntity(blueAudienceBot);
+                    meepMeep_local.addEntity(blueAudienceBotLeft);
+                    meepMeep_local.addEntity(blueAudienceBotRight);
+                }
+                if (SHOW_RED_BACKSTAGE_BOT) {
+                    meepMeep_local.addEntity(redBackstageBot);
+                    meepMeep_local.addEntity(redBackstageBotLeft);
+                    meepMeep_local.addEntity(redBackstageBotRight);
+                }
+                if (SHOW_RED_AUDIENCE_BOT) {
+                    meepMeep_local.addEntity(redAudienceBot);
+                    meepMeep_local.addEntity(redAudienceBotLeft);
+                    meepMeep_local.addEntity(redAudienceBotRight);
+                }
             }
         }
 
