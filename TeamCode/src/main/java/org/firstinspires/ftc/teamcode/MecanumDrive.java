@@ -99,11 +99,14 @@ public class MecanumDrive {
 
     public final TurnConstraints defaultTurnConstraints = new TurnConstraints(
             PARAMS.maxAngVel, -PARAMS.maxAngAccel, PARAMS.maxAngAccel);
+
+
     public final VelConstraint defaultVelConstraint =
             new MinVelConstraint(Arrays.asList(
                     kinematics.new WheelVelConstraint(PARAMS.maxWheelVel),
                     new AngularVelConstraint(PARAMS.maxAngVel)
             ));
+
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 

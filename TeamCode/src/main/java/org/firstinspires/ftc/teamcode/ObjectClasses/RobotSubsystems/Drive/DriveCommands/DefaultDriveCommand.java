@@ -38,8 +38,8 @@ public class DefaultDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        //this sets the drive/strafe/turn values based on the values supplied, while also doing automatic apriltag driving to the backdrop
-//        driveSubsystem.setDriveStrafeTurnValues(driveSupplier.getAsDouble(), strafeSupplier.getAsDouble(), turnSupplier.getAsDouble());
+        //this sets the drive/strafe/turn values based on the gamepad
+        driveSubsystem.setDriveStrafeTurnValues(driveSupplier.getAsDouble(), strafeSupplier.getAsDouble(), turnSupplier.getAsDouble());
         driveSubsystem.mecanumDrive.mecanumDriveSpeedControl(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
     }
 }

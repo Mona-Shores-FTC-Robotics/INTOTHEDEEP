@@ -1,25 +1,23 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 
-import static com.example.sharedconstants.FieldConstants.BLUE_AUDIENCE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.BLUE_BACKSTAGE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.RED_AUDIENCE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POSE;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.example.sharedconstants.RobotDriveAdapter;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionProcessors.InitVisionProcessor;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
-@Config
 public class DriveSubsystem extends SubsystemBase {
+
+    @Config
+    public static class DriveParameters {
+        /** Set these drive parameters for faster TeleOp driving**/
+        public static double DRIVE_SPEED_FACTOR=.9;
+        public static double STRAFE_SPEED_FACTOR=.9;
+        public static double TURN_SPEED_FACTOR=.8;
+        public static double DEAD_ZONE = .2;
+    }
 
     public MecanumDriveMona mecanumDrive;
     public VisionSubsystem visionSubsystem;
@@ -33,7 +31,6 @@ public class DriveSubsystem extends SubsystemBase {
     public double leftYAdjusted;
     public double leftXAdjusted;
     public double rightXAdjusted;
-
 
     public DriveSubsystem(HardwareMap hardwareMap) {
         //Make the mecanumDrive at pose 0,0,0 because we don't know where we are yet
@@ -60,6 +57,28 @@ public class DriveSubsystem extends SubsystemBase {
     public MecanumDriveMona getMecanumDrive()
     {
        return mecanumDrive;
+    }
+
+    public void setDriveStrafeTurnValues(double leftY, double leftX, double rightX ){
+        boolean gamepadActive = driverGamepadIsActive(leftY, leftX, rightX);
+        if (gamepadActive) {
+            //apply speed factors
+            leftYAdjusted = leftY * DriveParameters.DRIVE_SPEED_FACTOR;
+            leftXAdjusted = leftX * DriveParameters.STRAFE_SPEED_FACTOR;
+            rightXAdjusted = rightX * DriveParameters.TURN_SPEED_FACTOR;
+        }
+        drive = leftYAdjusted;
+        strafe = leftXAdjusted;
+        turn = rightXAdjusted;
+    }
+
+
+    public Boolean driverGamepadIsActive(double leftY, double leftX, double rightX) {
+        if     (Math.abs(leftY) > DriveParameters.DEAD_ZONE ||
+                Math.abs(leftX) > DriveParameters.DEAD_ZONE ||
+                Math.abs(rightX) > DriveParameters.DEAD_ZONE ){
+            return true;
+        } else return false;
     }
 }
 

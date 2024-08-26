@@ -35,7 +35,6 @@ public class AprilTagDrive extends MecanumDrive { // TODO: if not using MecanumD
         static Vector2d cameraOffset = new Vector2d(
                 -6,
                 4);
-
     }
 
     Vector2d cameraOffset;
