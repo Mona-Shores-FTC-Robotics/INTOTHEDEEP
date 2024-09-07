@@ -44,15 +44,31 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDee
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionTelemetry;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
+import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 
-@TeleOp(name="TeleOp_IntoTheDeep")
-public class TeleOp_IntoTheDeep extends LinearOpMode
+@TeleOp(name="TeleOp_AprilTag")
+public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
 {
+    AprilTagLibrary intoTheDeepAprilTagLibrary;
+    AprilTagMetadata[] aprilTagMetadata;
+
     @Override
     public void runOpMode()
     {
+        intoTheDeepAprilTagLibrary = getCurrentGameTagLibrary();
+        telemetry.addData("Number of Tags",intoTheDeepAprilTagLibrary.getAllTags().length);
+
+        aprilTagMetadata = intoTheDeepAprilTagLibrary.getAllTags();
+
+        telemetry.addLine("April Tag 11 name: " + aprilTagMetadata[11].name);
+//        telemetry.addData("April Tag 0 Distance Unit",aprilTagMetadata.distanceUnit);
+//        telemetry.addData("April Tag 0 Field Orientation",aprilTagMetadata.fieldOrientation);
+//        telemetry.addData("April Tag 0 Field Position",aprilTagMetadata.fieldPosition);
+//        telemetry.addData("April Tag 0 Tag Size",aprilTagMetadata.tagsize);
+        telemetry.update();
+
+
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
@@ -68,8 +84,6 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         // Setup Button Bindings
         new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
         new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad());
-
-        telemetry.clearAll();
 
         while (opModeInInit()) {
 
