@@ -51,13 +51,13 @@ public class Robot {
             //Just the drive base
             case ROBOT_DRIVE_BASE: {
                 gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
-                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
+//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
                 break;
             }
             case ROBOT_INTOTHEDEEP: {
                 gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
-                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
+//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
 //                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
 //                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
@@ -110,14 +110,14 @@ public class Robot {
         switch (robotType) {
             case ROBOT_DRIVE_BASE: {
                 gyroSubsystem.init();
-                visionSubsystem.init();
+//                visionSubsystem.init();
                 mecanumDriveSubsystem.init();
                 break;
             }
 
             case ROBOT_INTOTHEDEEP: {
                 gyroSubsystem.init();
-                visionSubsystem.init();
+//                visionSubsystem.init();
                 mecanumDriveSubsystem.init();
 //                intakeSubsystem.init();
 //                gripperSubsystem.init();

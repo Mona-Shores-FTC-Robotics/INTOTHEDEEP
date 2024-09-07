@@ -71,23 +71,23 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
         while (opModeInInit()) {
 
-            VisionTelemetry.telemetryForInitProcessing(gamepadHandling);
+//            VisionTelemetry.telemetryForInitProcessing(gamepadHandling);
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.lockColorAndSide();
+//            gamepadHandling.lockColorAndSide();
 
             telemetry.update();
             sleep(10);
         }
 
         //Switch the vision processing to AprilTags
-        Robot.getInstance().getVisionSubsystem().SwitchToAprilTagProcessor();
+//        Robot.getInstance().getVisionSubsystem().SwitchToAprilTagProcessor();
 
         //Reset Gyro and pose to be 0 at whatever heading the robot is at
         //todo what happens if we don't have this in
         Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
 
         //Set the flag so we reset the gyro/pose heading to zero the next time we go to the backdrop
-        Robot.getInstance().getVisionSubsystem().resetHeading=true;
+//        Robot.getInstance().getVisionSubsystem().resetHeading=true;
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
@@ -114,7 +114,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             gamepadHandling.getDriverGamepad().readButtons();
 
             //Look for AprilTags
-            Robot.getInstance().getVisionSubsystem().LookForAprilTags();
+//            Robot.getInstance().getVisionSubsystem().LookForAprilTags();
 
             //Activate End Game Rumble at 87 seconds into TeleOp
             gamepadHandling.endGameRumble();

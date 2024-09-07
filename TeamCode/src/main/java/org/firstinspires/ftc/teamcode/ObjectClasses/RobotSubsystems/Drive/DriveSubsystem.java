@@ -13,8 +13,8 @@ public class DriveSubsystem extends SubsystemBase {
     @Config
     public static class DriveParameters {
         /** Set these drive parameters for faster TeleOp driving**/
-        public static double DRIVE_SPEED_FACTOR=.9;
-        public static double STRAFE_SPEED_FACTOR=.9;
+        public static double DRIVE_SPEED_FACTOR=.7;
+        public static double STRAFE_SPEED_FACTOR=.7;
         public static double TURN_SPEED_FACTOR=.8;
         public static double DEAD_ZONE = .2;
     }
@@ -66,6 +66,10 @@ public class DriveSubsystem extends SubsystemBase {
             leftYAdjusted = leftY * DriveParameters.DRIVE_SPEED_FACTOR;
             leftXAdjusted = leftX * DriveParameters.STRAFE_SPEED_FACTOR;
             rightXAdjusted = rightX * DriveParameters.TURN_SPEED_FACTOR;
+        } else {
+            leftYAdjusted = 0;
+            leftXAdjusted = 0;
+            rightXAdjusted = 0;
         }
         drive = leftYAdjusted;
         strafe = leftXAdjusted;

@@ -180,8 +180,8 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new MakeOperatorCombinationCommands().ReleasePixels(), false);
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
+//                .whenPressed(new MakeOperatorCombinationCommands().ReleasePixels(), false);
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -234,26 +234,26 @@ public class IntoTheDeepOperatorBindings {
         }
 
         private Command ReleasePixels() {
-
-            return new SequentialCommandGroup(
-                            new ActuateGripperCommand(gripperSubsystem,
-                                    GripperSubsystem.GripperStates.OPEN),
-                            new WaitCommand(325),
-                            new ParallelCommandGroup(
-                                    new MoveLiftSlideCommand(liftSlideSubsystem,
-                                            LiftSlideSubsystem.LiftStates.SAFE),
-                                    new ActuateGripperCommand(gripperSubsystem,
-                                            GripperSubsystem.GripperStates.CLOSED),
-                                    new RotateShoulderCommand(shoulderSubsystem,
-                                            ShoulderSubsystem.ShoulderStates.HALFWAY)
-                            ),
-                            new WaitCommand(250),
-                            new RotateShoulderCommand(shoulderSubsystem,
-                                    ShoulderSubsystem.ShoulderStates.INTAKE),
-                            new WaitCommand(250),
-                            new MoveLiftSlideCommand(liftSlideSubsystem,
-                                    LiftSlideSubsystem.LiftStates.HOME)
-                    );
+            return null;
+//            return new SequentialCommandGroup(
+//                            new ActuateGripperCommand(gripperSubsystem,
+//                                    GripperSubsystem.GripperStates.OPEN),
+//                            new WaitCommand(325),
+//                            new ParallelCommandGroup(
+//                                    new MoveLiftSlideCommand(liftSlideSubsystem,
+//                                            LiftSlideSubsystem.LiftStates.SAFE),
+//                                    new ActuateGripperCommand(gripperSubsystem,
+//                                            GripperSubsystem.GripperStates.CLOSED),
+//                                    new RotateShoulderCommand(shoulderSubsystem,
+//                                            ShoulderSubsystem.ShoulderStates.HALFWAY)
+//                            ),
+//                            new WaitCommand(250),
+//                            new RotateShoulderCommand(shoulderSubsystem,
+//                                    ShoulderSubsystem.ShoulderStates.INTAKE),
+//                            new WaitCommand(250),
+//                            new MoveLiftSlideCommand(liftSlideSubsystem,
+//                                    LiftSlideSubsystem.LiftStates.HOME)
+//                    );
         }
     }
 }
