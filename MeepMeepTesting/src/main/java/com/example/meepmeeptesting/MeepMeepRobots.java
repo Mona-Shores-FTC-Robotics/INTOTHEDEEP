@@ -49,6 +49,13 @@ public class MeepMeepRobots {
                 .setColorScheme(new ColorSchemeRedDark())
                 .setDimensions(18,18)
                 .build();
+
+        roadRunnerBot = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(40, 40, Math.toRadians(180), Math.toRadians(180), 15)
+                .setColorScheme(new ColorSchemeRedLight())
+                .setDimensions(18,18)
+                .build();
     }
 
     public static void setRoutes(Routes routes) {
