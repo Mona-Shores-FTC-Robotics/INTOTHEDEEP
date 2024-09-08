@@ -3,7 +3,6 @@ package com.example.sharedconstants.Routes.FunctionalRoutes;
 import static com.example.sharedconstants.FieldConstants.*;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.*;
 import static com.example.sharedconstants.FieldConstants.SideOfField.*;
-import static com.example.sharedconstants.FieldConstants.TeamPropLocation.*;
 
 import com.acmerobotics.roadrunner.Action;
 import com.example.sharedconstants.RobotDriveAdapter;
@@ -14,151 +13,57 @@ public class FunctionalRoutesExample extends Routes {
         super(roadRunnerDrive);
     }
 
-    //Variables to store routes for team prop left for all four start locations
-    public Action redAudienceBotTeamPropLeftRoute;
-    public Action redBackstageBotTeamPropLeftRoute;
-    public Action blueBackstageBotTeamPropLeftRoute;
-    public Action blueAudienceBotTeamPropLeftRoute;
-
-    //Variables to store routes for team prop center for all four start locations
-    public Action redAudienceBotTeamPropCenterRoute;
-    public Action redBackstageBotTeamPropCenterRoute;
-    public Action blueBackstageBotTeamPropCenterRoute;
-    public Action blueAudienceBotTeamPropCenterRoute;
-
-    //Variables to store routes for team prop right for all four start locations
-    public Action redAudienceBotTeamPropRightRoute;
-    public Action redBackstageBotTeamPropRightRoute;
-    public Action blueBackstageBotTeamPropRightRoute;
-    public Action blueAudienceBotTeamPropRightRoute;
+    // Variables to store routes for all four start locations (red/blue audience and backstage)
+    public Action redAudienceBotRoute;
+    public Action redBackstageBotRoute;
+    public Action blueAudienceBotRoute;
+    public Action blueBackstageBotRoute;
 
     public void BuildRoutes() {
 
-    /** RED AUDIENCE ROUTES **/
-        PosesForFunctionalRoutesExample redAudienceLeftPoses = new PosesForFunctionalRoutesExample(RED, AUDIENCE, LEFT);
-        redAudienceBotTeamPropLeftRoute = roadRunnerDrive.actionBuilder(redAudienceLeftPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(redAudienceLeftPoses))
+        /** RED AUDIENCE ROUTE **/
+        PosesForFunctionalRoutesExample redAudiencePoses = new PosesForFunctionalRoutesExample(RED, AUDIENCE);
+        redAudienceBotRoute = roadRunnerDrive.actionBuilder(redAudiencePoses.startingPose)
+                .stopAndAdd(new RouteBuilder().ExampleRoute(redAudiencePoses))
                 .build();
 
-        PosesForFunctionalRoutesExample redAudienceCenterPoses = new PosesForFunctionalRoutesExample(RED, AUDIENCE, CENTER);
-        redAudienceBotTeamPropCenterRoute = roadRunnerDrive.actionBuilder(redAudienceCenterPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(redAudienceCenterPoses))
+        /** RED BACKSTAGE ROUTE **/
+        PosesForFunctionalRoutesExample redBackstagePoses = new PosesForFunctionalRoutesExample(RED, BACKSTAGE);
+        redBackstageBotRoute = roadRunnerDrive.actionBuilder(redBackstagePoses.startingPose)
+                .stopAndAdd(new RouteBuilder().ExampleRoute(redBackstagePoses))
                 .build();
 
-        PosesForFunctionalRoutesExample redAudienceRightPoses = new PosesForFunctionalRoutesExample(RED, AUDIENCE, RIGHT);
-        redAudienceBotTeamPropRightRoute = roadRunnerDrive.actionBuilder(redAudienceRightPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(redAudienceRightPoses))
+        /** BLUE AUDIENCE ROUTE **/
+        PosesForFunctionalRoutesExample blueAudiencePoses = new PosesForFunctionalRoutesExample(BLUE, AUDIENCE);
+        blueAudienceBotRoute = roadRunnerDrive.actionBuilder(blueAudiencePoses.startingPose)
+                .stopAndAdd(new RouteBuilder().ExampleRoute(blueAudiencePoses))
                 .build();
 
-        /** RED BACKSTAGE ROUTES **/
-        PosesForFunctionalRoutesExample redBackstageLeftPoses = new PosesForFunctionalRoutesExample(RED, BACKSTAGE, LEFT);
-        redBackstageBotTeamPropLeftRoute = roadRunnerDrive.actionBuilder(redBackstageLeftPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(redBackstageLeftPoses))
+        /** BLUE BACKSTAGE ROUTE **/
+        PosesForFunctionalRoutesExample blueBackstagePoses = new PosesForFunctionalRoutesExample(BLUE, BACKSTAGE);
+        blueBackstageBotRoute = roadRunnerDrive.actionBuilder(blueBackstagePoses.startingPose)
+                .stopAndAdd(new RouteBuilder().ExampleRoute(blueBackstagePoses))
                 .build();
-
-        PosesForFunctionalRoutesExample redBackstageCenterPoses = new PosesForFunctionalRoutesExample(RED, BACKSTAGE, CENTER);
-        redBackstageBotTeamPropCenterRoute = roadRunnerDrive.actionBuilder(redBackstageCenterPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(redBackstageCenterPoses))
-                .build();
-
-        PosesForFunctionalRoutesExample redBackstageRightPoses = new PosesForFunctionalRoutesExample(RED, BACKSTAGE, RIGHT);
-        redBackstageBotTeamPropRightRoute = roadRunnerDrive.actionBuilder(redBackstageRightPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(redBackstageRightPoses))
-                .build();
-
-
-        /** BLUE BACKSTAGE ROUTES **/
-        PosesForFunctionalRoutesExample blueBackstageLeftPoses = new PosesForFunctionalRoutesExample(BLUE, BACKSTAGE, LEFT);
-        blueBackstageBotTeamPropLeftRoute = roadRunnerDrive.actionBuilder(blueBackstageLeftPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(blueBackstageLeftPoses))
-                .build();
-
-        PosesForFunctionalRoutesExample blueBackstageCenterPoses = new PosesForFunctionalRoutesExample(BLUE, BACKSTAGE, CENTER);
-        blueBackstageBotTeamPropCenterRoute = roadRunnerDrive.actionBuilder(blueBackstageCenterPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(blueBackstageCenterPoses))
-                .build();
-
-        PosesForFunctionalRoutesExample blueBackstageRightPoses = new PosesForFunctionalRoutesExample(BLUE, BACKSTAGE, RIGHT);
-        blueBackstageBotTeamPropRightRoute = roadRunnerDrive.actionBuilder(blueBackstageRightPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(blueBackstageRightPoses))
-                .build();
-
-        /** BLUE AUDIENCE ROUTES **/
-        PosesForFunctionalRoutesExample blueAudienceLeftPoses = new PosesForFunctionalRoutesExample(BLUE, AUDIENCE, LEFT);
-        blueAudienceBotTeamPropLeftRoute = roadRunnerDrive.actionBuilder(blueAudienceLeftPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(blueAudienceLeftPoses))
-                .build();
-
-        PosesForFunctionalRoutesExample blueAudienceCenterPoses = new PosesForFunctionalRoutesExample(BLUE, AUDIENCE, CENTER);
-        blueAudienceBotTeamPropCenterRoute = roadRunnerDrive.actionBuilder(blueAudienceCenterPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(blueAudienceCenterPoses))
-                .build();
-
-        PosesForFunctionalRoutesExample blueAudienceRightPoses = new PosesForFunctionalRoutesExample(BLUE, AUDIENCE, RIGHT);
-        blueAudienceBotTeamPropRightRoute = roadRunnerDrive.actionBuilder(blueAudienceRightPoses.startingPose)
-                .stopAndAdd(new RouteBuilder().ExampleRoute(blueAudienceRightPoses))
-                .build();
-
-
-    }
-    @Override
-    public Action getBlueBackstageBotTeamPropLeftRoute() {
-        return blueBackstageBotTeamPropLeftRoute;
     }
 
     @Override
-    public Action getBlueAudienceBotTeamPropLeftRoute() {
-        return blueAudienceBotTeamPropLeftRoute;
+    public Action getBlueBackstageBotRoute() {
+        return blueBackstageBotRoute;
     }
 
     @Override
-    public Action getBlueBackstageBotTeamPropCenterRoute() {
-        return blueBackstageBotTeamPropCenterRoute;
+    public Action getBlueAudienceBotRoute() {
+        return blueAudienceBotRoute;
     }
 
     @Override
-    public Action getBlueAudienceBotTeamPropCenterRoute() {
-        return blueAudienceBotTeamPropCenterRoute;
+    public Action getRedBackstageBotRoute() {
+        return redBackstageBotRoute;
     }
 
     @Override
-    public Action getBlueBackstageBotTeamPropRightRoute() {
-        return blueBackstageBotTeamPropRightRoute;
-    }
-
-    @Override
-    public Action getBlueAudienceBotTeamPropRightRoute() {
-        return blueAudienceBotTeamPropRightRoute;
-    }
-
-    @Override
-    public Action getRedBackstageBotTeamPropLeftRoute() {
-        return redBackstageBotTeamPropLeftRoute;
-    }
-
-    @Override
-    public Action getRedAudienceBotTeamPropLeftRoute() {
-        return redAudienceBotTeamPropLeftRoute;
-    }
-
-    @Override
-    public Action getRedBackstageBotTeamPropCenterRoute() {
-        return redBackstageBotTeamPropCenterRoute;
-    }
-
-    @Override
-    public Action getRedAudienceBotTeamPropCenterRoute() {
-        return redAudienceBotTeamPropCenterRoute;
-    }
-
-    @Override
-    public Action getRedBackstageBotTeamPropRightRoute() {
-        return redBackstageBotTeamPropRightRoute;
-    }
-
-    @Override
-    public Action getRedAudienceBotTeamPropRightRoute() {
-        return redAudienceBotTeamPropRightRoute;
+    public Action getRedAudienceBotRoute() {
+        return redAudienceBotRoute;
     }
 
     public class RouteBuilder {

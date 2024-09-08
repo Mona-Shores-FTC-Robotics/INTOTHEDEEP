@@ -25,8 +25,7 @@ public class MeepMeepTesting {
      *      SPIKE_BACKDROP_PARK,
      **/
 
-    public static TeamPropLocation teamPropLocation = TeamPropLocation.NONE;
-    public static RoutesToRun routesToRunSelection = RoutesToRun.RRPATHGEN;
+    public static RoutesToRun routesToRunSelection = RoutesToRun.DIRECT_ROUTES_EXAMPLE;
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = true;
@@ -66,77 +65,30 @@ public class MeepMeepTesting {
         // Build the routes
         routes.BuildRoutes();
 
-        // Set the routes for team prop(s)
-        switch (teamPropLocation) {
-            case LEFT:
-                MeepMeepRobots.setTeamPropLeftRoutes(routes);
-                break;
-            case CENTER:
-                MeepMeepRobots.setTeamPropCenterRoutes(routes);
-                break;
-            case RIGHT:
-                MeepMeepRobots.setTeamPropRightRoutes(routes);
-                break;
-            case ALL:
-                MeepMeepRobots.setTeamPropAllRoutes(routes);
-                break;
-            case NONE:
-                MeepMeepRobots.setRoutes(routes);
-                break;
-        }
+        MeepMeepRobots.setRoutes(routes);
+
         addRobotsToField(meepMeep);
     }
 
     private static void addRobotsToField(MeepMeep meepMeep_local) {
 
-        if (teamPropLocation== TeamPropLocation.NONE)
-        {
-//            if (SHOW_BLUE_AUDIENCE_BOT) meepMeep_local.addEntity(blueAudienceBot);
-//            if (SHOW_BLUE_BACKSTAGE_BOT) meepMeep_local.addEntity(blueBackstageBot);
-            if (SHOW_RED_AUDIENCE_BOT) meepMeep_local.addEntity(redAudienceBot);
-//            if (SHOW_RED_BACKSTAGE_BOT) meepMeep_local.addEntity(redBackstageBot);
-        } else {
+        if (SHOW_BLUE_AUDIENCE_BOT) meepMeep_local.addEntity(blueAudienceBot);
+        if (SHOW_BLUE_BACKSTAGE_BOT) meepMeep_local.addEntity(blueBackstageBot);
+        if (SHOW_RED_AUDIENCE_BOT) meepMeep_local.addEntity(redAudienceBot);
+        if (SHOW_RED_BACKSTAGE_BOT) meepMeep_local.addEntity(redBackstageBot);
 
-            if (teamPropLocation != TeamPropLocation.ALL) {
-                if (SHOW_BLUE_AUDIENCE_BOT) meepMeep_local.addEntity(blueAudienceBot);
-                if (SHOW_BLUE_BACKSTAGE_BOT) meepMeep_local.addEntity(blueBackstageBot);
-                if (SHOW_RED_AUDIENCE_BOT) meepMeep_local.addEntity(redAudienceBot);
-                if (SHOW_RED_BACKSTAGE_BOT) meepMeep_local.addEntity(redBackstageBot);
-            }
-            if (teamPropLocation == TeamPropLocation.ALL) {
-                if (SHOW_BLUE_BACKSTAGE_BOT) {
-                    meepMeep_local.addEntity(blueBackstageBot);
-                    meepMeep_local.addEntity(blueBackstageBotLeft);
-                    meepMeep_local.addEntity(blueBackstageBotRight);
-                }
-                if (SHOW_BLUE_AUDIENCE_BOT) {
-                    meepMeep_local.addEntity(blueAudienceBot);
-                    meepMeep_local.addEntity(blueAudienceBotLeft);
-                    meepMeep_local.addEntity(blueAudienceBotRight);
-                }
-                if (SHOW_RED_BACKSTAGE_BOT) {
-                    meepMeep_local.addEntity(redBackstageBot);
-                    meepMeep_local.addEntity(redBackstageBotLeft);
-                    meepMeep_local.addEntity(redBackstageBotRight);
-                }
-                if (SHOW_RED_AUDIENCE_BOT) {
-                    meepMeep_local.addEntity(redAudienceBot);
-                    meepMeep_local.addEntity(redAudienceBotLeft);
-                    meepMeep_local.addEntity(redAudienceBotRight);
-                }
-            }
-        }
 
-        String filePath = "CenterstageRotated.png";
-        System.out.println(new File(".").getAbsolutePath());
+        String filePath = "D:\\FTC\\StudioProjects\\2024-OffseasonDevelopment\\intothedeep1.png";
+//        String filePath = "D:\\FTC\\StudioProjects\\2024-OffseasonDevelopment\\intothedeep2.png";
+//        String filePath = "D:\\FTC\\StudioProjects\\2024-OffseasonDevelopment\\intothedeep3.png";
         Image img = null;
         try {
             img = ImageIO.read(new File(filePath));
         } catch (IOException e) {
+            e.printStackTrace();  // Log the exception details
         }
 
-
-        meepMeep_local.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)
+        meepMeep_local.setBackground(img)
                 .setDarkMode(false)
                 .setBackgroundAlpha(.95f)
                 .start();

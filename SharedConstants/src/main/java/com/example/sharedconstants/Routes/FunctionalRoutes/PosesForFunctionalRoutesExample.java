@@ -10,9 +10,9 @@ public class PosesForFunctionalRoutesExample {
     public Pose2d parkPose;
     public double parkOrientation;
 
-    PosesForFunctionalRoutesExample(AllianceColor allianceColor, SideOfField sideOfField, TeamPropLocation teamPropLocation) {
+    PosesForFunctionalRoutesExample(AllianceColor allianceColor, SideOfField sideOfField) {
         SetStartingPose(allianceColor, sideOfField);
-        SetWaypointPose(allianceColor, sideOfField, teamPropLocation);
+        SetWaypointPose(allianceColor, sideOfField);
         SetParkPose(allianceColor);
     }
 
@@ -28,61 +28,25 @@ public class PosesForFunctionalRoutesExample {
         }
     }
 
-    public void SetWaypointPose(AllianceColor allianceColor, SideOfField sideOfField, TeamPropLocation teamPropLocation) {
-        if (allianceColor == AllianceColor.BLUE) {
-            switch (teamPropLocation) {
-                case LEFT: {
-                    if (sideOfField == SideOfField.AUDIENCE) {
-                        waypointPose = BLUE_AUDIENCE_SPIKE_L;
-                    } else waypointPose = BLUE_BACKSTAGE_SPIKE_L;
-                    break;
-                }
-                case RIGHT: {
-                    if (sideOfField == SideOfField.AUDIENCE) {
-                        waypointPose = BLUE_AUDIENCE_SPIKE_R;
-                    } else waypointPose = BLUE_BACKSTAGE_SPIKE_R;
-                    break;
-                }
-                case CENTER: {
-                    if (sideOfField == SideOfField.AUDIENCE) {
-                        waypointPose = BLUE_AUDIENCE_SPIKE_C;
-                    } else waypointPose = BLUE_BACKSTAGE_SPIKE_C;
-                    break;
-                }
-            }
-        } else {
-            switch (teamPropLocation) {
-                case LEFT: {
-                    if (sideOfField == SideOfField.AUDIENCE) {
-                        waypointPose = RED_AUDIENCE_SPIKE_L;
-                    } else waypointPose = RED_BACKSTAGE_SPIKE_L;
-                    break;
-                }
-                case RIGHT: {
-                    if (sideOfField == SideOfField.AUDIENCE) {
-                        waypointPose = RED_AUDIENCE_SPIKE_R;
-                    } else waypointPose = RED_BACKSTAGE_SPIKE_R;
-                    break;
-                }
-                case CENTER:
-                default: {
-                    if (sideOfField == SideOfField.AUDIENCE) {
-                        waypointPose = RED_AUDIENCE_SPIKE_C;
-                    } else waypointPose = RED_BACKSTAGE_SPIKE_C;
-                    break;
-                }
-            }
+    private void SetWaypointPose(AllianceColor allianceColor, SideOfField sideOfField) {
+        if (allianceColor == AllianceColor.BLUE && sideOfField == SideOfField.AUDIENCE) {
+            waypointPose = RUNG_BLUE_AUDIENCE;  // Default waypoint for BLUE AUDIENCE
+        } else if (allianceColor == AllianceColor.BLUE && sideOfField == SideOfField.BACKSTAGE) {
+            waypointPose = SPIKE_NEUTRAL_BACKSTAGE_1; // Default waypoint for BLUE BACKSTAGE
+        } else if (allianceColor == AllianceColor.RED && sideOfField == SideOfField.AUDIENCE) {
+            waypointPose = SPIKE_NEUTRAL_AUDIENCE_1;   // Default waypoint for RED AUDIENCE
+        } else if (allianceColor == AllianceColor.RED && sideOfField == SideOfField.BACKSTAGE) {
+            waypointPose = RUNG_RED_BACKSTAGE;  // Default waypoint for RED BACKSTAGE
         }
     }
 
-    public void SetParkPose(AllianceColor allianceColor) {
+    private void SetParkPose(AllianceColor allianceColor) {
         if (allianceColor == AllianceColor.BLUE) {
-            parkPose = BLUE_BACKSTAGE_PARK_LANE_C;
+            parkPose = OBSERVATION_BLUE_ZONE;
             parkOrientation = FACE_45_DEGREES;
         } else {
-            parkPose = RED_BACKSTAGE_PARK_LANE_D;
+            parkPose = OBSERVATION_RED_ZONE;
             parkOrientation = FACE_315_DEGREES;
         }
     }
-
 }

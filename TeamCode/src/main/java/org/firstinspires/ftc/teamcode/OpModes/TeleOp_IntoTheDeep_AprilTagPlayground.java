@@ -56,18 +56,27 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        // Get the April Tag library for the current game
         intoTheDeepAprilTagLibrary = getCurrentGameTagLibrary();
-        telemetry.addData("Number of Tags",intoTheDeepAprilTagLibrary.getAllTags().length);
 
+        // Get all the tags from the library
         aprilTagMetadata = intoTheDeepAprilTagLibrary.getAllTags();
 
-        telemetry.addLine("April Tag 11 name: " + aprilTagMetadata[11].name);
-//        telemetry.addData("April Tag 0 Distance Unit",aprilTagMetadata.distanceUnit);
-//        telemetry.addData("April Tag 0 Field Orientation",aprilTagMetadata.fieldOrientation);
-//        telemetry.addData("April Tag 0 Field Position",aprilTagMetadata.fieldPosition);
-//        telemetry.addData("April Tag 0 Tag Size",aprilTagMetadata.tagsize);
-        telemetry.update();
+        // Print out the number of tags
+        telemetry.addData("Number of Tags", aprilTagMetadata.length);
 
+        // Loop through each tag and print out its information
+        for (int i = 0; i < aprilTagMetadata.length; i++) {
+            telemetry.addLine("April Tag " + i + " name: " + aprilTagMetadata[i].id);
+            telemetry.addLine("April Tag " + i + " name: " + aprilTagMetadata[i].name);
+            telemetry.addData("April Tag " + i + " Distance Unit", aprilTagMetadata[i].distanceUnit);
+            telemetry.addData("April Tag " + i + " Field Orientation", aprilTagMetadata[i].fieldOrientation);
+            telemetry.addData("April Tag " + i + " Field Position", aprilTagMetadata[i].fieldPosition);
+            telemetry.addData("April Tag " + i + " Tag Size", aprilTagMetadata[i].tagsize);
+        }
+
+        // Update telemetry to display all the data
+        telemetry.update();
 
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
@@ -131,7 +140,6 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
 
             //Look for AprilTags
 //            Robot.getInstance().getVisionSubsystem().LookForAprilTags();
-
 
             //Activate End Game Rumble at 87 seconds into TeleOp
             gamepadHandling.endGameRumble();
