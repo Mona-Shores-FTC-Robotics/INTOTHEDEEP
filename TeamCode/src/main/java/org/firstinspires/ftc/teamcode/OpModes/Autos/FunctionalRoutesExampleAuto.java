@@ -58,7 +58,7 @@ public class FunctionalRoutesExampleAuto extends LinearOpMode {
         telemetry.update();
 
         //Pick one of the routes built previously based on the final Alliance Color, Side of Field, and Team Prop
-        Action selectedRoute = functionalRoutesExample.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField, MatchConfig.finalTeamPropLocation);
+        Action selectedRoute = functionalRoutesExample.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //Reset Gyro
         Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();

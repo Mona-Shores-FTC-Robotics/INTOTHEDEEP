@@ -16,11 +16,14 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.RobotDriveAdapter;
+import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
+import com.example.sharedconstants.Routes.FunctionalRoutes.PosesForFunctionalRoutesExample;
 import com.example.sharedconstants.Routes.Routes;
 import com.noahbres.meepmeep.roadrunner.entity.TrajectoryAction;
 import com.noahbres.meepmeep.roadrunner.entity.TurnAction;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class DirectRoutesExample extends Routes {
 
@@ -36,18 +39,22 @@ public class DirectRoutesExample extends Routes {
     public void BuildRoutes() {
         /** RED AUDIENCE **/
         redAudienceBotRoute = roadRunnerDrive.actionBuilder(RED_AUDIENCE_START_POSE)
+                .splineToLinearHeading(SPIKE_NEUTRAL_AUDIENCE_1, FACE_TOWARD_BLUE)
+                .build();
+
+        /** BLUE BACKSTAGE - THIS SHOULD MATCH THE RED AUDIENCE PATH AND START LOCATION **/
+        blueBackstageBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_AUDIENCE_START_POSE)
+                .splineToLinearHeading(SPIKE_NEUTRAL_AUDIENCE_1, FACE_TOWARD_BLUE)
                 .build();
 
         /** RED BACKSTAGE **/
-        redBackstageBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
+        redBackstageBotRoute = roadRunnerDrive.actionBuilder(RED_BACKSTAGE_START_POSE)
+                .splineToConstantHeading(RUNG_RED_BACKSTAGE, FACE_TOWARD_BLUE)
                 .build();
 
-        /** BLUE AUDIENCE **/
-        blueAudienceBotRoute = roadRunnerDrive.actionBuilder(BLUE_AUDIENCE_START_POSE)
-                .build();
-
-        /** BLUE BACKSTAGE **/
-        blueBackstageBotRoute = roadRunnerDrive.actionBuilder(BLUE_BACKSTAGE_START_POSE)
+        /** BLUE AUDIENCE THIS SHOULD MATCH THE RED BACKSTAGE PATH AND START LOCATION **/
+        blueAudienceBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
+                .splineToConstantHeading(RUNG_RED_BACKSTAGE, FACE_TOWARD_BLUE)
                 .build();
     }
 

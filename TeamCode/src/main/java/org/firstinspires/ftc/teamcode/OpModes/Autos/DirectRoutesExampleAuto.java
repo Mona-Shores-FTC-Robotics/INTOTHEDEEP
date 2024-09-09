@@ -38,12 +38,7 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         DirectRoutesExample directRoutesExample = new DirectRoutesExample(robotDriveAdapter);
         directRoutesExample.BuildRoutes();
 
-        // Turn on the Init Vision Processor to Automatically Figure Out Alliance Color, Side, and Team Prop Location
-        Robot.getInstance().getVisionSubsystem().SwitchToInitVisionProcessor();
-
         while (opModeInInit()) {
-            // Add Vision Init Processor Telemetry
-            VisionTelemetry.telemetryForInitProcessing(gamepadHandling);
 
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
@@ -52,18 +47,14 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
             sleep(10);
         }
 
-        //Display the initVision telemetry a final time
-        VisionTelemetry.telemetryForInitProcessing(gamepadHandling);
-        telemetry.update();
-
-        //Pick one of the routes built previously based on the final Alliance Color, Side of Field, and Team Prop
+        //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRoute = directRoutesExample.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //Reset Gyro
         Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
 
         //After Init switch the vision processing to AprilTags
-        Robot.getInstance().getVisionSubsystem().SwitchToAprilTagProcessor();
+        //Robot.getInstance().getVisionSubsystem().SwitchToAprilTagProcessor();
 
         telemetry.clearAll();
 

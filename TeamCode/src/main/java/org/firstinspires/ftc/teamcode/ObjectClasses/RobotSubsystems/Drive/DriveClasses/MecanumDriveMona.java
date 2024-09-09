@@ -177,7 +177,7 @@ public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter 
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultVelConstraint,
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultAccelConstraint,
                 pose -> new Pose2dDual<>(
-                        pose.position.x, pose.position.y.unaryMinus(), pose.heading.inverse()));
+                        pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.inverse()));
     }
 }
 

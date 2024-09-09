@@ -52,21 +52,21 @@ public class IntoTheDeepOperatorBindings {
         // RIGHT BUMPER - ROBOT UP WITH WINCH                   //
         //                                                      //
         //////////////////////////////////////////////////////////
-
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(
-                        new InstantCommand(() -> {
-                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
-                                if (armIsUp) {
-                                    new ChangeWinchPowerCommand(climberSubsystem, ClimberSubsystem.WinchMotorStates.ROBOT_UP).schedule();
-                                }
-                            }
-                        }
-                        )
-                )
-                .whenReleased(
-                        new ChangeWinchPowerCommand(climberSubsystem, ClimberSubsystem.WinchMotorStates.OFF)
-                );
+//
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                .whenPressed(
+//                        new InstantCommand(() -> {
+//                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
+//                                if (armIsUp) {
+//                                    new ChangeWinchPowerCommand(climberSubsystem, ClimberSubsystem.WinchMotorStates.ROBOT_UP).schedule();
+//                                }
+//                            }
+//                        }
+//                        )
+//                )
+//                .whenReleased(
+//                        new ChangeWinchPowerCommand(climberSubsystem, ClimberSubsystem.WinchMotorStates.OFF)
+//                );
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -74,20 +74,21 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new InstantCommand(()->{
-                    visionSubsystem.setDeliverHeight(LiftSlideSubsystem.LiftStates.MAX);
-                }));
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//                .whenPressed(new InstantCommand(()->{
+//                    visionSubsystem.setDeliverHeight(LiftSlideSubsystem.LiftStates.MAX);
+//                }));
+
         //////////////////////////////////////////////////////////
         //                                                      //
         // DPAD-RIGHT -                                         //
         //                                                      //
         //////////////////////////////////////////////////////////
-
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(new InstantCommand(()->{
-                    visionSubsystem.setDeliverHeight(LiftSlideSubsystem.LiftStates.HIGH);
-                }));
+//
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(new InstantCommand(()->{
+//                    visionSubsystem.setDeliverHeight(LiftSlideSubsystem.LiftStates.HIGH);
+//                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -95,10 +96,10 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(new InstantCommand(()->{
-                    visionSubsystem.setDeliverHeight(LiftSlideSubsystem.LiftStates.MID);
-                }));
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+//                .whenPressed(new InstantCommand(()->{
+//                    visionSubsystem.setDeliverHeight(LiftSlideSubsystem.LiftStates.MID);
+//                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -106,10 +107,10 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new InstantCommand(()->{
-                    visionSubsystem.setDeliverHeight(LiftSlideSubsystem.LiftStates.LOW);
-                }));
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+//                .whenPressed(new InstantCommand(()->{
+//                    visionSubsystem.setDeliverHeight(LiftSlideSubsystem.LiftStates.LOW);
+//                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -117,20 +118,20 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .toggleWhenPressed(
-                        new InstantCommand(() -> {
-                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
-                                new ReadyClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.READY).schedule();
-                                armIsUp=true;
-                            }
-                        }),
-                        new InstantCommand(() -> {
-                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
-                                new ReadyClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.STOWED).schedule();
-                                armIsUp=false;
-                            }
-                        }));
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                .toggleWhenPressed(
+//                        new InstantCommand(() -> {
+//                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
+//                                new ReadyClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.READY).schedule();
+//                                armIsUp=true;
+//                            }
+//                        }),
+//                        new InstantCommand(() -> {
+//                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
+//                                new ReadyClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.STOWED).schedule();
+//                                armIsUp=false;
+//                            }
+//                        }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -139,18 +140,18 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
 
         // INTAKE ON while held down, off when not
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(
-                        new SequentialCommandGroup(
-                                new ActuateGripperCommand(gripperSubsystem, GripperSubsystem.GripperStates.OPEN),
-                                new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_ON, IntakeSubsystem.IntakeStates.INTAKE_SLOW)
-                        ))
-                .whenReleased(
-                        new SequentialCommandGroup(
-                                new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_OFF, IntakeSubsystem.IntakeStates.INTAKE_OFF),
-                                new WaitCommand(300),
-                                new ActuateGripperCommand(gripperSubsystem, GripperSubsystem.GripperStates.CLOSED)
-                        ));
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
+//                .whenPressed(
+//                        new SequentialCommandGroup(
+//                                new ActuateGripperCommand(gripperSubsystem, GripperSubsystem.GripperStates.OPEN),
+//                                new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_ON, IntakeSubsystem.IntakeStates.INTAKE_SLOW)
+//                        ))
+//                .whenReleased(
+//                        new SequentialCommandGroup(
+//                                new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_OFF, IntakeSubsystem.IntakeStates.INTAKE_OFF),
+//                                new WaitCommand(300),
+//                                new ActuateGripperCommand(gripperSubsystem, GripperSubsystem.GripperStates.CLOSED)
+//                        ));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -159,9 +160,9 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
 
         // INTAKE ON while held down, off when not
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_REVERSE, IntakeSubsystem.IntakeStates.INTAKE_REVERSE))
-                .whenReleased(new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_OFF, IntakeSubsystem.IntakeStates.INTAKE_OFF));
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
+//                .whenPressed(new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_REVERSE, IntakeSubsystem.IntakeStates.INTAKE_REVERSE))
+//                .whenReleased(new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_OFF, IntakeSubsystem.IntakeStates.INTAKE_OFF));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -169,10 +170,10 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(new InstantCommand(()-> {
-                            new MakeOperatorCombinationCommands().ReadyToScorePixelCommand().schedule();
-                        }));
+//        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
+//                .whenPressed(new InstantCommand(()-> {
+//                            new MakeOperatorCombinationCommands().ReadyToScorePixelCommand().schedule();
+//                        }));
 
         //////////////////////////////////////////////////////////
         //                                                      //

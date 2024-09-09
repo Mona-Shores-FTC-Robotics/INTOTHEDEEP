@@ -12,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import static com.example.sharedconstants.FieldConstants.*;
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
+
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionProcessors.InitVisionProcessor;
 
 public class GamepadHandling {
     private double DEAD_ZONE = .1;
@@ -72,7 +72,6 @@ public class GamepadHandling {
         timeoutRumbleCounter = 0;
     }
 
-
     public GamepadEx getDriverGamepad() {
         return driverGamepad;
     }
@@ -81,77 +80,46 @@ public class GamepadHandling {
         return operatorGamepad;
     }
 
-
     public void lockColorAndSide() {
         Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
-        InitVisionProcessor initVisionProcessor = Robot.getInstance().getVisionSubsystem().getInitVisionProcessor();
         telemetry.addLine("");
 
         if (LockedInitSettingsFlag) {
-            telemetry.addLine("Alliance Color and Side of Field Locked - Team Prop Location cannot be locked");
-            telemetry.addLine(finalAllianceColor + " "
-                    + finalSideOfField + " "
-                    + finalTeamPropLocation);
-
+            telemetry.addLine("Alliance Color and Side of Field Locked");
+            telemetry.addLine(finalAllianceColor + " " + finalSideOfField);
             telemetry.addLine("Press B to unlock Alliance Color and Side of Field");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
                 LockedInitSettingsFlag = false;
             }
         } else {
-            if (ManualOverrideInitSettingsFlag) {
-                finalAllianceColor = initVisionProcessor.allianceColorOverride;
-                finalSideOfField = initVisionProcessor.sideOfFieldOverride;
-
-            } else {
-                finalAllianceColor = initVisionProcessor.allianceColor;
-                finalSideOfField = initVisionProcessor.sideOfField;
-            }
-            //Always use the vision for the team prop location since we can't override it to fix it at competition
-            finalTeamPropLocation = initVisionProcessor.teamPropLocation;
-
             telemetry.addLine("Lock Alliance Color and Side of Field with B");
-            telemetry.addLine(finalAllianceColor + " "
-                    + finalSideOfField + " "
-                    + finalTeamPropLocation);
-
+            telemetry.addLine(finalAllianceColor + " " + finalSideOfField);
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
                 LockedInitSettingsFlag = true;
             }
 
-            if (!ManualOverrideInitSettingsFlag) {
-                telemetry.addLine("Override with A");
-                if (driverGamepad.wasJustPressed(GamepadKeys.Button.A)) {
-                    ManualOverrideInitSettingsFlag = true;
-                }
-            } else if (ManualOverrideInitSettingsFlag) {
-                telemetry.addLine("Color (DPAD-UP/DOWN) - Side Of Field (DPAD-LEFT/RIGHT");
+            telemetry.addLine("Color (DPAD-UP/DOWN) - Side Of Field (DPAD-LEFT/RIGHT");
                 if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    initVisionProcessor.allianceColorOverride = AllianceColor.BLUE;
+                    finalAllianceColor = AllianceColor.BLUE;
                 } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                    initVisionProcessor.allianceColorOverride = AllianceColor.RED;
+                    finalAllianceColor = AllianceColor.RED;
                 }
 
                 if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    if (initVisionProcessor.allianceColorOverride == AllianceColor.BLUE) {
-                        initVisionProcessor.sideOfFieldOverride = SideOfField.AUDIENCE;
-                    } else if (initVisionProcessor.allianceColorOverride == AllianceColor.RED) {
-                        initVisionProcessor.sideOfFieldOverride = SideOfField.BACKSTAGE;
+                    if (finalAllianceColor == AllianceColor.BLUE) {
+                        finalSideOfField = SideOfField.AUDIENCE;
+                    } else if (finalAllianceColor == AllianceColor.RED) {
+                        finalSideOfField = SideOfField.BACKSTAGE;
                     }
                 } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                    if (initVisionProcessor.allianceColorOverride == AllianceColor.RED) {
-                        initVisionProcessor.sideOfFieldOverride = SideOfField.AUDIENCE;
-                    } else if (initVisionProcessor.allianceColorOverride == AllianceColor.BLUE) {
-                        initVisionProcessor.sideOfFieldOverride = SideOfField.BACKSTAGE;
+                    if (finalAllianceColor == AllianceColor.RED) {
+                        finalSideOfField = SideOfField.AUDIENCE;
+                    } else if (finalAllianceColor == AllianceColor.BLUE) {
+                        finalSideOfField = SideOfField.BACKSTAGE;
                     }
-                }
-
-                telemetry.addLine("Override Off with A");
-                if (driverGamepad.wasJustPressed(GamepadKeys.Button.A)) {
-                    ManualOverrideInitSettingsFlag = false;
                 }
             }
         }
-    }
 
     public void endGameRumble() {
         //Rumble 3 seconds before end game begins

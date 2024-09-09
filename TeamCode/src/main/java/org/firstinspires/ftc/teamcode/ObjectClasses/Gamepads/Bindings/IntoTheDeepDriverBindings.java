@@ -40,21 +40,21 @@ public class IntoTheDeepDriverBindings {
 //        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
 //                .whenHeld(slowModeZeroHeadingCommand);
 
-        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenHeld(slowModeCommand);
+//        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                .whenHeld(slowModeCommand);
 
         //////////////////////////////////////////////////////////
         //                                                      //
         // LEFT BUMPER     - fly drone                          //
         //                                                      //
         //////////////////////////////////////////////////////////
-
-        gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(() -> {
-                    if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
-                        //new ReleaseDroneCommand(Robot.getInstance().getDroneSubsystem(), DroneSubsystem.DroneDeployState.FLY).schedule();
-                    }
-                }));
+//
+//        gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                .whenPressed(new InstantCommand(() -> {
+//                    if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
+//                        //new ReleaseDroneCommand(Robot.getInstance().getDroneSubsystem(), DroneSubsystem.DroneDeployState.FLY).schedule();
+//                    }
+//                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -62,28 +62,28 @@ public class IntoTheDeepDriverBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
         // moves straight back and rotates us toward the wing - can be cancelled to easily grab from the neutral stacks instead
-        gamepad.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(backupFromBackdropCommand);
+//        gamepad.getGamepadButton(GamepadKeys.Button.Y)
+//                .whenPressed(backupFromBackdropCommand);
 
         //////////////////////////////////////////////////////////
         //                                                      //
         //  X BUTTON                                            //
         //                                                      //
         //////////////////////////////////////////////////////////
-        gamepad.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(new InstantCommand(() -> {
-                    Robot.getInstance().getVisionSubsystem().setDeliverLocation(VisionSubsystem.DeliverLocation.LEFT);
-                }));
+//        gamepad.getGamepadButton(GamepadKeys.Button.X)
+//                .whenPressed(new InstantCommand(() -> {
+//                    Robot.getInstance().getVisionSubsystem().setDeliverLocation(VisionSubsystem.DeliverLocation.LEFT);
+//                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
         //  A BUTTON                                            //
         //                                                      //
         //////////////////////////////////////////////////////////
-        gamepad.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(() -> {
-                    Robot.getInstance().getVisionSubsystem().setDeliverLocation(VisionSubsystem.DeliverLocation.CENTER);
-                }));
+//        gamepad.getGamepadButton(GamepadKeys.Button.A)
+//                .whenPressed(new InstantCommand(() -> {
+//                    Robot.getInstance().getVisionSubsystem().setDeliverLocation(VisionSubsystem.DeliverLocation.CENTER);
+//                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -108,24 +108,24 @@ public class IntoTheDeepDriverBindings {
         //The concept here is if we disconnect, this gives us a way to reset our gyro to a known field position
         //Otherwise, we normally only reset our x/y pose based on the apriltag reading and the heading based on the gyro
         // because the gyro is much more accurate than the april tag based heading
-        gamepad.getGamepadButton(GamepadKeys.Button.BACK)
-                .whenPressed(new InstantCommand(() -> {
-                    Robot.getInstance().getVisionSubsystem().resetHeading=true;
-                }));
+//        gamepad.getGamepadButton(GamepadKeys.Button.BACK)
+//                .whenPressed(new InstantCommand(() -> {
+//                    Robot.getInstance().getVisionSubsystem().resetHeading=true;
+//                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
         //  START BUTTON  - FIELD ORIENTED CONTROL              //
         //                                                      //
         //////////////////////////////////////////////////////////
-        gamepad.getGamepadButton(GamepadKeys.Button.START)
-                .toggleWhenPressed(new InstantCommand(() -> {
-                    Robot.getInstance().getActiveOpMode().telemetry.addLine("Field Centric Driving");
-                    Robot.getInstance().getDriveSubsystem().fieldOrientedControl = true;
-                }), new InstantCommand(() -> {
-                    Robot.getInstance().getActiveOpMode().telemetry.addLine("Robot Centric Driving");
-                    Robot.getInstance().getDriveSubsystem().fieldOrientedControl = false;
-                }));
+//        gamepad.getGamepadButton(GamepadKeys.Button.START)
+//                .toggleWhenPressed(new InstantCommand(() -> {
+//                    Robot.getInstance().getActiveOpMode().telemetry.addLine("Field Centric Driving");
+//                    Robot.getInstance().getDriveSubsystem().fieldOrientedControl = true;
+//                }), new InstantCommand(() -> {
+//                    Robot.getInstance().getActiveOpMode().telemetry.addLine("Robot Centric Driving");
+//                    Robot.getInstance().getDriveSubsystem().fieldOrientedControl = false;
+//                }));
     }
 
     private void MakeCommands(GamepadEx gamepad) {
