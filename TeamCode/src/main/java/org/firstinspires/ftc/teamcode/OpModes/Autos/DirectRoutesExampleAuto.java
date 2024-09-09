@@ -38,7 +38,6 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         DirectRoutesExample directRoutesExample = new DirectRoutesExample(robotDriveAdapter);
         directRoutesExample.BuildRoutes();
 
-
         // Turn on the Init Vision Processor to Automatically Figure Out Alliance Color, Side, and Team Prop Location
         Robot.getInstance().getVisionSubsystem().SwitchToInitVisionProcessor();
 
