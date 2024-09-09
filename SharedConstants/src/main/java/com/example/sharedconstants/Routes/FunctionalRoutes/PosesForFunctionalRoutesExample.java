@@ -42,10 +42,10 @@ public class PosesForFunctionalRoutesExample {
 
     private void SetParkPose(AllianceColor allianceColor) {
         if (allianceColor == AllianceColor.BLUE) {
-            parkPose = null;
+            parkPose = RUNG_RED_AUDIENCE;
             parkOrientation = FACE_45_DEGREES;
         } else {
-            parkPose = null;
+            parkPose = RUNG_RED_AUDIENCE;
             parkOrientation = FACE_315_DEGREES;
         }
     }

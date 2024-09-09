@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Disabled
 @Config
 @Autonomous(name = "SampleAuto", group = "Autonomous")
 public class SampleAuto extends LinearOpMode {
@@ -24,6 +26,7 @@ public class SampleAuto extends LinearOpMode {
         private DcMotorEx lift;
 
         public Lift(HardwareMap hardwareMap) {
+
             lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lift.setDirection(DcMotorSimple.Direction.FORWARD);
