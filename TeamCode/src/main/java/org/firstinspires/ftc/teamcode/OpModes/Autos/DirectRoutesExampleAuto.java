@@ -38,6 +38,7 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         DirectRoutesExample directRoutesExample = new DirectRoutesExample(robotDriveAdapter);
         directRoutesExample.BuildRoutes();
 
+
         // Turn on the Init Vision Processor to Automatically Figure Out Alliance Color, Side, and Team Prop Location
         Robot.getInstance().getVisionSubsystem().SwitchToInitVisionProcessor();
 
@@ -57,7 +58,7 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         telemetry.update();
 
         //Pick one of the routes built previously based on the final Alliance Color, Side of Field, and Team Prop
-        Action selectedRoute = directRoutesExample.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField, MatchConfig.finalTeamPropLocation);
+        Action selectedRoute = directRoutesExample.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //Reset Gyro
         Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
@@ -77,5 +78,7 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().mecanumDrive.pose;
 
     }
+
+
 }
 
