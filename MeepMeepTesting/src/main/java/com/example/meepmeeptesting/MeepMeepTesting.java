@@ -32,8 +32,8 @@ public class MeepMeepTesting {
     public static RoutesToRun routesToRunSelection = RoutesToRun.DIRECT_ROUTES_EXAMPLE;
 
     /** Set which robots should show up **/
-    public static boolean SHOW_BLUE_AUDIENCE_BOT = true;
-    public static boolean SHOW_BLUE_BACKSTAGE_BOT = true;
+    public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
+    public static boolean SHOW_BLUE_BACKSTAGE_BOT = false;
     public static boolean SHOW_RED_AUDIENCE_BOT = true;
     public static boolean SHOW_RED_BACKSTAGE_BOT = true;
 
@@ -43,7 +43,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
 
         //Set the window Size for MeepMeep
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(1400);
 
         //This method makes 4 robots (2 red robots and 2 blue robots)
         MeepMeepRobots.createRobots(meepMeep);
