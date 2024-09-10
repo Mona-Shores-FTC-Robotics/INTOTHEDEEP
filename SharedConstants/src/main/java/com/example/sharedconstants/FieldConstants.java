@@ -85,11 +85,11 @@ public class FieldConstants {
     public static Pose2d RIGHT_TO_CHAMBER = new Pose2d(TILE+HALF_TILE, -TILE-HALF_TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_2 = new Pose2d(2*TILE+HALF_TILE, -TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_3 = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, -TILE, FACE_TOWARD_BLUE);
-    public static Pose2d SPIKE_RED_2_OB = new Pose2d(2*TILE+HALF_TILE, -HALF_TILE, FACE_TOWARD_BLUE);
-    public static Pose2d SPIKE_RED_3_OB = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, -HALF_TILE, FACE_TOWARD_BLUE);
+    public static Pose2d SPIKE_RED_2_OB = new Pose2d(2*TILE+HALF_TILE, -HALF_TILE-QUARTER_TILE, FACE_TOWARD_BLUE);
+    public static Pose2d SPIKE_RED_3_OB = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, -HALF_TILE-QUARTER_TILE, FACE_TOWARD_BLUE);
     public static Vector2d OBSERVATION_RED_ZONE = new Vector2d(2*TILE, -2*TILE-HALF_TILE);
     public static Pose2d ASCENT_RED_BACKSTAGE = new Pose2d(TILE, -HALF_TILE, FACE_TOWARD_AUDIENCE);
-
+    public static Vector2d NEXT_TO_ASCENT_RED_BACKSTAGE = new Vector2d(TILE+HALF_TILE, -HALF_TILE-QUARTER_TILE);
     //Blue points of interest, should not be needed
 //    public static Pose2d NET_ZONE_BLUE = new Pose2d(2*TILE, 2*TILE, FACE_45_DEGREES);
 //    public static Pose2d OBSERVATION_BLUE_ZONE = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);

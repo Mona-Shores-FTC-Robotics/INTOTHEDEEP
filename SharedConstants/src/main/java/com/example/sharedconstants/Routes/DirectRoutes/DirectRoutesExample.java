@@ -3,8 +3,14 @@ package com.example.sharedconstants.Routes.DirectRoutes;
 import static com.example.sharedconstants.FieldConstants.*;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.AngularVelConstraint;
+import com.acmerobotics.roadrunner.MinVelConstraint;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.RobotDriveAdapter;
 import com.example.sharedconstants.Routes.Routes;
+
+import java.util.Arrays;
 
 public class DirectRoutesExample extends Routes {
 
@@ -18,6 +24,13 @@ public class DirectRoutesExample extends Routes {
     }
 
     public void BuildRoutes() {
+
+
+        VelConstraint baseVelConstraint = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(20),
+                new AngularVelConstraint(Math.PI / 2)
+        ));
+
         /** RED AUDIENCE **/
         redAudienceBotRoute = roadRunnerDrive.actionBuilder(RED_AUDIENCE_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
@@ -30,30 +43,36 @@ public class DirectRoutesExample extends Routes {
 
         /** RED BACKSTAGE **/
         redBackstageBotRoute = roadRunnerDrive.actionBuilder(RED_BACKSTAGE_START_POSE)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
                 .waitSeconds(2)
                 .setReversed(true)
-                .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE)
-                .splineToLinearHeading(SPIKE_RED_1_OB, FACE_TOWARD_RED)
-                .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED)
+                .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
+                .waitSeconds(0.1)
+                .splineToConstantHeading(NEXT_TO_ASCENT_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToLinearHeading(SPIKE_RED_1_OB, FACE_TOWARD_RED, baseVelConstraint)
+                .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
                // next cycle
                 .waitSeconds(2)
                 .setReversed(true)
-                .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE)
-                .splineToLinearHeading(SPIKE_RED_2_OB, FACE_TOWARD_RED)
-                .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED)
+                .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
+                .waitSeconds(0.1)
+                .splineToConstantHeading(NEXT_TO_ASCENT_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToLinearHeading(SPIKE_RED_2_OB, FACE_TOWARD_RED, baseVelConstraint)
+                .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
                 //last cycle
                 .waitSeconds(2)
                 .setReversed(true)
-                .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE)
-                .splineToLinearHeading(SPIKE_RED_3_OB, FACE_TOWARD_RED)
-                .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED)
+                .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
+                .waitSeconds(0.1)
+                .splineToConstantHeading(NEXT_TO_ASCENT_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToLinearHeading(SPIKE_RED_3_OB, FACE_TOWARD_RED, baseVelConstraint)
+                .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE)
+               .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
                 .build();
 
         /** BLUE AUDIENCE THIS SHOULD MATCH THE RED BACKSTAGE PATH AND START LOCATION **/
