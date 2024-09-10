@@ -30,22 +30,22 @@ public class PosesForFunctionalRoutesExample {
 
     private void SetWaypointPose(AllianceColor allianceColor, SideOfField sideOfField) {
         if (allianceColor == AllianceColor.BLUE && sideOfField == SideOfField.AUDIENCE) {
-            waypointPose = RUNG_RED_AUDIENCE;  // Default waypoint for BLUE AUDIENCE
+            waypointPose = CHAMBER_RED_AUDIENCE;  // Default waypoint for BLUE AUDIENCE
         } else if (allianceColor == AllianceColor.BLUE && sideOfField == SideOfField.BACKSTAGE) {
             waypointPose = SPIKE_NEUTRAL_AUDIENCE_1; // Default waypoint for BLUE BACKSTAGE
         } else if (allianceColor == AllianceColor.RED && sideOfField == SideOfField.AUDIENCE) {
             waypointPose = SPIKE_NEUTRAL_AUDIENCE_1;   // Default waypoint for RED AUDIENCE
         } else if (allianceColor == AllianceColor.RED && sideOfField == SideOfField.BACKSTAGE) {
-            waypointPose = RUNG_RED_AUDIENCE;  // Default waypoint for RED BACKSTAGE
+            waypointPose = CHAMBER_RED_AUDIENCE;  // Default waypoint for RED BACKSTAGE
         }
     }
 
     private void SetParkPose(AllianceColor allianceColor) {
         if (allianceColor == AllianceColor.BLUE) {
-            parkPose = RUNG_RED_AUDIENCE;
+            parkPose = CHAMBER_RED_AUDIENCE;
             parkOrientation = FACE_45_DEGREES;
         } else {
-            parkPose = RUNG_RED_AUDIENCE;
+            parkPose = CHAMBER_RED_AUDIENCE;
             parkOrientation = FACE_315_DEGREES;
         }
     }

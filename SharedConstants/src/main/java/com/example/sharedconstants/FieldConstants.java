@@ -11,10 +11,6 @@ package com.example.sharedconstants;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
-
 public class FieldConstants {
     public static enum AllianceColor {BLUE, RED}
     public static enum SideOfField {BACKSTAGE, AUDIENCE}
@@ -71,12 +67,12 @@ public class FieldConstants {
     public static double TANGENT_315_DEGREES = Math.toRadians(315);
 
     public static Pose2d BLUE_AUDIENCE_START_POSE = new Pose2d(-HALF_TILE, HALF_FIELD-HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
-    public static Pose2d RED_AUDIENCE_START_POSE = new Pose2d(-HALF_TILE-TILE,  -HALF_FIELD+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    public static Pose2d RED_AUDIENCE_START_POSE = new Pose2d(-HALF_TILE,  -HALF_FIELD+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Pose2d RED_BACKSTAGE_START_POSE = new Pose2d(HALF_TILE,-HALF_FIELD + HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Pose2d BLUE_BACKSTAGE_START_POSE = new Pose2d(TILE+HALF_TILE, HALF_FIELD-HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
 
     //Red Points of Interest
-    public static Pose2d RUNG_RED_AUDIENCE = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    public static Pose2d CHAMBER_RED_AUDIENCE = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_NEUTRAL_AUDIENCE_1 = new Pose2d(-2*TILE, -TILE-QUARTER_TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_NEUTRAL_AUDIENCE_2 = new Pose2d(-2*TILE-HALF_TILE, -TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_NEUTRAL_AUDIENCE_3 = new Pose2d(-2*TILE-HALF_TILE-QUARTER_TILE, -TILE, FACE_TOWARD_BLUE);
