@@ -13,7 +13,6 @@ public class VisionTelemetry {
 
         telemetry.addData("Alliance Color", MatchConfig.finalAllianceColor);
         telemetry.addData("Side of the Field", MatchConfig.finalSideOfField);
-        telemetry.addData("Team Prop Location",  MatchConfig.finalTeamPropLocation);
         telemetry.addLine("");
         telemetry.addData("Left Square Blue/Red Percent", JavaUtil.formatNumber(Robot.getInstance().getVisionSubsystem().getInitVisionProcessor().getLeftPercent(), 4, 1));
         telemetry.addData("Middle Square Blue/Red Percent", JavaUtil.formatNumber(Robot.getInstance().getVisionSubsystem().getInitVisionProcessor().getCenterPercent(), 4, 1));

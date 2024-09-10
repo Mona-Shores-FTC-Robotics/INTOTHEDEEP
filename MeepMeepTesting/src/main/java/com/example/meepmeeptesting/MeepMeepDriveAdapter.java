@@ -19,7 +19,8 @@ public class MeepMeepDriveAdapter implements RobotDriveAdapter {
     }
 
     @Override
-    public TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose) {
-        return driveShim.actionBuilder(beginPose);
+    public TrajectoryActionBuilder mirroredActionBuilder(Pose2d startPose) {
+        return driveShim.actionBuilder(startPose);
     }
+
 }

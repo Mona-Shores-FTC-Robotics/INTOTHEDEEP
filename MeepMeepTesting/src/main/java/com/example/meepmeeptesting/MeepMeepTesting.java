@@ -43,7 +43,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
 
         //Set the window Size for MeepMeep
-        MeepMeep meepMeep = new MeepMeep(1400);
+        MeepMeep meepMeep = new MeepMeep(1200);
 
         //This method makes 4 robots (2 red robots and 2 blue robots)
         MeepMeepRobots.createRobots(meepMeep);

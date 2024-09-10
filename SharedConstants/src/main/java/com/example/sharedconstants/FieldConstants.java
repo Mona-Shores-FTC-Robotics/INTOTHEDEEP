@@ -79,7 +79,7 @@ public class FieldConstants {
     public static Pose2d NET_ZONE_RED = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
     public static Pose2d ASCENT_RED_AUDIENCE = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
 
-    public static Vector2d RUNG_RED_BACKSTAGE = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
+    public static Vector2d CHAMBER_RED_BACKSTAGE = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
     public static Pose2d SPIKE_RED_1 = new Pose2d(2*TILE, -TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_2 = new Pose2d(2*TILE+HALF_TILE, -TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_3 = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, -TILE, FACE_TOWARD_BLUE);
