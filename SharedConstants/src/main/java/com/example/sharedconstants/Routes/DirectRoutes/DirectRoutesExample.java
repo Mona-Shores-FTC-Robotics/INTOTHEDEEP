@@ -14,6 +14,7 @@ import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.RobotDriveAdapter;
 import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
@@ -39,9 +40,37 @@ public class DirectRoutesExample extends Routes {
     public void BuildRoutes() {
         /** RED AUDIENCE **/
         redAudienceBotRoute = roadRunnerDrive.actionBuilder(RED_AUDIENCE_START_POSE)
+          //      .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
+                // BASKET_RED_AUDIENCE_2_TJ
+                // SPIKE_NEUTRAL_AUDIENCE_1_TJ
+                // SPIKE_NEUTRAL_AUDIENCE_2_TJ
+                // SPIKE_NEUTRAL_AUDIENCE_3_TJ
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
+                .waitSeconds(2)
+                .setReversed(true)
+                .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_1_TJ,FACE_135_DEGREES) // Moves robot behind first sample
+//                .strafeTo(SPIKE_NEUTRAL_AUDIENCE_1_TJ) // Grabs first sample
+                .setReversed(false)
+                .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_1_TJ,FACE_TOWARD_BLUE) // Moves robot to grab first sample
+                .waitSeconds(1)
+                .setReversed(true)
+                .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_BLUE) // Moves robot to grab first sample
+                .waitSeconds(0.5)
+                .setReversed(true)
+                .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
+                .waitSeconds(1)
+                .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_2_TJ, FACE_TOWARD_BLUE)
+                .waitSeconds(0.5)
+                .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_2_TJ, FACE_TOWARD_BLUE)
+                .waitSeconds(1)
+                .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
+                .waitSeconds(0.5)
+                .setReversed(true)
+                .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
+                .waitSeconds(1)
+                .splineToLinearHeading(SPIKE_NEUTRAL_AUDIENCE_3_POS_TJ , FACE_TOWARD_BLUE)
                 .build();
-
+               // .strafeTo(WALL_ALIGN_POS_AUDIENCE_TJ)
         /** BLUE BACKSTAGE - THIS SHOULD MATCH THE RED AUDIENCE PATH AND START LOCATION **/
         blueBackstageBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_AUDIENCE_START_POSE)
                 .splineToLinearHeading(SPIKE_NEUTRAL_AUDIENCE_1, FACE_TOWARD_BLUE)
