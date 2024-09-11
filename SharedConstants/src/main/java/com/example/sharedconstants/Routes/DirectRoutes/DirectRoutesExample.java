@@ -14,6 +14,7 @@ import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.RobotDriveAdapter;
@@ -47,16 +48,10 @@ public class DirectRoutesExample extends Routes {
 
         /** RED AUDIENCE **/
         redAudienceBotRoute = roadRunnerDrive.actionBuilder(RED_AUDIENCE_START_POSE)
-          //      .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
-                // BASKET_RED_AUDIENCE_2_TJ
-                // SPIKE_NEUTRAL_AUDIENCE_1_TJ
-                // SPIKE_NEUTRAL_AUDIENCE_2_TJ
-                // SPIKE_NEUTRAL_AUDIENCE_3_TJ
-                .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
+                  .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_1_TJ,FACE_135_DEGREES) // Moves robot behind first sample
-//                .strafeTo(SPIKE_NEUTRAL_AUDIENCE_1_TJ) // Grabs first sample
                 .setReversed(false)
                 .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_1_TJ,FACE_TOWARD_BLUE) // Moves robot to grab first sample
                 .waitSeconds(1)
@@ -89,7 +84,6 @@ public class DirectRoutesExample extends Routes {
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
-                .waitSeconds(0.1)
                 .splineToConstantHeading(NEXT_TO_ASCENT_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
                 .splineToLinearHeading(SPIKE_RED_1_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
@@ -99,7 +93,6 @@ public class DirectRoutesExample extends Routes {
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
-                .waitSeconds(0.1)
                 .splineToConstantHeading(NEXT_TO_ASCENT_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
                 .splineToLinearHeading(SPIKE_RED_2_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
@@ -109,7 +102,6 @@ public class DirectRoutesExample extends Routes {
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
-                .waitSeconds(0.1)
                 .splineToConstantHeading(NEXT_TO_ASCENT_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
                 .splineToLinearHeading(SPIKE_RED_3_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)

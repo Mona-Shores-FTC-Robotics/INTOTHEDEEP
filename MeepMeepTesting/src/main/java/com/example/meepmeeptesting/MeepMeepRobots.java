@@ -17,7 +17,6 @@ public class MeepMeepRobots {
 
     public static RoadRunnerBotEntity roadRunnerBot;
 
-
     public static void createRobots( MeepMeep meepMeep ) {
 
         blueBackstageBot = new DefaultBotBuilder(meepMeep)
