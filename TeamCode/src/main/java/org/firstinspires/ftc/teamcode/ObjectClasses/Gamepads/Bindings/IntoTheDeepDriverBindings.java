@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveC
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.RoadRunnerActionToCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
+//TODO can we describe what each button should do? Maybe we should download a PS5 controller map and fill it out to start thinking about how the driver and operator will control the robot?
+// -maybe functionally describe what each button should do in this file to get us started?
+
 public class IntoTheDeepDriverBindings {
     public Command defaultDriveCommand;
     public Command slowModeCommand;
@@ -37,6 +40,8 @@ public class IntoTheDeepDriverBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
+
+        //TODO can we get slowmode working?
 //        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
 //                .whenHeld(slowModeZeroHeadingCommand);
 

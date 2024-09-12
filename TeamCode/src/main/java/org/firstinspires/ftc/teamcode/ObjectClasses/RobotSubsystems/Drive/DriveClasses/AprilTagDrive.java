@@ -29,6 +29,7 @@ import java.util.*;
  */
 public class AprilTagDrive extends MecanumDrive {
     // TODO: experiment with AprilTags -  we shoudl be able to have MecanumDriveMona extend this class then write a teleop OpMode using this. also can look at the AprilTag sample code)
+    //  -perhaps edit TeleOp_IntoTheDeep_AprilTagPlayground under TeamCode/OpModes
     @Config
     static class Params {
         // distance FROM robot center TO camera (inches)

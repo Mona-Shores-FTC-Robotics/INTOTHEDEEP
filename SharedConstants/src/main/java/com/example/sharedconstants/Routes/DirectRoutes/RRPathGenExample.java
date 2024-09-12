@@ -7,6 +7,9 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.example.sharedconstants.RobotDriveAdapter;
 import com.example.sharedconstants.Routes.Routes;
 
+// TODO Autonomous Learning - experiment with RRPathGen
+//  to get started google "RRPathGen" and download the file - ask for mentor help to get it running
+
 public class RRPathGenExample extends Routes {
 
     public RRPathGenExample(RobotDriveAdapter roadRunnerDrive) {

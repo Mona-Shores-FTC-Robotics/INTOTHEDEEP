@@ -128,6 +128,8 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         }
     }
 
+    //TODO can we make this telemetry while driving more robust and easy to look at and understand?
+    // -perhaps we should make it only viewable on the driver station / dashboard while pressing a button?
     private void LoopDriverStationTelemetry() {
         //Print our color,
         telemetry.addData("Alliance Color", MatchConfig.finalAllianceColor);

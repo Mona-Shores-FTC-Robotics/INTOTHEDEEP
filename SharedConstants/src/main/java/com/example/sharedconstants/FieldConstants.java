@@ -11,6 +11,10 @@ package com.example.sharedconstants;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
+// TODO Field Constants - improve our constants class
+//  - should we have Pose2d and Vector for every point of interest?
+//  - should we change how we name our "facings"?
+
 public class FieldConstants {
     public static enum AllianceColor {BLUE, RED}
     public static enum SideOfField {BACKSTAGE, AUDIENCE}
