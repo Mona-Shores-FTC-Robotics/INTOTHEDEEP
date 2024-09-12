@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
+//TODO is this necessary now that we extend MecanumDrive and it has its own instantiation of the imu?
 public class GyroSubsystem extends SubsystemBase {
 
     public IMU imu;

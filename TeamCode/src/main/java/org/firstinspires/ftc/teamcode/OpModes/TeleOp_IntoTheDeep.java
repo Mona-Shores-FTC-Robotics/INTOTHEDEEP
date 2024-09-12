@@ -104,6 +104,9 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
+
+            //TODO does the route/localization show up in FTC Dashboard? If not, how can we make it show up there?
+
             LoopDriverStationTelemetry();
 
             //Reset the timer for the loop timer
