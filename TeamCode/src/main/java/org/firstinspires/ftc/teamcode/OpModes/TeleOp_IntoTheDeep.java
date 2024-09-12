@@ -85,7 +85,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 //        Robot.getInstance().getVisionSubsystem().SwitchToAprilTagProcessor();
 
         //Reset Gyro and pose to be 0 at whatever heading the robot is at
-        //todo what happens if we don't have this in
+        //TODO experiment with what the robot does without this
         Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
 
         //Set the flag so we reset the gyro/pose heading to zero the next time we go to the backdrop

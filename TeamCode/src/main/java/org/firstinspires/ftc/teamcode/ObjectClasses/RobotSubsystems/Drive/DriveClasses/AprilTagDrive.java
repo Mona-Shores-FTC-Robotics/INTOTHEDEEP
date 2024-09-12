@@ -27,11 +27,11 @@ import java.util.*;
  * Portions of this code released under the BSD 3-Clause Clear License by Michael from team 14343,
  * Tarun from team 12791, and by Ryan Brott from team 8367
  */
-public class AprilTagDrive extends MecanumDrive { // TODO: if not using MecanumDrive, change to your drive class (e.g. TankDrive, SparkFunOTOSDrive)
+public class AprilTagDrive extends MecanumDrive {
+    // TODO: experiment with AprilTags -  we shoudl be able to have MecanumDriveMona extend this class then write a teleop OpMode using this. also can look at the AprilTag sample code)
     @Config
     static class Params {
         // distance FROM robot center TO camera (inches)
-        // TODO: tune
         static Vector2d cameraOffset = new Vector2d(
                 -6,
                 4);
@@ -68,7 +68,7 @@ public class AprilTagDrive extends MecanumDrive { // TODO: if not using MecanumD
             // if we can see tags, we use the apriltag position
             // however apriltags don't have accurate headings so we use the localizer heading
             // localizer heading, for us and in TwoDeadWheelLocalizer, is IMU and absolute-ish
-            // TODO: apriltags unreliable at higher speeds? speed limit? global shutter cam? https://discord.com/channels/225450307654647808/225451520911605765/1164034719369941023
+            // apriltags unreliable at higher speeds? speed limit? global shutter cam? https://discord.com/channels/225450307654647808/225451520911605765/1164034719369941023
 
             // then we add the apriltag position to the localizer heading as a pose
             pose = new Pose2d(aprilVector, localizerPose.heading); // TODO: aprilVector should be filteredVector to use kalman filter (kalman filter is untested)
@@ -116,7 +116,7 @@ public class AprilTagDrive extends MecanumDrive { // TODO: if not using MecanumD
         VectorF tagpose = getCenterStageTagLibrary().lookupTag(detection.id).fieldPosition;
 
 
-        // todo: this will need to be changed for next season (use tag heading to automate??)
+        // this will need to be changed for next season (use tag heading to automate??)
         if (!detection.metadata.name.contains("Audience")) { // is it a backdrop tag?
             return new Vector2d(
                     tagpose.get(0) + y2,

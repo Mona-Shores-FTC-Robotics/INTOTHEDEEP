@@ -32,7 +32,7 @@ public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter 
     @Config
     static class Params {
         // Mona Drive Parameters
-        // TODO: tune
+        // TODO: Learn how to tune our teleop driving and make it easier to tune later in the season
 
         static double MAX_MOTOR_SPEED_RPS = 435.0 / 60.0;
         static double TICKS_PER_REV = 384.5;
