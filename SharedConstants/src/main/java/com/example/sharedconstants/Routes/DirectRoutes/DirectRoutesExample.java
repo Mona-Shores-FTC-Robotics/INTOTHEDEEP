@@ -47,7 +47,7 @@ public class DirectRoutesExample extends Routes {
 
         /** RED AUDIENCE **/
         redAudienceBotRoute = roadRunnerDrive.actionBuilder(RED_AUDIENCE_START_POSE)
-                  .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
+                .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_1_TJ,FACE_135_DEGREES) // Moves robot behind first sample
@@ -70,6 +70,12 @@ public class DirectRoutesExample extends Routes {
                 .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
                 .waitSeconds(1)
                 .splineToLinearHeading(SPIKE_NEUTRAL_AUDIENCE_3_POS_TJ , FACE_TOWARD_BLUE)
+                .waitSeconds(1)
+                .setReversed(true)
+                .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
+                .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
+                .waitSeconds(1)
+                .splineToLinearHeading(RED_AUDIENCE_START_POSE, FACE_TOWARD_RED)
                 .build();
 
         /** BLUE BACKSTAGE - THIS SHOULD MATCH THE RED AUDIENCE PATH AND START LOCATION **/

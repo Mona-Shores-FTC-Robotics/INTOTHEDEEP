@@ -78,7 +78,7 @@ public class FieldConstants {
     //Red Points of Interest
     public static Pose2d CHAMBER_RED_AUDIENCE = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Vector2d BASKET_RED_AUDIENCE_2_TJ = new Vector2d(-55.6, -51.6);
-    public static Pose2d SPIKE_NEUTRAL_AUDIENCE_3_POS_TJ = new Pose2d(-58.4, -26.7, FACE_TOWARD_AUDIENCE);
+    public static Pose2d SPIKE_NEUTRAL_AUDIENCE_3_POS_TJ = new Pose2d(-55, -25.5, FACE_TOWARD_AUDIENCE);
 
     public static Pose2d SPIKE_NEUTRAL_AUDIENCE_1 = new Pose2d(-2*TILE, -TILE-QUARTER_TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Vector2d SPIKE_NEUTRAL_AUDIENCE_1_TJ = new Vector2d(-48.1, -38.6);

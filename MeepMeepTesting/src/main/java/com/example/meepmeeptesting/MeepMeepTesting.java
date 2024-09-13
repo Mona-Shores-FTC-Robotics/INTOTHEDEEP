@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilder;
+import com.example.sharedconstants.Routes.DirectRoutes.BasicRoute;
 import com.example.sharedconstants.Routes.DirectRoutes.RRPathGenExample;
 import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
 import com.example.sharedconstants.Routes.Routes;
@@ -29,7 +30,7 @@ public class MeepMeepTesting {
      *      SPIKE_BACKDROP_PARK,
      **/
 
-    public static RoutesToRun routesToRunSelection = RoutesToRun.DIRECT_ROUTES_EXAMPLE;
+    public static RoutesToRun routesToRunSelection = RoutesToRun.BASIC_ROUTE; // here
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
@@ -38,12 +39,12 @@ public class MeepMeepTesting {
     public static boolean SHOW_RED_BACKSTAGE_BOT = true;
 
     public enum TeamPropLocation {LEFT, CENTER, RIGHT, ALL, NONE}
-    enum RoutesToRun {DIRECT_ROUTES_EXAMPLE, FUNCTIONAL_ROUTES_EXAMPLE, RRPATHGEN}
+    enum RoutesToRun {DIRECT_ROUTES_EXAMPLE, FUNCTIONAL_ROUTES_EXAMPLE, RRPATHGEN, BASIC_ROUTE} // here
 
     public static void main(String[] args) {
 
         //Set the window Size for MeepMeep
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(1400);
 
         //This method makes 4 robots (2 red robots and 2 blue robots)
         MeepMeepRobots.createRobots(meepMeep);
@@ -57,12 +58,13 @@ public class MeepMeepTesting {
         // Create a Routes instance based on the selected route
         Routes routes;
 
-        if (routesToRunSelection == RoutesToRun.DIRECT_ROUTES_EXAMPLE) {
+        if (routesToRunSelection == RoutesToRun.DIRECT_ROUTES_EXAMPLE) { // here
             routes = new DirectRoutesExample(robotDriveAdapter);
         } else if (routesToRunSelection == RoutesToRun.RRPATHGEN){
             routes = new RRPathGenExample(robotDriveAdapter);
-        }
-        else { //if(routesToRunSelection == RoutesToRun.FUNCTIONAL_ROUTES_EXAMPLE){
+        } else if (routesToRunSelection == RoutesToRun.BASIC_ROUTE) {
+            routes = new BasicRoute(robotDriveAdapter);
+        } else { //if(routesToRunSelection == RoutesToRun.FUNCTIONAL_ROUTES_EXAMPLE){
             routes = new FunctionalRoutesExample(robotDriveAdapter);
         }
 
