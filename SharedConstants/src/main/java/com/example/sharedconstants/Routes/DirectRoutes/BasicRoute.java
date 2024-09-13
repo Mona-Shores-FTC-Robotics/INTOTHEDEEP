@@ -3,6 +3,8 @@ package com.example.sharedconstants.Routes.DirectRoutes;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_AUDIENCE;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE;
 import static com.example.sharedconstants.FieldConstants.FACE_135_DEGREES;
+import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_AUDIENCE;
+import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BACKSTAGE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_RED;
 import static com.example.sharedconstants.FieldConstants.NET_POS_AUDIENCE_TJ;
@@ -17,7 +19,9 @@ import static com.example.sharedconstants.FieldConstants.SPIKE_NEUTRAL_AUDIENCE_
 import static com.example.sharedconstants.FieldConstants.SPIKE_NEUTRAL_AUDIENCE_1_TJ;
 import static com.example.sharedconstants.FieldConstants.SPIKE_NEUTRAL_AUDIENCE_2_TJ;
 import static com.example.sharedconstants.FieldConstants.SPIKE_NEUTRAL_AUDIENCE_3_POS_TJ;
+import static com.example.sharedconstants.FieldConstants.SPIKE_RED_1;
 import static com.example.sharedconstants.FieldConstants.SPIKE_RED_1_OB;
+import static com.example.sharedconstants.FieldConstants.SPIKE_RED_1_Vec;
 import static com.example.sharedconstants.FieldConstants.SPIKE_RED_2_OB;
 import static com.example.sharedconstants.FieldConstants.SPIKE_RED_3_OB;
 import static com.example.sharedconstants.FieldConstants.WALL_ALIGN_POS_AUDIENCE_TJ;
@@ -53,20 +57,29 @@ public class BasicRoute extends Routes {
         /** RED AUDIENCE **/
         redAudienceBotRoute = roadRunnerDrive.actionBuilder(RED_AUDIENCE_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .setReversed(true)
+                .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_1_TJ, FACE_TOWARD_AUDIENCE, baseVelConstraint)
                 .build();
+
         /** BLUE BACKSTAGE - THIS SHOULD MATCH THE RED AUDIENCE PATH AND START LOCATION **/
         blueBackstageBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_AUDIENCE_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .setReversed(true)
+                .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_1_TJ, FACE_TOWARD_AUDIENCE, baseVelConstraint)
                 .build();
 
         /** RED BACKSTAGE **/
         redBackstageBotRoute = roadRunnerDrive.actionBuilder(RED_BACKSTAGE_START_POSE)
                 .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .setReversed(true)
+                .splineToConstantHeading(SPIKE_RED_1_Vec, FACE_TOWARD_BACKSTAGE, baseVelConstraint)
                 .build();
 
         /** BLUE AUDIENCE THIS SHOULD MATCH THE RED BACKSTAGE PATH AND START LOCATION **/
         blueAudienceBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
                 .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .setReversed(true)
+                .splineToConstantHeading(SPIKE_RED_1_Vec, FACE_TOWARD_BACKSTAGE, baseVelConstraint)
                 .build();
     }
 

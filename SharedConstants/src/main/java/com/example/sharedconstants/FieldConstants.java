@@ -101,6 +101,8 @@ public class FieldConstants {
    // public static Vector2d NET_POS_AUDIENCE_TJ = new Vector2d(-61.8, -52);
     public static Vector2d CHAMBER_RED_BACKSTAGE = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
     public static Pose2d SPIKE_RED_1 = new Pose2d(2*TILE, -TILE, FACE_TOWARD_BLUE);
+    public static Vector2d SPIKE_RED_1_Vec = new Vector2d(48.1, -38.6);
+
     public static Pose2d SPIKE_RED_1_OB = new Pose2d(2*TILE, -TILE+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Pose2d RIGHT_TO_CHAMBER = new Pose2d(TILE+HALF_TILE, -TILE-HALF_TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_2 = new Pose2d(2*TILE+HALF_TILE, -TILE, FACE_TOWARD_BLUE);
