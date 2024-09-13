@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.RoadRunnerActionToCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
 //TODO can we describe what each button should do? Maybe we should download a PS5 controller map and fill it out to start thinking about how the driver and operator will control the robot?
@@ -45,8 +46,8 @@ public class IntoTheDeepDriverBindings {
 //        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
 //                .whenHeld(slowModeZeroHeadingCommand);
 
-//        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-//                .whenHeld(slowModeCommand);
+        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenHeld(slowModeCommand);
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -140,12 +141,12 @@ public class IntoTheDeepDriverBindings {
                 gamepad::getRightX
         );
 
-//        slowModeCommand = new SlowModeCommand(Robot.getInstance().getDriveSubsystem(),
-//                gamepad::getLeftY,
-//                gamepad::getLeftX,
-//                gamepad::getRightX
-//        );
-//
+        slowModeCommand = new SlowModeCommand(Robot.getInstance().getDriveSubsystem(),
+                gamepad::getLeftY,
+                gamepad::getLeftX,
+                gamepad::getRightX
+        );
+
 //        slowModeZeroHeadingCommand = new SlowModeZeroHeadingCommand(Robot.getInstance().getDriveSubsystem(),
 //                gamepad::getLeftY,
 //                gamepad::getLeftX,
