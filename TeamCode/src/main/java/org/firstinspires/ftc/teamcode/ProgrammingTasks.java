@@ -8,6 +8,7 @@ public class ProgrammingTasks {
 // - how should the color sensor be integrated into our robot?
 // - https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/configuring_color_sensor/configuring-color-sensor.html'
 // - https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/configuring_color_sensor/configuring-color-sensor.html#configuring-a-color-distance-sensor-instructions
+// https://www.reddit.com/r/FTC/comments/10pgflr/color_sensor_not_detecting_accurately/
 
 // TODO Should we try to do the same thing with a camera to see if the camera or the color sensor is faster / more accurate?
 //  - https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/configuring_external_webcam/configuring-external-webcam.html
