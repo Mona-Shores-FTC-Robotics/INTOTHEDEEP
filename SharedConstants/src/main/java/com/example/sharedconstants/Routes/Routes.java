@@ -2,7 +2,12 @@ package com.example.sharedconstants.Routes;
 
 import com.acmerobotics.roadrunner.Action;
 import static com.example.sharedconstants.FieldConstants.*;
+
+import com.acmerobotics.roadrunner.Pose2d;
+import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotDriveAdapter;
+
+import java.lang.reflect.Field;
 
 
 public abstract class Routes {
@@ -19,6 +24,35 @@ public abstract class Routes {
     protected Action redBackstageBotRoute;
     protected Action blueBackstageBotRoute;
     protected Action blueAudienceBotRoute;
+
+    // These are the defaults
+    protected Pose2d redAudienceStartPose = RED_AUDIENCE_START_POSE;
+    protected Pose2d redBackstageStartPose = RED_BACKSTAGE_START_POSE;
+    protected Pose2d blueBackstageStartPose = BLUE_BACKSTAGE_START_POSE;
+    protected Pose2d blueAudienceStartPose = BLUE_AUDIENCE_START_POSE;
+
+    // Method to return the corresponding starting pose
+    public Pose2d getStartingPose(AllianceColor allianceColor, SideOfField sideOfField) {
+        switch (allianceColor) {
+            case BLUE:
+                switch (sideOfField) {
+                    case AUDIENCE:
+                        return blueAudienceStartPose;
+                    case BACKSTAGE:
+                        return blueBackstageStartPose;
+                }
+                break;
+            case RED:
+                switch (sideOfField) {
+                    case AUDIENCE:
+                        return redAudienceStartPose;
+                    case BACKSTAGE:
+                        return redBackstageStartPose;
+                }
+                break;
+        }
+        return null;  // Fallback in case nothing matches
+    }
 
     public Action getRoute(AllianceColor allianceColor, SideOfField sideOfField) {
         switch (allianceColor) {

@@ -54,7 +54,9 @@ public class BasicAuto extends LinearOpMode {
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRoute = basicRoute.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
-        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= FieldConstants.RED_AUDIENCE_START_POSE;
+
+        //set the starting location of the robot on the field
+        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= basicRoute.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //Reset Gyro
         Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();

@@ -53,7 +53,12 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRoute = directRoutesExample.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
+        //set the starting location of the robot on the field
+        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= directRoutesExample.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+
         //Reset Gyro
+        //TODO i suspect this is not needed or might be duplicative with what is happening in MecanumDrive
+        // can we run a test without this and see what happens?
         Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
 
         //After Init switch the vision processing to AprilTags

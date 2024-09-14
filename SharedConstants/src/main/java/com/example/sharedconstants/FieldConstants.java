@@ -44,23 +44,6 @@ public class FieldConstants {
     public static double FACE_315_DEGREES = Math.toRadians(315);
     public static double FACE_340_DEGREES = Math.toRadians(340);
 
-    public enum StartingPosition {
-        BLUE_AUDIENCE(FieldConstants.BLUE_AUDIENCE_START_POSE),
-        BLUE_BACKSTAGE(FieldConstants.BLUE_BACKSTAGE_START_POSE),
-        RED_AUDIENCE(FieldConstants.RED_AUDIENCE_START_POSE),
-        RED_BACKSTAGE(FieldConstants.RED_BACKSTAGE_START_POSE);
-
-        private final Pose2d startPose;
-
-        StartingPosition(Pose2d startPose) {
-            this.startPose = startPose;
-        }
-
-        public Pose2d getStartPose() {
-            return startPose;
-        }
-    }
-
     public static double TANGENT_TOWARD_BACKSTAGE = Math.toRadians(0);
     public static double TANGENT_45_DEGREES = Math.toRadians(45);
     public static double TANGENT_TOWARD_BLUE = Math.toRadians(90);

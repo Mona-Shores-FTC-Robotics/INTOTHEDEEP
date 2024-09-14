@@ -22,9 +22,9 @@ public class IntoTheDeepDriverBindings {
     public Command defaultDriveCommand;
     public Command slowModeCommand;
     public Command backupFromBackdropCommand;
-    public Command slowModeZeroHeadingCommand;
 
     public IntoTheDeepDriverBindings(GamepadEx gamepad) {
+
         //Make the commands to use for the bindings
         MakeCommands(gamepad);
 
@@ -37,21 +37,17 @@ public class IntoTheDeepDriverBindings {
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // RIGHT BUMPER - Slow Mode Zero Heading                //
+        // RIGHT BUMPER - Slow Mode                             //
         //                                                      //
         //////////////////////////////////////////////////////////
 
-
-        //TODO can we get slowmode working?
-//        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-//                .whenHeld(slowModeZeroHeadingCommand);
-
+        //TODO does Slow Mode work?
         gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenHeld(slowModeCommand);
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // LEFT BUMPER     - fly drone                          //
+        // LEFT BUMPER                                          //
         //                                                      //
         //////////////////////////////////////////////////////////
 //
@@ -67,6 +63,7 @@ public class IntoTheDeepDriverBindings {
         //  Y BUTTON                                            //
         //                                                      //
         //////////////////////////////////////////////////////////
+
         // moves straight back and rotates us toward the wing - can be cancelled to easily grab from the neutral stacks instead
 //        gamepad.getGamepadButton(GamepadKeys.Button.Y)
 //                .whenPressed(backupFromBackdropCommand);
@@ -76,6 +73,7 @@ public class IntoTheDeepDriverBindings {
         //  X BUTTON                                            //
         //                                                      //
         //////////////////////////////////////////////////////////
+
 //        gamepad.getGamepadButton(GamepadKeys.Button.X)
 //                .whenPressed(new InstantCommand(() -> {
 //                    Robot.getInstance().getVisionSubsystem().setDeliverLocation(VisionSubsystem.DeliverLocation.LEFT);
@@ -146,12 +144,6 @@ public class IntoTheDeepDriverBindings {
                 gamepad::getLeftX,
                 gamepad::getRightX
         );
-
-//        slowModeZeroHeadingCommand = new SlowModeZeroHeadingCommand(Robot.getInstance().getDriveSubsystem(),
-//                gamepad::getLeftY,
-//                gamepad::getLeftX,
-//                0
-//        );
 
     }
 }
