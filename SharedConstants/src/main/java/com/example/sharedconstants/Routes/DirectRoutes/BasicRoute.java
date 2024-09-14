@@ -51,11 +51,6 @@ public class BasicRoute extends Routes {
 
     public void BuildRoutes() {
 
-        //TODO experiment with changing these in case we don't always have the same start location
-        redAudienceStartPose = RED_AUDIENCE_START_POSE;
-        redBackstageStartPose = RED_BACKSTAGE_START_POSE;
-        blueBackstageStartPose = BLUE_BACKSTAGE_START_POSE;
-        blueAudienceStartPose = BLUE_AUDIENCE_START_POSE;
 
         VelConstraint baseVelConstraint = new MinVelConstraint(Arrays.asList(
                 new TranslationalVelConstraint(10),

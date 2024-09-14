@@ -26,9 +26,12 @@ public abstract class Routes {
     protected Action blueAudienceBotRoute;
 
     // These are the defaults
+    //THIS SAYS RED AUDIENCE BECXAUSE IT IS MIRRORED
     protected Pose2d redAudienceStartPose = RED_AUDIENCE_START_POSE;
-    protected Pose2d redBackstageStartPose = RED_BACKSTAGE_START_POSE;
     protected Pose2d blueBackstageStartPose = BLUE_BACKSTAGE_START_POSE;
+
+    //THIS SAYS RED BACKSTAGE BECAUSE ITS MIRRORED
+    protected Pose2d redBackstageStartPose = RED_BACKSTAGE_START_POSE;
     protected Pose2d blueAudienceStartPose = BLUE_AUDIENCE_START_POSE;
 
     // Method to return the corresponding starting pose
