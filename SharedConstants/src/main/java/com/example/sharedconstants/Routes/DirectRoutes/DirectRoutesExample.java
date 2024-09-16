@@ -41,7 +41,7 @@ public class DirectRoutesExample extends Routes {
     public void BuildRoutes() {
 
         VelConstraint baseVelConstraint = new MinVelConstraint(Arrays.asList(
-                new TranslationalVelConstraint(20),
+                new TranslationalVelConstraint(30),
                 new AngularVelConstraint(Math.PI / 2)
         ));
 
