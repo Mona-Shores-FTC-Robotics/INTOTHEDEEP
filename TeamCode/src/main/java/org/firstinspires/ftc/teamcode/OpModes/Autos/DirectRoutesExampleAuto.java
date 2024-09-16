@@ -40,7 +40,6 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
 
         while (opModeInInit()) {
 
-
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
 
@@ -69,17 +68,12 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         MatchConfig.timestampTimer = new ElapsedTime();
         MatchConfig.timestampTimer.reset();
 
-        //TODO is the correct route being run for all four combinations of Alliance Color and Side of Field?
-        //TODO does the route show up in FTC Dashboard?
         Actions.runBlocking(selectedRoute);
 
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getGyroSubsystem().currentAbsoluteYawDegrees;
         MatchConfig.endOfAutonomousRelativeYawDegrees = Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees;
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getGyroSubsystem().offsetFromAbsoluteYawDegrees;
         MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().mecanumDrive.pose;
-
     }
-
-
 }
 

@@ -30,7 +30,10 @@ public class MeepMeepTesting {
      *      SPIKE_BACKDROP_PARK,
      **/
 
-    public static RoutesToRun routesToRunSelection = RoutesToRun.BASIC_ROUTE; // here
+    //TODO Naming convention
+    // discuss how to name our OpModes, does this make sense: AUD_2_1_BACK_0_4
+
+    public static RoutesToRun routesToRunSelection = RoutesToRun.DIRECT_ROUTES_EXAMPLE; // here
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
