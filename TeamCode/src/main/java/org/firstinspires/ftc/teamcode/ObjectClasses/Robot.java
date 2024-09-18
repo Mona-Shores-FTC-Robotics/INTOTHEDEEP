@@ -21,7 +21,7 @@ public class Robot {
     private static Robot robot = null;
     public RobotType robotType;
     public OpModeType opModeType;
-    public enum RobotType {ROBOT_INTOTHEDEEP, ROBOT_DRIVE_BASE, ROBOT_PIT_MODE}
+    public enum RobotType {ROBOT_INTOTHEDEEP, ROBOT_DRIVE_BASE, ROBOT_PIT_MODE, ROBOT_CENTERSTAGE}
     public enum OpModeType {TELEOP, AUTO}
 
     private static LinearOpMode activeOpMode;
@@ -67,6 +67,17 @@ public class Robot {
             }
 
             case ROBOT_PIT_MODE: {
+                break;
+            }
+
+            case ROBOT_CENTERSTAGE: {
+                gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
+                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
+                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
+                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
+                liftSlideSubsystem = new LiftSlideSubsystem(hardwareMap, "liftslide");
+                shoulderSubsystem = new ShoulderSubsystem(hardwareMap, "shoulder");
+                climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
                 break;
             }
         }
@@ -129,20 +140,40 @@ public class Robot {
             case ROBOT_PIT_MODE: {
                 break;
             }
+
+            case ROBOT_CENTERSTAGE: {
+                gyroSubsystem.init();
+                mecanumDriveSubsystem.init();
+                intakeSubsystem.init();
+                gripperSubsystem.init();
+                liftSlideSubsystem.init();
+                shoulderSubsystem.init();
+                climberSubsystem.init();
+                break;
+            }
         }
     }
 
     private void initAuto() {
         // initialize auto-specific scheduler
         switch (robotType) {
-            case ROBOT_INTOTHEDEEP: {
-                visionSubsystem.init();
+            case ROBOT_INTOTHEDEEP:
+//                visionSubsystem.init();
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
 //                intakeSubsystem.init();
 //                gripperSubsystem.init();
 //                liftSlideSubsystem.init();
 //                shoulderSubsystem.init();
+                break;
+
+            case ROBOT_CENTERSTAGE: {
+                gyroSubsystem.init();
+                mecanumDriveSubsystem.init();
+                intakeSubsystem.init();
+                gripperSubsystem.init();
+                liftSlideSubsystem.init();
+                shoulderSubsystem.init();
                 break;
             }
         }

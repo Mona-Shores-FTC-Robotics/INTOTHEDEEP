@@ -33,7 +33,7 @@ public class MeepMeepTesting {
     //TODO Naming convention
     // discuss how to name our OpModes, does this make sense: AUD_2_1_BACK_0_4
 
-    public static RoutesToRun routesToRunSelection = RoutesToRun.DIRECT_ROUTES_EXAMPLE; // here
+    public static RoutesToRun routesToRunSelection = RoutesToRun.A1Spec_3Samp_B4Spec_0Samp; // here
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
@@ -42,7 +42,7 @@ public class MeepMeepTesting {
     public static boolean SHOW_RED_BACKSTAGE_BOT = true;
 
     public enum TeamPropLocation {LEFT, CENTER, RIGHT, ALL, NONE}
-    enum RoutesToRun {DIRECT_ROUTES_EXAMPLE, FUNCTIONAL_ROUTES_EXAMPLE, RRPATHGEN, BASIC_ROUTE} // here
+    enum RoutesToRun {A1Spec_3Samp_B4Spec_0Samp, FUNCTIONAL_ROUTES_EXAMPLE, RRPATHGEN, BASIC_ROUTE} // here
 
     public static void main(String[] args) {
 
@@ -61,7 +61,7 @@ public class MeepMeepTesting {
         // Create a Routes instance based on the selected route
         Routes routes;
 
-        if (routesToRunSelection == RoutesToRun.DIRECT_ROUTES_EXAMPLE) { // here
+        if (routesToRunSelection == RoutesToRun.A1Spec_3Samp_B4Spec_0Samp) { // here
             routes = new DirectRoutesExample(robotDriveAdapter);
         } else if (routesToRunSelection == RoutesToRun.RRPATHGEN){
             routes = new RRPathGenExample(robotDriveAdapter);
