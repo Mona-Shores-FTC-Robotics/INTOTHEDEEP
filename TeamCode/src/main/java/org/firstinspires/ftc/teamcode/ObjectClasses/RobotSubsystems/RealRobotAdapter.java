@@ -7,6 +7,7 @@ import com.example.sharedconstants.RobotDriveAdapter;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmActions.ActuateEndEffectorAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
 
 public class RealRobotAdapter implements RobotDriveAdapter {
@@ -29,11 +30,11 @@ public class RealRobotAdapter implements RobotDriveAdapter {
 
     @Override
     public Action createCloseGripperAction() {
-        return null;
+        return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.CLOSED);
     }
 
     @Override
     public Action createOpenGripperAction() {
-        return null;
+        return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN);
     }
 }

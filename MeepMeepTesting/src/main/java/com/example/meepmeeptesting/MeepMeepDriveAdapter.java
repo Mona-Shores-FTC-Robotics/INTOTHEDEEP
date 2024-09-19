@@ -1,5 +1,6 @@
 package com.example.meepmeeptesting;
 
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.example.sharedconstants.RobotDriveAdapter;
 import com.noahbres.meepmeep.roadrunner.DriveShim;
@@ -21,6 +22,16 @@ public class MeepMeepDriveAdapter implements RobotDriveAdapter {
     @Override
     public TrajectoryActionBuilder mirroredActionBuilder(Pose2d startPose) {
         return driveShim.actionBuilder(startPose);
+    }
+
+    @Override
+    public Action createCloseGripperAction() {
+        return null;
+    }
+
+    @Override
+    public Action createOpenGripperAction() {
+        return null;
     }
 
 }

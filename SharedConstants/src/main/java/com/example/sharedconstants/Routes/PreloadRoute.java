@@ -53,15 +53,15 @@ public class PreloadRoute extends Routes {
         SetupConstraints();
 
         redBackstageBotRoute = roadRunnerDrive.actionBuilder(RED_BACKSTAGE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_RED_AUDIENCE))
-                .build();
-
-        blueAudienceBotRoute = roadRunnerDrive.actionBuilder(BLUE_AUDIENCE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_RED_AUDIENCE))
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_RED_BACKSTAGE))
                 .build();
 
         redAudienceBotRoute = roadRunnerDrive.actionBuilder(RED_AUDIENCE_START_POSE)
                 .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_AUDIENCE_START_POSE, CHAMBER_RED_AUDIENCE))
+                .build();
+
+        blueAudienceBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_RED_AUDIENCE))
                 .build();
 
         blueBackstageBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_AUDIENCE_START_POSE)
@@ -95,7 +95,7 @@ public class PreloadRoute extends Routes {
         Action ScorePreloadSpecimen(Pose2d startPose, Pose2d chamberPose) {
             SequentialAction scorePreloadSpecimen =
                     new SequentialAction(
-                            new ActuateEndEffectorAction(GripperStates.CLOSED),
+                            roadRunnerDrive.createCloseGripperAction(),
                             new ParallelAction(
                                     new RouteBuilder().DriveToChamber(startPose, chamberPose),
                                     new SequentialAction(
