@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.DirectRoutes.BasicRoute;
-import com.example.sharedconstants.Routes.DirectRoutes.DirectRoutesExample;
+import com.example.sharedconstants.Routes.BasicRoute;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.RealRobotAdapter;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.RealRobotAdapter;
 
 @Autonomous(name = "Basic Auto")
 public class BasicAuto extends LinearOpMode {

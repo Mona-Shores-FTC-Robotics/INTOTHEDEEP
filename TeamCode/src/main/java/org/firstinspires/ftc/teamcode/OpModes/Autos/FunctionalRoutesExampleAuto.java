@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.OpModes.Autos;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.example.sharedconstants.Routes.DirectRoutes.DirectRoutesExample;
 import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -13,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.RealRobotAdapter;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionTelemetry;
 @Disabled
 @Autonomous(name = "Functional Routes Example Auto")

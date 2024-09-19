@@ -2,15 +2,11 @@ package com.example.meepmeeptesting;
 
 import static com.example.meepmeeptesting.MeepMeepRobots.*;
 
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Pose2dDual;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TrajectoryBuilder;
-import com.example.sharedconstants.Routes.DirectRoutes.BasicRoute;
-import com.example.sharedconstants.Routes.DirectRoutes.RRPathGenExample;
+import com.example.sharedconstants.Routes.BasicRoute;
+import com.example.sharedconstants.Routes.RRPathGenExample;
 import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
 import com.example.sharedconstants.Routes.Routes;
-import com.example.sharedconstants.Routes.DirectRoutes.DirectRoutesExample;
+import com.example.sharedconstants.Routes.DirectRoutesExample;
 import com.example.sharedconstants.RobotDriveAdapter;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DriveShim;
