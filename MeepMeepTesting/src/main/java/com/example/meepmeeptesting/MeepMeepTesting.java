@@ -3,6 +3,7 @@ package com.example.meepmeeptesting;
 import static com.example.meepmeeptesting.MeepMeepRobots.*;
 
 import com.example.sharedconstants.Routes.BasicRoute;
+import com.example.sharedconstants.Routes.PreloadRoute;
 import com.example.sharedconstants.Routes.RRPathGenExample;
 import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
 import com.example.sharedconstants.Routes.Routes;
@@ -29,7 +30,7 @@ public class MeepMeepTesting {
     //TODO Naming convention
     // discuss how to name our OpModes, does this make sense: AUD_2_1_BACK_0_4
 
-    public static RoutesToRun routesToRunSelection = RoutesToRun.A1Spec_3Samp_B4Spec_0Samp; // here
+    public static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD; // here
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
@@ -38,7 +39,7 @@ public class MeepMeepTesting {
     public static boolean SHOW_RED_BACKSTAGE_BOT = true;
 
     public enum TeamPropLocation {LEFT, CENTER, RIGHT, ALL, NONE}
-    enum RoutesToRun {A1Spec_3Samp_B4Spec_0Samp, FUNCTIONAL_ROUTES_EXAMPLE, RRPATHGEN, BASIC_ROUTE} // here
+    enum RoutesToRun {A1Spec_3Samp_B4Spec_0Samp, FUNCTIONAL_ROUTES_EXAMPLE, RRPATHGEN, BASIC_ROUTE, PRELOAD} // here
 
     public static void main(String[] args) {
 
@@ -63,6 +64,8 @@ public class MeepMeepTesting {
             routes = new RRPathGenExample(robotDriveAdapter);
         } else if (routesToRunSelection == RoutesToRun.BASIC_ROUTE) {
             routes = new BasicRoute(robotDriveAdapter);
+        } else if (routesToRunSelection == RoutesToRun.PRELOAD){
+            routes = new PreloadRoute(robotDriveAdapter);
         } else { //if(routesToRunSelection == RoutesToRun.FUNCTIONAL_ROUTES_EXAMPLE){
             routes = new FunctionalRoutesExample(robotDriveAdapter);
         }

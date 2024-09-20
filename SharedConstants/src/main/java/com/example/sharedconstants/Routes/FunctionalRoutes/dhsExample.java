@@ -4,6 +4,7 @@ import static com.example.sharedconstants.FieldConstants.ASCENT_RED_AUDIENCE;
 import static com.example.sharedconstants.FieldConstants.ASCENT_RED_BACKSTAGE;
 import static com.example.sharedconstants.FieldConstants.BLUE_AUDIENCE_START_POSE;
 import static com.example.sharedconstants.FieldConstants.BLUE_BACKSTAGE_START_POSE;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE_VEC;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_AUDIENCE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_RED;
@@ -54,17 +55,17 @@ public class dhsExample extends Routes {
 
         /** RED BACKSTAGE **/
         redBackstageBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED)
                 .waitSeconds(2)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED)
                 .waitSeconds(2)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED)

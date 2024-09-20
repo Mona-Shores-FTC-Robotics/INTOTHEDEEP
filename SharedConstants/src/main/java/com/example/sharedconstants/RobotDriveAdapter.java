@@ -3,6 +3,7 @@ package com.example.sharedconstants;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
 public interface RobotDriveAdapter {
@@ -11,5 +12,10 @@ public interface RobotDriveAdapter {
 
     Action createCloseGripperAction();
     Action createOpenGripperAction();
+    Action createLiftToHighChamberAction();
+    Action createLiftToHomePosistionAction();
+
+    //what are all the actions we are going to have to call in auto?
+
 }
 

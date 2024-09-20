@@ -93,17 +93,19 @@ public class PreloadRoute extends Routes {
     public class RouteBuilder {
 
         Action ScorePreloadSpecimen(Pose2d startPose, Pose2d chamberPose) {
-            SequentialAction scorePreloadSpecimen =
+            Action scorePreloadSpecimen =
                     new SequentialAction(
                             roadRunnerDrive.createCloseGripperAction(),
-                            new ParallelAction(
-                                    new RouteBuilder().DriveToChamber(startPose, chamberPose),
-                                    new SequentialAction(
-                                            new SleepAction(.6),
-                                            new ActuateEndEffectorAction(GripperStates.OPEN)
-                                    )
-                            )
-                    );
+                            new RouteBuilder().DriveToChamber(startPose, chamberPose));
+
+//                            new ParallelAction(
+//                                    new RouteBuilder().DriveToChamber(startPose, chamberPose),
+//                                    new SequentialAction(
+//                                            new SleepAction(.6),
+//                                            roadRunnerDrive.createOpenGripperAction()
+//                                    )
+//                            )
+//                    );
             return scorePreloadSpecimen;
         }
 
@@ -115,5 +117,25 @@ public class PreloadRoute extends Routes {
         }
 
 
+    }
+
+    @Override
+    public Action getBlueBackstageBotRoute() {
+        return blueBackstageBotRoute;
+    }
+
+    @Override
+    public Action getBlueAudienceBotRoute() {
+        return blueAudienceBotRoute;
+    }
+
+    @Override
+    public Action getRedBackstageBotRoute() {
+        return redBackstageBotRoute;
+    }
+
+    @Override
+    public Action getRedAudienceBotRoute() {
+        return redAudienceBotRoute;
     }
 }
