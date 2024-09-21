@@ -1,8 +1,5 @@
 package com.example.meepmeeptesting;
 
-import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE_VEC;
-import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BLUE;
-import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POSE;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.NullAction;

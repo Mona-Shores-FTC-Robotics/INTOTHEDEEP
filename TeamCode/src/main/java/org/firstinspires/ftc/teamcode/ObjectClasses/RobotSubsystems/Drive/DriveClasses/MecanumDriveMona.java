@@ -7,6 +7,7 @@ import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POS
 import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.ProfileParams;
@@ -178,6 +179,26 @@ public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter 
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultAccelConstraint,
                 pose -> new Pose2dDual<>(
                         pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.inverse()));
+    }
+
+    @Override
+    public Action createCloseGripperAction() {
+        return null;
+    }
+
+    @Override
+    public Action createOpenGripperAction() {
+        return null;
+    }
+
+    @Override
+    public Action createLiftToHighChamberAction() {
+        return null;
+    }
+
+    @Override
+    public Action createLiftToHomePosistionAction() {
+        return null;
     }
 }
 

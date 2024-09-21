@@ -33,7 +33,7 @@ public class FunctionalRoutesExampleAuto extends LinearOpMode {
         Robot.getInstance().init(Robot.OpModeType.AUTO);
 
         //Instantiate the robotDriveAdapter so we can use MeepMeep seamlessly
-        RealRobotAdapter robotDriveAdapter = new RealRobotAdapter(Robot.getInstance().getDriveSubsystem().getMecanumDrive());
+        RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
         //Build all the routes using the adapter so we can select one quickly later
         FunctionalRoutesExample functionalRoutesExample = new FunctionalRoutesExample(robotDriveAdapter);

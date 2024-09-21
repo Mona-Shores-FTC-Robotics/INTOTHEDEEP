@@ -37,4 +37,14 @@ public class RealRobotAdapter implements RobotDriveAdapter {
     public Action createOpenGripperAction() {
         return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN);
     }
+
+    @Override
+    public Action createLiftToHighChamberAction() {
+        return null;
+    }
+
+    @Override
+    public Action createLiftToHomePosistionAction() {
+        return null;
+    }
 }
