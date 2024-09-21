@@ -1,31 +1,15 @@
-package com.example.sharedconstants.Routes.DirectRoutes;
+package com.example.sharedconstants.Routes;
 
 import static com.example.sharedconstants.FieldConstants.*;
 
-import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Pose2dDual;
-import com.acmerobotics.roadrunner.PoseMap;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.Rotation2d;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.RobotDriveAdapter;
-import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
-import com.example.sharedconstants.Routes.FunctionalRoutes.PosesForFunctionalRoutesExample;
-import com.example.sharedconstants.Routes.Routes;
-import com.noahbres.meepmeep.roadrunner.entity.TrajectoryAction;
-import com.noahbres.meepmeep.roadrunner.entity.TurnAction;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class DirectRoutesExample extends Routes {
 
@@ -113,7 +97,7 @@ public class DirectRoutesExample extends Routes {
 
         /** RED BACKSTAGE **/
         redBackstageBotRoute = roadRunnerDrive.actionBuilder(RED_BACKSTAGE_START_POSE)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
@@ -123,7 +107,7 @@ public class DirectRoutesExample extends Routes {
                 .splineToLinearHeading(SPIKE_RED_1_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                // next cycle
                 .waitSeconds(2)
                 .setReversed(true)
@@ -132,7 +116,7 @@ public class DirectRoutesExample extends Routes {
                 .splineToLinearHeading(SPIKE_RED_2_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 //last cycle
                 .waitSeconds(2)
                 .setReversed(true)
@@ -141,12 +125,12 @@ public class DirectRoutesExample extends Routes {
                 .splineToLinearHeading(SPIKE_RED_3_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-               .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+               .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 .build();
 
         /** BLUE AUDIENCE THIS SHOULD MATCH THE RED BACKSTAGE PATH AND START LOCATION **/
         blueAudienceBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
@@ -156,7 +140,7 @@ public class DirectRoutesExample extends Routes {
                 .splineToLinearHeading(SPIKE_RED_1_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 // next cycle
                 .waitSeconds(2)
                 .setReversed(true)
@@ -165,7 +149,7 @@ public class DirectRoutesExample extends Routes {
                 .splineToLinearHeading(SPIKE_RED_2_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 //last cycle
                 .waitSeconds(2)
                 .setReversed(true)
@@ -174,7 +158,7 @@ public class DirectRoutesExample extends Routes {
                 .splineToLinearHeading(SPIKE_RED_3_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 .build();
 
     }

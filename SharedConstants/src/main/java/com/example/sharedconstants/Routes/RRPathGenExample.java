@@ -1,11 +1,10 @@
-package com.example.sharedconstants.Routes.DirectRoutes;
+package com.example.sharedconstants.Routes;
 
 import static com.example.sharedconstants.FieldConstants.RED_AUDIENCE_START_POSE;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.example.sharedconstants.RobotDriveAdapter;
-import com.example.sharedconstants.Routes.Routes;
 
 // TODO Autonomous Learning - experiment with RRPathGen
 //  to get started google "RRPathGen" and download the file - ask for mentor help to get it running
