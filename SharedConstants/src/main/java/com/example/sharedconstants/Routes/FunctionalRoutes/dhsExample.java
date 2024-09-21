@@ -4,7 +4,6 @@ import static com.example.sharedconstants.FieldConstants.ASCENT_RED_AUDIENCE;
 import static com.example.sharedconstants.FieldConstants.ASCENT_RED_BACKSTAGE;
 import static com.example.sharedconstants.FieldConstants.BLUE_AUDIENCE_START_POSE;
 import static com.example.sharedconstants.FieldConstants.BLUE_BACKSTAGE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE_VEC;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_AUDIENCE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_RED;
@@ -12,7 +11,7 @@ import static com.example.sharedconstants.FieldConstants.NET_ZONE_RED;
 import static com.example.sharedconstants.FieldConstants.OBSERVATION_RED_ZONE;
 import static com.example.sharedconstants.FieldConstants.RED_AUDIENCE_START_POSE;
 import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE_VECTOR;
 import static com.example.sharedconstants.FieldConstants.SPIKE_NEUTRAL_AUDIENCE_1;
 import static com.example.sharedconstants.FieldConstants.SPIKE_NEUTRAL_AUDIENCE_2;
 import static com.example.sharedconstants.FieldConstants.SPIKE_NEUTRAL_AUDIENCE_3;
@@ -55,17 +54,17 @@ public class dhsExample extends Routes {
 
         /** RED BACKSTAGE **/
         redBackstageBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED)
                 .waitSeconds(2)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED)
                 .waitSeconds(2)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED)

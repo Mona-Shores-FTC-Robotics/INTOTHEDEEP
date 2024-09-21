@@ -59,6 +59,8 @@ public class FieldConstants {
     public static Pose2d BLUE_BACKSTAGE_START_POSE = new Pose2d(HALF_TILE, HALF_FIELD-HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
 
     //Red Points of Interest
+    public static Pose2d CHAMBER_RED_BACKSTAGE = new Pose2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+
     public static Pose2d CHAMBER_RED_AUDIENCE = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Vector2d BASKET_RED_AUDIENCE_2_TJ = new Vector2d(-55.6, -51.6);
     public static Pose2d SPIKE_NEUTRAL_AUDIENCE_3_POS_TJ = new Pose2d(-55, -25.5, FACE_TOWARD_AUDIENCE);
@@ -82,8 +84,12 @@ public class FieldConstants {
     public static Vector2d RUNG_RED_BACKSTAGE = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
     public static Pose2d WALL_ALIGN_POS_AUDIENCE_TJ = new Pose2d(-61.8, -38.6,  FACE_TOWARD_BLUE);
    // public static Vector2d NET_POS_AUDIENCE_TJ = new Vector2d(-61.8, -52);
-    public static Pose2d CHAMBER_RED_BACKSTAGE = new Pose2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
-    public static Vector2d CHAMBER_RED_BACKSTAGE_VEC = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
+    // POSITIONS FOR PLACING SPECIMEN ON CHAMBER DURING AUTO
+    public static Vector2d CHAMBER_RED_BACKSTAGE_VECTOR = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
+    public static Vector2d CHAMBER_RED_BACKSTAGE2 = new Vector2d(HALF_TILE - QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH);
+    public static Vector2d CHAMBER_RED_BACKSTAGE3 = new Vector2d(0, -TILE-HALF_ROBOT_LENGTH);
+    public static Vector2d CHAMBER_RED_BACKSTAGE4 = new Vector2d(HALF_TILE - TILE*0.75, -TILE-HALF_ROBOT_LENGTH);
+
     public static Pose2d SPIKE_RED_1 = new Pose2d(2*TILE, -TILE, FACE_TOWARD_BLUE);
     public static Vector2d SPIKE_RED_1_Vec = new Vector2d(48.1, -38.6);
 

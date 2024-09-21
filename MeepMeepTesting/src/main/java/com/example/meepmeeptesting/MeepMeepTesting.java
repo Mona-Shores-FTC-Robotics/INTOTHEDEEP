@@ -30,7 +30,7 @@ public class MeepMeepTesting {
     //TODO Naming convention
     // discuss how to name our OpModes, does this make sense: AUD_2_1_BACK_0_4
 
-    public static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD; // here
+    public static RoutesToRun routesToRunSelection = RoutesToRun.A1Spec_3Samp_B4Spec_0Samp; // here
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = false;

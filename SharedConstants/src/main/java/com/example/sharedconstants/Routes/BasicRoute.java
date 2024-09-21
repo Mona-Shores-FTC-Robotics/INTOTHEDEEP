@@ -1,8 +1,7 @@
 package com.example.sharedconstants.Routes;
 
 import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_AUDIENCE;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE_VEC;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE_VECTOR;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_AUDIENCE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BACKSTAGE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BLUE;
@@ -55,14 +54,14 @@ public class BasicRoute extends Routes {
 
         /** RED BACKSTAGE **/
         redBackstageBotRoute = roadRunnerDrive.actionBuilder(RED_BACKSTAGE_START_POSE)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
                 .setReversed(true)
                 .splineToConstantHeading(SPIKE_RED_1_Vec, FACE_TOWARD_BACKSTAGE, baseVelConstraint)
                 .build();
 
         /** BLUE AUDIENCE THIS SHOULD MATCH THE RED BACKSTAGE PATH AND START LOCATION **/
         blueAudienceBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
                 .setReversed(true)
                 .splineToConstantHeading(SPIKE_RED_1_Vec, FACE_TOWARD_BACKSTAGE, baseVelConstraint)
                 .build();
