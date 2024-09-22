@@ -30,13 +30,11 @@ public class GyroSubsystem extends SubsystemBase {
 
     public double offsetFromAbsoluteYawDegrees;
 
-    public GyroSubsystem(final HardwareMap hMap, final String name) {
-        imu = hMap.get(IMU.class, name);
+    public GyroSubsystem() {
     }
 
     public void init() {
-        imu.initialize(new IMU.Parameters(hubOrientation));
-        imu.resetYaw();
+        imu = Robot.getInstance().getDriveSubsystem().getMecanumDrive().lazyImu.get();
     }
 
     public void periodic() {

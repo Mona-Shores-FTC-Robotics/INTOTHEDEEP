@@ -25,7 +25,7 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
         // Create and Initialize the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_DRIVE_BASE);
+        Robot.createInstance(this, Robot.RobotType.ROBOT_CHASSIS);
 
         // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);

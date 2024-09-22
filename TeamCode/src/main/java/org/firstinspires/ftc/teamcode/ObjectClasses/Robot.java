@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.Shoulder
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.GyroSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
@@ -21,7 +20,7 @@ public class Robot {
     private static Robot robot = null;
     public RobotType robotType;
     public OpModeType opModeType;
-    public enum RobotType {ROBOT_INTOTHEDEEP, ROBOT_DRIVE_BASE, ROBOT_PIT_MODE, ROBOT_CENTERSTAGE}
+    public enum RobotType {ROBOT_INTOTHEDEEP, ROBOT_CHASSIS, ROBOT_PIT_MODE, ROBOT_CENTERSTAGE}
     public enum OpModeType {TELEOP, AUTO}
 
     private static LinearOpMode activeOpMode;
@@ -49,16 +48,17 @@ public class Robot {
     private void CreateSubsystems(HardwareMap hardwareMap) {
         switch (robotType) {
             //Just the drive base
-            case ROBOT_DRIVE_BASE: {
-                gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
-//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
+            case ROBOT_CHASSIS: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
+                gyroSubsystem = new GyroSubsystem();
+//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
                 break;
             }
             case ROBOT_INTOTHEDEEP: {
-                gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
-//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
+                gyroSubsystem = new GyroSubsystem();
+//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
+
 //                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
 //                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
 //                liftSlideSubsystem = new LiftSlideSubsystem(hardwareMap, "liftslide");
@@ -71,9 +71,9 @@ public class Robot {
             }
 
             case ROBOT_CENTERSTAGE: {
-                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
-                gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
+                gyroSubsystem = new GyroSubsystem();
+                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
                 intakeSubsystem = new IntakeSubsystem(hardwareMap, "par", "perp");
                 gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
                 liftSlideSubsystem = new LiftSlideSubsystem(hardwareMap, "liftslide");
@@ -120,7 +120,7 @@ public class Robot {
 
     private void initTele() {
         switch (robotType) {
-            case ROBOT_DRIVE_BASE: {
+            case ROBOT_CHASSIS: {
                 gyroSubsystem.init();
 //                visionSubsystem.init();
                 mecanumDriveSubsystem.init();

@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 @Config
 public class LiftSlideSubsystem extends SubsystemBase {
 
-
     public static class LiftSlideParameters {
         public int LIFT_HEIGHT_TICK_THRESHOLD = 45;
         public double TIMEOUT_TIME_SECONDS = 2;
@@ -39,6 +38,16 @@ public class LiftSlideSubsystem extends SubsystemBase {
         public int MAX_HEIGHT_TICKETS=2800;
     }
 
+    public static class LiftHeightsIntoTheDeep{
+        public int HOME_HEIGHT_TICKS=25;
+        public int SAFE_HEIGHT_TICKS=125;
+
+        public int HIGH_BASKET_TICKS=2500;
+        public int LOW_BASKET_TICKS=1500;
+        public int HIGH_CHAMBER_TICKS=2000;
+        public int LOW_CHAMBER_TICKS=1400;
+    }
+
     public final int MAX_TARGET_TICKS = 2800;
     public final int MIN_TARGET_TICKS = 0;
 
@@ -50,7 +59,6 @@ public class LiftSlideSubsystem extends SubsystemBase {
         public int ticks;
 
         static {
-
             MAX.ticks = liftSlideHeights.MAX_HEIGHT_TICKETS;
             HIGH.ticks = liftSlideHeights.HIGH_HEIGHT_TICKS;
             MID.ticks = liftSlideHeights.MID_HEIGHT_TICKS;;
@@ -61,6 +69,24 @@ public class LiftSlideSubsystem extends SubsystemBase {
             AUTO_LOW.ticks = liftSlideHeights.AUTO_LOW_HEIGHT_TICKS;
             AUTO_MID.ticks = liftSlideHeights.AUTO_MID_HEIGHT_TICKS;
             AUTO_HIGH.ticks = liftSlideHeights.AUTO_HIGH_HEIGHT_TICKS;
+        }
+        public void setLiftHeightTicks(int t){
+            this.ticks = t;
+        }
+    }
+
+    public enum LiftStatesIntoTheDeep {
+        MAX, HIGH_BASKET, LOW_BASKET, HIGH_CHAMBER, LOW_CHAMBER, HOME, MANUAL;
+        public int ticks;
+
+        static {
+            MAX.ticks = liftSlideHeights.MAX_HEIGHT_TICKETS;
+            HIGH_BASKET.ticks = liftSlideHeights.HIGH_HEIGHT_TICKS;
+            LOW_BASKET.ticks = liftSlideHeights.MID_HEIGHT_TICKS;
+            HIGH_CHAMBER.ticks = liftSlideHeights.LOW_HEIGHT_TICKS;
+            LOW_CHAMBER.ticks = liftSlideHeights.LOW_HEIGHT_TICKS;
+            HOME.ticks = liftSlideHeights.HOME_HEIGHT_TICKS;
+
         }
         public void setLiftHeightTicks(int t){
             this.ticks = t;

@@ -7,16 +7,22 @@ import com.example.sharedconstants.RobotDriveAdapter;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSlideSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmActions.ActuateEndEffectorAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmActions.MoveLiftSlideAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmActions.MoveLiftSlideActionFinishImmediate;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmCommands.MoveLiftSlideCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
 
 public class RealRobotAdapter implements RobotDriveAdapter {
     private final MecanumDriveMona drive;
     private final GripperSubsystem gripperSubsystem;
+    private final LiftSlideSubsystem liftSubystem;
 
     public RealRobotAdapter() {
         drive = Robot.getInstance().getDriveSubsystem().mecanumDrive;
         gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
+        liftSubystem = Robot.getInstance().getLiftSlideSubsystem();
     }
 
     @Override
@@ -40,7 +46,7 @@ public class RealRobotAdapter implements RobotDriveAdapter {
 
     @Override
     public Action createLiftToHighChamberAction() {
-        return null;
+        return new MoveLiftSlideAction(LiftSlideSubsystem.LiftStates.HIGH);
     }
 
     @Override

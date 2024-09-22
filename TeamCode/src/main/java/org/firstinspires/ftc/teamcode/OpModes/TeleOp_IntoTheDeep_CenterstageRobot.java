@@ -31,12 +31,15 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.CenterStageDriverBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.CenterStageOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepDriverBindings;
@@ -70,7 +73,6 @@ public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
         telemetry.clearAll();
 
         while (opModeInInit()) {
-
             gamepadHandling.getDriverGamepad().readButtons();
             gamepadHandling.lockColorAndSide();
 
@@ -78,12 +80,9 @@ public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
             sleep(10);
         }
 
-        //Switch the vision processing to AprilTags
-//        Robot.getInstance().getVisionSubsystem().SwitchToAprilTagProcessor();
-
         //Reset Gyro and pose to be 0 at whatever heading the robot is at
-        //TODO experiment with what the robot does without this
-        Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
+        //This should be being done by Roadrunner now that we are using their instance of the IMU
+        //Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
@@ -98,9 +97,8 @@ public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
-
             //TODO does the route/localization show up in FTC Dashboard? If not, how can we make it show up there?
-            LoopDriverStationTelemetry();
+            Robot.getInstance().getDriveSubsystem().getMecanumDrive().LoopDriverStationTelemetry(telemetry);
 
             //Reset the timer for the loop timer
             MatchConfig.loopTimer.reset();
@@ -118,24 +116,5 @@ public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);
             MatchConfig.telemetryPacket = new TelemetryPacket();
         }
-    }
-
-    //TODO can we make this telemetry while driving more robust and easy to look at and understand?
-    // -perhaps we should make it only viewable on the driver station / dashboard while pressing a button?
-    private void LoopDriverStationTelemetry() {
-        //Print our color,
-        telemetry.addData("Alliance Color", MatchConfig.finalAllianceColor);
-        telemetry.addLine("TeleOp Time " + JavaUtil.formatNumber(MatchConfig.teleOpTimer.seconds(), 4, 1) + " / 120 seconds");
-        telemetry.addData("Loop Time ", JavaUtil.formatNumber(MatchConfig.loopTimer.milliseconds(), 4, 1));
-
-        Robot.getInstance().getActiveOpMode().telemetry.addLine();
-        telemetry.addData("Current Pose", "X %5.2f, Y %5.2f, heading %5.2f ",
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.x,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.y,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.heading.log());
-
-        Robot.getInstance().getActiveOpMode().telemetry.addLine();
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Absolute (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentAbsoluteYawDegrees, 5, 2));
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Relative (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees, 5, 2));
     }
 }

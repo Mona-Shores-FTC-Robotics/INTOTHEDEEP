@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses;
 
-import static com.example.sharedconstants.FieldConstants.BLUE_AUDIENCE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.BLUE_BACKSTAGE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.RED_AUDIENCE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POSE;
 import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -14,13 +10,19 @@ import com.acmerobotics.roadrunner.ProfileParams;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.example.sharedconstants.RobotDriveAdapter;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter  {
+public class MecanumDriveMona extends MecanumDrive  {
+
+    private MonaParams MONA_PARAMS;
+
     private double drive, strafe, turn;
     private double last_drive=0, last_strafe=0, last_turn=0;
     private double current_drive_ramp = 0, current_strafe_ramp=0, current_turn_ramp=0;
@@ -28,41 +30,115 @@ public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter 
 
     public MecanumDriveMona(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
+
+        switch (Robot.getInstance().robotType) {
+            //Override the Roadrunner parameters for the chassis bot and the centerstage robot
+            //The normal IntoTheDeep robot parameters should be stored in the MecancumDrive class
+            case ROBOT_CHASSIS:
+                PARAMS = new ChassisParams();
+                break;
+            case ROBOT_CENTERSTAGE:
+                PARAMS = new CenterStageParams();
+                break;
+            default:
+                PARAMS = new MonaParams();
+                break;
+        }
     }
 
-    @Config
-    static class Params {
-        // Mona Drive Parameters
-        // TODO: Learn how to tune our teleop driving and make it easier to tune later in the season
+    // Extend Params to include Mona-specific speed parameters
+    public static class MonaParams extends MecanumDrive.Params {
+        public double MAX_MOTOR_SPEED_RPS = 435.0 / 60.0;
+        public double TICKS_PER_REV = 384.5;
+        public double MAX_SPEED_TICK_PER_SEC = MAX_MOTOR_SPEED_RPS * TICKS_PER_REV;
 
-        static double MAX_MOTOR_SPEED_RPS = 435.0 / 60.0;
-        static double TICKS_PER_REV = 384.5;
-        static double MAX_SPEED_TICK_PER_SEC = MAX_MOTOR_SPEED_RPS * TICKS_PER_REV;
+        public double DRIVE_RAMP = .2;
+        public double STRAFE_RAMP = .22;
+        public double TURN_RAMP = .4;
+        public double RAMP_THRESHOLD = .04;
 
-        /** Set Mona motor parameters for faster TeleOp driving**/
-        static double DRIVE_RAMP = .2; //ken ramp
-        static double STRAFE_RAMP = .22;
-        static double TURN_RAMP = .4;
-
-        static double RAMP_THRESHOLD = .04; // This is the threshold at which we just clamp to the target drive/strafe/turn value
-
-        //it looks to me like just using a feedforward of 12.5 gets the actual speed to match the target. The PID doesn't seem to really do anything.
-        static double P =0; // default = 10
-        static double D =0; // default = 0
-        static double I =0; // default = 3
-        static double F =8; // default = 0
+        public double P = 0;
+        public double D = 0;
+        public double I = 3;
+        public double F = 8;
     }
 
-//    public MecanumDriveMona(HardwareMap hardwareMap, Pose2d pose, AprilTagProcessor aprilTagProcessor) {
-//        super(hardwareMap, pose, aprilTagProcessor);
-//    }
+    public static class ChassisParams extends MonaParams {
+        public ChassisParams() {
+            this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
+            this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+
+            this.inPerTick = 0.002996;
+            this.lateralInPerTick = inPerTick; // inPerTick;
+            this.trackWidthTicks = 0;
+
+            this.kS = 1.3635356937629455;
+            this.kV = 0.00038558904047469167;
+            this.kA = 0.0;
+
+            // path profile parameters (in inches)
+            this.maxWheelVel = 50;
+            this.minProfileAccel = -30;
+            this.maxProfileAccel = 50;
+
+            // turn profile parameters (in radians)
+            this.maxAngVel = Math.PI; // shared with path
+            this.maxAngAccel = Math.PI;
+
+            // path controller gains
+            this.axialGain = 0.0;
+            this.lateralGain = 0.0;
+            this.headingGain = 0.0; // shared with turn
+
+            this.axialVelGain = 0.0;
+            this.lateralVelGain = 0.0;
+            this.headingVelGain = 0.0; // shared with turn
+
+        }
+    }
+
+    public static class CenterStageParams extends MonaParams{
+        public CenterStageParams() {
+            this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
+            this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+
+            this.inPerTick = 0.002996;
+            this.lateralInPerTick = inPerTick; // inPerTick;
+            this.trackWidthTicks = 0;
+
+            this.kS = 1.3635356937629455;
+            this.kV = 0.00038558904047469167;
+            this.kA = 0.0;
+
+            // path profile parameters (in inches)
+            this.maxWheelVel = 50;
+            this.minProfileAccel = -30;
+            this.maxProfileAccel = 50;
+
+            // turn profile parameters (in radians)
+            this.maxAngVel = Math.PI; // shared with path
+            this.maxAngAccel = Math.PI;
+
+            // path controller gains
+            this.axialGain = 0.0;
+            this.lateralGain = 0.0;
+            this.headingGain = 0.0; // shared with turn
+
+            this.axialVelGain = 0.0;
+            this.lateralVelGain = 0.0;
+            this.headingVelGain = 0.0; // shared with turn
+        }
+    }
 
     public void init() {
+        //By casting PARAMS as MonaParms we can use the same parameter object but access the parameters we added in this class.
+        MONA_PARAMS = (MonaParams) PARAMS;  // Cast to MonaParams
+
         //set the PID values one time
-        leftFront.setVelocityPIDFCoefficients(Params.P, Params.I, Params.D, Params.F);
-        rightFront.setVelocityPIDFCoefficients(Params.P, Params.I, Params.D, Params.F);
-        leftBack.setVelocityPIDFCoefficients(Params.P, Params.I, Params.D, Params.F);
-        rightBack.setVelocityPIDFCoefficients(Params.P, Params.I, Params.D, Params.F);
+        leftFront.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
+        rightFront.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
+        leftBack.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
+        rightBack.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
     }
 
     public void mecanumDriveSpeedControl(double drive, double strafe, double turn) {
@@ -87,18 +163,18 @@ public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter 
             Robot.getInstance().getDriveSubsystem().mecanumDrive.updatePoseEstimate();
 
             //If we see blue tags and we are red and we are driving toward them, then use the safetydrivespeedfactor to slow us down
-            current_drive_ramp = Ramp(drive, current_drive_ramp, Params.DRIVE_RAMP);
-            current_strafe_ramp = Ramp(strafe, current_strafe_ramp, Params.STRAFE_RAMP);
-            current_turn_ramp = Ramp(turn, current_turn_ramp, Params.TURN_RAMP);
+            current_drive_ramp = Ramp(drive, current_drive_ramp, MONA_PARAMS.DRIVE_RAMP);
+            current_strafe_ramp = Ramp(strafe, current_strafe_ramp, MONA_PARAMS.STRAFE_RAMP);
+            current_turn_ramp = Ramp(turn, current_turn_ramp, MONA_PARAMS.TURN_RAMP);
 
             double dPercent = abs(current_drive_ramp) / (abs(current_drive_ramp) + abs(current_strafe_ramp) + abs(current_turn_ramp));
             double sPercent = abs(current_strafe_ramp) / (abs(current_drive_ramp) + abs(current_turn_ramp) + abs(current_strafe_ramp));
             double tPercent = abs(current_turn_ramp) / (abs(current_drive_ramp) + abs(current_turn_ramp) + abs(current_strafe_ramp));
 
-            leftFrontTargetSpeed = Params.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
-            rightFrontTargetSpeed = Params.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
-            leftBackTargetSpeed = Params.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
-            rightBackTargetSpeed = Params.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
+            leftFrontTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
+            rightFrontTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
+            leftBackTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
+            rightBackTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
 
             leftFront.setVelocity(leftFrontTargetSpeed);
             rightFront.setVelocity(rightFrontTargetSpeed);
@@ -112,7 +188,7 @@ public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter 
     }
 
     private double Ramp(double target, double currentValue, double ramp_amount) {
-        if (Math.abs(currentValue) + Params.RAMP_THRESHOLD < Math.abs(target)) {
+        if (Math.abs(currentValue) + MONA_PARAMS.RAMP_THRESHOLD < Math.abs(target)) {
             return Math.signum(target) * (Math.abs(currentValue) + ramp_amount);
         }  else
         {
@@ -164,6 +240,7 @@ public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter 
 //
 //        leftYAdjusted = Math.min( leftYAdjusted * 1.1, 1);  // Counteract imperfect strafing
 //    }
+
     public TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose) {
         return new TrajectoryActionBuilder(
                 TurnAction::new,
@@ -181,24 +258,22 @@ public class MecanumDriveMona extends MecanumDrive implements RobotDriveAdapter 
                         pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.inverse()));
     }
 
-    @Override
-    public Action createCloseGripperAction() {
-        return null;
-    }
+    public void LoopDriverStationTelemetry(Telemetry telemetry) {
+        telemetry.addData("Alliance Color: ", MatchConfig.finalAllianceColor);
+        telemetry.addData("Side of Field: ", MatchConfig.finalSideOfField);
+        telemetry.addLine("TeleOp Time " + JavaUtil.formatNumber(MatchConfig.teleOpTimer.seconds(), 4, 1) + " / 120 seconds");
+        telemetry.addData("Loop Time ", JavaUtil.formatNumber(MatchConfig.loopTimer.milliseconds(), 4, 1) + " milliseconds");
 
-    @Override
-    public Action createOpenGripperAction() {
-        return null;
-    }
+        telemetry.addLine();
+        telemetry.addData("Current Pose", "X %5.2f, Y %5.2f, heading %5.2f ",
+                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.x,
+                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.y,
+                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.heading.log());
 
-    @Override
-    public Action createLiftToHighChamberAction() {
-        return null;
-    }
+        telemetry.addLine();
 
-    @Override
-    public Action createLiftToHomePosistionAction() {
-        return null;
+        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Absolute (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentAbsoluteYawDegrees, 5, 2));
+        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Relative (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees, 5, 2));
     }
 }
 

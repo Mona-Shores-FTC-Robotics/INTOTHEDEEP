@@ -104,14 +104,8 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
             sleep(10);
         }
 
-        //Switch the vision processing to AprilTags
-//        Robot.getInstance().getVisionSubsystem().SwitchToAprilTagProcessor();
-
         //Reset Gyro and pose to be 0 at whatever heading the robot is at
         Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
-
-        //Set the flag so we reset the gyro/pose heading to zero the next time we go to the backdrop
-//        Robot.getInstance().getVisionSubsystem().resetHeading=true;
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
@@ -126,7 +120,7 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
-            LoopDriverStationTelemetry();
+            Robot.getInstance().getDriveSubsystem().getMecanumDrive().LoopDriverStationTelemetry(telemetry);
 
             //Reset the timer for the loop timer
             MatchConfig.loopTimer.reset();
@@ -137,9 +131,6 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
             //Read all buttons
             gamepadHandling.getDriverGamepad().readButtons();
 
-            //Look for AprilTags
-//            Robot.getInstance().getVisionSubsystem().LookForAprilTags();
-
             //Activate End Game Rumble at 87 seconds into TeleOp
             gamepadHandling.endGameRumble();
 
@@ -147,22 +138,5 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);
             MatchConfig.telemetryPacket = new TelemetryPacket();
         }
-    }
-
-    private void LoopDriverStationTelemetry() {
-        //Print our color,
-        telemetry.addData("Alliance Color", MatchConfig.finalAllianceColor);
-        telemetry.addLine("TeleOp Time " + JavaUtil.formatNumber(MatchConfig.teleOpTimer.seconds(), 4, 1) + " / 120 seconds");
-        telemetry.addData("Loop Time ", JavaUtil.formatNumber(MatchConfig.loopTimer.milliseconds(), 4, 1));
-
-        Robot.getInstance().getActiveOpMode().telemetry.addLine();
-        telemetry.addData("Current Pose", "X %5.2f, Y %5.2f, heading %5.2f ",
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.x,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.y,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.heading.log());
-
-        Robot.getInstance().getActiveOpMode().telemetry.addLine();
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Absolute (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentAbsoluteYawDegrees, 5, 2));
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Relative (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees, 5, 2));
     }
 }

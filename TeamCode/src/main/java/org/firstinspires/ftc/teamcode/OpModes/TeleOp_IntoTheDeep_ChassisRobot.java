@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import static org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase.getCurrentGameTagLibrary;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -44,11 +42,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDee
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionTelemetry;
-import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 
 @TeleOp(name="TeleOp_IntoTheDeep")
-public class TeleOp_IntoTheDeep extends LinearOpMode
+public class TeleOp_IntoTheDeep_ChassisRobot extends LinearOpMode
 {
     @Override
     public void runOpMode()
@@ -60,7 +56,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
         // Create the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_INTOTHEDEEP);
+        Robot.createInstance(this, Robot.RobotType.ROBOT_CHASSIS);
 
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);
@@ -104,10 +100,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
-
-            //TODO does the route/localization show up in FTC Dashboard? If not, how can we make it show up there?
-
-            LoopDriverStationTelemetry();
+            Robot.getInstance().getDriveSubsystem().getMecanumDrive().LoopDriverStationTelemetry(telemetry);
 
             //Reset the timer for the loop timer
             MatchConfig.loopTimer.reset();
@@ -118,10 +111,6 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             //Read all buttons
             gamepadHandling.getDriverGamepad().readButtons();
 
-            //Look for AprilTags
-//            Robot.getInstance().getVisionSubsystem().LookForAprilTags();
-
-
             //Activate End Game Rumble at 87 seconds into TeleOp
             gamepadHandling.endGameRumble();
 
@@ -129,24 +118,5 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);
             MatchConfig.telemetryPacket = new TelemetryPacket();
         }
-    }
-
-    //TODO can we make this telemetry while driving more robust and easy to look at and understand?
-    // -perhaps we should make it only viewable on the driver station / dashboard while pressing a button?
-    private void LoopDriverStationTelemetry() {
-        //Print our color,
-        telemetry.addData("Alliance Color", MatchConfig.finalAllianceColor);
-        telemetry.addLine("TeleOp Time " + JavaUtil.formatNumber(MatchConfig.teleOpTimer.seconds(), 4, 1) + " / 120 seconds");
-        telemetry.addData("Loop Time ", JavaUtil.formatNumber(MatchConfig.loopTimer.milliseconds(), 4, 1));
-
-        Robot.getInstance().getActiveOpMode().telemetry.addLine();
-        telemetry.addData("Current Pose", "X %5.2f, Y %5.2f, heading %5.2f ",
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.x,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.y,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.heading.log());
-
-        Robot.getInstance().getActiveOpMode().telemetry.addLine();
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Absolute (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentAbsoluteYawDegrees, 5, 2));
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Relative (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees, 5, 2));
     }
 }
