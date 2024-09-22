@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.GripperSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSlideSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ShoulderSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.GyroSubsystem;
@@ -29,7 +29,7 @@ public class Robot {
     private static VisionSubsystem visionSubsystem;
     private static IntakeSubsystem intakeSubsystem;
     private static GripperSubsystem gripperSubsystem;
-    private static LiftSlideSubsystem liftSlideSubsystem;
+    private static LiftSubsystem liftSubsystem;
     private static ShoulderSubsystem shoulderSubsystem;
     private static ClimberSubsystem climberSubsystem;
 
@@ -76,7 +76,7 @@ public class Robot {
                 visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
                 intakeSubsystem = new IntakeSubsystem(hardwareMap, "par", "perp");
                 gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
-                liftSlideSubsystem = new LiftSlideSubsystem(hardwareMap, "liftslide");
+                liftSubsystem = new LiftSubsystem(hardwareMap, "liftslide");
                 shoulderSubsystem = new ShoulderSubsystem(hardwareMap, "shoulder");
                 climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
                 break;
@@ -148,7 +148,7 @@ public class Robot {
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
                 gripperSubsystem.init();
-                liftSlideSubsystem.init();
+                liftSubsystem.init();
                 shoulderSubsystem.init();
                 climberSubsystem.init();
                 break;
@@ -175,7 +175,7 @@ public class Robot {
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
                 gripperSubsystem.init();
-                liftSlideSubsystem.init();
+                liftSubsystem.init();
                 shoulderSubsystem.init();
                 break;
             }
@@ -187,7 +187,7 @@ public class Robot {
     public VisionSubsystem getVisionSubsystem()  {return visionSubsystem;}
     public IntakeSubsystem getIntakeSubsystem()  {return intakeSubsystem;}
     public GripperSubsystem getEndEffectorSubsystem()  {return gripperSubsystem;}
-    public LiftSlideSubsystem getLiftSlideSubsystem()  {return liftSlideSubsystem;}
+    public LiftSubsystem getLiftSubsystem()  {return liftSubsystem;}
     public ShoulderSubsystem getShoulderSubsystem()  {return shoulderSubsystem;}
     public LinearOpMode getActiveOpMode()  {return activeOpMode;}
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;};

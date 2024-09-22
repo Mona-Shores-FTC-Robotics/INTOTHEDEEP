@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmActions;
 
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem.LIFT_PARAMS;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -9,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSlideSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
 
 public class MoveLiftSlideAction implements Action {
     //Declare and set a timeout threshold for the command called TIMEOUT_TIME_SECONDS - I suggest 1.5 seconds for now
@@ -18,7 +20,7 @@ public class MoveLiftSlideAction implements Action {
     //Declare currentTicks and targetTicks for use locally
     int targetTicks;
     int currentTicks;
-    private final LiftSlideSubsystem.LiftStates targetState;
+    private final LiftSubsystem.LiftStates targetState;
 
     private boolean hasNotInit = true;
     private boolean finished = false;
@@ -29,7 +31,7 @@ public class MoveLiftSlideAction implements Action {
     //declare a timeout boolean
     boolean timeout;
 
-    public MoveLiftSlideAction(LiftSlideSubsystem.LiftStates inputState) {
+    public MoveLiftSlideAction(LiftSubsystem.LiftStates inputState) {
         targetState = inputState;
         timeoutTimer = new ElapsedTime();
     }
@@ -37,8 +39,8 @@ public class MoveLiftSlideAction implements Action {
         public void init() {
         hasNotInit=false;
         //When the command is first run set the targetState of the subsystem to the targetState and set the target ticks to the target ticks of that state
-            Robot.getInstance().getLiftSlideSubsystem().setTargetState(targetState);
-            Robot.getInstance().getLiftSlideSubsystem().setTargetTicks(Robot.getInstance().getLiftSlideSubsystem().getTargetState().ticks);
+            Robot.getInstance().getLiftSubsystem().setTargetState(targetState);
+            Robot.getInstance().getLiftSubsystem().setTargetTicks(Robot.getInstance().getLiftSubsystem().getTargetState().ticks);
 
             //reset the timer
         timeoutTimer.reset();
@@ -46,38 +48,38 @@ public class MoveLiftSlideAction implements Action {
         timeout=false;
 
         //get the currentTicks and the targetTicks from the subsystem
-        currentTicks = Robot.getInstance().getLiftSlideSubsystem().getCurrentTicks();
-        targetTicks = Robot.getInstance().getLiftSlideSubsystem().getTargetTicks();
+        currentTicks = Robot.getInstance().getLiftSubsystem().getCurrentTicks();
+        targetTicks = Robot.getInstance().getLiftSubsystem().getTargetTicks();
 
         //Check if targetTicks is greater than MAX_TARGET_TICKS and if it is set the target to the max
         //This makes sure that if we accidentally put a very large number as our target ticks we don't break the robot
-        if (targetTicks> Robot.getInstance().getLiftSlideSubsystem().MAX_TARGET_TICKS)
+        if (targetTicks> LIFT_PARAMS.MAX_TARGET_TICKS)
         {
-            targetTicks=Robot.getInstance().getLiftSlideSubsystem().MAX_TARGET_TICKS;
+            targetTicks= LIFT_PARAMS.MAX_TARGET_TICKS;
         }
 
         //Check if targetTicks is lower than MIN_TARGET_TICKS and if it is set the target to the min
         //This makes sure that if we accidentally put a very low negative number as our target ticks we don't break the robot
-        if (targetTicks < Robot.getInstance().getLiftSlideSubsystem().MIN_TARGET_TICKS)
+        if (targetTicks < LIFT_PARAMS.MIN_TARGET_TICKS)
         {
-            targetTicks=Robot.getInstance().getLiftSlideSubsystem().MIN_TARGET_TICKS;
+            targetTicks= LIFT_PARAMS.MIN_TARGET_TICKS;
         }
 
         //if the target ticks are higher than the current ticks, then use EXTENSION_POWER
         if (targetTicks > currentTicks) {
-            Robot.getInstance().getLiftSlideSubsystem().liftSlide.setPower(LiftSlideSubsystem.liftSlideParameters.EXTENSION_LIFT_POWER);
+            Robot.getInstance().getLiftSubsystem().lift.setPower(LIFT_PARAMS.EXTENSION_LIFT_POWER);
         }
 
         //if the target ticks are lower than the current ticks, then use RETRACTION_POWER
         if (targetTicks < currentTicks) {
-            Robot.getInstance().getLiftSlideSubsystem().liftSlide.setPower(LiftSlideSubsystem.liftSlideParameters.RETRACTION_LIFT_POWER);
+            Robot.getInstance().getLiftSubsystem().lift.setPower(LIFT_PARAMS.RETRACTION_LIFT_POWER);
         }
 
         //Set the target position using the targetTicks
-            Robot.getInstance().getLiftSlideSubsystem().liftSlide.setTargetPosition(targetTicks);
+            Robot.getInstance().getLiftSubsystem().lift.setTargetPosition(targetTicks);
 
         //set the lift motor to RUN TO POSITION - this might not be necessary
-            Robot.getInstance().getLiftSlideSubsystem().liftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Robot.getInstance().getLiftSubsystem().lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
@@ -100,8 +102,8 @@ public class MoveLiftSlideAction implements Action {
     public boolean isFinished() {
         // Compare the currentTicks to the targetTicks to a threshold (LIFT_HEIGHT_TICK_THRESHOLD) and save as the boolean
         // For example, say our target is 2000 ticks and we are at 1997 - we would want that to count as being close enough
-        finished = Math.abs(Robot.getInstance().getLiftSlideSubsystem().getCurrentTicks() -
-                Robot.getInstance().getLiftSlideSubsystem().getTargetTicks()) <  LiftSlideSubsystem.liftSlideParameters.LIFT_HEIGHT_TICK_THRESHOLD;
+        finished = Math.abs(Robot.getInstance().getLiftSubsystem().getCurrentTicks() -
+                Robot.getInstance().getLiftSubsystem().getTargetTicks()) <  LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD;
 
         //write an if statement to change the currentState to the targetState and return true if the finished boolean is true
         if (finished){
@@ -124,10 +126,10 @@ public class MoveLiftSlideAction implements Action {
         if (!timeout)
         {
             //Report the command finished
-            p.addLine("LiftSlide Move COMPLETE From " + Robot.getInstance().getLiftSlideSubsystem().getCurrentState() + " to " +
-                    Robot.getInstance().getLiftSlideSubsystem().getTargetState() + " in " + String.format("%.2f", timeoutTimer.seconds()) + " seconds");
+            p.addLine("LiftSlide Move COMPLETE From " + Robot.getInstance().getLiftSubsystem().getCurrentState() + " to " +
+                    Robot.getInstance().getLiftSubsystem().getTargetState() + " in " + String.format("%.2f", timeoutTimer.seconds()) + " seconds");
             //change the current state to the target state
-            Robot.getInstance().getLiftSlideSubsystem().setCurrentState(Robot.getInstance().getLiftSlideSubsystem().getTargetState());
+            Robot.getInstance().getLiftSubsystem().setCurrentState(Robot.getInstance().getLiftSubsystem().getTargetState());
         }
         if (timeout){
             //Put the target state in the packet

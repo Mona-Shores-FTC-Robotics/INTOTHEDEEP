@@ -14,7 +14,7 @@ import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.GripperSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSlideSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmCommands.ActuateGripperCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmCommands.MoveLiftSlideCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmCommands.RotateShoulderCommand;
@@ -179,19 +179,19 @@ public class CenterStageOperatorBindings {
 
         GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
         ShoulderSubsystem shoulderSubsystem = Robot.getInstance().getShoulderSubsystem();
-        LiftSlideSubsystem liftSlideSubsystem = Robot.getInstance().getLiftSlideSubsystem();
+        LiftSubsystem liftSubsystem = Robot.getInstance().getLiftSubsystem();
 
         private Command ReadyToScorePixelCommand() {
 
             GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
             ShoulderSubsystem shoulderSubsystem = Robot.getInstance().getShoulderSubsystem();
-            LiftSlideSubsystem liftSlideSubsystem = Robot.getInstance().getLiftSlideSubsystem();
+            LiftSubsystem liftSubsystem = Robot.getInstance().getLiftSubsystem();
             return new ParallelCommandGroup(
                     new SequentialCommandGroup(
                             new ActuateGripperCommand(gripperSubsystem, GripperSubsystem.GripperStates.CLOSED),
-                            new MoveLiftSlideCommand(liftSlideSubsystem, LiftSlideSubsystem.LiftStates.SAFE),
+                            new MoveLiftSlideCommand(liftSubsystem, LiftSubsystem.LiftStates.SAFE),
                             new RotateShoulderCommand(shoulderSubsystem, ShoulderSubsystem.ShoulderStates.BACKDROP),
-                            new MoveLiftSlideCommand(liftSlideSubsystem, Robot.getInstance().getVisionSubsystem().getDeliverHeight())
+                            new MoveLiftSlideCommand(liftSubsystem, Robot.getInstance().getVisionSubsystem().getDeliverHeight())
                     ));
         }
 
@@ -201,8 +201,8 @@ public class CenterStageOperatorBindings {
                                     GripperSubsystem.GripperStates.OPEN),
                             new WaitCommand(325),
                             new ParallelCommandGroup(
-                                    new MoveLiftSlideCommand(liftSlideSubsystem,
-                                            LiftSlideSubsystem.LiftStates.SAFE),
+                                    new MoveLiftSlideCommand(liftSubsystem,
+                                            LiftSubsystem.LiftStates.SAFE),
                                     new ActuateGripperCommand(gripperSubsystem,
                                             GripperSubsystem.GripperStates.CLOSED),
                                     new RotateShoulderCommand(shoulderSubsystem,
@@ -212,8 +212,8 @@ public class CenterStageOperatorBindings {
                             new RotateShoulderCommand(shoulderSubsystem,
                                     ShoulderSubsystem.ShoulderStates.INTAKE),
                             new WaitCommand(250),
-                            new MoveLiftSlideCommand(liftSlideSubsystem,
-                                    LiftSlideSubsystem.LiftStates.HOME)
+                            new MoveLiftSlideCommand(liftSubsystem,
+                                    LiftSubsystem.LiftStates.HOME)
                     );
         }
     }

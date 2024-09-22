@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems;
 
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem.LIFT_PARAMS;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -7,22 +9,20 @@ import com.example.sharedconstants.RobotDriveAdapter;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.GripperSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSlideSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmActions.ActuateEndEffectorAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmActions.MoveLiftSlideAction;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmActions.MoveLiftSlideActionFinishImmediate;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmCommands.MoveLiftSlideCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
 
 public class RealRobotAdapter implements RobotDriveAdapter {
     private final MecanumDriveMona drive;
     private final GripperSubsystem gripperSubsystem;
-    private final LiftSlideSubsystem liftSubystem;
+    private final LiftSubsystem liftSubystem;
 
     public RealRobotAdapter() {
         drive = Robot.getInstance().getDriveSubsystem().mecanumDrive;
         gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
-        liftSubystem = Robot.getInstance().getLiftSlideSubsystem();
+        liftSubystem = Robot.getInstance().getLiftSubsystem();
     }
 
     @Override
@@ -46,11 +46,10 @@ public class RealRobotAdapter implements RobotDriveAdapter {
 
     @Override
     public Action createLiftToHighChamberAction() {
-        return new MoveLiftSlideAction(LiftSlideSubsystem.LiftStates.HIGH);
+        return new MoveLiftSlideAction(LiftSubsystem.LiftStates.HIGH_CHAMBER);
     }
 
     @Override
     public Action createLiftToHomePosistionAction() {
-        return null;
-    }
+        return new MoveLiftSlideAction(LiftSubsystem.LiftStates.HOME);}
 }
