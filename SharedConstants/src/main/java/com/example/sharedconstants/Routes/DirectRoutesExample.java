@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.VelConstraint;
-import com.example.sharedconstants.RobotDriveAdapter;
+import com.example.sharedconstants.RobotAdapter;
 
 import java.util.Arrays;
 
@@ -18,8 +18,8 @@ public class DirectRoutesExample extends Routes {
     public Action blueAudienceBotRoute;
     public Action blueBackstageBotRoute;
 
-    public DirectRoutesExample(RobotDriveAdapter roadRunnerDrive) {
-        super(roadRunnerDrive);
+    public DirectRoutesExample(RobotAdapter robotAdapter) {
+        super(robotAdapter);
     }
 
     public void BuildRoutes() {
@@ -30,7 +30,7 @@ public class DirectRoutesExample extends Routes {
         ));
 
         /** RED AUDIENCE **/
-        redAudienceBotRoute = roadRunnerDrive.actionBuilder(RED_AUDIENCE_START_POSE)
+        redAudienceBotRoute = robotAdapter.actionBuilder(RED_AUDIENCE_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
@@ -63,7 +63,7 @@ public class DirectRoutesExample extends Routes {
                 .build();
 
         /** BLUE BACKSTAGE - THIS SHOULD MATCH THE RED AUDIENCE PATH AND START LOCATION **/
-        blueBackstageBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_AUDIENCE_START_POSE)
+        blueBackstageBotRoute = robotAdapter.mirroredActionBuilder(RED_AUDIENCE_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
@@ -96,7 +96,7 @@ public class DirectRoutesExample extends Routes {
                 .build();
 
         /** RED BACKSTAGE **/
-        redBackstageBotRoute = roadRunnerDrive.actionBuilder(RED_BACKSTAGE_START_POSE)
+        redBackstageBotRoute = robotAdapter.actionBuilder(RED_BACKSTAGE_START_POSE)
                 .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
                 .waitSeconds(2)
                 .setReversed(true)
@@ -127,7 +127,7 @@ public class DirectRoutesExample extends Routes {
                 .build();
 
         /** BLUE AUDIENCE THIS SHOULD MATCH THE RED BACKSTAGE PATH AND START LOCATION **/
-        blueAudienceBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
+        blueAudienceBotRoute = robotAdapter.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
                 .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
                 .waitSeconds(2)
                 .setReversed(true)

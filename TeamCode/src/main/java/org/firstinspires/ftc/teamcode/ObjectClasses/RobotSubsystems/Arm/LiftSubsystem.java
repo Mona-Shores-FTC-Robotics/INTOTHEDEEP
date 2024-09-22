@@ -36,6 +36,8 @@ public class LiftSubsystem extends SubsystemBase {
         public int LOW_BASKET_TICKS=1500;
         public int HIGH_CHAMBER_TICKS=2000;
         public int LOW_CHAMBER_TICKS=1400;
+
+        public int HANG_TICK_DIFFERENCE = 200;
     }
 
     // Motor and state variables
@@ -95,13 +97,14 @@ public class LiftSubsystem extends SubsystemBase {
         LiftStates.LOW_BASKET.setLiftHeightTicks(LIFT_PARAMS.LOW_BASKET_TICKS);
         LiftStates.HIGH_CHAMBER.setLiftHeightTicks(LIFT_PARAMS.HIGH_CHAMBER_TICKS);
         LiftStates.LOW_CHAMBER.setLiftHeightTicks(LIFT_PARAMS.LOW_CHAMBER_TICKS);
+        LiftStates.HANG_HIGH_CHAMBER.setLiftHeightTicks(LIFT_PARAMS.HIGH_CHAMBER_TICKS- LIFT_PARAMS.HANG_TICK_DIFFERENCE);
+        LiftStates.HANG_LOW_CHAMBER.setLiftHeightTicks(LIFT_PARAMS.LOW_CHAMBER_TICKS- LIFT_PARAMS.HANG_TICK_DIFFERENCE);
         LiftStates.MAX.setLiftHeightTicks(LIFT_PARAMS.MAX_HEIGHT_TICKS);
 
     }
 
-
     public enum LiftStates {
-        ZERO, SAFE, MAX, HIGH_BASKET, LOW_BASKET, HIGH_CHAMBER, LOW_CHAMBER, HOME, MANUAL;
+        ZERO, SAFE, MAX, HIGH_BASKET, LOW_BASKET, HIGH_CHAMBER, LOW_CHAMBER, HOME, HANG_HIGH_CHAMBER, HANG_LOW_CHAMBER, MANUAL;
         public int ticks;
 
         static {
@@ -111,7 +114,9 @@ public class LiftSubsystem extends SubsystemBase {
             HIGH_BASKET.ticks = LIFT_PARAMS.HIGH_BASKET_TICKS;
             LOW_BASKET.ticks = LIFT_PARAMS.LOW_BASKET_TICKS;
             HIGH_CHAMBER.ticks = LIFT_PARAMS.HIGH_CHAMBER_TICKS;
+            HANG_HIGH_CHAMBER.ticks = LIFT_PARAMS.HIGH_CHAMBER_TICKS-LIFT_PARAMS.HANG_TICK_DIFFERENCE;
             LOW_CHAMBER.ticks = LIFT_PARAMS.LOW_CHAMBER_TICKS;
+            HANG_LOW_CHAMBER.ticks = LIFT_PARAMS.LOW_CHAMBER_TICKS-LIFT_PARAMS.HANG_TICK_DIFFERENCE;
             HOME.ticks = LIFT_PARAMS.HOME_HEIGHT_TICKS;
         }
         public void setLiftHeightTicks(int t){

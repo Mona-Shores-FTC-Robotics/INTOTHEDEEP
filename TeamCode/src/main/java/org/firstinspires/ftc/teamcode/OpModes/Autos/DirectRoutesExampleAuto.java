@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.RealRobotAdapter;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 
 @Autonomous(name = "Direct Routes Example Auto")
 public class DirectRoutesExampleAuto extends LinearOpMode {

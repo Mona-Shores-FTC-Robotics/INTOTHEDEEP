@@ -2,13 +2,13 @@ package com.example.meepmeeptesting;
 
 import static com.example.meepmeeptesting.MeepMeepRobots.*;
 
+import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.BasicRoute;
 import com.example.sharedconstants.Routes.PreloadRoute;
 import com.example.sharedconstants.Routes.RRPathGenExample;
 import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
 import com.example.sharedconstants.Routes.Routes;
 import com.example.sharedconstants.Routes.DirectRoutesExample;
-import com.example.sharedconstants.RobotDriveAdapter;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DriveShim;
 
@@ -30,7 +30,7 @@ public class MeepMeepTesting {
     //TODO Naming convention
     // discuss how to name our OpModes, does this make sense: AUD_2_1_BACK_0_4
 
-    public static RoutesToRun routesToRunSelection = RoutesToRun.A1Spec_3Samp_B4Spec_0Samp; // here
+    public static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD; // here
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
@@ -53,21 +53,21 @@ public class MeepMeepTesting {
         DriveShim driveShim = MeepMeepRobots.roadRunnerBot.getDrive();
 
         // Use the adapter
-        RobotDriveAdapter robotDriveAdapter = new MeepMeepDriveAdapter(driveShim);
+        RobotAdapter robotAdapter = new MeepMeepDriveAdapter(driveShim);
 
         // Create a Routes instance based on the selected route
         Routes routes;
 
         if (routesToRunSelection == RoutesToRun.A1Spec_3Samp_B4Spec_0Samp) { // here
-            routes = new DirectRoutesExample(robotDriveAdapter);
+            routes = new DirectRoutesExample(robotAdapter);
         } else if (routesToRunSelection == RoutesToRun.RRPATHGEN){
-            routes = new RRPathGenExample(robotDriveAdapter);
+            routes = new RRPathGenExample(robotAdapter);
         } else if (routesToRunSelection == RoutesToRun.BASIC_ROUTE) {
-            routes = new BasicRoute(robotDriveAdapter);
+            routes = new BasicRoute(robotAdapter);
         } else if (routesToRunSelection == RoutesToRun.PRELOAD){
-            routes = new PreloadRoute(robotDriveAdapter);
+            routes = new PreloadRoute(robotAdapter);
         } else { //if(routesToRunSelection == RoutesToRun.FUNCTIONAL_ROUTES_EXAMPLE){
-            routes = new FunctionalRoutesExample(robotDriveAdapter);
+            routes = new FunctionalRoutesExample(robotAdapter);
         }
 
         // Build the routes

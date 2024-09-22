@@ -1,20 +1,47 @@
 package com.example.sharedconstants.Routes;
 
+import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
 import static com.example.sharedconstants.FieldConstants.*;
 
+import com.acmerobotics.roadrunner.AngularVelConstraint;
+import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.RobotDriveAdapter;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.VelConstraint;
+import com.example.sharedconstants.RobotAdapter;
 
-import java.lang.reflect.Field;
-
+import java.util.Arrays;
 
 public abstract class Routes {
-    protected RobotDriveAdapter roadRunnerDrive;
 
-    public Routes(RobotDriveAdapter roadRunnerDrive) {
-        this.roadRunnerDrive = roadRunnerDrive;
+    // Velocity and acceleration overrides
+    public static final double SLOW_VELOCITY_OVERRIDE = 10;
+    public static final double SLOW_ACCELERATION_OVERRIDE = 15;
+    public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(45);
+
+    public static final double NORMAL_VELOCITY_OVERRIDE = 40;
+    public static final double NORMAL_ACCELERATION_OVERRIDE = 40;
+    public static final double NORMAL_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
+
+    public static final double FAST_VELOCITY_OVERRIDE = 60;
+    public static final double FAST_ACCELERATION_OVERRIDE = 60;
+    public static final double FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(120);
+
+    // Shared constraints for all routes
+    public static VelConstraint slowVelocity;
+    public static AccelConstraint slowAcceleration;
+    public static VelConstraint normalVelocity;
+    public static AccelConstraint normalAcceleration;
+    public static VelConstraint fastVelocity;
+    public static AccelConstraint fastAcceleration;
+
+    protected RobotAdapter robotAdapter;
+
+    public Routes(RobotAdapter robotAdapter) {
+        this.robotAdapter = robotAdapter;
+        setupConstraints();
     }
 
     public abstract void BuildRoutes();
@@ -93,5 +120,25 @@ public abstract class Routes {
 
     public Action getRedBackstageBotRoute() {
         return redBackstageBotRoute;
+    }
+
+    private void setupConstraints() {
+        slowVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(SLOW_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(SLOW_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        slowAcceleration = new ProfileAccelConstraint(-SLOW_ACCELERATION_OVERRIDE, SLOW_ACCELERATION_OVERRIDE);
+
+        normalVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(NORMAL_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(NORMAL_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        normalAcceleration = new ProfileAccelConstraint(-NORMAL_ACCELERATION_OVERRIDE, NORMAL_ACCELERATION_OVERRIDE);
+
+        fastVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(FAST_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(FAST_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        fastAcceleration = new ProfileAccelConstraint(-FAST_ACCELERATION_OVERRIDE, FAST_ACCELERATION_OVERRIDE);
     }
 }

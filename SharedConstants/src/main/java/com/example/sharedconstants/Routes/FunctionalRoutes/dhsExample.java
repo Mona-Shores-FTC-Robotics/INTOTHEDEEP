@@ -18,7 +18,7 @@ import static com.example.sharedconstants.FieldConstants.SPIKE_NEUTRAL_AUDIENCE_
 import static com.example.sharedconstants.FieldConstants.TANGENT_315_DEGREES;
 
 import com.acmerobotics.roadrunner.Action;
-import com.example.sharedconstants.RobotDriveAdapter;
+import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.Routes;
 
 public class dhsExample extends Routes {
@@ -28,15 +28,13 @@ public class dhsExample extends Routes {
     public Action blueAudienceBotRoute;
     public Action blueBackstageBotRoute;
 
-    public dhsExample(RobotDriveAdapter roadRunnerDrive) {
+    public dhsExample(RobotAdapter roadRunnerDrive) {
         super(roadRunnerDrive);
     }
 
-
-
     public void BuildRoutes() {
         /** RED AUDIENCE **/
-        redAudienceBotRoute = roadRunnerDrive.actionBuilder(RED_AUDIENCE_START_POSE)
+        redAudienceBotRoute = robotAdapter.actionBuilder(RED_AUDIENCE_START_POSE)
                 .splineToLinearHeading(SPIKE_NEUTRAL_AUDIENCE_1, FACE_TOWARD_RED)
                 .waitSeconds(2)
                 .splineToLinearHeading(NET_ZONE_RED, TANGENT_315_DEGREES)
@@ -53,7 +51,7 @@ public class dhsExample extends Routes {
                 .build();
 
         /** RED BACKSTAGE **/
-        redBackstageBotRoute = roadRunnerDrive.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
+        redBackstageBotRoute = robotAdapter.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
                 .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
@@ -73,11 +71,11 @@ public class dhsExample extends Routes {
                 .build();
 
         /** BLUE AUDIENCE **/
-        blueAudienceBotRoute = roadRunnerDrive.actionBuilder(BLUE_AUDIENCE_START_POSE)
+        blueAudienceBotRoute = robotAdapter.actionBuilder(BLUE_AUDIENCE_START_POSE)
                 .build();
 
         /** BLUE BACKSTAGE **/
-        blueBackstageBotRoute = roadRunnerDrive.actionBuilder(BLUE_BACKSTAGE_START_POSE)
+        blueBackstageBotRoute = robotAdapter.actionBuilder(BLUE_BACKSTAGE_START_POSE)
                 .build();
     }
 

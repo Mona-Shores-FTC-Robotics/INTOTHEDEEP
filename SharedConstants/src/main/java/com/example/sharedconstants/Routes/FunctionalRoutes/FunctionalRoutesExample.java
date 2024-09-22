@@ -5,11 +5,11 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.*;
 import static com.example.sharedconstants.FieldConstants.SideOfField.*;
 
 import com.acmerobotics.roadrunner.Action;
-import com.example.sharedconstants.RobotDriveAdapter;
+import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.Routes;
 
 public class FunctionalRoutesExample extends Routes {
-    public FunctionalRoutesExample(RobotDriveAdapter roadRunnerDrive) {
+    public FunctionalRoutesExample(RobotAdapter roadRunnerDrive) {
         super(roadRunnerDrive);
     }
 
@@ -23,25 +23,25 @@ public class FunctionalRoutesExample extends Routes {
 
         /** RED AUDIENCE ROUTE **/
         PosesForFunctionalRoutesExample redAudiencePoses = new PosesForFunctionalRoutesExample(RED, AUDIENCE);
-        redAudienceBotRoute = roadRunnerDrive.actionBuilder(redAudiencePoses.startingPose)
+        redAudienceBotRoute = robotAdapter.actionBuilder(redAudiencePoses.startingPose)
                 .stopAndAdd(new RouteBuilder().ExampleRoute(redAudiencePoses))
                 .build();
 
         /** RED BACKSTAGE ROUTE **/
         PosesForFunctionalRoutesExample redBackstagePoses = new PosesForFunctionalRoutesExample(RED, BACKSTAGE);
-        redBackstageBotRoute = roadRunnerDrive.actionBuilder(redBackstagePoses.startingPose)
+        redBackstageBotRoute = robotAdapter.actionBuilder(redBackstagePoses.startingPose)
                 .stopAndAdd(new RouteBuilder().ExampleRoute(redBackstagePoses))
                 .build();
 
         /** BLUE AUDIENCE ROUTE **/
         PosesForFunctionalRoutesExample blueAudiencePoses = new PosesForFunctionalRoutesExample(BLUE, AUDIENCE);
-        blueAudienceBotRoute = roadRunnerDrive.actionBuilder(blueAudiencePoses.startingPose)
+        blueAudienceBotRoute = robotAdapter.actionBuilder(blueAudiencePoses.startingPose)
                 .stopAndAdd(new RouteBuilder().ExampleRoute(blueAudiencePoses))
                 .build();
 
         /** BLUE BACKSTAGE ROUTE **/
         PosesForFunctionalRoutesExample blueBackstagePoses = new PosesForFunctionalRoutesExample(BLUE, BACKSTAGE);
-        blueBackstageBotRoute = roadRunnerDrive.actionBuilder(blueBackstagePoses.startingPose)
+        blueBackstageBotRoute = robotAdapter.actionBuilder(blueBackstagePoses.startingPose)
                 .stopAndAdd(new RouteBuilder().ExampleRoute(blueBackstagePoses))
                 .build();
     }
@@ -69,20 +69,20 @@ public class FunctionalRoutesExample extends Routes {
     public class RouteBuilder {
 
         public Action ExampleRoute(PosesForFunctionalRoutesExample posesForRoute) {
-            return roadRunnerDrive.actionBuilder(posesForRoute.startingPose)
+            return robotAdapter.actionBuilder(posesForRoute.startingPose)
                     .stopAndAdd(new RouteBuilder().FirstWaypoint(posesForRoute))
                     .stopAndAdd(new RouteBuilder().Park(posesForRoute))
                     .build();
         }
 
         private Action FirstWaypoint(PosesForFunctionalRoutesExample posesForRoute) {
-            return roadRunnerDrive.actionBuilder(posesForRoute.startingPose)
+            return robotAdapter.actionBuilder(posesForRoute.startingPose)
                     .splineToLinearHeading(posesForRoute.waypointPose, posesForRoute.waypointPose.heading.log())
                     .build();
         }
 
         private Action Park(PosesForFunctionalRoutesExample posesForRoute) {
-            return roadRunnerDrive.actionBuilder(posesForRoute.waypointPose)
+            return robotAdapter.actionBuilder(posesForRoute.waypointPose)
                     .strafeTo(PoseToVector(posesForRoute.parkPose))
                     .turnTo(posesForRoute.parkOrientation)
                     .build();

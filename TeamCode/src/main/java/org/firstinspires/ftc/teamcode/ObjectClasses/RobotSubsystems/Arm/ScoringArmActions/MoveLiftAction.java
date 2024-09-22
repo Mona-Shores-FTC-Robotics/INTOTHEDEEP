@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
 
-public class MoveLiftSlideAction implements Action {
+public class MoveLiftAction implements Action {
     //Declare and set a timeout threshold for the command called TIMEOUT_TIME_SECONDS - I suggest 1.5 seconds for now
     final double TIMEOUT_TIME_SECONDS = 3;
 
@@ -31,21 +31,22 @@ public class MoveLiftSlideAction implements Action {
     //declare a timeout boolean
     boolean timeout;
 
-    public MoveLiftSlideAction(LiftSubsystem.LiftStates inputState) {
+    public MoveLiftAction(LiftSubsystem.LiftStates inputState) {
         targetState = inputState;
         timeoutTimer = new ElapsedTime();
     }
 
         public void init() {
-        hasNotInit=false;
-        //When the command is first run set the targetState of the subsystem to the targetState and set the target ticks to the target ticks of that state
+            hasNotInit=false;
+            //When the command is first run set the targetState of the subsystem to the targetState and set the target ticks to the target ticks of that state
+
             Robot.getInstance().getLiftSubsystem().setTargetState(targetState);
             Robot.getInstance().getLiftSubsystem().setTargetTicks(Robot.getInstance().getLiftSubsystem().getTargetState().ticks);
 
             //reset the timer
-        timeoutTimer.reset();
-        //set the timeout to false since we have not timed out yet
-        timeout=false;
+            timeoutTimer.reset();
+            //set the timeout to false since we have not timed out yet
+            timeout=false;
 
         //get the currentTicks and the targetTicks from the subsystem
         currentTicks = Robot.getInstance().getLiftSubsystem().getCurrentTicks();

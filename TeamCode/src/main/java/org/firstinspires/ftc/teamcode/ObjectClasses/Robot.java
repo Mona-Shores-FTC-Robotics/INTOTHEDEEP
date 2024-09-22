@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import com.example.sharedconstants.RobotDriveAdapter;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -32,10 +30,6 @@ public class Robot {
     private static LiftSubsystem liftSubsystem;
     private static ShoulderSubsystem shoulderSubsystem;
     private static ClimberSubsystem climberSubsystem;
-
-    private static boolean hasInit = false;
-
-    private RobotDriveAdapter robotDriveAdapter;
 
     /* Constructor */
     private Robot(LinearOpMode opMode, RobotType rType) {
