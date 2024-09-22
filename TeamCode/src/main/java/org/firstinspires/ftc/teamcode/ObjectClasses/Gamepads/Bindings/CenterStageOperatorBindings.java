@@ -188,14 +188,10 @@ public class CenterStageOperatorBindings {
             LiftSlideSubsystem liftSlideSubsystem = Robot.getInstance().getLiftSlideSubsystem();
             return new ParallelCommandGroup(
                     new SequentialCommandGroup(
-                            new ActuateGripperCommand(gripperSubsystem,
-                                    GripperSubsystem.GripperStates.CLOSED),
-                            new MoveLiftSlideCommand(liftSlideSubsystem,
-                                    LiftSlideSubsystem.LiftStates.SAFE),
-                            new RotateShoulderCommand(shoulderSubsystem,
-                                    ShoulderSubsystem.ShoulderStates.BACKDROP),
-                            new MoveLiftSlideCommand(liftSlideSubsystem,
-                                    Robot.getInstance().getVisionSubsystem().getDeliverHeight())
+                            new ActuateGripperCommand(gripperSubsystem, GripperSubsystem.GripperStates.CLOSED),
+                            new MoveLiftSlideCommand(liftSlideSubsystem, LiftSlideSubsystem.LiftStates.SAFE),
+                            new RotateShoulderCommand(shoulderSubsystem, ShoulderSubsystem.ShoulderStates.BACKDROP),
+                            new MoveLiftSlideCommand(liftSlideSubsystem, Robot.getInstance().getVisionSubsystem().getDeliverHeight())
                     ));
         }
 

@@ -71,6 +71,7 @@ public class Robot {
             }
 
             case ROBOT_CENTERSTAGE: {
+                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
                 gyroSubsystem = new GyroSubsystem(hardwareMap, "imu");
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
                 intakeSubsystem = new IntakeSubsystem(hardwareMap, "par", "perp");
@@ -142,6 +143,7 @@ public class Robot {
             }
 
             case ROBOT_CENTERSTAGE: {
+                visionSubsystem.init();
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
@@ -168,6 +170,7 @@ public class Robot {
                 break;
 
             case ROBOT_CENTERSTAGE: {
+                visionSubsystem.init();
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();

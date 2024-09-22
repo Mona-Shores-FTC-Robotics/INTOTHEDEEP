@@ -124,7 +124,7 @@ public class LiftSlideSubsystem extends SubsystemBase {
 
         MatchConfig.telemetryPacket.put("LiftSlide State", currentState);
         MatchConfig.telemetryPacket.put("LiftSlide Ticks", currentTicks);
-        MatchConfig.telemetryPacket.put("LiftSlide Deliver Height", Robot.getInstance().getVisionSubsystem().getDeliverHeight());
+//        MatchConfig.telemetryPacket.put("LiftSlide Deliver Height", Robot.getInstance().getVisionSubsystem().getDeliverHeight());
 
         if (targetState!=currentState) {
             MatchConfig.telemetryPacket.put("LiftSlide Target State", targetState);
