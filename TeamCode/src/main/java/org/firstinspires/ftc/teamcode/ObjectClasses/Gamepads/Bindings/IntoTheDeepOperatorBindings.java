@@ -221,7 +221,7 @@ public class IntoTheDeepOperatorBindings {
                             new RotateShoulderCommand(shoulderSubsystem,
                                     ShoulderSubsystem.ShoulderStates.BACKDROP),
                             new MoveLiftSlideCommand(liftSubsystem,
-                                    Robot.getInstance().getVisionSubsystem().getDeliverHeight())
+                                    Robot.getInstance().getLiftSubsystem().getDeliverHeight())
                     ));
         }
 

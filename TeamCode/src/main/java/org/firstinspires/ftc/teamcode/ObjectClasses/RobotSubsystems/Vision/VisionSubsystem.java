@@ -30,7 +30,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionProcessors.InitVisionProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -172,7 +171,6 @@ public final class VisionSubsystem extends SubsystemBase {
     private DeliverLocation deliverLocationBlue = DeliverLocation.CENTER;
     private DeliverLocation deliverLocationRed = DeliverLocation.CENTER;
 
-    public LiftSubsystem.LiftStates currentDeliverHeight = LiftSubsystem.LiftStates.LOW_CHAMBER;
 
     public boolean blueBackdropAprilTagFoundRecently = false;
     public boolean redBackdropAprilTagFoundRecently = false;
@@ -661,13 +659,7 @@ public final class VisionSubsystem extends SubsystemBase {
         deliverLocationBlue = location;
     }
 
-    public void setDeliverHeight(LiftSubsystem.LiftStates targetLiftState) {
-        currentDeliverHeight = targetLiftState;
-    }
 
-    public LiftSubsystem.LiftStates getDeliverHeight() {
-        return currentDeliverHeight;
-    }
 
 
     public DeliverLocation getDeliverLocationRed() {

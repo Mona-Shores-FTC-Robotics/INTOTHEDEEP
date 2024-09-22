@@ -48,10 +48,20 @@ public class LiftSubsystem extends SubsystemBase {
     private int targetTicks;
     private double power;
 
+    public LiftSubsystem.LiftStates currentDeliverHeight;
+
 
     // Constructor to initialize the lift motor
     public LiftSubsystem(final HardwareMap hMap, final String name) {
         lift = hMap.get(DcMotorEx.class, name);
+    }
+
+    public void setDeliverHeight(LiftSubsystem.LiftStates targetLiftState) {
+        currentDeliverHeight = targetLiftState;
+    }
+
+    public LiftSubsystem.LiftStates getDeliverHeight() {
+        return currentDeliverHeight;
     }
 
     public void init (){
@@ -70,6 +80,8 @@ public class LiftSubsystem extends SubsystemBase {
         currentState = LiftStates.ZERO;
         lift.setTargetPosition(currentState.ticks);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        currentDeliverHeight = LiftSubsystem.LiftStates.LOW_CHAMBER;
     }
 
     public void periodic(){

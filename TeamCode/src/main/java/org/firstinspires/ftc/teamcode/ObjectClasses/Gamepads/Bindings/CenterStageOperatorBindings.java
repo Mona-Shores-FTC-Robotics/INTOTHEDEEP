@@ -191,8 +191,8 @@ public class CenterStageOperatorBindings {
                             new ActuateGripperCommand(gripperSubsystem, GripperSubsystem.GripperStates.CLOSED),
                             new MoveLiftSlideCommand(liftSubsystem, LiftSubsystem.LiftStates.SAFE),
                             new RotateShoulderCommand(shoulderSubsystem, ShoulderSubsystem.ShoulderStates.BACKDROP),
-                            new MoveLiftSlideCommand(liftSubsystem, Robot.getInstance().getVisionSubsystem().getDeliverHeight())
-                    ));
+                            new MoveLiftSlideCommand(liftSubsystem, Robot.getInstance().getLiftSubsystem().getDeliverHeight()))
+                    );
         }
 
         private Command ReleasePixels() {
