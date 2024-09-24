@@ -40,6 +40,7 @@ public class RealRobotAdapter implements RobotAdapter {
 
         public Action createAction(ActionType actionType) {
             switch (actionType) {
+                case SECURE_PRELOAD_SPECIMEN:
                 case PICKUP_SPECIMEN:
                 case PICKUP_SAMPLE:
                     return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.CLOSED);

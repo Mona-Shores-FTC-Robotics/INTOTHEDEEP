@@ -19,7 +19,10 @@ public interface RobotAdapter {
         LIFT_TO_LOW_CHAMBER,
         LIFT_TO_HOME_POSITION,
         LIFT_TO_HIGH_BASKET,
-        LIFT_TO_LOW_BASKET
+        LIFT_TO_LOW_BASKET,
+        LEVEL_1_ASCENT,
+        LEVEL_2_ASCENT,
+        LEVEL_3_ASCENT
     }
 
     // Generalized method to get an Action based on a provided action type
