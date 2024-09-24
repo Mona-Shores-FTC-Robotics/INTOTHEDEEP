@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Drive
 
 import static java.lang.Math.abs;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.ProfileParams;
@@ -20,7 +18,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 public class MecanumDriveMona extends MecanumDrive  {
 
-    private MonaParams MONA_PARAMS;
+    private MonaTeleopParams MONA_PARAMS;
 
     private double drive, strafe, turn;
     private double last_drive=0, last_strafe=0, last_turn=0;
@@ -30,6 +28,7 @@ public class MecanumDriveMona extends MecanumDrive  {
     public MecanumDriveMona(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
 
+        //TODO This should override the Roadrunner parameters depending on the robot type set in the OpMode.
         switch (Robot.getInstance().robotType) {
             //Override the Roadrunner parameters for the chassis bot and the centerstage robot
             //The normal IntoTheDeep robot parameters should be stored in the MecancumDrive class
@@ -40,13 +39,13 @@ public class MecanumDriveMona extends MecanumDrive  {
                 PARAMS = new CenterStageParams();
                 break;
             default:
-                PARAMS = new MonaParams();
+                PARAMS = new MonaTeleopParams();
                 break;
         }
     }
 
     // Extend Params to include Mona-specific speed parameters
-    public static class MonaParams extends MecanumDrive.Params {
+    public static class MonaTeleopParams extends MecanumDrive.Params {
         public double MAX_MOTOR_SPEED_RPS = 435.0 / 60.0;
         public double TICKS_PER_REV = 384.5;
         public double MAX_SPEED_TICK_PER_SEC = MAX_MOTOR_SPEED_RPS * TICKS_PER_REV;
@@ -62,7 +61,7 @@ public class MecanumDriveMona extends MecanumDrive  {
         public double F = 8;
     }
 
-    public static class ChassisParams extends MonaParams {
+    public static class ChassisParams extends MonaTeleopParams {
         public ChassisParams() {
             this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
             this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
@@ -96,7 +95,7 @@ public class MecanumDriveMona extends MecanumDrive  {
         }
     }
 
-    public static class CenterStageParams extends MonaParams{
+    public static class CenterStageParams extends MonaTeleopParams {
         public CenterStageParams() {
             this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
             this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
@@ -131,7 +130,7 @@ public class MecanumDriveMona extends MecanumDrive  {
 
     public void init() {
         //By casting PARAMS as MonaParms we can use the same parameter object but access the parameters we added in this class.
-        MONA_PARAMS = (MonaParams) PARAMS;  // Cast to MonaParams
+        MONA_PARAMS = (MonaTeleopParams) PARAMS;  // Cast to MonaParams
 
         //set the PID values one time
         leftFront.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);

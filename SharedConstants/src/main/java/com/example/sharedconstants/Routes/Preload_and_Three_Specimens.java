@@ -132,8 +132,6 @@ public class Preload_and_Three_Specimens extends Routes {
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
-                //TODO Autonomous Learning: experiment with removing this wait. What is the difference?
-                .waitSeconds(.1)
                 .splineToConstantHeading(NEXT_TO_ASCENT_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
                 .splineToLinearHeading(SPIKE_RED_1_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)

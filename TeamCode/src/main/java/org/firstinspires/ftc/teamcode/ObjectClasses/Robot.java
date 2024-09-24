@@ -79,12 +79,11 @@ public class Robot {
     }
 
     //Ensures only one robot object is ever created
-    public static Robot createInstance(LinearOpMode opMode, RobotType robotType) {
+    public static void createInstance(LinearOpMode opMode, RobotType robotType) {
         //there should only ever be one instance of robot - when we run a new opMode it should delete any previously existing robot object and make a new one
         //MatchConfig can house any data we need between opModes.
         robot = null;
         robot = new Robot(opMode, robotType);
-        return robot;
     }
 
     public synchronized void reset() {

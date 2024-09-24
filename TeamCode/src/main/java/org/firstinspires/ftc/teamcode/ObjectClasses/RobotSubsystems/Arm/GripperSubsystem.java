@@ -7,9 +7,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 
-//TODO Will we have an arm in intothedeep?
-// - Will this code work as a starting point? Do we need to start over?
-
 @Config
 public final class GripperSubsystem extends SubsystemBase {
 

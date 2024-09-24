@@ -38,12 +38,8 @@ public class BasicAuto extends LinearOpMode {
         basicRoute.BuildRoutes();
 
         while (opModeInInit()) {
-
-
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
-
-            //TODO what is happening here? Does it work correctly?
             gamepadHandling.lockColorAndSide();
             telemetry.update();
             sleep(10);
@@ -66,8 +62,6 @@ public class BasicAuto extends LinearOpMode {
         MatchConfig.timestampTimer = new ElapsedTime();
         MatchConfig.timestampTimer.reset();
 
-        //TODO is the correct route being run for all four combinations of Alliance Color and Side of Field?
-        //TODO does the route show up in FTC Dashboard?
         Actions.runBlocking(selectedRoute);
 
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getGyroSubsystem().currentAbsoluteYawDegrees;
