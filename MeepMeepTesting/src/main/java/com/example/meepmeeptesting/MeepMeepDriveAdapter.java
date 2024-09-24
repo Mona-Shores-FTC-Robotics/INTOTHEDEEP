@@ -37,7 +37,7 @@ public class MeepMeepDriveAdapter implements RobotAdapter {
             switch (actionType) {
                 case SECURE_PRELOAD_SPECIMEN:
                     return new SleepAction(.5);  // Simulating a close gripper action
-                case PICKUP_SPECIMEN:
+                case PICKUP_SPECIMEN_OFF_WALL:
                     return new SleepAction(.5);  // Simulating a close gripper action
 
                 case HANG_SPECIMEN_ON_HIGH_CHAMBER:

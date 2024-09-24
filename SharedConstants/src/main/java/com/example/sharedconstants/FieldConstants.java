@@ -59,7 +59,6 @@ public class FieldConstants {
     public static Pose2d BLUE_BACKSTAGE_START_POSE = new Pose2d(HALF_TILE, HALF_FIELD-HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
 
     //Red Points of Interest
-    public static Pose2d CHAMBER_RED_BACKSTAGE = new Pose2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
 
     public static Pose2d CHAMBER_RED_AUDIENCE = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Vector2d BASKET_RED_AUDIENCE_2_TJ = new Vector2d(-55.6, -51.6);
@@ -85,8 +84,11 @@ public class FieldConstants {
     public static Pose2d WALL_ALIGN_POS_AUDIENCE_TJ = new Pose2d(-61.8, -38.6,  FACE_TOWARD_BLUE);
    // public static Vector2d NET_POS_AUDIENCE_TJ = new Vector2d(-61.8, -52);
     // POSITIONS FOR PLACING SPECIMEN ON CHAMBER DURING AUTO
+    public static Pose2d CHAMBER_PRELOAD_RED_BACKSTAGE = new Pose2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Vector2d CHAMBER_RED_BACKSTAGE_VECTOR = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
     public static Vector2d CHAMBER_RED_BACKSTAGE2 = new Vector2d(HALF_TILE - QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH);
+    public static Pose2d CHAMBER_TWO_RED_BACKSTAGE = new Pose2d(HALF_TILE - QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+
     public static Vector2d CHAMBER_RED_BACKSTAGE3 = new Vector2d(0, -TILE-HALF_ROBOT_LENGTH);
     public static Vector2d CHAMBER_RED_BACKSTAGE4 = new Vector2d(HALF_TILE - TILE*0.75, -TILE-HALF_ROBOT_LENGTH);
 
@@ -99,7 +101,7 @@ public class FieldConstants {
     public static Pose2d SPIKE_RED_3 = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, -TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_2_OB = new Pose2d(2*TILE+HALF_TILE, -HALF_TILE-QUARTER_TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_3_OB = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, -HALF_TILE-QUARTER_TILE, FACE_TOWARD_BLUE);
-    public static Pose2d OBSERVATION_ZONE_RED_PICKUP = new Pose2d(2*TILE, -2*TILE-HALF_TILE, FACE_TOWARD_BLUE);
+    public static Pose2d OBSERVATION_ZONE_RED_PICKUP = new Pose2d(2*TILE, -2*TILE-HALF_TILE, FACE_TOWARD_RED);
 
     public static Vector2d OBSERVATION_RED_ZONE = new Vector2d(2*TILE, -2*TILE-HALF_TILE);
     public static Pose2d ASCENT_RED_BACKSTAGE = new Pose2d(TILE, -HALF_TILE, FACE_TOWARD_AUDIENCE);

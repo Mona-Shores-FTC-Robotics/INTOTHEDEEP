@@ -3,11 +3,18 @@ package com.example.sharedconstants.Routes;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
 import static com.example.sharedconstants.FieldConstants.*;
+import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
+import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HIGH_CHAMBER;
+import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HOME_POSITION;
+import static com.example.sharedconstants.RobotAdapter.ActionType.PICKUP_SPECIMEN_OFF_WALL;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SECURE_PRELOAD_SPECIMEN;
 
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.RobotAdapter;
@@ -140,5 +147,60 @@ public abstract class Routes {
                 new AngularVelConstraint(FAST_ANGULAR_VELOCITY_OVERRIDE)
         ));
         fastAcceleration = new ProfileAccelConstraint(-FAST_ACCELERATION_OVERRIDE, FAST_ACCELERATION_OVERRIDE);
+    }
+
+    public class RouteBuilder {
+
+        Action ScorePreloadSpecimen(Pose2d startPose, Pose2d chamberPose) {
+            return new SequentialAction(
+                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
+                    new ParallelAction(
+                            robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER),
+                            DriveToChamberFromStart(startPose, chamberPose)
+                    ),
+                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
+            );
+        }
+
+        Action ScoreSpecimen(Pose2d startPose, Pose2d chamberPose) {
+            return new SequentialAction(
+                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
+                    new ParallelAction(
+                            robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER),
+                            DriveToChamberFromObservation(startPose, chamberPose)
+                    ),
+                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
+            );
+        }
+
+        Action PickupSpecimen(Pose2d startPose, Pose2d observationZonePose) {
+            return new SequentialAction(
+                        new ParallelAction(
+                            DriveToObservationZone(startPose, observationZonePose),
+                            robotAdapter.getAction(LIFT_TO_HOME_POSITION)
+                        ),
+                        robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL)
+            );
+        }
+        Action DriveToChamberFromStart(Pose2d startPose, Pose2d chamberPose) {
+            return robotAdapter.actionBuilder(startPose)
+                    .splineToLinearHeading(chamberPose, chamberPose.heading, slowVelocity, slowAcceleration)
+                    .build();
+        }
+
+        Action DriveToChamberFromObservation(Pose2d observationZonePose, Pose2d chamberPose) {
+            return robotAdapter.actionBuilder(observationZonePose)
+                    .setReversed(true)
+                    .splineToLinearHeading(chamberPose, chamberPose.heading, slowVelocity, slowAcceleration)
+                    .build();
+        }
+
+
+        Action DriveToObservationZone(Pose2d startPose, Pose2d observationZonePose) {
+            return robotAdapter.actionBuilder(startPose)
+                    .setReversed(true)
+                    .splineToLinearHeading(observationZonePose, observationZonePose.heading, slowVelocity, slowAcceleration)
+                    .build();
+        }
     }
 }

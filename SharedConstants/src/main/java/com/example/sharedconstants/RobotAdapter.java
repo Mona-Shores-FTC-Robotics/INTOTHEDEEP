@@ -10,7 +10,7 @@ public interface RobotAdapter {
     // Enum for actions that both RealRobot and MeepMeep should handle
     enum ActionType {
         SECURE_PRELOAD_SPECIMEN,
-        PICKUP_SPECIMEN,
+        PICKUP_SPECIMEN_OFF_WALL,
         HANG_SPECIMEN_ON_HIGH_CHAMBER,
         HANG_SPECIMEN_ON_LOW_CHAMBER,
         PICKUP_SAMPLE,
