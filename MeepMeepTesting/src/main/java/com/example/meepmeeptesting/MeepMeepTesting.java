@@ -4,11 +4,11 @@ import static com.example.meepmeeptesting.MeepMeepRobots.*;
 
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.BasicRoute;
-import com.example.sharedconstants.Routes.PreloadRoute;
-import com.example.sharedconstants.Routes.RRPathGenExample;
-import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
+import com.example.sharedconstants.Routes.Preload;
+import com.example.sharedconstants.Routes.Preload_and_One_Sample;
+import com.example.sharedconstants.Routes.Preload_and_One_Specimen;
 import com.example.sharedconstants.Routes.Routes;
-import com.example.sharedconstants.Routes.DirectRoutesExample;
+import com.example.sharedconstants.Routes.Preload_and_Three_Specimens;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DriveShim;
 
@@ -30,7 +30,7 @@ public class MeepMeepTesting {
     //TODO Naming convention
     // discuss how to name our OpModes, does this make sense: AUD_2_1_BACK_0_4
 
-    public static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD; // here
+    static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD_AND_THREE_SPECIMENS; // here
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
@@ -39,7 +39,12 @@ public class MeepMeepTesting {
     public static boolean SHOW_RED_BACKSTAGE_BOT = true;
 
     public enum TeamPropLocation {LEFT, CENTER, RIGHT, ALL, NONE}
-    enum RoutesToRun {A1Spec_3Samp_B4Spec_0Samp, FUNCTIONAL_ROUTES_EXAMPLE, RRPATHGEN, BASIC_ROUTE, PRELOAD} // here
+    enum RoutesToRun {
+        BASIC,
+        PRELOAD_AND_THREE_SPECIMENS,
+        PRELOAD,
+        PRELOAD_AND_ONE_SPECIMEN,
+        PRELOAD_AND_ONE_SAMPLE} // here
 
     public static void main(String[] args) {
 
@@ -58,16 +63,16 @@ public class MeepMeepTesting {
         // Create a Routes instance based on the selected route
         Routes routes;
 
-        if (routesToRunSelection == RoutesToRun.A1Spec_3Samp_B4Spec_0Samp) { // here
-            routes = new DirectRoutesExample(robotAdapter);
-        } else if (routesToRunSelection == RoutesToRun.RRPATHGEN){
-            routes = new RRPathGenExample(robotAdapter);
-        } else if (routesToRunSelection == RoutesToRun.BASIC_ROUTE) {
-            routes = new BasicRoute(robotAdapter);
+        if (routesToRunSelection == RoutesToRun.PRELOAD_AND_THREE_SPECIMENS) { // here
+            routes = new Preload_and_Three_Specimens(robotAdapter);
+        } else if (routesToRunSelection == RoutesToRun.PRELOAD_AND_ONE_SPECIMEN){
+            routes = new Preload_and_One_Specimen(robotAdapter);
+        } else if (routesToRunSelection == RoutesToRun.PRELOAD_AND_ONE_SAMPLE) {
+            routes = new Preload_and_One_Sample(robotAdapter);
         } else if (routesToRunSelection == RoutesToRun.PRELOAD){
-            routes = new PreloadRoute(robotAdapter);
-        } else { //if(routesToRunSelection == RoutesToRun.FUNCTIONAL_ROUTES_EXAMPLE){
-            routes = new FunctionalRoutesExample(robotAdapter);
+            routes = new Preload(robotAdapter);
+        } else { //if(routesToRunSelection == RoutesToRun.BASIC){
+            routes = new BasicRoute(robotAdapter);
         }
 
         // Build the routes

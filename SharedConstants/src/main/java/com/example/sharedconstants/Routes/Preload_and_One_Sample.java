@@ -1,16 +1,22 @@
 package com.example.sharedconstants.Routes;
 
-import static com.example.sharedconstants.FieldConstants.*;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_AUDIENCE;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE;
+import static com.example.sharedconstants.FieldConstants.OBSERVATION_ZONE_RED_PICKUP;
+import static com.example.sharedconstants.FieldConstants.RED_AUDIENCE_START_POSE;
+import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POSE;
+import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
+import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HIGH_CHAMBER;
+import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HOME_POSITION;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SECURE_PRELOAD_SPECIMEN;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.example.sharedconstants.RobotAdapter;
-import static com.example.sharedconstants.RobotAdapter.ActionType.*;
 
-public class PreloadRoute extends Routes {
+public class Preload_and_One_Sample extends Routes {
 
     public Action redAudienceBotRoute;
     public Action redBackstageBotRoute;
@@ -19,19 +25,17 @@ public class PreloadRoute extends Routes {
 
     public static Action blueTestRoute;
 
-    public PreloadRoute(RobotAdapter roadRunnerDrive) {
+    public Preload_and_One_Sample(RobotAdapter roadRunnerDrive) {
         super(roadRunnerDrive);
     }
 
     public void BuildRoutes() {
         redBackstageBotRoute = robotAdapter.actionBuilder(RED_BACKSTAGE_START_POSE)
                 .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_RED_BACKSTAGE))
-                .stopAndAdd(new RouteBuilder().DriveToObservationZone(CHAMBER_RED_BACKSTAGE, OBSERVATION_ZONE_RED_PICKUP))
                 .build();
 
         blueAudienceBotRoute = robotAdapter.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
                 .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_RED_BACKSTAGE))
-//                .stopAndAdd(new RouteBuilder().DriveToObservationZone(CHAMBER_RED_BACKSTAGE, OBSERVATION_ZONE_RED_PICKUP))
                 .build();
 
         redAudienceBotRoute = robotAdapter.actionBuilder(RED_AUDIENCE_START_POSE)

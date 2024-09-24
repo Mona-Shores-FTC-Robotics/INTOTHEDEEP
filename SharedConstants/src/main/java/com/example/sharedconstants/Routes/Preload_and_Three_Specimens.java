@@ -11,14 +11,14 @@ import com.example.sharedconstants.RobotAdapter;
 
 import java.util.Arrays;
 
-public class DirectRoutesExample extends Routes {
+public class Preload_and_Three_Specimens extends Routes {
 
     public Action redAudienceBotRoute;
     public Action redBackstageBotRoute;
     public Action blueAudienceBotRoute;
     public Action blueBackstageBotRoute;
 
-    public DirectRoutesExample(RobotAdapter robotAdapter) {
+    public Preload_and_Three_Specimens(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
 

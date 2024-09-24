@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Autos;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.example.sharedconstants.Routes.DirectRoutesExample;
+import com.example.sharedconstants.Routes.Preload_and_Three_Specimens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -34,8 +34,8 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
         //Build all the routes using the adapter so we can select one quickly later
-        DirectRoutesExample directRoutesExample = new DirectRoutesExample(robotDriveAdapter);
-        directRoutesExample.BuildRoutes();
+        Preload_and_Three_Specimens PRELOADANDFOURSPECIMENS = new Preload_and_Three_Specimens(robotDriveAdapter);
+        PRELOADANDFOURSPECIMENS.BuildRoutes();
 
         while (opModeInInit()) {
 
@@ -49,10 +49,10 @@ public class DirectRoutesExampleAuto extends LinearOpMode {
         }
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = directRoutesExample.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Action selectedRoute = PRELOADANDFOURSPECIMENS.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= directRoutesExample.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= PRELOADANDFOURSPECIMENS.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //Reset Gyro
         //TODO i suspect this is not needed or might be duplicative with what is happening in MecanumDrive
