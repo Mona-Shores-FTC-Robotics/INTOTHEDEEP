@@ -101,9 +101,6 @@ public class MeepMeepTesting {
                 .setDarkMode(false)
                 .setBackgroundAlpha(.95f)
                 .start();
-
     }
-
-
 }
 
