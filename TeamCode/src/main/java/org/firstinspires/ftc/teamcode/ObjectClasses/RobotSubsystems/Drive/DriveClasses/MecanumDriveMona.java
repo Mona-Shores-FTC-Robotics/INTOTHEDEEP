@@ -68,7 +68,7 @@ public class MecanumDriveMona extends MecanumDrive  {
             this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
             this.inPerTick = 0.002996;
-            this.lateralInPerTick = inPerTick; // inPerTick;
+            this.lateralInPerTick = inPerTick;
             this.trackWidthTicks = 0;
 
             this.kS = 1.3635356937629455;
