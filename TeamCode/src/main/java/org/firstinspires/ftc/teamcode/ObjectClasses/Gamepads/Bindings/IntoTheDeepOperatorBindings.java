@@ -24,7 +24,9 @@ public class IntoTheDeepOperatorBindings {
     public static ParallelCommandGroup readyToScorePixel;
     public static SequentialCommandGroup releasePixels;
     private static boolean armIsUp = false;
+
     public IntoTheDeepOperatorBindings(GamepadEx operatorGamepad) {
+
         VisionSubsystem visionSubsystem = Robot.getInstance().getVisionSubsystem();
         IntakeSubsystem intakeSubsystem = Robot.getInstance().getIntakeSubsystem();
         GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
