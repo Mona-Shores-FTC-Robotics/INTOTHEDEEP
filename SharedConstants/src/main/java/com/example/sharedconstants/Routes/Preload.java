@@ -12,28 +12,25 @@ public class Preload extends Routes {
     public Action blueAudienceBotRoute;
     public Action blueBackstageBotRoute;
 
-    public static Action blueTestRoute;
-
     public Preload(RobotAdapter roadRunnerDrive) {
         super(roadRunnerDrive);
     }
 
     public void BuildRoutes() {
         redBackstageBotRoute = robotAdapter.actionBuilder(RED_BACKSTAGE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScoreSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .build();
 
         blueAudienceBotRoute = robotAdapter.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScoreSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
-//                .stopAndAdd(new RouteBuilder().DriveToObservationZone(CHAMBER_RED_BACKSTAGE, OBSERVATION_ZONE_RED_PICKUP))
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .build();
 
         redAudienceBotRoute = robotAdapter.actionBuilder(RED_AUDIENCE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScoreSpecimen(RED_AUDIENCE_START_POSE, CHAMBER_RED_AUDIENCE))
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_AUDIENCE_START_POSE, CHAMBER_RED_AUDIENCE))
                 .build();
 
         blueBackstageBotRoute = robotAdapter.mirroredActionBuilder(RED_AUDIENCE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScoreSpecimen(RED_AUDIENCE_START_POSE, CHAMBER_RED_AUDIENCE))
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_AUDIENCE_START_POSE, CHAMBER_RED_AUDIENCE))
                 .build();
     }
 

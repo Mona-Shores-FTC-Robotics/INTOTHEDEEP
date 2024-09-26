@@ -29,6 +29,8 @@ public class Preload_and_Three_Specimens extends Routes {
                 new AngularVelConstraint(Math.PI / 2)
         ));
 
+        //TODO how can we make this easier to follow by making methods in our Routes class?
+
         /** RED AUDIENCE **/
         redAudienceBotRoute = robotAdapter.actionBuilder(RED_AUDIENCE_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)

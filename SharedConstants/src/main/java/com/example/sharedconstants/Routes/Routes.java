@@ -153,54 +153,51 @@ public abstract class Routes {
 
         Action ScorePreloadSpecimen(Pose2d startPose, Pose2d chamberPose) {
             return new SequentialAction(
-                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
-                    new ParallelAction(
-                            robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER),
-                            DriveToChamberFromStart(startPose, chamberPose)
-                    ),
-                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
+                    //TODO: write this code for scoring a preloaded specimen
+                        // Make sure the preloaded specimen is secure
+                        // Drive to the Chamber from the Start Position while moving the lift
+                        // Hang the specimen on the high chamber
             );
         }
 
         Action ScoreSpecimen(Pose2d startPose, Pose2d chamberPose) {
             return new SequentialAction(
-                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
-                    new ParallelAction(
-                            robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER),
-                            DriveToChamberFromObservation(startPose, chamberPose)
-                    ),
-                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
+                    //TODO: write this code for scoring a specimen
+                        // Drive to the Chamber from the Observation Zone while moving the lift in parallel
+                        // Hang the specimen on the high chamber
             );
         }
 
         Action PickupSpecimen(Pose2d startPose, Pose2d observationZonePose) {
             return new SequentialAction(
-                        new ParallelAction(
-                            DriveToObservationZone(startPose, observationZonePose),
-                            robotAdapter.getAction(LIFT_TO_HOME_POSITION)
-                        ),
-                        robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL)
+                    //TODO: write this code for picking up a specimen
+                        //Drive to the Observation Zone while lowering the lift in parallel
+                        //Pickup the specimen off the wall
             );
         }
         Action DriveToChamberFromStart(Pose2d startPose, Pose2d chamberPose) {
-            return robotAdapter.actionBuilder(startPose)
-                    .splineToLinearHeading(chamberPose, chamberPose.heading, slowVelocity, slowAcceleration)
-                    .build();
+            //TODO: write this code for driving to the chamber  from the start position
+            return
+                    robotAdapter.actionBuilder(startPose)
+                            // your code goes here
+                            .build();
         }
 
         Action DriveToChamberFromObservation(Pose2d observationZonePose, Pose2d chamberPose) {
-            return robotAdapter.actionBuilder(observationZonePose)
-                    .setReversed(true)
-                    .splineToLinearHeading(chamberPose, chamberPose.heading, slowVelocity, slowAcceleration)
-                    .build();
+            //TODO: write this code for driving to the chamber from the observation zone
+            return
+                    robotAdapter.actionBuilder(observationZonePose)
+                        // your code goes here
+                        // remember, you might need .setReversed(true)
+                        .build();
         }
 
-
-        Action DriveToObservationZone(Pose2d startPose, Pose2d observationZonePose) {
-            return robotAdapter.actionBuilder(startPose)
-                    .setReversed(true)
-                    .splineToLinearHeading(observationZonePose, observationZonePose.heading, slowVelocity, slowAcceleration)
-                    .build();
+        Action DriveToObservationZoneFromChamber(Pose2d chamberPose, Pose2d observationZonePose) {
+            //TODO: write this code for driving to the chamber from the observation zone
+            return robotAdapter.actionBuilder(chamberPose)
+                        // your code goes here
+                        // remember, you might need .setReversed(true)
+                        .build();
         }
     }
 }
