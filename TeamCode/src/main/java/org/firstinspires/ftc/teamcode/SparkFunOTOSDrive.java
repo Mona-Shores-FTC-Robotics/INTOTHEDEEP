@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.messages.PoseMessage;
  * Unless otherwise noted, comments are from SparkFun
  */
 public class SparkFunOTOSDrive extends MecanumDrive {
-    public static class Params {
+    public static class Params extends MecanumDrive.Params {
         // Assuming you've mounted your sensor to a robot and it's not centered,
         // you can specify the offset for the sensor relative to the center of the
         // robot. The units default to inches and degrees, but if you want to use

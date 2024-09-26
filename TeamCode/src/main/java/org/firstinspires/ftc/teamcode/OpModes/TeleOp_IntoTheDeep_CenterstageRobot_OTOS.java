@@ -42,8 +42,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@TeleOp(name="TeleOp_IntoTheDeep_CenterstageRobot")
-public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
+@TeleOp(name="TeleOp_IntoTheDeep_OTOS")
+public class TeleOp_IntoTheDeep_CenterstageRobot_OTOS extends LinearOpMode
 {
     @Override
     public void runOpMode()
@@ -55,7 +55,7 @@ public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
         // Create the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_CENTERSTAGE_PODS);
+        Robot.createInstance(this, Robot.RobotType.ROBOT_CENTERSTAGE_OTOS);
 
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);

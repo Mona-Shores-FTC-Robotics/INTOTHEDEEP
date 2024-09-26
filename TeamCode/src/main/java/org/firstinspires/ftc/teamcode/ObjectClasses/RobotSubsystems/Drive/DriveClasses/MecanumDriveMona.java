@@ -12,11 +12,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
 
-public class MecanumDriveMona extends MecanumDrive  {
+public class MecanumDriveMona extends SparkFunOTOSDrive {
 
     private MonaTeleopParams MONA_PARAMS;
 
@@ -30,13 +30,16 @@ public class MecanumDriveMona extends MecanumDrive  {
 
         //TODO This should override the Roadrunner parameters depending on the robot type set in the OpMode.
         switch (Robot.getInstance().robotType) {
-            //Override the Roadrunner parameters for the chassis bot and the centerstage robot
+            //Override the Roadrunner parameters for the different robots
             //The normal IntoTheDeep robot parameters should be stored in the MecancumDrive class
             case ROBOT_CHASSIS:
                 PARAMS = new ChassisParams();
                 break;
-            case ROBOT_CENTERSTAGE:
-                PARAMS = new CenterStageParams();
+            case ROBOT_CENTERSTAGE_PODS:
+                PARAMS = new CenterStagePodsParams();
+                break;
+            case ROBOT_CENTERSTAGE_OTOS :
+                PARAMS = new CenterStageOTOSParams();
                 break;
             default:
                 PARAMS = new MonaTeleopParams();
@@ -45,7 +48,7 @@ public class MecanumDriveMona extends MecanumDrive  {
     }
 
     // Extend Params to include Mona-specific speed parameters
-    public static class MonaTeleopParams extends MecanumDrive.Params {
+    public static class MonaTeleopParams extends SparkFunOTOSDrive.Params {
         public double MAX_MOTOR_SPEED_RPS = 435.0 / 60.0;
         public double TICKS_PER_REV = 384.5;
         public double MAX_SPEED_TICK_PER_SEC = MAX_MOTOR_SPEED_RPS * TICKS_PER_REV;
@@ -95,8 +98,8 @@ public class MecanumDriveMona extends MecanumDrive  {
         }
     }
 
-    public static class CenterStageParams extends MonaTeleopParams {
-        public CenterStageParams() {
+    public static class CenterStagePodsParams extends MonaTeleopParams {
+        public CenterStagePodsParams() {
             this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
             this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
@@ -107,6 +110,40 @@ public class MecanumDriveMona extends MecanumDrive  {
             this.kS = 1.3635356937629455;
             this.kV = 0.00038558904047469167;
             this.kA = 0.0;
+
+            // path profile parameters (in inches)
+            this.maxWheelVel = 50;
+            this.minProfileAccel = -30;
+            this.maxProfileAccel = 50;
+
+            // turn profile parameters (in radians)
+            this.maxAngVel = Math.PI; // shared with path
+            this.maxAngAccel = Math.PI;
+
+            // path controller gains
+            this.axialGain = 0.0;
+            this.lateralGain = 0.0;
+            this.headingGain = 0.0; // shared with turn
+
+            this.axialVelGain = 0.0;
+            this.lateralVelGain = 0.0;
+            this.headingVelGain = 0.0; // shared with turn
+        }
+    }
+
+
+    public static class CenterStageOTOSParams extends MonaTeleopParams {
+        public CenterStageOTOSParams() {
+            this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
+            this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+
+            this.inPerTick = 1;
+            this.lateralInPerTick = inPerTick; // inPerTick;
+            this.trackWidthTicks = 0;
+
+            this.kS = 0;
+            this.kV = 0;
+            this.kA = 0;
 
             // path profile parameters (in inches)
             this.maxWheelVel = 50;

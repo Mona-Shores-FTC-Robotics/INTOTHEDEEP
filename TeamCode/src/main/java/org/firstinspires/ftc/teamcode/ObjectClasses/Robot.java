@@ -18,7 +18,7 @@ public class Robot {
     private static Robot robot = null;
     public RobotType robotType;
     public OpModeType opModeType;
-    public enum RobotType {ROBOT_INTOTHEDEEP, ROBOT_CHASSIS, ROBOT_PIT_MODE, ROBOT_CENTERSTAGE}
+    public enum RobotType {ROBOT_INTOTHEDEEP, ROBOT_CHASSIS, ROBOT_PIT_MODE, ROBOT_CENTERSTAGE_PODS, ROBOT_CENTERSTAGE_OTOS}
     public enum OpModeType {TELEOP, AUTO}
 
     private static LinearOpMode activeOpMode;
@@ -64,7 +64,8 @@ public class Robot {
                 break;
             }
 
-            case ROBOT_CENTERSTAGE: {
+            case ROBOT_CENTERSTAGE_OTOS:
+            case ROBOT_CENTERSTAGE_PODS: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
                 gyroSubsystem = new GyroSubsystem();
                 visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
@@ -75,6 +76,7 @@ public class Robot {
                 climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
                 break;
             }
+
         }
     }
 
@@ -135,7 +137,7 @@ public class Robot {
                 break;
             }
 
-            case ROBOT_CENTERSTAGE: {
+            case ROBOT_CENTERSTAGE_PODS: {
                 visionSubsystem.init();
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
@@ -162,7 +164,7 @@ public class Robot {
 //                shoulderSubsystem.init();
                 break;
 
-            case ROBOT_CENTERSTAGE: {
+            case ROBOT_CENTERSTAGE_PODS: {
                 visionSubsystem.init();
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
