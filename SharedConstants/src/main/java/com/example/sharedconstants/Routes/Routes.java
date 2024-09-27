@@ -157,6 +157,12 @@ public abstract class Routes {
                         // Make sure the preloaded specimen is secure
                         // Drive to the Chamber from the Start Position while moving the lift
                         // Hang the specimen on the high chamber
+                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
+                   new ParallelAction(
+                           DriveToChamberFromStart(startPose,chamberPose),
+                          robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
+                    ),
+                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
             );
         }
 
@@ -165,6 +171,12 @@ public abstract class Routes {
                     //TODO: write this code for scoring a specimen
                         // Drive to the Chamber from the Observation Zone while moving the lift in parallel
                         // Hang the specimen on the high chamber
+                   new ParallelAction(
+                           DriveToChamberFromObservation(startPose,chamberPose),
+                           robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
+                   ),
+                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
+
             );
         }
 
@@ -173,13 +185,22 @@ public abstract class Routes {
                     //TODO: write this code for picking up a specimen
                         //Drive to the Observation Zone while lowering the lift in parallel
                         //Pickup the specimen off the wall
+                    new ParallelAction(
+                            DriveToObservationZoneFromChamber(startPose,observationZonePose),
+                            robotAdapter.getAction(LIFT_TO_HOME_POSITION)
+                    ),
+                    robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL),
+                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)
+
+
+
             );
         }
         Action DriveToChamberFromStart(Pose2d startPose, Pose2d chamberPose) {
             //TODO: write this code for driving to the chamber  from the start position
             return
                     robotAdapter.actionBuilder(startPose)
-                            // your code goes here
+                            .splineToLinearHeading(chamberPose,chamberPose.heading,slowVelocity,slowAcceleration)
                             .build();
         }
 
@@ -187,16 +208,16 @@ public abstract class Routes {
             //TODO: write this code for driving to the chamber from the observation zone
             return
                     robotAdapter.actionBuilder(observationZonePose)
-                        // your code goes here
-                        // remember, you might need .setReversed(true)
+                            .setReversed(true)
+                            .splineToLinearHeading(chamberPose,chamberPose.heading,slowVelocity,slowAcceleration)
                         .build();
         }
 
         Action DriveToObservationZoneFromChamber(Pose2d chamberPose, Pose2d observationZonePose) {
             //TODO: write this code for driving to the chamber from the observation zone
             return robotAdapter.actionBuilder(chamberPose)
-                        // your code goes here
-                        // remember, you might need .setReversed(true)
+                    .setReversed(true)
+                    .splineToLinearHeading(observationZonePose,observationZonePose.heading,slowVelocity,slowAcceleration)
                         .build();
         }
     }
