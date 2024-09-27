@@ -63,6 +63,7 @@ public class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 0.002996;
+        //TODO: update this lateralInPerTick based on lateralRampLogger
         public double lateralInPerTick = inPerTick;
         public double trackWidthTicks = 4410.968285794866;
 
