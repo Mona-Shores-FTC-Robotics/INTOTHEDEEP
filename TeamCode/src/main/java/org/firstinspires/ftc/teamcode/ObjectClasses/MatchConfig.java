@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MatchConfig {
 
-    public static AllianceColor finalAllianceColor = AllianceColor.RED;
+    public static AllianceColor finalAllianceColor = AllianceColor.BLUE;
     public static SideOfField finalSideOfField = SideOfField.AUDIENCE;
 
     public static Pose2d endOfAutonomousPose = null;

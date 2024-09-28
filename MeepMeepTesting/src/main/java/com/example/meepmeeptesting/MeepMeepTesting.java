@@ -27,7 +27,7 @@ public class MeepMeepTesting {
      *      SPIKE_BACKDROP_PARK,
      **/
 
-static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD_AND_ONE_SPECIMEN; // here
+static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD; // here
 
     /** Set which robots should show up **/
     public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
