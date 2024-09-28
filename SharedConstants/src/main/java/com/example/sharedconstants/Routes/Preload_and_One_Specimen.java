@@ -28,7 +28,7 @@ public class Preload_and_One_Specimen extends Routes {
         redBackstageBotRoute = robotAdapter.actionBuilder(RED_BACKSTAGE_START_POSE)
                 .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .stopAndAdd(new RouteBuilder().PickupSpecimen(CHAMBER_PRELOAD_RED_BACKSTAGE, OBSERVATION_ZONE_RED_PICKUP))
-                .stopAndAdd(new RouteBuilder().ScoreSpecimen(OBSERVATION_ZONE_RED_PICKUP, CHAMBER_TWO_RED_BACKSTAGE))
+               .stopAndAdd(new RouteBuilder().ScoreSpecimen(OBSERVATION_ZONE_RED_PICKUP, CHAMBER_TWO_RED_BACKSTAGE))
                 .stopAndAdd(new RouteBuilder().PickupSpecimen(CHAMBER_TWO_RED_BACKSTAGE, OBSERVATION_ZONE_RED_PICKUP))
                 .build();
 
