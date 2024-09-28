@@ -27,21 +27,6 @@ public class MecanumDriveMona extends MecanumDrive  {
 
     public MecanumDriveMona(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
-
-        //TODO This should override the Roadrunner parameters depending on the robot type set in the OpMode.
-        switch (Robot.getInstance().robotType) {
-            //Override the Roadrunner parameters for the chassis bot and the centerstage robot
-            //The normal IntoTheDeep robot parameters should be stored in the MecancumDrive class
-            case ROBOT_CHASSIS:
-                PARAMS = new ChassisParams();
-                break;
-            case ROBOT_CENTERSTAGE:
-                PARAMS = new CenterStageParams();
-                break;
-            default:
-                PARAMS = new MonaTeleopParams();
-                break;
-        }
     }
 
     // Extend Params to include Mona-specific speed parameters
@@ -63,16 +48,21 @@ public class MecanumDriveMona extends MecanumDrive  {
 
     public static class ChassisParams extends MonaTeleopParams {
         public ChassisParams() {
-            this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
-            this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+            RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
+                    RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
+            RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
+                    RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
+            // drive model parameters
             this.inPerTick = 0.002996;
-            this.lateralInPerTick = inPerTick;
-            this.trackWidthTicks = 0;
+            //TODO: update this lateralInPerTick based on lateralRampLogger
+            this.lateralInPerTick = 0.0023321641061384555;
+            this. trackWidthTicks = 4410.968285794866;
 
-            this.kS = 1.3635356937629455;
-            this.kV = 0.00038558904047469167;
-            this.kA = 0.0;
+            // feedforward parameters (in tick units)
+            this.kS = 1.1061809171010473;
+            this.kV = 0.0003917967378464592;
+            this.kA = 0.00001;
 
             // path profile parameters (in inches)
             this.maxWheelVel = 50;
@@ -84,14 +74,13 @@ public class MecanumDriveMona extends MecanumDrive  {
             this.maxAngAccel = Math.PI;
 
             // path controller gains
-            this.axialGain = 0.0;
-            this.lateralGain = 0.0;
-            this.headingGain = 0.0; // shared with turn
+            this.axialGain = 10;
+            this. lateralGain = 10;
+            this.headingGain = 8; // shared with turn
 
-            this.axialVelGain = 0.0;
-            this.lateralVelGain = 0.0;
-            this.headingVelGain = 0.0; // shared with turn
-
+            this.axialVelGain = 1.5;
+            this.lateralVelGain = 0;
+            this. headingVelGain = 1.1;
         }
     }
 
@@ -129,6 +118,22 @@ public class MecanumDriveMona extends MecanumDrive  {
     }
 
     public void init() {
+        //TODO This should override the Roadrunner parameters depending on the robot type set in the OpMode.
+        switch (Robot.getInstance().robotType) {
+            //Override the Roadrunner parameters for the chassis bot and the centerstage robot
+            //The normal IntoTheDeep robot parameters should be stored in the MecancumDrive class
+            case ROBOT_CHASSIS:
+                PARAMS = new ChassisParams();
+                break;
+            case ROBOT_CENTERSTAGE:
+                PARAMS = new CenterStageParams();
+                break;
+            default:
+                PARAMS = new MonaTeleopParams();
+                break;
+        }
+
+
         //By casting PARAMS as MonaParms we can use the same parameter object but access the parameters we added in this class.
         MONA_PARAMS = (MonaTeleopParams) PARAMS;  // Cast to MonaParams
 

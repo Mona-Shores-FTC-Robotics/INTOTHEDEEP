@@ -24,9 +24,9 @@ import java.util.Arrays;
 public abstract class Routes {
 
     // Velocity and acceleration overrides
-    public static final double SLOW_VELOCITY_OVERRIDE = 10;
-    public static final double SLOW_ACCELERATION_OVERRIDE = 15;
-    public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(45);
+    public static final double SLOW_VELOCITY_OVERRIDE = 20;
+    public static final double SLOW_ACCELERATION_OVERRIDE = 20;
+    public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
 
     public static final double NORMAL_VELOCITY_OVERRIDE = 30;
     public static final double NORMAL_ACCELERATION_OVERRIDE = 35;
@@ -157,12 +157,12 @@ public abstract class Routes {
                         // Make sure the preloaded specimen is secure
                         // Drive to the Chamber from the Start Position while moving the lift
                         // Hang the specimen on the high chamber
-                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
+//                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
                    new ParallelAction(
-                           DriveToChamberFromStart(startPose,chamberPose),
-                          robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
-                    ),
-                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
+                           DriveToChamberFromStart(startPose,chamberPose)
+//                          robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
+                    )
+//                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
             );
         }
 
@@ -172,10 +172,10 @@ public abstract class Routes {
                         // Drive to the Chamber from the Observation Zone while moving the lift in parallel
                         // Hang the specimen on the high chamber
                    new ParallelAction(
-                           DriveToChamberFromObservation(startPose,chamberPose),
-                           robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
-                   ),
-                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
+                           DriveToChamberFromObservation(startPose,chamberPose)
+//                           robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
+                   )
+//                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
 
             );
         }
@@ -186,11 +186,11 @@ public abstract class Routes {
                         //Drive to the Observation Zone while lowering the lift in parallel
                         //Pickup the specimen off the wall
                     new ParallelAction(
-                            DriveToObservationZoneFromChamber(startPose,observationZonePose),
-                            robotAdapter.getAction(LIFT_TO_HOME_POSITION)
-                    ),
-                    robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL),
-                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)
+                            DriveToObservationZoneFromChamber(startPose,observationZonePose)
+//                            robotAdapter.getAction(LIFT_TO_HOME_POSITION)
+                    )
+//                    robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL),
+//                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)
 
 
 

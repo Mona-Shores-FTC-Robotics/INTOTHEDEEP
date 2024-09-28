@@ -4,18 +4,18 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.Routes.Preload;
-import com.example.sharedconstants.Routes.Preload_and_Three_Specimens;
+import com.example.sharedconstants.Routes.Preload_and_One_Specimen;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@Autonomous(name = "Preload Auto")
-public class PreloadAuto extends LinearOpMode {
+@Autonomous(name = "Preload Auto Plus One Speciman")
+public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -35,8 +35,8 @@ public class PreloadAuto extends LinearOpMode {
         RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
         //Build all the routes using the adapter so we can select one quickly later
-        Preload preload = new Preload(robotDriveAdapter);
-        preload.BuildRoutes();
+        Preload_and_One_Specimen preloadAndOneSpecimen = new Preload_and_One_Specimen(robotDriveAdapter);
+        preloadAndOneSpecimen.BuildRoutes();
 
         while (opModeInInit()) {
             // Allow driver to override/lock the vision
@@ -47,10 +47,10 @@ public class PreloadAuto extends LinearOpMode {
         }
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = preload.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Action selectedRoute = preloadAndOneSpecimen.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= preload.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= preloadAndOneSpecimen.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //Reset Gyro
         //TODO i suspect this is not needed or might be duplicative with what is happening in MecanumDrive
