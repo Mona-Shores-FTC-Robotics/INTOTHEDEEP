@@ -22,9 +22,9 @@ public class Robot {
         ROBOT_INTOTHEDEEP,
         ROBOT_PIT_MODE,
         ROBOT_CHASSIS_PINPOINT,
-        ROBOT_CHASSIS_INTERNAL_IMU,
+        ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU,
         ROBOT_CENTERSTAGE_OTOS,
-        ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU
+        ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU
     }
     public enum OpModeType {TELEOP, AUTO}
 
@@ -49,7 +49,7 @@ public class Robot {
     private void CreateSubsystems(HardwareMap hardwareMap) {
         switch (robotType) {
             //Just the drive base
-            case ROBOT_CHASSIS_INTERNAL_IMU:
+            case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
             case ROBOT_CHASSIS_PINPOINT: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
                 gyroSubsystem = new GyroSubsystem();
@@ -71,7 +71,7 @@ public class Robot {
             }
 
             case ROBOT_CENTERSTAGE_OTOS:
-            case ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU:{
+            case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:{
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
                 gyroSubsystem = new GyroSubsystem();
                 visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
@@ -121,14 +121,14 @@ public class Robot {
     private void initTele() {
         switch (robotType) {
             case ROBOT_INTOTHEDEEP:
-            case ROBOT_CHASSIS_INTERNAL_IMU:
+            case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
             case ROBOT_CHASSIS_PINPOINT: {
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
                 break;
             }
             case ROBOT_CENTERSTAGE_OTOS:
-            case ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU:
+            case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:
             {
                 visionSubsystem.init();
                 gyroSubsystem.init();
@@ -151,14 +151,14 @@ public class Robot {
         // initialize auto-specific scheduler
         switch (robotType) {
             case ROBOT_INTOTHEDEEP:
-            case ROBOT_CHASSIS_INTERNAL_IMU:
+            case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
             case ROBOT_CHASSIS_PINPOINT:
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
                 break;
 
             case ROBOT_CENTERSTAGE_OTOS:
-            case ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU:{
+            case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:{
                 visionSubsystem.init();
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();

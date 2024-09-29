@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.ProfileParams;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
@@ -15,19 +16,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 
+/**
+ * MecanumDriveMona class for handling different robot configurations (Chassis, CenterStage).
+ * Extends MecanumDrive and provides robot-specific configurations for motor directions,
+ * RoadRunner parameters, and speed control.
+ */
 public class MecanumDriveMona extends MecanumDrive  {
-
-    private MonaTeleopParams MONA_PARAMS;
-
-    private double drive, strafe, turn;
-    private double last_drive=0, last_strafe=0, last_turn=0;
-    private double current_drive_ramp = 0, current_strafe_ramp=0, current_turn_ramp=0;
-    private double leftFrontTargetSpeed, rightFrontTargetSpeed, leftBackTargetSpeed, rightBackTargetSpeed;
-
-    public MecanumDriveMona(HardwareMap hardwareMap, Pose2d pose) {
-        super(hardwareMap, pose);
-    }
 
     // Extend Params to include Mona-specific speed parameters
     public static class MonaTeleopParams extends MecanumDrive.Params {
@@ -46,8 +42,8 @@ public class MecanumDriveMona extends MecanumDrive  {
         public double F = 8;
     }
 
-    public static class ChassisInternalIMUParams extends MonaTeleopParams {
-        public ChassisInternalIMUParams() {
+    public static class ChassisTwoDeadWheelInternalIMUParams extends MonaTeleopParams {
+        public ChassisTwoDeadWheelInternalIMUParams() {
             RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
                     RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
             RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
@@ -84,8 +80,8 @@ public class MecanumDriveMona extends MecanumDrive  {
         }
     }
 
-    public static class CenterStageDEAD_WHEEL_Params extends MonaTeleopParams {
-        public CenterStageDEAD_WHEEL_Params() {
+    public static class CenterStageTwoDeadWheelInternalIMUParams extends MonaTeleopParams {
+        public CenterStageTwoDeadWheelInternalIMUParams() {
             this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
             this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
@@ -117,32 +113,68 @@ public class MecanumDriveMona extends MecanumDrive  {
         }
     }
 
+    public static class ChassisTwoDeadWheelInternalIMULocalizerParams extends TwoDeadWheelLocalizer.Params {
+        public ChassisTwoDeadWheelInternalIMULocalizerParams() {
+            // Override parYTicks and perpXTicks with values specific to ChassisInternalIMU
+            this.parYTicks = -1450.0;
+            this.perpXTicks = 800.0;
+        }
+    }
+
+    public static class CenterStageTwoDeadWheelInternalIMULocalizerParams extends TwoDeadWheelLocalizer.Params {
+        public CenterStageTwoDeadWheelInternalIMULocalizerParams() {
+            // Override parYTicks and perpXTicks with values specific to CenterStageDEAD_WHEEL
+            this.parYTicks = -1440.0;
+            this.perpXTicks = 820.0;
+        }
+    }
+
+    // ========== Instance Variables ==========
+    private MonaTeleopParams MONA_PARAMS;
+    private double drive, strafe, turn;
+    private double last_drive=0, last_strafe=0, last_turn=0;
+    private double current_drive_ramp = 0, current_strafe_ramp=0, current_turn_ramp=0;
+    private double leftFrontTargetSpeed, rightFrontTargetSpeed, leftBackTargetSpeed, rightBackTargetSpeed;
+
+    // ========== Constructor ==========
+    public MecanumDriveMona(HardwareMap hardwareMap, Pose2d pose) {
+        super(hardwareMap, pose);
+    }
+
     public void init() {
         //TODO This should override the Roadrunner parameters depending on the robot type set in the OpMode.
         switch (Robot.getInstance().robotType) {
             //Override the Roadrunner parameters for the chassis bot and the centerstage robot
             //The normal IntoTheDeep robot parameters should be stored in the MecancumDrive class
-            case ROBOT_CHASSIS_INTERNAL_IMU:
-                PARAMS = new ChassisInternalIMUParams();
+            case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
+                PARAMS = new ChassisTwoDeadWheelInternalIMUParams();
+                TwoDeadWheelLocalizer.PARAMS = new ChassisTwoDeadWheelInternalIMULocalizerParams();
+                setMotorAndEncoderDirectionsForChassisTwoDeadWheelInternalIMU();
                 break;
-            case ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU:
-                PARAMS = new CenterStageDEAD_WHEEL_Params();
-                break;
-            default:
-                PARAMS = new MonaTeleopParams();
+
+            case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:
+                PARAMS = new CenterStageTwoDeadWheelInternalIMUParams();
+                TwoDeadWheelLocalizer.PARAMS = new CenterStageTwoDeadWheelInternalIMULocalizerParams();
+                setMotorAndEncoderDirectionsForCenterStageTwoDeadWheelInternalIMU();
                 break;
         }
 
-
-        //By casting PARAMS as MonaParms we can use the same parameter object but access the parameters we added in this class.
+        //Cast PARAMS as MonaParms we can use the same parameter object but access the parameters we added in this class.
         MONA_PARAMS = (MonaTeleopParams) PARAMS;  // Cast to MonaParams
 
         //set the PID values one time
+        configurePID();
+    }
+
+    private void configurePID() {
+        // Set PID values for motors
         leftFront.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
         rightFront.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
         leftBack.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
         rightBack.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
     }
+
+    // ========== Main Logic/Control Methods ==========
 
     public void mecanumDriveSpeedControl(double drive, double strafe, double turn) {
         if (drive==0 && strafe ==0 && turn==0) {
@@ -190,6 +222,25 @@ public class MecanumDriveMona extends MecanumDrive  {
         }
     }
 
+    public void mecanumDrivePowerControl (){
+        double dPercent = abs(drive) / (abs(drive) + abs(strafe) + abs(turn));
+        double sPercent = abs(strafe) / (abs(drive) + abs(turn) + abs(strafe));
+        double tPercent = abs(turn) / (abs(drive) + abs(turn) + abs(strafe));
+
+        double leftFrontPower = ((drive * dPercent) + (strafe * sPercent) + (turn * tPercent));
+        double rightFrontPower = ((drive * dPercent) + (-strafe * sPercent) + (-turn * tPercent));
+        double leftBackPower = ((drive * dPercent) + (-strafe * sPercent) + (turn * tPercent));
+        double rightBackPower = ((drive * dPercent) + (strafe * sPercent) + (-turn * tPercent));
+
+        leftFront.setPower(leftFrontPower);
+        rightFront.setPower(rightFrontPower);
+        leftBack.setPower(leftBackPower);
+        rightBack.setPower(rightBackPower);
+    }
+
+
+    // ========== Helper/Utility Methods ==========
+
     private double Ramp(double target, double currentValue, double ramp_amount) {
         if (Math.abs(currentValue) + MONA_PARAMS.RAMP_THRESHOLD < Math.abs(target)) {
             return Math.signum(target) * (Math.abs(currentValue) + ramp_amount);
@@ -207,42 +258,6 @@ public class MecanumDriveMona extends MecanumDrive  {
         leftBack.setPower(lB);
         rightBack.setPower(rB);
     }
-
-
-    public void mecanumDrivePowerControl (){
-        double dPercent = abs(drive) / (abs(drive) + abs(strafe) + abs(turn));
-        double sPercent = abs(strafe) / (abs(drive) + abs(turn) + abs(strafe));
-        double tPercent = abs(turn) / (abs(drive) + abs(turn) + abs(strafe));
-
-        double leftFrontPower = ((drive * dPercent) + (strafe * sPercent) + (turn * tPercent));
-        double rightFrontPower = ((drive * dPercent) + (-strafe * sPercent) + (-turn * tPercent));
-        double leftBackPower = ((drive * dPercent) + (-strafe * sPercent) + (turn * tPercent));
-        double rightBackPower = ((drive * dPercent) + (strafe * sPercent) + (-turn * tPercent));
-
-        leftFront.setPower(leftFrontPower);
-        rightFront.setPower(rightFrontPower);
-        leftBack.setPower(leftBackPower);
-        rightBack.setPower(rightBackPower);
-    }
-
-//    public void fieldOrientedControl (double leftY, double leftX){
-//        double y = leftY;
-//        double x = leftX;
-//        double botHeading;
-//
-//        //This should make it so field centric driving works for both alliance colors
-//        if (MatchConfig.finalAllianceColor == InitVisionProcessor.AllianceColor.RED) {
-//            botHeading = Math.toRadians(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees - 90);
-//        } else {
-//            botHeading = Math.toRadians(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees + 90);
-//        }
-//
-//        // Rotate the movement direction counter to the bot's rotation
-//        leftXAdjusted = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-//        leftYAdjusted = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-//
-//        leftYAdjusted = Math.min( leftYAdjusted * 1.1, 1);  // Counteract imperfect strafing
-//    }
 
     public TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose) {
         return new TrajectoryActionBuilder(
@@ -277,6 +292,27 @@ public class MecanumDriveMona extends MecanumDrive  {
 
         Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Absolute (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentAbsoluteYawDegrees, 5, 2));
         Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Relative (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees, 5, 2));
+    }
+
+    // Helper methods to set motor and encoder directions
+    private void setMotorAndEncoderDirectionsForChassisTwoDeadWheelInternalIMU() {
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        ((TwoDeadWheelLocalizer) this.localizer).par.setDirection(DcMotorSimple.Direction.REVERSE);
+        ((TwoDeadWheelLocalizer) this.localizer).perp.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+    private void setMotorAndEncoderDirectionsForCenterStageTwoDeadWheelInternalIMU() {
+        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        ((TwoDeadWheelLocalizer) this.localizer).par.setDirection(DcMotorSimple.Direction.REVERSE);
+        ((TwoDeadWheelLocalizer) this.localizer).perp.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 }
 

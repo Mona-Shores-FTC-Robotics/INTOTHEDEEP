@@ -10,7 +10,7 @@ public class MatchConfig {
     public static AllianceColor finalAllianceColor = AllianceColor.RED;
     public static SideOfField finalSideOfField = SideOfField.BACKSTAGE;
 
-    public static Robot.RobotType finalRobotType = Robot.RobotType.ROBOT_CHASSIS_INTERNAL_IMU;  // Default to an initial type
+    public static Robot.RobotType finalRobotType = Robot.RobotType.ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU;  // Default to an initial type
 
     public static Pose2d endOfAutonomousPose = null;
     public static double endOfAutonomousOffset;

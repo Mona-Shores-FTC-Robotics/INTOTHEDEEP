@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
@@ -77,7 +80,6 @@ public class DriveSubsystem extends SubsystemBase {
         turn = rightXAdjusted;
     }
 
-
     public Boolean driverGamepadIsActive(double leftY, double leftX, double rightX) {
         if     (Math.abs(leftY) > DriveParameters.DEAD_ZONE ||
                 Math.abs(leftX) > DriveParameters.DEAD_ZONE ||
@@ -86,7 +88,24 @@ public class DriveSubsystem extends SubsystemBase {
         } else return false;
     }
 
+    public void fieldOrientedControl (double leftY, double leftX){
+        double y = leftY;
+        double x = leftX;
+        double botHeading;
 
+        //This should make it so field centric driving works for both alliance colors
+        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED) {
+            botHeading = Math.toRadians(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees - 90);
+        } else {
+            botHeading = Math.toRadians(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees + 90);
+        }
+
+        // Rotate the movement direction counter to the bot's rotation
+        leftXAdjusted = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        leftYAdjusted = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        leftYAdjusted = Math.min( leftYAdjusted * 1.1, 1);  // Counteract imperfect strafing
+    }
 }
 
 
