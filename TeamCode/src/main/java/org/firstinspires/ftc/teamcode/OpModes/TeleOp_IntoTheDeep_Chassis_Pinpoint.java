@@ -31,25 +31,19 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Rotation2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.CenterStageDriverBindings;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.CenterStageOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepDriverBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@TeleOp(name="TeleOp_IntoTheDeep_CenterstageRobot")
-public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
+@TeleOp(name="TeleOp_IntoTheDeep")
+public class TeleOp_IntoTheDeep_Chassis_Pinpoint extends LinearOpMode
 {
     @Override
     public void runOpMode()
@@ -61,28 +55,24 @@ public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
         // Create the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_CENTERSTAGE);
+        Robot.createInstance(this, Robot.RobotType.ROBOT_CHASSIS_PINPOINT);
 
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);
 
         // Setup Button Bindings
-        new CenterStageDriverBindings(gamepadHandling.getDriverGamepad());
-        new CenterStageOperatorBindings(gamepadHandling.getOperatorGamepad());
+        new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
+        new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad());
 
         telemetry.clearAll();
 
         while (opModeInInit()) {
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.lockColorAndSide();
+            gamepadHandling.SelectAndLockColorAndSide();
 
             telemetry.update();
             sleep(10);
         }
-
-        //Reset Gyro and pose to be 0 at whatever heading the robot is at
-        //This should be being done by Roadrunner now that we are using their instance of the IMU
-        //Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
@@ -97,7 +87,6 @@ public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
-            //TODO does the route/localization show up in FTC Dashboard? If not, how can we make it show up there?
             Robot.getInstance().getDriveSubsystem().getMecanumDrive().LoopDriverStationTelemetry(telemetry);
 
             //Reset the timer for the loop timer
@@ -108,9 +97,6 @@ public class TeleOp_IntoTheDeep_CenterstageRobot extends LinearOpMode
 
             //Read all buttons
             gamepadHandling.getDriverGamepad().readButtons();
-
-            //Activate End Game Rumble at 87 seconds into TeleOp
-            gamepadHandling.endGameRumble();
 
             telemetry.update();
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);

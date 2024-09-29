@@ -40,7 +40,7 @@ public class BasicAuto extends LinearOpMode {
         while (opModeInInit()) {
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.lockColorAndSide();
+            gamepadHandling.SelectAndLockColorAndSide();
             telemetry.update();
             sleep(10);
         }

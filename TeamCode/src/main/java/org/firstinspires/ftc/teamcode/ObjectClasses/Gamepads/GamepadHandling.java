@@ -12,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import static com.example.sharedconstants.FieldConstants.*;
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.getNextRobotType;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.getPreviousRobotType;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
@@ -21,7 +23,9 @@ public class GamepadHandling {
     private GamepadEx driverGamepad;
     private GamepadEx operatorGamepad;
 
-    public boolean LockedInitSettingsFlag = false;
+    public boolean LockedSettingsFlag = false;
+
+
     public boolean ManualOverrideInitSettingsFlag = false;
 
     private Gamepad.RumbleEffect endGameRumbleEffect;
@@ -79,58 +83,108 @@ public class GamepadHandling {
     public GamepadEx getOperatorGamepad() {
         return operatorGamepad;
     }
-
-    public void lockColorAndSide() {
+    public void SelectAndLockColorAndSideAndRobotType() {
         Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
         telemetry.addLine("");
 
-        if (LockedInitSettingsFlag) {
+        if (LockedSettingsFlag) {
+            telemetry.addLine("Settings Locked");
+            telemetry.addLine("Alliance: " + finalAllianceColor);
+            telemetry.addLine("Side: " + finalSideOfField);
+            telemetry.addLine("Robot Type: " + finalRobotType);
+            telemetry.addLine("Press B to unlock all settings");
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
+                LockedSettingsFlag = false;
+            }
+        } else {
+            telemetry.addLine("Lock settings with B");
+            telemetry.addLine("Alliance: " + finalAllianceColor);
+            telemetry.addLine("Side: " + finalSideOfField);
+            telemetry.addLine("Robot Type: " + finalRobotType);
+
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
+                LockedSettingsFlag = true;
+            }
+
+            // Allow selection of alliance color
+            telemetry.addLine("Color (DPAD-UP/DOWN)");
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                finalAllianceColor = AllianceColor.BLUE;
+            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                finalAllianceColor = AllianceColor.RED;
+            }
+
+            // Allow selection of side of field based on alliance color
+            telemetry.addLine("Side Of Field (DPAD-LEFT/RIGHT)");
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                if (finalAllianceColor == AllianceColor.BLUE) {
+                    finalSideOfField = SideOfField.AUDIENCE;
+                } else if (finalAllianceColor == AllianceColor.RED) {
+                    finalSideOfField = SideOfField.BACKSTAGE;
+                }
+            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                if (finalAllianceColor == AllianceColor.RED) {
+                    finalSideOfField = SideOfField.AUDIENCE;
+                } else if (finalAllianceColor == AllianceColor.BLUE) {
+                    finalSideOfField = SideOfField.BACKSTAGE;
+                }
+            }
+
+            // Allow selection of robot type using bumpers
+            telemetry.addLine("Robot Type (Left/Right Bumper)");
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                finalRobotType = getPreviousRobotType(finalRobotType);
+            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                finalRobotType = getNextRobotType(finalRobotType);
+            }
+        }
+    }
+
+    public void SelectAndLockColorAndSide() {
+        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
+        telemetry.addLine("");
+
+        if (LockedSettingsFlag) {
             telemetry.addLine("Alliance Color and Side of Field Locked");
             telemetry.addLine(finalAllianceColor + " " + finalSideOfField);
             telemetry.addLine("Press B to unlock Alliance Color and Side of Field");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-                LockedInitSettingsFlag = false;
+                LockedSettingsFlag = false;
             }
         } else {
             telemetry.addLine("Lock Alliance Color and Side of Field with B");
             telemetry.addLine(finalAllianceColor + " " + finalSideOfField);
+
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-                LockedInitSettingsFlag = true;
+                LockedSettingsFlag = true;
             }
 
-            telemetry.addLine("Color (DPAD-UP/DOWN) - Side Of Field (DPAD-LEFT/RIGHT");
-                if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    finalAllianceColor = AllianceColor.BLUE;
-                } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                    finalAllianceColor = AllianceColor.RED;
-                }
-
-                if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    if (finalAllianceColor == AllianceColor.BLUE) {
-                        finalSideOfField = SideOfField.AUDIENCE;
-                    } else if (finalAllianceColor == AllianceColor.RED) {
-                        finalSideOfField = SideOfField.BACKSTAGE;
-                    }
-                } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                    if (finalAllianceColor == AllianceColor.RED) {
-                        finalSideOfField = SideOfField.AUDIENCE;
-                    } else if (finalAllianceColor == AllianceColor.BLUE) {
-                        finalSideOfField = SideOfField.BACKSTAGE;
-                    }
-                }
+            telemetry.addLine("Color (DPAD-UP/DOWN) - Side Of Field (DPAD-LEFT/RIGHT)");
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                finalAllianceColor = AllianceColor.BLUE;
+            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                finalAllianceColor = AllianceColor.RED;
             }
-        }
 
-    public void endGameRumble() {
-        //Rumble 3 seconds before end game begins
-        if (teleOpTimer.seconds() > END_GAME_TIME - 3) {
-            if (teleOpTimer.seconds() < END_GAME_TIME) {
-                Robot.getInstance().getActiveOpMode().gamepad1.runRumbleEffect(endGameRumbleEffect);
-                Robot.getInstance().getActiveOpMode().gamepad2.runRumbleEffect(endGameRumbleEffect);
-            } else {
-                Robot.getInstance().getActiveOpMode().gamepad1.stopRumble();
-                Robot.getInstance().getActiveOpMode().gamepad2.stopRumble();
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                if (finalAllianceColor == AllianceColor.BLUE) {
+                    finalSideOfField = SideOfField.AUDIENCE;
+                } else if (finalAllianceColor == AllianceColor.RED) {
+                    finalSideOfField = SideOfField.BACKSTAGE;
+                }
+            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                if (finalAllianceColor == AllianceColor.RED) {
+                    finalSideOfField = SideOfField.AUDIENCE;
+                } else if (finalAllianceColor == AllianceColor.BLUE) {
+                    finalSideOfField = SideOfField.BACKSTAGE;
+                }
             }
         }
     }
+
+
+
+
+
+
 }

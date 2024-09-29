@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import static org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase.getCurrentGameTagLibrary;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -38,74 +36,43 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepDriverBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
-import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 
-@TeleOp(name="TeleOp_AprilTag")
-public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
+@TeleOp(name="TeleOp_IntoTheDeep_Testing")
+public class TeleOp_IntoTheDeep_Testing extends LinearOpMode
 {
-    AprilTagLibrary intoTheDeepAprilTagLibrary;
-    AprilTagMetadata[] aprilTagMetadata;
-
     @Override
     public void runOpMode()
     {
-        // Get the April Tag library for the current game
-        intoTheDeepAprilTagLibrary = getCurrentGameTagLibrary();
-
-        // Get all the tags from the library
-        aprilTagMetadata = intoTheDeepAprilTagLibrary.getAllTags();
-
-        // Print out the number of tags
-        telemetry.addData("Number of Tags", aprilTagMetadata.length);
-
-        // Loop through each tag and print out its information
-        for (int i = 0; i < aprilTagMetadata.length; i++) {
-            telemetry.addLine("April Tag " + i + " name: " + aprilTagMetadata[i].id);
-            telemetry.addLine("April Tag " + i + " name: " + aprilTagMetadata[i].name);
-            telemetry.addData("April Tag " + i + " Distance Unit", aprilTagMetadata[i].distanceUnit);
-            telemetry.addData("April Tag " + i + " Field Orientation", aprilTagMetadata[i].fieldOrientation);
-            telemetry.addData("April Tag " + i + " Field Position", aprilTagMetadata[i].fieldPosition);
-            telemetry.addData("April Tag " + i + " Tag Size", aprilTagMetadata[i].tagsize);
-        }
-
-        // Update telemetry to display all the data
-        telemetry.update();
-
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
         //Initialize the Game-pads
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
-        // Create the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_INTOTHEDEEP);
-
-        // Initialize the robot
-        Robot.getInstance().init(Robot.OpModeType.TELEOP);
-
         // Setup Button Bindings
         new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
         new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad());
 
-        while (opModeInInit()) {
+        telemetry.clearAll();
 
-//            VisionTelemetry.telemetryForInitProcessing(gamepadHandling);
+        while (opModeInInit()) {
             gamepadHandling.getDriverGamepad().readButtons();
-//            gamepadHandling.lockColorAndSide();
+            gamepadHandling.SelectAndLockColorAndSideAndRobotType();
 
             telemetry.update();
             sleep(10);
         }
 
-        //Reset Gyro and pose to be 0 at whatever heading the robot is at
-        Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
+        // Create the robot
+        Robot.createInstance(this, MatchConfig.finalRobotType);
+
+        // Initialize the robot
+        Robot.getInstance().init(Robot.OpModeType.TELEOP);
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
@@ -130,9 +97,6 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
 
             //Read all buttons
             gamepadHandling.getDriverGamepad().readButtons();
-
-            //Activate End Game Rumble at 87 seconds into TeleOp
-            gamepadHandling.endGameRumble();
 
             telemetry.update();
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);

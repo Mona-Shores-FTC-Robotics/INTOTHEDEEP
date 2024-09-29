@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.OpModes.Autos;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.example.sharedconstants.Routes.Preload;
 import com.example.sharedconstants.Routes.Preload_and_One_Specimen;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -41,7 +40,7 @@ public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
         while (opModeInInit()) {
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.lockColorAndSide();
+            gamepadHandling.SelectAndLockColorAndSide();
             telemetry.update();
             sleep(10);
         }

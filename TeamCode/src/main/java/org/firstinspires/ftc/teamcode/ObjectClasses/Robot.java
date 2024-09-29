@@ -18,7 +18,14 @@ public class Robot {
     private static Robot robot = null;
     public RobotType robotType;
     public OpModeType opModeType;
-    public enum RobotType {ROBOT_INTOTHEDEEP, ROBOT_CHASSIS, ROBOT_PIT_MODE, ROBOT_CENTERSTAGE}
+    public enum RobotType {
+        ROBOT_INTOTHEDEEP,
+        ROBOT_PIT_MODE,
+        ROBOT_CHASSIS_PINPOINT,
+        ROBOT_CHASSIS_INTERNAL_IMU,
+        ROBOT_CENTERSTAGE_OTOS,
+        ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU
+    }
     public enum OpModeType {TELEOP, AUTO}
 
     private static LinearOpMode activeOpMode;
@@ -42,17 +49,16 @@ public class Robot {
     private void CreateSubsystems(HardwareMap hardwareMap) {
         switch (robotType) {
             //Just the drive base
-            case ROBOT_CHASSIS: {
+            case ROBOT_CHASSIS_INTERNAL_IMU:
+            case ROBOT_CHASSIS_PINPOINT: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
                 gyroSubsystem = new GyroSubsystem();
-//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
                 break;
             }
             case ROBOT_INTOTHEDEEP: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
                 gyroSubsystem = new GyroSubsystem();
 //                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
-
 //                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
 //                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
 //                liftSlideSubsystem = new LiftSlideSubsystem(hardwareMap, "liftslide");
@@ -64,7 +70,8 @@ public class Robot {
                 break;
             }
 
-            case ROBOT_CENTERSTAGE: {
+            case ROBOT_CENTERSTAGE_OTOS:
+            case ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU:{
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
                 gyroSubsystem = new GyroSubsystem();
                 visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
@@ -113,29 +120,16 @@ public class Robot {
 
     private void initTele() {
         switch (robotType) {
-            case ROBOT_CHASSIS: {
+            case ROBOT_INTOTHEDEEP:
+            case ROBOT_CHASSIS_INTERNAL_IMU:
+            case ROBOT_CHASSIS_PINPOINT: {
                 gyroSubsystem.init();
-//                visionSubsystem.init();
                 mecanumDriveSubsystem.init();
                 break;
             }
-
-            case ROBOT_INTOTHEDEEP: {
-                gyroSubsystem.init();
-//                visionSubsystem.init();
-                mecanumDriveSubsystem.init();
-//                intakeSubsystem.init();
-//                gripperSubsystem.init();
-//                liftSlideSubsystem.init();
-//                shoulderSubsystem.init();
-//                climberSubsystem.init();
-                break;
-            }
-            case ROBOT_PIT_MODE: {
-                break;
-            }
-
-            case ROBOT_CENTERSTAGE: {
+            case ROBOT_CENTERSTAGE_OTOS:
+            case ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU:
+            {
                 visionSubsystem.init();
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
@@ -146,6 +140,10 @@ public class Robot {
                 climberSubsystem.init();
                 break;
             }
+
+            case ROBOT_PIT_MODE: {
+                break;
+            }
         }
     }
 
@@ -153,16 +151,14 @@ public class Robot {
         // initialize auto-specific scheduler
         switch (robotType) {
             case ROBOT_INTOTHEDEEP:
-//                visionSubsystem.init();
+            case ROBOT_CHASSIS_INTERNAL_IMU:
+            case ROBOT_CHASSIS_PINPOINT:
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
-//                intakeSubsystem.init();
-//                gripperSubsystem.init();
-//                liftSlideSubsystem.init();
-//                shoulderSubsystem.init();
                 break;
 
-            case ROBOT_CENTERSTAGE: {
+            case ROBOT_CENTERSTAGE_OTOS:
+            case ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU:{
                 visionSubsystem.init();
                 gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
@@ -184,6 +180,21 @@ public class Robot {
     public ShoulderSubsystem getShoulderSubsystem()  {return shoulderSubsystem;}
     public LinearOpMode getActiveOpMode()  {return activeOpMode;}
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;};
+
+    public static RobotType getPreviousRobotType(RobotType currentType) {
+        RobotType[] types = RobotType.values();
+        int index = currentType.ordinal() - 1;
+        if (index < 0) {
+            index = types.length - 1;  // Wrap around to the last enum value if we're at the first one
+        }
+        return types[index];
+    }
+
+    public static RobotType getNextRobotType(RobotType currentType) {
+        RobotType[] types = RobotType.values();
+        int index = (currentType.ordinal() + 1) % types.length;  // Wrap around to the first enum value if we're at the last one
+        return types[index];
+    }
 
 }
 
