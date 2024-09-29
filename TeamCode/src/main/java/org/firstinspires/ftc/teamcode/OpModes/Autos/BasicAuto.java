@@ -24,8 +24,16 @@ public class BasicAuto extends LinearOpMode {
         //Initialize the Game-pads
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
+        while (opModeInInit()) {
+            // Allow driver to override/lock the vision
+            gamepadHandling.getDriverGamepad().readButtons();
+            gamepadHandling.SelectAndLockColorAndSideAndRobotType();
+            telemetry.update();
+            sleep(10);
+        }
+
         // Create and Initialize the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_CHASSIS);
+        Robot.createInstance(this, MatchConfig.finalRobotType);
 
         // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
@@ -37,25 +45,11 @@ public class BasicAuto extends LinearOpMode {
         BasicRoute basicRoute = new BasicRoute(robotDriveAdapter);
         basicRoute.BuildRoutes();
 
-        while (opModeInInit()) {
-            // Allow driver to override/lock the vision
-            gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSide();
-            telemetry.update();
-            sleep(10);
-        }
-
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRoute = basicRoute.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= basicRoute.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
-
-        //Reset Gyro
-        Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
-
-        //After Init switch the vision processing to AprilTags
-        //Robot.getInstance().getVisionSubsystem().SwitchToAprilTagProcessor();
 
         telemetry.clearAll();
 
@@ -68,9 +62,6 @@ public class BasicAuto extends LinearOpMode {
         MatchConfig.endOfAutonomousRelativeYawDegrees = Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees;
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getGyroSubsystem().offsetFromAbsoluteYawDegrees;
         MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().mecanumDrive.pose;
-
     }
-
-
 }
 

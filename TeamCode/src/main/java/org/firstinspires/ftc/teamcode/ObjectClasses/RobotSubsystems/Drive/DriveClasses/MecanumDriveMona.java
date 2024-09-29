@@ -46,8 +46,8 @@ public class MecanumDriveMona extends MecanumDrive  {
         public double F = 8;
     }
 
-    public static class ChassisParams extends MonaTeleopParams {
-        public ChassisParams() {
+    public static class ChassisInternalIMUParams extends MonaTeleopParams {
+        public ChassisInternalIMUParams() {
             RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
                     RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
             RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
@@ -84,8 +84,8 @@ public class MecanumDriveMona extends MecanumDrive  {
         }
     }
 
-    public static class CenterStageParams extends MonaTeleopParams {
-        public CenterStageParams() {
+    public static class CenterStageDEAD_WHEEL_Params extends MonaTeleopParams {
+        public CenterStageDEAD_WHEEL_Params() {
             this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
             this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
@@ -122,11 +122,11 @@ public class MecanumDriveMona extends MecanumDrive  {
         switch (Robot.getInstance().robotType) {
             //Override the Roadrunner parameters for the chassis bot and the centerstage robot
             //The normal IntoTheDeep robot parameters should be stored in the MecancumDrive class
-            case ROBOT_CHASSIS:
-                PARAMS = new ChassisParams();
+            case ROBOT_CHASSIS_INTERNAL_IMU:
+                PARAMS = new ChassisInternalIMUParams();
                 break;
-            case ROBOT_CENTERSTAGE:
-                PARAMS = new CenterStageParams();
+            case ROBOT_CENTERSTAGE_DEAD_WHEEL_INTERNAL_IMU:
+                PARAMS = new CenterStageDEAD_WHEEL_Params();
                 break;
             default:
                 PARAMS = new MonaTeleopParams();

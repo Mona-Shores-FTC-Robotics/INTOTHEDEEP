@@ -24,8 +24,16 @@ public class PreloadAuto extends LinearOpMode {
         //Initialize the Game-pads
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
+        while (opModeInInit()) {
+            // Allow driver to override/lock the vision
+            gamepadHandling.getDriverGamepad().readButtons();
+            gamepadHandling.SelectAndLockColorAndSide();
+            telemetry.update();
+            sleep(10);
+        }
+
         // Create and Initialize the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_CHASSIS);
+        Robot.createInstance(this, MatchConfig.finalRobotType);
 
         // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
@@ -37,24 +45,11 @@ public class PreloadAuto extends LinearOpMode {
         Preload preload = new Preload(robotDriveAdapter);
         preload.BuildRoutes();
 
-        while (opModeInInit()) {
-            // Allow driver to override/lock the vision
-            gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSide();
-            telemetry.update();
-            sleep(10);
-        }
-
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRoute = preload.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= preload.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
-
-        //Reset Gyro
-        //TODO i suspect this is not needed or might be duplicative with what is happening in MecanumDrive
-        // can we run a test without this and see what happens?
-        //Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
 
         telemetry.clearAll();
 

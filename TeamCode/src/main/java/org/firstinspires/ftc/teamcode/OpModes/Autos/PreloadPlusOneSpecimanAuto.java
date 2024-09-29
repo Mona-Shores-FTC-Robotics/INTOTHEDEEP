@@ -24,8 +24,18 @@ public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
         //Initialize the Game-pads
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
+        while (opModeInInit()) {
+            // Allow driver to override/lock the vision
+            gamepadHandling.getDriverGamepad().readButtons();
+            gamepadHandling.SelectAndLockColorAndSide();
+            telemetry.update();
+            sleep(10);
+        }
+
+        //TODO: before competition we must hardcode for a single robot and move this to before the init to save precious auto time
+
         // Create and Initialize the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_CHASSIS);
+        Robot.createInstance(this, MatchConfig.finalRobotType);
 
         // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
@@ -37,13 +47,6 @@ public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
         Preload_and_One_Specimen preloadAndOneSpecimen = new Preload_and_One_Specimen(robotDriveAdapter);
         preloadAndOneSpecimen.BuildRoutes();
 
-        while (opModeInInit()) {
-            // Allow driver to override/lock the vision
-            gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSide();
-            telemetry.update();
-            sleep(10);
-        }
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRoute = preloadAndOneSpecimen.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
