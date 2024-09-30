@@ -11,12 +11,9 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 
@@ -46,10 +43,8 @@ public class MecanumDriveMona extends MecanumDrive  {
 
     public static class ChassisTwoDeadWheelInternalIMUParams extends MonaTeleopParams {
         public ChassisTwoDeadWheelInternalIMUParams() {
-            RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                    RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
-            RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                    RevHubOrientationOnRobot.UsbFacingDirection.UP;
+            logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
+            usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
             // drive model parameters
             this.inPerTick = 0.002996;
@@ -136,7 +131,6 @@ public class MecanumDriveMona extends MecanumDrive  {
     private double drive, strafe, turn;
     private double last_drive=0, last_strafe=0, last_turn=0;
     private double current_drive_ramp = 0, current_strafe_ramp=0, current_turn_ramp=0;
-    private double leftFrontTargetSpeed, rightFrontTargetSpeed, leftBackTargetSpeed, rightBackTargetSpeed;
 
     // ========== Constructor ==========
     public MecanumDriveMona(HardwareMap hardwareMap, Pose2d pose) {
@@ -208,10 +202,10 @@ public class MecanumDriveMona extends MecanumDrive  {
             double sPercent = abs(current_strafe_ramp) / (abs(current_drive_ramp) + abs(current_turn_ramp) + abs(current_strafe_ramp));
             double tPercent = abs(current_turn_ramp) / (abs(current_drive_ramp) + abs(current_turn_ramp) + abs(current_strafe_ramp));
 
-            leftFrontTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
-            rightFrontTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
-            leftBackTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
-            rightBackTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
+            double leftFrontTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
+            double rightFrontTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
+            double leftBackTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
+            double rightBackTargetSpeed = MONA_PARAMS.MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
 
             leftFront.setVelocity(leftFrontTargetSpeed);
             rightFront.setVelocity(rightFrontTargetSpeed);
@@ -305,21 +299,6 @@ public class MecanumDriveMona extends MecanumDrive  {
     public double getYawDegrees() {
         YawPitchRollAngles angles = lazyImu.get().getRobotYawPitchRollAngles(); // Access IMU
         return angles.getYaw(AngleUnit.DEGREES);  // Return yaw in degrees
-    }
-
-    /**
-     * Method to get current yaw (heading) in radians from the IMU.
-     */
-    public double getYawRadians() {
-        YawPitchRollAngles angles = lazyImu.get().getRobotYawPitchRollAngles(); // Access IMU
-        return angles.getYaw(AngleUnit.RADIANS);  // Return yaw in radians
-    }
-
-    /**
-     * Method to reset the yaw (useful for synchronization).
-     */
-    public void resetYaw() {
-        lazyImu.get().resetYaw();  // Reset the IMU yaw
     }
 
 }
