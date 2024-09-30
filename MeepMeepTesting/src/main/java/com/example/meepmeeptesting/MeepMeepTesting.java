@@ -20,22 +20,14 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    /**
-     * SET TO PICK WHICH ROUTES TO RUN:
-     * Prop Location: LEFT, RIGHT, OR CENTER
-     * Routes:
-     *      SPIKE_BACKDROP_PARK,
-     **/
-
-static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD; // here
+static RoutesToRun routeToRunSelection = RoutesToRun.PRELOAD; // here
 
     /** Set which robots should show up **/
-    public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
-    public static boolean SHOW_BLUE_BACKSTAGE_BOT = false;
+    public static boolean SHOW_BLUE_AUDIENCE_BOT = true;
+    public static boolean SHOW_BLUE_BACKSTAGE_BOT = true;
     public static boolean SHOW_RED_AUDIENCE_BOT = true;
     public static boolean SHOW_RED_BACKSTAGE_BOT = true;
 
-    public enum TeamPropLocation {LEFT, CENTER, RIGHT, ALL, NONE}
     enum RoutesToRun {
         BASIC,
         PRELOAD_AND_THREE_SPECIMENS,
@@ -51,31 +43,38 @@ static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD; // here
         //This method makes 4 robots (2 red robots and 2 blue robots)
         MeepMeepRobots.createRobots(meepMeep);
 
-        //This sets the drive for a "dummy robot"
-        DriveShim driveShim = MeepMeepRobots.roadRunnerBot.getDrive();
-
-        // Use the adapter
-        RobotAdapter robotAdapter = new MeepMeepDriveAdapter(driveShim);
-
-        // Create a Routes instance based on the selected route
-        Routes routes;
-
-        if (routesToRunSelection == RoutesToRun.PRELOAD_AND_THREE_SPECIMENS) { // here
-            routes = new Preload_and_Three_Specimens(robotAdapter);
-        } else if (routesToRunSelection == RoutesToRun.PRELOAD_AND_ONE_SPECIMEN){
-            routes = new Preload_and_One_Specimen(robotAdapter);
-        } else if (routesToRunSelection == RoutesToRun.PRELOAD_AND_ONE_SAMPLE) {
-            routes = new Preload_and_One_Sample(robotAdapter);
-        } else if (routesToRunSelection == RoutesToRun.PRELOAD){
-            routes = new Preload(robotAdapter);
-        } else { //if(routesToRunSelection == RoutesToRun.BASIC){
-            routes = new BasicRoute(robotAdapter);
+        // Now each robot uses its own DriveShim instead of a general one
+        if (SHOW_RED_AUDIENCE_BOT) {
+            DriveShim redAudienceDriveShim = redAudienceBot.getDrive();
+            RobotAdapter redAudienceAdapter = new MeepMeepDriveAdapter(redAudienceDriveShim);
+            Routes redAudienceRoute = CreateRoute(redAudienceAdapter);
+            redAudienceRoute.BuildRoutes();
+            redAudienceBot.runAction(redAudienceRoute.getRedAudienceBotRoute());
         }
 
-        // Build the routes
-        routes.BuildRoutes();
+        if (SHOW_BLUE_BACKSTAGE_BOT) {
+            DriveShim blueBackstageDriveShim = blueBackstageBot.getDrive();
+            RobotAdapter blueBackstageAdapter = new MeepMeepDriveAdapter(blueBackstageDriveShim);
+            Routes blueBackstageRoute = CreateRoute(blueBackstageAdapter);
+            blueBackstageRoute.BuildRoutes();
+            blueBackstageBot.runAction(blueBackstageRoute.getBlueBackstageBotRoute());
+        }
 
-        MeepMeepRobots.setRoutes(routes);
+        if (SHOW_BLUE_AUDIENCE_BOT) {
+            DriveShim blueAudienceDriveShim = blueAudienceBot.getDrive();
+            RobotAdapter blueAudienceAdapter = new MeepMeepDriveAdapter(blueAudienceDriveShim);
+            Routes blueAudienceRoute = CreateRoute(blueAudienceAdapter);
+            blueAudienceRoute.BuildRoutes();
+            blueAudienceBot.runAction(blueAudienceRoute.getBlueAudienceBotRoute());
+        }
+
+        if (SHOW_RED_BACKSTAGE_BOT) {
+            DriveShim redBackstageDriveShim = redBackstageBot.getDrive();
+            RobotAdapter redBackstageAdapter = new MeepMeepDriveAdapter(redBackstageDriveShim);
+            Routes redBackstageRoute = CreateRoute(redBackstageAdapter);
+            redBackstageRoute.BuildRoutes();
+            redBackstageBot.runAction(redBackstageRoute.getRedBackstageBotRoute());
+        }
 
         addRobotsToField(meepMeep);
     }
@@ -101,6 +100,20 @@ static RoutesToRun routesToRunSelection = RoutesToRun.PRELOAD; // here
                 .setDarkMode(false)
                 .setBackgroundAlpha(.95f)
                 .start();
+    }
+
+    public static Routes CreateRoute(RobotAdapter adapter) {
+        if (routeToRunSelection == MeepMeepTesting.RoutesToRun.PRELOAD_AND_THREE_SPECIMENS) {
+            return new Preload_and_Three_Specimens(adapter);
+        } else if (routeToRunSelection == MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SPECIMEN) {
+            return new Preload_and_One_Specimen(adapter);
+        } else if (routeToRunSelection == MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SAMPLE) {
+            return new Preload_and_One_Sample(adapter);
+        } else if (routeToRunSelection == MeepMeepTesting.RoutesToRun.PRELOAD) {
+            return new Preload(adapter);
+        } else {
+            return new BasicRoute(adapter);
+        }
     }
 }
 

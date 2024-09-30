@@ -3,6 +3,7 @@ package com.example.sharedconstants.Routes;
 import static com.example.sharedconstants.FieldConstants.*;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.NullAction;
 import com.example.sharedconstants.RobotAdapter;
 
 public class Preload extends Routes {
@@ -19,9 +20,10 @@ public class Preload extends Routes {
     public void BuildRoutes() {
         redBackstageBotRoute = robotAdapter.actionBuilder(RED_BACKSTAGE_START_POSE)
                 .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
+//                .stopAndAdd(new RouteBuilder().NullDriveAction(CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .build();
 
-        blueAudienceBotRoute = robotAdapter.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
+        blueAudienceBotRoute = robotAdapter.mirroredActionBuilder(BLUE_AUDIENCE_START_POSE)
                 .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .build();
 

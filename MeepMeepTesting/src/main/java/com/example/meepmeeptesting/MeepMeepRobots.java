@@ -1,8 +1,12 @@
 package com.example.meepmeeptesting;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.Routes;
 import com.noahbres.meepmeep.MeepMeep;
+import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedLight;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
@@ -17,41 +21,33 @@ public class MeepMeepRobots {
 
     public static RoadRunnerBotEntity roadRunnerBot;
 
+    public static MeepMeepDriveAdapter blueBackstageAdapter;
+    public static MeepMeepDriveAdapter redAudienceAdapter;
+    public static MeepMeepDriveAdapter blueAudienceAdapter;
+    public static MeepMeepDriveAdapter redBackstageAdapter;
+
     public static void createRobots( MeepMeep meepMeep ) {
 
-        blueBackstageBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(40, 40, Math.toRadians(180), Math.toRadians(180), 15)
-                .setColorScheme(new ColorSchemeBlueDark())
-                .setDimensions(18,18)
-                .build();
+        // Create each robot entity with its own settings
+        blueBackstageBot = createBot(meepMeep, new ColorSchemeBlueDark(), FieldConstants.BLUE_BACKSTAGE_START_POSE);
+        blueAudienceBot = createBot(meepMeep, new ColorSchemeBlueLight(), FieldConstants.BLUE_AUDIENCE_START_POSE);
+        redAudienceBot = createBot(meepMeep, new ColorSchemeRedDark(), FieldConstants.RED_AUDIENCE_START_POSE);
+        redBackstageBot = createBot(meepMeep, new ColorSchemeRedLight(), FieldConstants.RED_BACKSTAGE_START_POSE);
 
-        blueAudienceBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(40, 40, Math.toRadians(180), Math.toRadians(180), 15)
-                .setColorScheme(new ColorSchemeBlueDark())
-                .setDimensions(18,18)
-                .build();
+        // Set up the drive adapters for each bot
+        blueBackstageAdapter = new MeepMeepDriveAdapter(blueBackstageBot.getDrive());
+        blueAudienceAdapter = new MeepMeepDriveAdapter(blueAudienceBot.getDrive());
+        redAudienceAdapter = new MeepMeepDriveAdapter(redAudienceBot.getDrive());
+        redBackstageAdapter = new MeepMeepDriveAdapter(redBackstageBot.getDrive());
+    }
 
-        redAudienceBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+    // Helper function to create each robot with specific constraints and colors
+    private static RoadRunnerBotEntity createBot(MeepMeep meepMeep, ColorScheme colorScheme, Pose2d startPose) {
+        return new DefaultBotBuilder(meepMeep)
                 .setConstraints(40, 40, Math.toRadians(180), Math.toRadians(180), 15)
-                .setColorScheme(new ColorSchemeRedLight())
-                .setDimensions(18,18)
-                .build();
-
-        redBackstageBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(40, 40, Math.toRadians(180), Math.toRadians(180), 15)
-                .setColorScheme(new ColorSchemeRedDark())
-                .setDimensions(18,18)
-                .build();
-
-        roadRunnerBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(40, 40, Math.toRadians(180), Math.toRadians(180), 15)
-                .setColorScheme(new ColorSchemeRedLight())
-                .setDimensions(18,18)
+                .setColorScheme(colorScheme)
+                .setDimensions(18, 18)
+                .setStartPose(startPose)
                 .build();
     }
 
@@ -61,5 +57,4 @@ public class MeepMeepRobots {
         blueAudienceBot.runAction(routes.getBlueAudienceBotRoute());
         redBackstageBot.runAction(routes.getRedBackstageBotRoute());
     }
-
 }

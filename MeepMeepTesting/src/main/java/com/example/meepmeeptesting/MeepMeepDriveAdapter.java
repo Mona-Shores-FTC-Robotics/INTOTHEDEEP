@@ -1,11 +1,17 @@
 package com.example.meepmeeptesting;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.NullAction;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.example.sharedconstants.RobotAdapter;
 import com.noahbres.meepmeep.roadrunner.DriveShim;
+
+import org.jetbrains.annotations.NotNull;
 
 public class MeepMeepDriveAdapter implements RobotAdapter {
     private final DriveShim driveShim;
@@ -13,7 +19,7 @@ public class MeepMeepDriveAdapter implements RobotAdapter {
 
     public MeepMeepDriveAdapter(DriveShim driveShim) {
         this.driveShim = driveShim;
-        this.actionFactory = new ActionFactory();  // Initialize the ActionFactory
+        this.actionFactory = new ActionFactory(driveShim);  // Initialize the ActionFactory
     }
 
     @Override
@@ -28,46 +34,27 @@ public class MeepMeepDriveAdapter implements RobotAdapter {
 
     @Override
     public Action getAction(ActionType actionType) {
-        return actionFactory.createAction((ActionType) actionType);
+        return actionFactory.createAction(actionType);
     }
 
     // Inner ActionFactory class
     private static class ActionFactory {
+        private final DriveShim driveShim;
+
+        public ActionFactory(DriveShim driveShim) {
+            this.driveShim = driveShim;  // Store the driveShim instance
+        }
+
         public Action createAction(ActionType actionType) {
             switch (actionType) {
-                case SECURE_PRELOAD_SPECIMEN:
-                    return new SleepAction(.5);  // Simulating a close gripper action
-                case PICKUP_SPECIMEN_OFF_WALL:
-                    return new SleepAction(.5);  // Simulating a close gripper action
-
-                case HANG_SPECIMEN_ON_HIGH_CHAMBER:
-                    return new SleepAction(.5);  // Simulating a close gripper action
-
-                case HANG_SPECIMEN_ON_LOW_CHAMBER:
-                    return new SleepAction(.5);  // Simulating a close gripper action
-
-                case PICKUP_SAMPLE:
-                    return new SleepAction(.5);  // Simulating a close gripper action
-
-                case DEPOSIT_SAMPLE:
-                    return new SleepAction(.5);  // Simulating a close gripper action
-
-                case LIFT_TO_HIGH_CHAMBER:
-                    return new SleepAction(1);  // Simulating lift to high chamber
-                case LIFT_TO_LOW_CHAMBER:
-                    return new SleepAction(.5);  // Simulating a close gripper action
-
-                case LIFT_TO_HOME_POSITION:
-                    return new SleepAction(1);  // Simulating lift to home position
-                case LIFT_TO_HIGH_BASKET:
-                    return new SleepAction(.5);  // Simulating a close gripper action
-
-                case LIFT_TO_LOW_BASKET:
-                    return new SleepAction(.5);  // Simulating a close gripper action
-
                 default:
                     return new SleepAction(1);
             }
         }
     }
+
+    public Pose2d getCurrentPose(){
+        return driveShim.getPoseEstimate();
+    }
+
 }

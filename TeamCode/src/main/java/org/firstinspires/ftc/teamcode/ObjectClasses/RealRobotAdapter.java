@@ -97,4 +97,8 @@ public class RealRobotAdapter implements RobotAdapter {
             }
         }
     }
+
+    public Pose2d getCurrentPose(){
+        return Robot.getInstance().getDriveSubsystem().mecanumDrive.pose;
+    }
 }

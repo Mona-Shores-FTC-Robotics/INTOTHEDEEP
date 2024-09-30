@@ -9,6 +9,7 @@ import static com.example.sharedconstants.FieldConstants.RED_AUDIENCE_START_POSE
 import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POSE;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.NullAction;
 import com.example.sharedconstants.RobotAdapter;
 
 public class Preload_and_One_Specimen extends Routes {
@@ -28,7 +29,7 @@ public class Preload_and_One_Specimen extends Routes {
         redBackstageBotRoute = robotAdapter.actionBuilder(RED_BACKSTAGE_START_POSE)
                 .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .stopAndAdd(new RouteBuilder().PickupSpecimen(CHAMBER_PRELOAD_RED_BACKSTAGE, OBSERVATION_ZONE_RED_PICKUP))
-               .stopAndAdd(new RouteBuilder().ScoreSpecimen(OBSERVATION_ZONE_RED_PICKUP, CHAMBER_TWO_RED_BACKSTAGE))
+                .stopAndAdd(new RouteBuilder().ScoreSpecimen(OBSERVATION_ZONE_RED_PICKUP, CHAMBER_TWO_RED_BACKSTAGE))
                 .stopAndAdd(new RouteBuilder().PickupSpecimen(CHAMBER_TWO_RED_BACKSTAGE, OBSERVATION_ZONE_RED_PICKUP))
                 .build();
 

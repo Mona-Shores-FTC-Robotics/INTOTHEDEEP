@@ -33,4 +33,7 @@ public interface RobotAdapter {
 
     // Method for mirrored driving actions
     TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose);
+
+    Pose2d getCurrentPose();
+
 }

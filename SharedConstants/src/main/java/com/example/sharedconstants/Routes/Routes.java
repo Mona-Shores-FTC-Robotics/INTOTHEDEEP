@@ -11,6 +11,7 @@ import static com.example.sharedconstants.RobotAdapter.ActionType.SECURE_PRELOAD
 
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
+import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
@@ -157,9 +158,9 @@ public abstract class Routes {
                         // Make sure the preloaded specimen is secure
                         // Drive to the Chamber from the Start Position while moving the lift
                         // Hang the specimen on the high chamber
-                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
+                   robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
                    new ParallelAction(
-                           DriveToChamberFromStart(startPose,chamberPose),
+                          DriveToChamberFromStart(startPose,chamberPose),
                           robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
                     ),
                     robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
@@ -214,7 +215,18 @@ public abstract class Routes {
             return robotAdapter.actionBuilder(chamberPose)
                     .setReversed(true)
                     .splineToLinearHeading(observationZonePose,observationZonePose.heading,slowVelocity,slowAcceleration)
-                        .build();
+                    .build();
+        }
+
+        public Action NullDriveAction(Pose2d currentPose) {
+            // Small move to stabilize position visualization in MeepMeep
+            return robotAdapter.actionBuilder(currentPose)
+                    .splineToLinearHeading(
+                            new Pose2d(currentPose.position.x + 0.000001,
+                                    currentPose.position.y,
+                                    currentPose.heading.log()),
+                            currentPose.heading)
+                    .build();
         }
     }
 }
