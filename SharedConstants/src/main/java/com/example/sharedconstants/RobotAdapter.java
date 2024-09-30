@@ -28,12 +28,16 @@ public interface RobotAdapter {
     // Generalized method to get an Action based on a provided action type
     Action getAction(ActionType actionType);
 
+    // The new method that will determine which builder to use
+    TrajectoryActionBuilder getActionBuilder(Pose2d startPose);
+
     // Method for creating trajectory actions
     TrajectoryActionBuilder actionBuilder(Pose2d startPose);
 
     // Method for mirrored driving actions
-    TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose);
+    TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose);
 
-    Pose2d getCurrentPose();
+    void setAllianceColor(FieldConstants.AllianceColor allianceColor);
+    void setSideOfField(FieldConstants.SideOfField sideOfField);
 
 }

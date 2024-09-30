@@ -46,7 +46,7 @@ public class BasicAuto extends LinearOpMode {
         basicRoute.BuildRoutes();
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = basicRoute.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Action selectedRoute = basicRoute.getRouteAction(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= basicRoute.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);

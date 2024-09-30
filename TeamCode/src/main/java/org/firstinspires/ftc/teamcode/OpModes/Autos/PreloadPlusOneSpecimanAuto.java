@@ -49,7 +49,7 @@ public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
 
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = preloadAndOneSpecimen.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Action selectedRoute = preloadAndOneSpecimen.getRouteAction(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= preloadAndOneSpecimen.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);

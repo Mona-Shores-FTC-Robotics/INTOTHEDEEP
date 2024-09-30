@@ -11,7 +11,6 @@ import static com.example.sharedconstants.RobotAdapter.ActionType.SECURE_PRELOAD
 
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
-import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
@@ -63,11 +62,11 @@ public abstract class Routes {
     // These are the defaults
     //THIS SAYS RED AUDIENCE BECAUSE IT IS MIRRORED - DO NOT CHANGE THESE
     protected Pose2d redAudienceStartPose = RED_AUDIENCE_START_POSE;
-    protected Pose2d blueBackstageStartPose = RED_AUDIENCE_START_POSE;
+    protected Pose2d blueBackstageStartPose = BLUE_BACKSTAGE_START_POSE;
 
     //THIS SAYS RED BACKSTAGE BECAUSE ITS MIRRORED - DO NOT CHANGE THESE
     protected Pose2d redBackstageStartPose = RED_BACKSTAGE_START_POSE;
-    protected Pose2d blueAudienceStartPose = RED_BACKSTAGE_START_POSE;
+    protected Pose2d blueAudienceStartPose = BLUE_AUDIENCE_START_POSE;
 
     // Method to return the corresponding starting pose
     public Pose2d getStartingPose(AllianceColor allianceColor, SideOfField sideOfField) {
@@ -92,7 +91,7 @@ public abstract class Routes {
         return null;  // Fallback in case nothing matches
     }
 
-    public Action getRoute(AllianceColor allianceColor, SideOfField sideOfField) {
+    public Action getRouteAction(AllianceColor allianceColor, SideOfField sideOfField) {
         switch (allianceColor) {
             case BLUE:
                 switch (sideOfField) {
@@ -196,7 +195,7 @@ public abstract class Routes {
         Action DriveToChamberFromStart(Pose2d startPose, Pose2d chamberPose) {
             //TODO: write this code for driving to the chamber  from the start position
             return
-                    robotAdapter.actionBuilder(startPose)
+                    robotAdapter.getActionBuilder(startPose)
                             .splineToLinearHeading(chamberPose,chamberPose.heading,slowVelocity,slowAcceleration)
                             .build();
         }
@@ -204,7 +203,7 @@ public abstract class Routes {
         Action DriveToChamberFromObservation(Pose2d observationZonePose, Pose2d chamberPose) {
             //TODO: write this code for driving to the chamber from the observation zone
             return
-                    robotAdapter.actionBuilder(observationZonePose)
+                    robotAdapter.getActionBuilder(observationZonePose)
                             .setReversed(true)
                             .splineToLinearHeading(chamberPose,chamberPose.heading,slowVelocity,slowAcceleration)
                         .build();
@@ -212,7 +211,7 @@ public abstract class Routes {
 
         Action DriveToObservationZoneFromChamber(Pose2d chamberPose, Pose2d observationZonePose) {
             //TODO: write this code for driving to the chamber from the observation zone
-            return robotAdapter.actionBuilder(chamberPose)
+            return robotAdapter.getActionBuilder(chamberPose)
                     .setReversed(true)
                     .splineToLinearHeading(observationZonePose,observationZonePose.heading,slowVelocity,slowAcceleration)
                     .build();
@@ -220,7 +219,7 @@ public abstract class Routes {
 
         public Action NullDriveAction(Pose2d currentPose) {
             // Small move to stabilize position visualization in MeepMeep
-            return robotAdapter.actionBuilder(currentPose)
+            return robotAdapter.getActionBuilder(currentPose)
                     .splineToLinearHeading(
                             new Pose2d(currentPose.position.x + 0.000001,
                                     currentPose.position.y,

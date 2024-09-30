@@ -256,6 +256,12 @@ public class MecanumDriveMona extends MecanumDrive  {
     }
 
     public TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose) {
+        Pose2d rotatedStartingPose = new Pose2d(
+                -beginPose.position.x,
+                -beginPose.position.y,
+                beginPose.heading.inverse().log()
+        );
+
         return new TrajectoryActionBuilder(
                 TurnAction::new,
                 FollowTrajectoryAction::new,
@@ -264,7 +270,7 @@ public class MecanumDriveMona extends MecanumDrive  {
                         new ProfileParams(.25, .1, 1e-2
                         )
                 ),
-                beginPose, 0.0,
+                rotatedStartingPose, 0.0,
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultTurnConstraints,
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultVelConstraint,
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultAccelConstraint,

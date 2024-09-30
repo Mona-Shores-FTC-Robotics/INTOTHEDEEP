@@ -46,7 +46,7 @@ public class PreloadAuto extends LinearOpMode {
         preload.BuildRoutes();
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = preload.getRoute(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Action selectedRoute = preload.getRouteAction(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= preload.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);

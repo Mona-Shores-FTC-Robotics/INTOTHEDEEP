@@ -29,7 +29,7 @@ public class Preload_and_One_Sample extends Routes {
                 .stopAndAdd(new RouteBuilder().ScoreSpecimen(OBSERVATION_ZONE_RED_PICKUP, CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .build();
 
-        blueAudienceBotRoute = robotAdapter.mirroredActionBuilder(RED_BACKSTAGE_START_POSE)
+        blueAudienceBotRoute = robotAdapter.rotatedActionBuilder(RED_BACKSTAGE_START_POSE)
                 .stopAndAdd(new RouteBuilder().ScoreSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .build();
 
@@ -37,7 +37,7 @@ public class Preload_and_One_Sample extends Routes {
                 .stopAndAdd(new RouteBuilder().ScoreSpecimen(RED_AUDIENCE_START_POSE, CHAMBER_RED_AUDIENCE))
                 .build();
 
-        blueBackstageBotRoute = robotAdapter.mirroredActionBuilder(RED_AUDIENCE_START_POSE)
+        blueBackstageBotRoute = robotAdapter.rotatedActionBuilder(RED_AUDIENCE_START_POSE)
                 .stopAndAdd(new RouteBuilder().ScoreSpecimen(RED_AUDIENCE_START_POSE, CHAMBER_RED_AUDIENCE))
                 .build();
     }

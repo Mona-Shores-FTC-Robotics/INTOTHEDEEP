@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.GripperSubsystem;
@@ -14,9 +15,13 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringA
 
 public class RealRobotAdapter implements RobotAdapter {
     private final ActionFactory actionFactory;
+    private FieldConstants.AllianceColor allianceColor;
+    private FieldConstants.SideOfField sideOfField;
 
     public RealRobotAdapter() {
         actionFactory = new ActionFactory();
+        this.setAllianceColor(MatchConfig.finalAllianceColor);
+        this.setSideOfField(MatchConfig.finalSideOfField);
     }
 
     @Override
@@ -25,13 +30,37 @@ public class RealRobotAdapter implements RobotAdapter {
     }
 
     @Override
+    public TrajectoryActionBuilder getActionBuilder(Pose2d startPose) {
+        if (isRotated()) {
+            return rotatedActionBuilder(startPose);
+        } else {
+            return actionBuilder(startPose);
+        }
+    }
+
+    @Override
     public TrajectoryActionBuilder actionBuilder(Pose2d startPose) {
         return Robot.getInstance().getDriveSubsystem().mecanumDrive.actionBuilder(startPose);
     }
 
     @Override
-    public TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose) {
+    public TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose) {
         return Robot.getInstance().getDriveSubsystem().mecanumDrive.mirroredActionBuilder(beginPose);
+    }
+
+    @Override
+    public void setAllianceColor(FieldConstants.AllianceColor allianceColor) {
+        this.allianceColor = allianceColor;
+    }
+
+    @Override
+    public void setSideOfField(FieldConstants.SideOfField sideOfField) {
+        this.sideOfField = sideOfField;
+    }
+
+    // Check if the robot is on the blue alliance and therefore should use the rotated trajectory
+    public boolean isRotated() {
+        return this.allianceColor == FieldConstants.AllianceColor.BLUE;
     }
 
     // Inner ActionFactory class
