@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Config
 public class ClimberSubsystem extends SubsystemBase {
@@ -69,6 +70,7 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void init() {
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.CLIMBER);
         winchMotorInit();
         climberArmInit();
     }

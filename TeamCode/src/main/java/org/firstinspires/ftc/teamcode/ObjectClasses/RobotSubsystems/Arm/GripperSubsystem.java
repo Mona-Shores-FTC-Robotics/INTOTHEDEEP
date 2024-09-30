@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Config
 public final class GripperSubsystem extends SubsystemBase {
@@ -34,6 +35,7 @@ public final class GripperSubsystem extends SubsystemBase {
     }
 
     public void init() {
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.GRIPPER);
         currentState= GRIPPER_STARTING_STATE;
         endEffector.setPosition(currentState.position);
     }

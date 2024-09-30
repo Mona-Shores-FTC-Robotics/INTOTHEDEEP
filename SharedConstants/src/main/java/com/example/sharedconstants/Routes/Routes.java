@@ -60,13 +60,13 @@ public abstract class Routes {
     protected Action blueAudienceBotRoute;
 
     // These are the defaults
-    //THIS SAYS RED AUDIENCE BECXAUSE IT IS MIRRORED
+    //THIS SAYS RED AUDIENCE BECAUSE IT IS MIRRORED - DO NOT CHANGE THESE
     protected Pose2d redAudienceStartPose = RED_AUDIENCE_START_POSE;
-    protected Pose2d blueBackstageStartPose = BLUE_BACKSTAGE_START_POSE;
+    protected Pose2d blueBackstageStartPose = RED_AUDIENCE_START_POSE;
 
-    //THIS SAYS RED BACKSTAGE BECAUSE ITS MIRRORED
+    //THIS SAYS RED BACKSTAGE BECAUSE ITS MIRRORED - DO NOT CHANGE THESE
     protected Pose2d redBackstageStartPose = RED_BACKSTAGE_START_POSE;
-    protected Pose2d blueAudienceStartPose = BLUE_AUDIENCE_START_POSE;
+    protected Pose2d blueAudienceStartPose = RED_BACKSTAGE_START_POSE;
 
     // Method to return the corresponding starting pose
     public Pose2d getStartingPose(AllianceColor allianceColor, SideOfField sideOfField) {
@@ -157,12 +157,12 @@ public abstract class Routes {
                         // Make sure the preloaded specimen is secure
                         // Drive to the Chamber from the Start Position while moving the lift
                         // Hang the specimen on the high chamber
-//                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
+                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN),
                    new ParallelAction(
-                           DriveToChamberFromStart(startPose,chamberPose)
-//                          robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
-                    )
-//                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
+                           DriveToChamberFromStart(startPose,chamberPose),
+                          robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
+                    ),
+                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
             );
         }
 
@@ -172,11 +172,10 @@ public abstract class Routes {
                         // Drive to the Chamber from the Observation Zone while moving the lift in parallel
                         // Hang the specimen on the high chamber
                    new ParallelAction(
-                           DriveToChamberFromObservation(startPose,chamberPose)
-//                           robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
-                   )
-//                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
-
+                           DriveToChamberFromObservation(startPose,chamberPose),
+                           robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER)
+                   ),
+                    robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER)
             );
         }
 
@@ -186,14 +185,11 @@ public abstract class Routes {
                         //Drive to the Observation Zone while lowering the lift in parallel
                         //Pickup the specimen off the wall
                     new ParallelAction(
-                            DriveToObservationZoneFromChamber(startPose,observationZonePose)
-//                            robotAdapter.getAction(LIFT_TO_HOME_POSITION)
-                    )
-//                    robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL),
-//                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)
-
-
-
+                            DriveToObservationZoneFromChamber(startPose,observationZonePose),
+                            robotAdapter.getAction(LIFT_TO_HOME_POSITION)
+                    ),
+                    robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL),
+                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)
             );
         }
         Action DriveToChamberFromStart(Pose2d startPose, Pose2d chamberPose) {

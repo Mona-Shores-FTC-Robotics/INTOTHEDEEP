@@ -34,6 +34,7 @@ public class GyroSubsystem extends SubsystemBase {
     }
 
     public void init() {
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.GYRO);
         imu = Robot.getInstance().getDriveSubsystem().getMecanumDrive().lazyImu.get();
     }
 

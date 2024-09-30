@@ -13,6 +13,10 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.Cli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+
 public class Robot {
 
     private static Robot robot = null;
@@ -37,6 +41,13 @@ public class Robot {
     private static LiftSubsystem liftSubsystem;
     private static ShoulderSubsystem shoulderSubsystem;
     private static ClimberSubsystem climberSubsystem;
+
+    public enum SubsystemType {
+        DRIVE, GYRO, VISION, INTAKE, GRIPPER, LIFT, SHOULDER, CLIMBER
+    }
+
+    // Use an EnumSet for tracking available subsystems
+    private Set<SubsystemType> availableSubsystems = EnumSet.noneOf(SubsystemType.class);
 
     /* Constructor */
     private Robot(LinearOpMode opMode, RobotType rType) {
@@ -101,11 +112,28 @@ public class Robot {
     // Static method to get single instance of Robot
     public static synchronized Robot getInstance() {
         if (robot == null) {
-            telemetry.addLine("error");
+            telemetry.addLine("error: Robot instance is null");
+            telemetry.update();
         }
         return robot;
     }
 
+    // This method can be called to register subsystems
+    public void registerSubsystem(SubsystemType subsystem) {
+        availableSubsystems.add(subsystem);
+        telemetry.addLine("Registered subsystem: " + subsystem);
+        telemetry.update();
+    }
+
+    // Check if the subsystem exists
+    public boolean hasSubsystem(SubsystemType subsystem) {
+        if (!availableSubsystems.contains(subsystem)) {
+            telemetry.addLine("Warning: Subsystem " + subsystem + " is not available on this robot.");
+            telemetry.update();
+            return false;
+        }
+        return true;
+    }
 
     // Initialize teleop or autonomous, depending on which is used
     public void init(OpModeType oType){

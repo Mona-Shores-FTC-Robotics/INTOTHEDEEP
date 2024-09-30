@@ -24,8 +24,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public MecanumDriveMona mecanumDrive;
-    public VisionSubsystem visionSubsystem;
-    public boolean aprilTagAutoDriving;
     public boolean fieldOrientedControl;
 
     public double drive;
@@ -43,8 +41,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void init()
     {
-        visionSubsystem = Robot.getInstance().getVisionSubsystem();
-        aprilTagAutoDriving =false;
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.DRIVE);
         fieldOrientedControl=false;
         mecanumDrive.init();
     }

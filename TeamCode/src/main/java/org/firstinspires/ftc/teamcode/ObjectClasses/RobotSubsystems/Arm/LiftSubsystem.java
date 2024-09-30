@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Config
 public class LiftSubsystem extends SubsystemBase {
@@ -65,6 +66,9 @@ public class LiftSubsystem extends SubsystemBase {
     }
 
     public void init (){
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.LIFT);
+
+
         //This Direction works better because the string doesn't coil up in the other direction on the spool
         lift.setDirection(DcMotorSimple.Direction.REVERSE);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
