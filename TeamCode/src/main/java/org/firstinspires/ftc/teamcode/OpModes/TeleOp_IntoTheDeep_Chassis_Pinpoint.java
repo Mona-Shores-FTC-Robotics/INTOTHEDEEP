@@ -87,13 +87,14 @@ public class TeleOp_IntoTheDeep_Chassis_Pinpoint extends LinearOpMode
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
-            Robot.getInstance().getDriveSubsystem().getMecanumDrive().LoopDriverStationTelemetry(telemetry);
-
             //Reset the timer for the loop timer
             MatchConfig.loopTimer.reset();
 
             //Run the Scheduler
             CommandScheduler.getInstance().run();
+
+            // Display Telemetry through the Robot's Telemetry Manager
+            Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();
 
             //Read all buttons
             gamepadHandling.getDriverGamepad().readButtons();

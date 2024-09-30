@@ -38,6 +38,7 @@ public class RealRobotAdapter implements RobotAdapter {
     private static class ActionFactory {
         public Action createAction(ActionType actionType) {
             Robot robot = Robot.getInstance();
+            DriverStationTelemetryManager telemetryManger = robot.getDriverStationTelemetryManager();
 
             switch (actionType) {
                 case SECURE_PRELOAD_SPECIMEN:
@@ -46,8 +47,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.GRIPPER)) {
                         return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.CLOSED);
                     } else {
-                        robot.getActiveOpMode().telemetry.addLine("Gripper subsystem is not available on this robot.");
-                        robot.getActiveOpMode().telemetry.update();
+                        telemetryManger.displayError("Gripper subsystem is not available on this robot.");
                         return new SleepAction(0.1);  // Returning nonce action
                     }
 
@@ -57,8 +57,7 @@ public class RealRobotAdapter implements RobotAdapter {
                                 new MoveLiftAction(LiftSubsystem.LiftStates.HANG_HIGH_CHAMBER),
                                 new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN));
                     } else {
-                        robot.getActiveOpMode().telemetry.addLine("Lift or Gripper subsystem is not available on this robot.");
-                        robot.getActiveOpMode().telemetry.update();
+                        telemetryManger.displayError("Lift or Gripper subsystem is not available on this robot.");
                         return new SleepAction(0.1);  // Returning nonce action
                     }
 
@@ -68,8 +67,7 @@ public class RealRobotAdapter implements RobotAdapter {
                                 new MoveLiftAction(LiftSubsystem.LiftStates.HANG_LOW_CHAMBER),
                                 new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN));
                     } else {
-                        robot.getActiveOpMode().telemetry.addLine("Lift or Gripper subsystem is not available on this robot.");
-                        robot.getActiveOpMode().telemetry.update();
+                        telemetryManger.displayError("Lift or Gripper subsystem is not available on this robot.");
                         return new SleepAction(0.1);  // Returning nonce action
                     }
 
@@ -77,8 +75,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.GRIPPER)) {
                         return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN);
                     } else {
-                        robot.getActiveOpMode().telemetry.addLine("Gripper subsystem is not available on this robot.");
-                        robot.getActiveOpMode().telemetry.update();
+                        telemetryManger.displayError("Gripper subsystem is not available on this robot.");
                         return new SleepAction(0.1);  // Returning nonce action
                     }
 
@@ -90,14 +87,12 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.LIFT)) {
                         return new MoveLiftAction(LiftSubsystem.LiftStates.valueOf(actionType.name()));
                     } else {
-                        robot.getActiveOpMode().telemetry.addLine("Lift subsystem is not available on this robot.");
-                        robot.getActiveOpMode().telemetry.update();
+                        telemetryManger.displayError("Lift subsystem is not available on this robot.");
                         return new SleepAction(0.1);  // Returning nonce action
                     }
 
                 default:
-                    robot.getActiveOpMode().telemetry.addLine("Unknown action type: " + actionType);
-                    robot.getActiveOpMode().telemetry.update();
+                    telemetryManger.displayError("Unknown action type: " + actionType);
                     return new SleepAction(0.1);  // Returning nonce action for unknown actions
             }
         }

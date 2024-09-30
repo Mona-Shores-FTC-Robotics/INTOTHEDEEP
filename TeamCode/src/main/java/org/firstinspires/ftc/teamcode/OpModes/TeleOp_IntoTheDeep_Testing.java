@@ -54,10 +54,6 @@ public class TeleOp_IntoTheDeep_Testing extends LinearOpMode
         //Initialize the Game-pads
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
-        // Setup Button Bindings
-        new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
-        new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad());
-
         telemetry.clearAll();
 
         while (opModeInInit()) {
@@ -74,6 +70,10 @@ public class TeleOp_IntoTheDeep_Testing extends LinearOpMode
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);
 
+        // Setup Button Bindings
+        new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
+        new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad());
+
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
         MatchConfig.teleOpTimer.reset();
@@ -87,19 +87,22 @@ public class TeleOp_IntoTheDeep_Testing extends LinearOpMode
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
-            Robot.getInstance().getDriveSubsystem().getMecanumDrive().LoopDriverStationTelemetry(telemetry);
-
-            //Reset the timer for the loop timer
+            // Reset the loop timer
             MatchConfig.loopTimer.reset();
 
-            //Run the Scheduler
+            // Run the scheduler
             CommandScheduler.getInstance().run();
 
-            //Read all buttons
+            // Read buttons
             gamepadHandling.getDriverGamepad().readButtons();
 
-            telemetry.update();
+            // Display Telemetry through the Robot's Telemetry Manager
+            Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();
+
+            // Send packet to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);
+
+            // Clear the packet for the next loop
             MatchConfig.telemetryPacket = new TelemetryPacket();
         }
     }

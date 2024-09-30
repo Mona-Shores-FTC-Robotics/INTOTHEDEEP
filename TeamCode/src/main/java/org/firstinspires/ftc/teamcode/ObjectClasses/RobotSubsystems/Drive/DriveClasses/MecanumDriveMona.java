@@ -278,23 +278,6 @@ public class MecanumDriveMona extends MecanumDrive  {
                         pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.inverse()));
     }
 
-    public void LoopDriverStationTelemetry(Telemetry telemetry) {
-        telemetry.addData("Alliance Color: ", MatchConfig.finalAllianceColor);
-        telemetry.addData("Side of Field: ", MatchConfig.finalSideOfField);
-        telemetry.addLine("TeleOp Time " + JavaUtil.formatNumber(MatchConfig.teleOpTimer.seconds(), 4, 1) + " / 120 seconds");
-        telemetry.addData("Loop Time ", JavaUtil.formatNumber(MatchConfig.loopTimer.milliseconds(), 4, 1) + " milliseconds");
-
-        telemetry.addLine();
-        telemetry.addData("Current Pose", "X %5.2f, Y %5.2f, heading %5.2f ",
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.x,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.y,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.heading.log());
-
-        telemetry.addLine();
-
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Absolute (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getDriveSubsystem().getMecanumDrive().getYawDegrees(), 5, 2));
-    }
-
     // Helper methods to set motor and encoder directions
     private void setMotorAndEncoderDirectionsForChassisTwoDeadWheelInternalIMU() {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);

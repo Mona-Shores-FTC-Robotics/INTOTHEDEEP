@@ -18,6 +18,9 @@ import java.util.Set;
 public class Robot {
 
     private static Robot robot = null;
+
+    private DriverStationTelemetryManager driverStationTelemetryManager;
+
     public RobotType robotType;
     public OpModeType opModeType;
     public enum RobotType {
@@ -131,6 +134,7 @@ public class Robot {
 
     // Initialize teleop or autonomous, depending on which is used
     public void init(OpModeType oType){
+        driverStationTelemetryManager = new DriverStationTelemetryManager(activeOpMode.telemetry);
         opModeType = oType;
             if (opModeType == OpModeType.TELEOP) {
                 initTele();
@@ -197,6 +201,8 @@ public class Robot {
     public ShoulderSubsystem getShoulderSubsystem()  {return shoulderSubsystem;}
     public LinearOpMode getActiveOpMode()  {return activeOpMode;}
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;}
+    public DriverStationTelemetryManager getDriverStationTelemetryManager() {return driverStationTelemetryManager;
+    }
 
     public static RobotType getPreviousRobotType(RobotType currentType) {
         RobotType[] types = RobotType.values();
@@ -211,6 +217,14 @@ public class Robot {
         RobotType[] types = RobotType.values();
         int index = (currentType.ordinal() + 1) % types.length;  // Wrap around to the first enum value if we're at the last one
         return types[index];
+    }
+
+    public boolean isAutoMode() {
+        return opModeType == OpModeType.AUTO;
+    }
+
+    public boolean isTeleOpMode() {
+        return opModeType == OpModeType.TELEOP;
     }
 
 }
