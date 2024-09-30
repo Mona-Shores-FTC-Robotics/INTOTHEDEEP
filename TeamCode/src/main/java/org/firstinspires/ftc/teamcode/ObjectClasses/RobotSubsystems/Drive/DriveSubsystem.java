@@ -4,13 +4,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.example.sharedconstants.FieldConstants;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -24,6 +23,9 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public MecanumDriveMona mecanumDrive;
+    private double currentRelativeYawDegrees;
+    private double offsetFromAbsoluteYawDegrees; // To manage relative yaw offset
+
     public boolean fieldOrientedControl;
 
     public double drive;
@@ -42,66 +44,110 @@ public class DriveSubsystem extends SubsystemBase {
     public void init()
     {
         Robot.getInstance().registerSubsystem(Robot.SubsystemType.DRIVE);
-        fieldOrientedControl=false;
+        fieldOrientedControl=false; // Default to non-field-oriented
         mecanumDrive.init();
     }
 
     public void periodic(){
-        DashboardTelemetryDriveTrain();
+        updateCurrentRelativeYaw();
+        Robot.getInstance().getActiveOpMode().telemetry.addData("Relative Yaw (Degrees)", currentRelativeYawDegrees);
+        DriverStationTelemetry();
     }
 
-    private void DashboardTelemetryDriveTrain() {
-        //Add code to help with telemetry
+    // Use the IMU in MecanumDrive to get the current yaw angle
+    public double getYawDegrees() {
+        return mecanumDrive.getYawDegrees(); // Access IMU yaw from MecanumDrive
     }
 
+    // Get the current relative yaw (adjusted by offset)
+    public void updateCurrentRelativeYaw() {
+        double absoluteYawDegrees = getYawDegrees(); // Use MecanumDrive's IMU
+        currentRelativeYawDegrees = absoluteYawDegrees + offsetFromAbsoluteYawDegrees;
+
+        // Normalize to -180 to 180 degrees
+        if (currentRelativeYawDegrees > 180) {
+            currentRelativeYawDegrees -= 360;
+        } else if (currentRelativeYawDegrees <= -180) {
+            currentRelativeYawDegrees += 360;
+        }
+    }
+
+    // Telemetry for driver station
+    public void DriverStationTelemetry() {
+        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
+        telemetry.addLine("Yaw Angle (Degrees): " + currentRelativeYawDegrees);
+        telemetry.addLine("Robot Pose Heading (Degrees): " + Math.toDegrees(mecanumDrive.pose.heading.log()));
+    }
 
     public MecanumDriveMona getMecanumDrive()
     {
        return mecanumDrive;
     }
 
-    public void setDriveStrafeTurnValues(double leftY, double leftX, double rightX ){
+    /**
+     * Adjust the drive, strafe, and turn values for robot-centric or field-centric control
+     */
+    public void setDriveStrafeTurnValues(double leftY, double leftX, double rightX) {
         boolean gamepadActive = driverGamepadIsActive(leftY, leftX, rightX);
         if (gamepadActive) {
-            //apply speed factors
-            leftYAdjusted = leftY * DriveParameters.DRIVE_SPEED_FACTOR;
-            leftXAdjusted = leftX * DriveParameters.STRAFE_SPEED_FACTOR;
-            rightXAdjusted = rightX * DriveParameters.TURN_SPEED_FACTOR;
+            if (fieldOrientedControl) {
+                fieldOrientedControl(leftY, leftX);
+            } else {
+                // Apply speed factors
+                leftYAdjusted = leftY * DriveParameters.DRIVE_SPEED_FACTOR;
+                leftXAdjusted = leftX * DriveParameters.STRAFE_SPEED_FACTOR;
+                rightXAdjusted = rightX * DriveParameters.TURN_SPEED_FACTOR;
+            }
         } else {
+            // No input, set adjusted values to 0
             leftYAdjusted = 0;
             leftXAdjusted = 0;
             rightXAdjusted = 0;
         }
+
+        // Set drive, strafe, and turn values
         drive = leftYAdjusted;
         strafe = leftXAdjusted;
         turn = rightXAdjusted;
+
+        // Pass these values to the Mecanum drive system
+        mecanumDrive.mecanumDriveSpeedControl(drive, strafe, turn);
     }
 
     public Boolean driverGamepadIsActive(double leftY, double leftX, double rightX) {
-        if     (Math.abs(leftY) > DriveParameters.DEAD_ZONE ||
+        return (Math.abs(leftY) > DriveParameters.DEAD_ZONE ||
                 Math.abs(leftX) > DriveParameters.DEAD_ZONE ||
-                Math.abs(rightX) > DriveParameters.DEAD_ZONE ){
-            return true;
-        } else return false;
+                Math.abs(rightX) > DriveParameters.DEAD_ZONE);
     }
 
-    public void fieldOrientedControl (double leftY, double leftX){
+    /**
+     * Implements field-centric control. Adjusts the robot's movement based on the heading.
+     */
+    public void fieldOrientedControl(double leftY, double leftX) {
         double y = leftY;
         double x = leftX;
-        double botHeading;
 
-        //This should make it so field centric driving works for both alliance colors
-        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED) {
-            botHeading = Math.toRadians(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees - 90);
-        } else {
-            botHeading = Math.toRadians(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees + 90);
+        // Get the robot's current heading in radians (directly from the gyro)
+        double botHeading = Math.toRadians(getYawDegrees());
+
+        // Determine the heading offset based on alliance (assuming you're tracking this in MatchConfig)
+        double headingOffset = 0;  // Default
+
+        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+            headingOffset = Math.toRadians(90);  // 90 degrees for blue side
+        } else if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED) {
+            headingOffset = Math.toRadians(-90);  // -90 degrees for red side
         }
 
-        // Rotate the movement direction counter to the bot's rotation
-        leftXAdjusted = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-        leftYAdjusted = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+        // Adjust the robot's heading by the alliance-specific offset
+        double adjustedHeading = botHeading - headingOffset;
 
-        leftYAdjusted = Math.min( leftYAdjusted * 1.1, 1);  // Counteract imperfect strafing
+        // Rotate the movement direction relative to the robot's adjusted heading
+        leftXAdjusted = x * Math.cos(-adjustedHeading) - y * Math.sin(-adjustedHeading);
+        leftYAdjusted = x * Math.sin(-adjustedHeading) + y * Math.cos(-adjustedHeading);
+
+        // Optionally counteract imperfect strafing
+        leftYAdjusted = Math.min(leftYAdjusted * 1.1, 1);
     }
 }
 

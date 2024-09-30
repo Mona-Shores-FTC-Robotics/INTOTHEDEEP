@@ -8,13 +8,11 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.GripperS
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ShoulderSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.GyroSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
 
 public class Robot {
@@ -34,7 +32,6 @@ public class Robot {
 
     private static LinearOpMode activeOpMode;
     private static DriveSubsystem mecanumDriveSubsystem;
-    private static GyroSubsystem gyroSubsystem;
     private static VisionSubsystem visionSubsystem;
     private static IntakeSubsystem intakeSubsystem;
     private static GripperSubsystem gripperSubsystem;
@@ -47,7 +44,7 @@ public class Robot {
     }
 
     // Use an EnumSet for tracking available subsystems
-    private Set<SubsystemType> availableSubsystems = EnumSet.noneOf(SubsystemType.class);
+    private final Set<SubsystemType> availableSubsystems = EnumSet.noneOf(SubsystemType.class);
 
     /* Constructor */
     private Robot(LinearOpMode opMode, RobotType rType) {
@@ -63,12 +60,10 @@ public class Robot {
             case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
             case ROBOT_CHASSIS_PINPOINT: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
-                gyroSubsystem = new GyroSubsystem();
                 break;
             }
             case ROBOT_INTOTHEDEEP: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
-                gyroSubsystem = new GyroSubsystem();
 //                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
 //                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
 //                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
@@ -84,7 +79,6 @@ public class Robot {
             case ROBOT_CENTERSTAGE_OTOS:
             case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:{
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
-                gyroSubsystem = new GyroSubsystem();
                 visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
                 intakeSubsystem = new IntakeSubsystem(hardwareMap, "par", "perp");
                 gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
@@ -151,7 +145,6 @@ public class Robot {
             case ROBOT_INTOTHEDEEP:
             case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
             case ROBOT_CHASSIS_PINPOINT: {
-                gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
                 break;
             }
@@ -159,7 +152,6 @@ public class Robot {
             case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:
             {
                 visionSubsystem.init();
-                gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
                 gripperSubsystem.init();
@@ -181,14 +173,12 @@ public class Robot {
             case ROBOT_INTOTHEDEEP:
             case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
             case ROBOT_CHASSIS_PINPOINT:
-                gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
                 break;
 
             case ROBOT_CENTERSTAGE_OTOS:
             case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:{
                 visionSubsystem.init();
-                gyroSubsystem.init();
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
                 gripperSubsystem.init();
@@ -199,7 +189,6 @@ public class Robot {
         }
     }
 
-    public GyroSubsystem getGyroSubsystem()  {return gyroSubsystem;    }
     public DriveSubsystem getDriveSubsystem()  {return mecanumDriveSubsystem;}
     public VisionSubsystem getVisionSubsystem()  {return visionSubsystem;}
     public IntakeSubsystem getIntakeSubsystem()  {return intakeSubsystem;}
@@ -207,7 +196,7 @@ public class Robot {
     public LiftSubsystem getLiftSubsystem()  {return liftSubsystem;}
     public ShoulderSubsystem getShoulderSubsystem()  {return shoulderSubsystem;}
     public LinearOpMode getActiveOpMode()  {return activeOpMode;}
-    public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;};
+    public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;}
 
     public static RobotType getPreviousRobotType(RobotType currentType) {
         RobotType[] types = RobotType.values();

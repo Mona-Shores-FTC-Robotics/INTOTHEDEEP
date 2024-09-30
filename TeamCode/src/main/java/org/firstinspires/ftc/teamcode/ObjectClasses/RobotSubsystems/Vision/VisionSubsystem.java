@@ -409,7 +409,7 @@ public final class VisionSubsystem extends SubsystemBase {
         //save the tag.detection.ftPose.yaw as the cameraYaw
         double cameraYaw = tag.detection.ftcPose.yaw;
 
-        Pose2d newPose = new Pose2d(tagPosXOnField-distanceX, tagPosYOnField+distanceY, Robot.getInstance().getGyroSubsystem().currentRelativeYawRadians);
+        Pose2d newPose = new Pose2d(tagPosXOnField-distanceX, tagPosYOnField+distanceY, Robot.getInstance().getDriveSubsystem().getYawDegrees());
 
         telemetry.addLine();
         telemetry.addData("Tag", tag.detection.metadata.name);

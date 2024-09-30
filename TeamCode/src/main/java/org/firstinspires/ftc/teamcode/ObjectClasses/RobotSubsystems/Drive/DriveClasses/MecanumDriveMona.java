@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
@@ -290,8 +292,7 @@ public class MecanumDriveMona extends MecanumDrive  {
 
         telemetry.addLine();
 
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Absolute (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentAbsoluteYawDegrees, 5, 2));
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Relative (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees, 5, 2));
+        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Absolute (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getDriveSubsystem().getMecanumDrive().getYawDegrees(), 5, 2));
     }
 
     // Helper methods to set motor and encoder directions
@@ -314,6 +315,30 @@ public class MecanumDriveMona extends MecanumDrive  {
         ((TwoDeadWheelLocalizer) this.localizer).par.setDirection(DcMotorSimple.Direction.REVERSE);
         ((TwoDeadWheelLocalizer) this.localizer).perp.setDirection(DcMotorSimple.Direction.REVERSE);
     }
+
+    /**
+     * Method to get current yaw (heading) in degrees from the IMU.
+     */
+    public double getYawDegrees() {
+        YawPitchRollAngles angles = lazyImu.get().getRobotYawPitchRollAngles(); // Access IMU
+        return angles.getYaw(AngleUnit.DEGREES);  // Return yaw in degrees
+    }
+
+    /**
+     * Method to get current yaw (heading) in radians from the IMU.
+     */
+    public double getYawRadians() {
+        YawPitchRollAngles angles = lazyImu.get().getRobotYawPitchRollAngles(); // Access IMU
+        return angles.getYaw(AngleUnit.RADIANS);  // Return yaw in radians
+    }
+
+    /**
+     * Method to reset the yaw (useful for synchronization).
+     */
+    public void resetYaw() {
+        lazyImu.get().resetYaw();  // Reset the IMU yaw
+    }
+
 }
 
 
