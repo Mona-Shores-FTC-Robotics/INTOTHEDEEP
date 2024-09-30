@@ -42,8 +42,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@TeleOp(name="TeleOp_IntoTheDeep")
-public class TeleOp_IntoTheDeep_Chassis_Pinpoint extends LinearOpMode
+@TeleOp(name="TeleOp_IntoTheDeep Hardcoded Robot [Chassis_Pinpoint]")
+public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
 {
     @Override
     public void runOpMode()
