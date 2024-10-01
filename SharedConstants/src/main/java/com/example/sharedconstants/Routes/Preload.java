@@ -17,44 +17,44 @@ public class Preload extends Routes {
     }
 
     public void BuildRoutes() {
-        redBackstageBotRoute = robotAdapter.getActionBuilder(RED_BACKSTAGE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
+        redBackstageBotRoute = robotAdapter.getActionBuilder(OBSERVATION_START_POSE)
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(OBSERVATION_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .stopAndAdd(new RouteBuilder().NullDriveAction(CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .build();
 
-        blueAudienceBotRoute = robotAdapter.getActionBuilder(RED_BACKSTAGE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_BACKSTAGE_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
+        blueAudienceBotRoute = robotAdapter.getActionBuilder(OBSERVATION_START_POSE)
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(OBSERVATION_START_POSE, CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .stopAndAdd(new RouteBuilder().NullDriveAction(CHAMBER_PRELOAD_RED_BACKSTAGE))
                 .build();
 
-        redAudienceBotRoute = robotAdapter.getActionBuilder(RED_AUDIENCE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_AUDIENCE_START_POSE, CHAMBER_PRELOAD_RED_AUDIENCE))
+        redAudienceBotRoute = robotAdapter.getActionBuilder(NET_START_POSE)
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(NET_START_POSE, CHAMBER_PRELOAD_RED_AUDIENCE))
                 .stopAndAdd(new RouteBuilder().NullDriveAction(CHAMBER_PRELOAD_RED_AUDIENCE))
                 .build();
 
-        blueBackstageBotRoute = robotAdapter.getActionBuilder(RED_AUDIENCE_START_POSE)
-                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(RED_AUDIENCE_START_POSE, CHAMBER_PRELOAD_RED_AUDIENCE))
+        blueBackstageBotRoute = robotAdapter.getActionBuilder(NET_START_POSE)
+                .stopAndAdd(new RouteBuilder().ScorePreloadSpecimen(NET_START_POSE, CHAMBER_PRELOAD_RED_AUDIENCE))
                 .stopAndAdd(new RouteBuilder().NullDriveAction(CHAMBER_PRELOAD_RED_AUDIENCE))
                 .build();
     }
 
     @Override
-    public Action getBlueBackstageBotRoute() {
+    public Action getBlueNetBotRoute() {
         return blueBackstageBotRoute;
     }
 
     @Override
-    public Action getBlueAudienceBotRoute() {
+    public Action getBlueObservationBotRoute() {
         return this.blueAudienceBotRoute;
     }
 
     @Override
-    public Action getRedBackstageBotRoute() {
+    public Action getRedObservationBotRoute() {
         return redBackstageBotRoute;
     }
 
     @Override
-    public Action getRedAudienceBotRoute() {
+    public Action getRedNetBotRoute() {
         return redAudienceBotRoute;
     }
 }

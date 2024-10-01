@@ -53,10 +53,10 @@ public class FieldConstants {
     public static double TANGENT_TOWARD_RED = Math.toRadians(270);
     public static double TANGENT_315_DEGREES = Math.toRadians(315);
 
-    public static Pose2d BLUE_AUDIENCE_START_POSE = new Pose2d(-HALF_TILE, HALF_FIELD-HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
-    public static Pose2d RED_AUDIENCE_START_POSE = new Pose2d(-HALF_TILE,  -HALF_FIELD+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
-    public static Pose2d RED_BACKSTAGE_START_POSE = new Pose2d(HALF_TILE,-HALF_FIELD + HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
-    public static Pose2d BLUE_BACKSTAGE_START_POSE = new Pose2d(HALF_TILE, HALF_FIELD-HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
+    public static Pose2d OBSERVATION_START_POSE = new Pose2d(HALF_TILE,-HALF_FIELD + HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+//    public static Pose2d BLUE_OBSERVATION_START_POSE = rotated(RED_OBSERVATION_START_POSE);
+    public static Pose2d NET_START_POSE = new Pose2d(-HALF_TILE,  -HALF_FIELD+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+//    public static Pose2d BLUE_NET_START_POSE = rotated(RED_NET_START_POSE);
 
     //Red Points of Interest
 
@@ -111,8 +111,6 @@ public class FieldConstants {
     public static Pose2d ASCENT_RED_BACKSTAGE = new Pose2d(TILE, -HALF_TILE, FACE_TOWARD_AUDIENCE);
     public static Vector2d NEXT_TO_ASCENT_RED_BACKSTAGE = new Vector2d(TILE+HALF_TILE, -HALF_TILE-QUARTER_TILE);
 
-
-
     //Blue points of interest, should not be needed
 //    public static Pose2d NET_ZONE_BLUE = new Pose2d(2*TILE, 2*TILE, FACE_45_DEGREES);
 //    public static Pose2d OBSERVATION_BLUE_ZONE = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
@@ -131,10 +129,12 @@ public class FieldConstants {
 //    public static Pose2d SPIKE_NEUTRAL_BACKSTAGE_3 = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, TILE+HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
 
 
-
+    public static Pose2d rotated(Pose2d pose) {
+        return new Pose2d(-pose.position.x, -pose.position.y, pose.heading.inverse().log());
+    }
 
     public static Pose2d flipYAxis(Pose2d pose) {
-        Pose2d output = new Pose2d(pose.position.x, -pose.position.y, Math.toRadians(pose.heading.imag+pose.heading.real));
+        Pose2d output = new Pose2d(pose.position.x, -pose.position.y, pose.heading.log());
         return output;
     }
 
@@ -145,8 +145,5 @@ public class FieldConstants {
 
     public static Vector2d PoseToVector(Pose2d pose){
         return new Vector2d (pose.position.x, pose.position.y);
-
-
-
     }
 }

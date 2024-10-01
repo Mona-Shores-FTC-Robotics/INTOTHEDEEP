@@ -5,8 +5,8 @@ import static com.example.sharedconstants.FieldConstants.CHAMBER_RED_BACKSTAGE_V
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_AUDIENCE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BACKSTAGE;
 import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BLUE;
-import static com.example.sharedconstants.FieldConstants.RED_AUDIENCE_START_POSE;
-import static com.example.sharedconstants.FieldConstants.RED_BACKSTAGE_START_POSE;
+import static com.example.sharedconstants.FieldConstants.NET_START_POSE;
+import static com.example.sharedconstants.FieldConstants.OBSERVATION_START_POSE;
 import static com.example.sharedconstants.FieldConstants.SPIKE_NEUTRAL_AUDIENCE_1_TJ;
 import static com.example.sharedconstants.FieldConstants.SPIKE_RED_1_Vec;
 
@@ -38,28 +38,28 @@ public class BasicRoute extends Routes {
         ));
 
         /** RED AUDIENCE **/
-        redAudienceBotRoute = robotAdapter.actionBuilder(RED_AUDIENCE_START_POSE)
+        redAudienceBotRoute = robotAdapter.actionBuilder(NET_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE, baseVelConstraint)
                 .setReversed(true)
                 .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_1_TJ, FACE_TOWARD_AUDIENCE, baseVelConstraint)
                 .build();
 
         /** BLUE BACKSTAGE - THIS SHOULD MATCH THE RED AUDIENCE PATH AND START LOCATION **/
-        blueBackstageBotRoute = robotAdapter.rotatedActionBuilder(RED_AUDIENCE_START_POSE)
+        blueBackstageBotRoute = robotAdapter.rotatedActionBuilder(NET_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE, baseVelConstraint)
                 .setReversed(true)
                 .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_1_TJ, FACE_TOWARD_AUDIENCE, baseVelConstraint)
                 .build();
 
         /** RED BACKSTAGE **/
-        redBackstageBotRoute = robotAdapter.actionBuilder(RED_BACKSTAGE_START_POSE)
+        redBackstageBotRoute = robotAdapter.actionBuilder(OBSERVATION_START_POSE)
                 .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
                 .setReversed(true)
                 .splineToConstantHeading(SPIKE_RED_1_Vec, FACE_TOWARD_BACKSTAGE, baseVelConstraint)
                 .build();
 
         /** BLUE AUDIENCE THIS SHOULD MATCH THE RED BACKSTAGE PATH AND START LOCATION **/
-        blueAudienceBotRoute = robotAdapter.rotatedActionBuilder(RED_BACKSTAGE_START_POSE)
+        blueAudienceBotRoute = robotAdapter.rotatedActionBuilder(OBSERVATION_START_POSE)
                 .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
                 .setReversed(true)
                 .splineToConstantHeading(SPIKE_RED_1_Vec, FACE_TOWARD_BACKSTAGE, baseVelConstraint)
@@ -67,22 +67,22 @@ public class BasicRoute extends Routes {
     }
 
     @Override
-    public Action getBlueBackstageBotRoute() {
+    public Action getBlueNetBotRoute() {
         return blueBackstageBotRoute;
     }
 
     @Override
-    public Action getBlueAudienceBotRoute() {
+    public Action getBlueObservationBotRoute() {
         return blueAudienceBotRoute;
     }
 
     @Override
-    public Action getRedBackstageBotRoute() {
+    public Action getRedObservationBotRoute() {
         return redBackstageBotRoute;
     }
 
     @Override
-    public Action getRedAudienceBotRoute() {
+    public Action getRedNetBotRoute() {
         return redAudienceBotRoute;
     }
 

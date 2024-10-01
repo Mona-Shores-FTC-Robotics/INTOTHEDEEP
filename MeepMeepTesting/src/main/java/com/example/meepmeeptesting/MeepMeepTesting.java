@@ -1,7 +1,7 @@
 package com.example.meepmeeptesting;
 
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD;
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SPECIMEN;
+import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_THREE_SPECIMENS;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.AUDIENCE;
@@ -12,8 +12,8 @@ import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.BasicRoute;
 import com.example.sharedconstants.Routes.Preload;
-import com.example.sharedconstants.Routes.Preload_and_One_Sample;
-import com.example.sharedconstants.Routes.Preload_and_One_Specimen;
+import com.example.sharedconstants.Routes.NET_Preload_and_One_Sample;
+import com.example.sharedconstants.Routes.OBS_Preload_and_One_Specimen;
 import com.example.sharedconstants.Routes.Routes;
 import com.example.sharedconstants.Routes.Preload_and_Three_Specimens;
 import com.noahbres.meepmeep.MeepMeep;
@@ -31,11 +31,10 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    static RoutesToRun RED_BACKSTAGE_ROUTE = PRELOAD; // here
-    static RoutesToRun BLUE_AUDIENCE_ROUTE = PRELOAD_AND_ONE_SPECIMEN; // here
-
-    static RoutesToRun RED_AUDIENCE_ROUTE = PRELOAD; // here
-    static RoutesToRun BLUE_BACKSTAGE_ROUTE = PRELOAD; // here
+    static RoutesToRun RED_OBSERVATION_ROUTE = PRELOAD_AND_ONE_SPECIMEN; // here
+    static RoutesToRun BLUE_OBSERVATION_ROUTE = PRELOAD_AND_ONE_SPECIMEN; // here
+    static RoutesToRun RED_NET_ROUTE = PRELOAD_AND_THREE_SPECIMENS; // here
+    static RoutesToRun BLUE_NET_ROUTE = PRELOAD_AND_THREE_SPECIMENS; // here
 
     enum RoutesToRun {
         BASIC,
@@ -44,29 +43,23 @@ public class MeepMeepTesting {
         PRELOAD_AND_ONE_SPECIMEN,
         PRELOAD_AND_ONE_SAMPLE} // here
 
-    // Store references to AdaptedBots
-    private static AdaptedBot redAudienceBot;
-    private static AdaptedBot blueBackstageBot;
-    private static AdaptedBot blueAudienceBot;
-    private static AdaptedBot redBackstageBot;
-
     public static void main(String[] args) {
 
         //Set the window Size for MeepMeep
         MeepMeep meepMeep = new MeepMeep(800);
 
         // Create the robots dynamically and configure them
-        if (RED_AUDIENCE_ROUTE!=null) {
-            redAudienceBot = createAdaptedBotAndRunRoute(meepMeep, RED, AUDIENCE, new ColorSchemeRedDark(), FieldConstants.RED_AUDIENCE_START_POSE, RED_AUDIENCE_ROUTE);
+        if (RED_NET_ROUTE !=null) {
+            createAdaptedBotAndRunRoute(meepMeep, RED, AUDIENCE, new ColorSchemeRedDark(), FieldConstants.NET_START_POSE, RED_NET_ROUTE);
         }
-        if (BLUE_BACKSTAGE_ROUTE!=null) {
-            blueBackstageBot = createAdaptedBotAndRunRoute(meepMeep, BLUE, BACKSTAGE,  new ColorSchemeBlueDark(), FieldConstants.BLUE_AUDIENCE_START_POSE, RED_BACKSTAGE_ROUTE);
+        if (BLUE_NET_ROUTE !=null) {
+            createAdaptedBotAndRunRoute(meepMeep, BLUE, BACKSTAGE,  new ColorSchemeBlueDark(), FieldConstants.NET_START_POSE, BLUE_NET_ROUTE);
         }
-        if (BLUE_AUDIENCE_ROUTE != null) {
-            blueAudienceBot = createAdaptedBotAndRunRoute(meepMeep, BLUE, AUDIENCE, new ColorSchemeBlueLight(), FieldConstants.BLUE_AUDIENCE_START_POSE, BLUE_AUDIENCE_ROUTE);
+        if (BLUE_OBSERVATION_ROUTE != null) {
+            createAdaptedBotAndRunRoute(meepMeep, BLUE, AUDIENCE, new ColorSchemeBlueLight(), FieldConstants.OBSERVATION_START_POSE, BLUE_OBSERVATION_ROUTE);
         }
-        if (RED_BACKSTAGE_ROUTE != null) {
-            redBackstageBot = createAdaptedBotAndRunRoute(meepMeep, RED, BACKSTAGE, new ColorSchemeRedLight(), FieldConstants.RED_BACKSTAGE_START_POSE, RED_BACKSTAGE_ROUTE);
+        if (RED_OBSERVATION_ROUTE != null) {
+            createAdaptedBotAndRunRoute(meepMeep, RED, BACKSTAGE, new ColorSchemeRedLight(), FieldConstants.OBSERVATION_START_POSE, RED_OBSERVATION_ROUTE);
         }
 
         startMeepMeep(meepMeep);
@@ -98,15 +91,6 @@ public class MeepMeepTesting {
     }
 
 
-    // Helper function to determine which side of the field a pose is located
-    private static FieldConstants.SideOfField getSideOfField(Pose2d pose) {
-        if (pose == FieldConstants.RED_AUDIENCE_START_POSE || pose == FieldConstants.BLUE_AUDIENCE_START_POSE) {
-            return AUDIENCE;
-        } else {
-            return FieldConstants.SideOfField.BACKSTAGE;
-        }
-    }
-
     // Start MeepMeep with custom settings
     private static void startMeepMeep(MeepMeep meepMeep_local) {
         String filePath = "intothedeep2.png";  // Customize the field background
@@ -129,9 +113,9 @@ public class MeepMeepTesting {
             case PRELOAD_AND_THREE_SPECIMENS:
                 return new Preload_and_Three_Specimens(adapter);
             case PRELOAD_AND_ONE_SPECIMEN:
-                return new Preload_and_One_Specimen(adapter);
+                return new OBS_Preload_and_One_Specimen(adapter);
             case PRELOAD_AND_ONE_SAMPLE:
-                return new Preload_and_One_Sample(adapter);
+                return new NET_Preload_and_One_Sample(adapter);
             case PRELOAD:
                 return new Preload(adapter);
             default:

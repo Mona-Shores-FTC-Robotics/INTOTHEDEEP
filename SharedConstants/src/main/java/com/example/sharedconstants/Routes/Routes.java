@@ -54,19 +54,19 @@ public abstract class Routes {
     public abstract void BuildRoutes();
 
     // Variables to store routes for all start locations and team prop locations
-    protected Action redAudienceBotRoute;
-    protected Action redBackstageBotRoute;
-    protected Action blueBackstageBotRoute;
-    protected Action blueAudienceBotRoute;
+    protected Action redNetBotRoute;
+    protected Action blueNetBotRoute;
+    protected Action redObservationBotRoute;
+    protected Action blueObservationBotRoute;
 
     // These are the defaults
     //THIS SAYS RED AUDIENCE BECAUSE IT IS MIRRORED - DO NOT CHANGE THESE
-    protected Pose2d redAudienceStartPose = RED_AUDIENCE_START_POSE;
-    protected Pose2d blueBackstageStartPose = BLUE_BACKSTAGE_START_POSE;
+    protected Pose2d redNetStartPose = NET_START_POSE;
+    protected Pose2d blueNetStartPose = NET_START_POSE;
 
     //THIS SAYS RED BACKSTAGE BECAUSE ITS MIRRORED - DO NOT CHANGE THESE
-    protected Pose2d redBackstageStartPose = RED_BACKSTAGE_START_POSE;
-    protected Pose2d blueAudienceStartPose = BLUE_AUDIENCE_START_POSE;
+    protected Pose2d redObservationStartPose = OBSERVATION_START_POSE;
+    protected Pose2d blueObservationStartPose = OBSERVATION_START_POSE;
 
     // Method to return the corresponding starting pose
     public Pose2d getStartingPose(AllianceColor allianceColor, SideOfField sideOfField) {
@@ -74,17 +74,17 @@ public abstract class Routes {
             case BLUE:
                 switch (sideOfField) {
                     case AUDIENCE:
-                        return blueAudienceStartPose;
+                        return blueObservationStartPose;
                     case BACKSTAGE:
-                        return blueBackstageStartPose;
+                        return blueNetStartPose;
                 }
                 break;
             case RED:
                 switch (sideOfField) {
                     case AUDIENCE:
-                        return redAudienceStartPose;
+                        return redNetStartPose;
                     case BACKSTAGE:
-                        return redBackstageStartPose;
+                        return redObservationStartPose;
                 }
                 break;
         }
@@ -96,37 +96,37 @@ public abstract class Routes {
             case BLUE:
                 switch (sideOfField) {
                     case AUDIENCE:
-                        return getBlueAudienceBotRoute();  // Consolidated method for BLUE AUDIENCE
+                        return getBlueObservationBotRoute();  // Consolidated method for BLUE AUDIENCE
                     case BACKSTAGE:
-                        return getBlueBackstageBotRoute();  // Consolidated method for BLUE BACKSTAGE
+                        return getBlueNetBotRoute();  // Consolidated method for BLUE BACKSTAGE
                 }
                 break;
             case RED:
                 switch (sideOfField) {
                     case AUDIENCE:
-                        return getRedAudienceBotRoute();  // Consolidated method for RED AUDIENCE
+                        return getRedNetBotRoute();  // Consolidated method for RED AUDIENCE
                     case BACKSTAGE:
-                        return getRedBackstageBotRoute();  // Consolidated method for RED BACKSTAGE
+                        return getRedObservationBotRoute();  // Consolidated method for RED BACKSTAGE
                 }
                 break;
         }
         return null;  // Fallback in case nothing matches
     }
 
-    public Action getRedAudienceBotRoute() {
-        return redAudienceBotRoute;
+    public Action getRedNetBotRoute() {
+        return redNetBotRoute;
     }
 
-    public Action getBlueAudienceBotRoute() {
-        return blueAudienceBotRoute;
+    public Action getBlueObservationBotRoute() {
+        return blueObservationBotRoute;
     }
 
-    public Action getBlueBackstageBotRoute() {
-        return blueBackstageBotRoute;
+    public Action getBlueNetBotRoute() {
+        return blueNetBotRoute;
     }
 
-    public Action getRedBackstageBotRoute() {
-        return redBackstageBotRoute;
+    public Action getRedObservationBotRoute() {
+        return redObservationBotRoute;
     }
 
     private void setupConstraints() {

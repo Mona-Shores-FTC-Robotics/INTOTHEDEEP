@@ -32,7 +32,7 @@ public class Preload_and_Three_Specimens extends Routes {
         //TODO how can we make this easier to follow by making methods in our Routes class?
 
         /** RED AUDIENCE **/
-        redAudienceBotRoute = robotAdapter.actionBuilder(RED_AUDIENCE_START_POSE)
+        redAudienceBotRoute = robotAdapter.actionBuilder(NET_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
@@ -61,11 +61,11 @@ public class Preload_and_Three_Specimens extends Routes {
                 .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
                 .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
                 .waitSeconds(1)
-                .splineToLinearHeading(RED_AUDIENCE_START_POSE, FACE_TOWARD_RED)
+                .splineToLinearHeading(NET_START_POSE, FACE_TOWARD_RED)
                 .build();
 
         /** BLUE BACKSTAGE - THIS SHOULD MATCH THE RED AUDIENCE PATH AND START LOCATION **/
-        blueBackstageBotRoute = robotAdapter.rotatedActionBuilder(RED_AUDIENCE_START_POSE)
+        blueBackstageBotRoute = robotAdapter.rotatedActionBuilder(NET_START_POSE)
                 .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
@@ -94,11 +94,11 @@ public class Preload_and_Three_Specimens extends Routes {
                 .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
                 .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
                 .waitSeconds(1)
-                .splineToLinearHeading(RED_AUDIENCE_START_POSE, FACE_TOWARD_RED)
+                .splineToLinearHeading(NET_START_POSE, FACE_TOWARD_RED)
                 .build();
 
         /** RED BACKSTAGE **/
-        redBackstageBotRoute = robotAdapter.actionBuilder(RED_BACKSTAGE_START_POSE)
+        redBackstageBotRoute = robotAdapter.actionBuilder(OBSERVATION_START_POSE)
                 .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
                 .waitSeconds(2)
                 .setReversed(true)
@@ -129,7 +129,7 @@ public class Preload_and_Three_Specimens extends Routes {
                 .build();
 
         /** BLUE AUDIENCE THIS SHOULD MATCH THE RED BACKSTAGE PATH AND START LOCATION **/
-        blueAudienceBotRoute = robotAdapter.rotatedActionBuilder(RED_BACKSTAGE_START_POSE)
+        blueAudienceBotRoute = robotAdapter.rotatedActionBuilder(OBSERVATION_START_POSE)
                 .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
                 .waitSeconds(2)
                 .setReversed(true)
@@ -162,22 +162,22 @@ public class Preload_and_Three_Specimens extends Routes {
     }
 
     @Override
-    public Action getBlueBackstageBotRoute() {
+    public Action getBlueNetBotRoute() {
         return blueBackstageBotRoute;
     }
 
     @Override
-    public Action getBlueAudienceBotRoute() {
+    public Action getBlueObservationBotRoute() {
         return blueAudienceBotRoute;
     }
 
     @Override
-    public Action getRedBackstageBotRoute() {
+    public Action getRedObservationBotRoute() {
         return redBackstageBotRoute;
     }
 
     @Override
-    public Action getRedAudienceBotRoute() {
+    public Action getRedNetBotRoute() {
         return redAudienceBotRoute;
     }
 
