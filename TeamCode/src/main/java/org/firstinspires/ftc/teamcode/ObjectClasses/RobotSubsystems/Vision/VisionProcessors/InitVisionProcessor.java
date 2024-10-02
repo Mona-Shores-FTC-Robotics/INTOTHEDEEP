@@ -67,11 +67,11 @@ public class InitVisionProcessor implements VisionProcessor {
 
     /** Our Default Values **/
     public AllianceColor allianceColor = AllianceColor.RED;
-    public SideOfField sideOfField = SideOfField.BACKSTAGE;
+    public SideOfField sideOfField = SideOfField.OBSERVATION;
     public TeamPropLocation teamPropLocation = TeamPropLocation.CENTER;
 
     public AllianceColor allianceColorOverride = AllianceColor.RED;
-    public SideOfField sideOfFieldOverride = SideOfField.BACKSTAGE;
+    public SideOfField sideOfFieldOverride = SideOfField.OBSERVATION;
     public TeamPropLocation teamPropLocationOverride = TeamPropLocation.CENTER;
 
     /** Matrices to store the camera images we are changing **/
@@ -394,11 +394,11 @@ public class InitVisionProcessor implements VisionProcessor {
         if (finalAllianceColor == AllianceColor.RED) {
             if (percentLeftStageDoorZone >= percentRightStageDoorZone && percentLeftStageDoorZone > STAGE_DOOR_THRESHOLD) {
                 // Stage Door is on the left and we are Red Alliance so we are BACKSTAGE
-                sideOfField = SideOfField.BACKSTAGE;
+                sideOfField = SideOfField.OBSERVATION;
             } else if (percentRightStageDoorZone > percentLeftStageDoorZone && percentRightStageDoorZone > STAGE_DOOR_THRESHOLD)
             {
                 // Stage Door is on the right and we are Red Alliance so we are AUDIENCE
-                sideOfField = SideOfField.AUDIENCE;
+                sideOfField = SideOfField.NET;
             }
         }
 
@@ -406,11 +406,11 @@ public class InitVisionProcessor implements VisionProcessor {
             //Figure out where the Stage Door is
             if (percentLeftStageDoorZone >= percentRightStageDoorZone && percentLeftStageDoorZone > STAGE_DOOR_THRESHOLD) {
                 // Stage Door is on the left and we are Blue Alliance so we are FRONTSTAGE
-                sideOfField = SideOfField.AUDIENCE;
+                sideOfField = SideOfField.NET;
             } else if (percentRightStageDoorZone > percentLeftStageDoorZone && percentRightStageDoorZone > STAGE_DOOR_THRESHOLD)
             {
                 // Stage Door is on the right and we are Blue Alliance so we are BACKSTAGE
-                sideOfField = SideOfField.BACKSTAGE;
+                sideOfField = SideOfField.OBSERVATION;
             }
         }
     }

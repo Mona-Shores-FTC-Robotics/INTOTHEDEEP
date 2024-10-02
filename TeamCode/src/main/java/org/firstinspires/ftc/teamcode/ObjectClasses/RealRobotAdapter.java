@@ -38,12 +38,10 @@ public class RealRobotAdapter implements RobotAdapter {
         }
     }
 
-    @Override
     public TrajectoryActionBuilder actionBuilder(Pose2d startPose) {
         return Robot.getInstance().getDriveSubsystem().mecanumDrive.actionBuilder(startPose);
     }
 
-    @Override
     public TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose) {
         return Robot.getInstance().getDriveSubsystem().mecanumDrive.mirroredActionBuilder(beginPose);
     }
@@ -57,6 +55,8 @@ public class RealRobotAdapter implements RobotAdapter {
     public void setSideOfField(FieldConstants.SideOfField sideOfField) {
         this.sideOfField = sideOfField;
     }
+
+
 
     // Check if the robot is on the blue alliance and therefore should use the rotated trajectory
     public boolean isRotated() {
@@ -125,9 +125,5 @@ public class RealRobotAdapter implements RobotAdapter {
                     return new SleepAction(0.1);  // Returning nonce action for unknown actions
             }
         }
-    }
-
-    public Pose2d getCurrentPose(){
-        return Robot.getInstance().getDriveSubsystem().mecanumDrive.pose;
     }
 }

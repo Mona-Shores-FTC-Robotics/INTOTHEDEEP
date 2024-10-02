@@ -17,6 +17,7 @@ import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.VelConstraint;
+import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
 import java.util.Arrays;
@@ -54,79 +55,32 @@ public abstract class Routes {
     public abstract void BuildRoutes();
 
     // Variables to store routes for all start locations and team prop locations
-    protected Action redNetBotRoute;
-    protected Action blueNetBotRoute;
-    protected Action redObservationBotRoute;
-    protected Action blueObservationBotRoute;
+    protected Action netBotRoute = null;
+    protected Action observationBotRoute = null;
 
-    // These are the defaults
-    //THIS SAYS RED AUDIENCE BECAUSE IT IS MIRRORED - DO NOT CHANGE THESE
-    protected Pose2d redNetStartPose = NET_START_POSE;
-    protected Pose2d blueNetStartPose = NET_START_POSE;
+    public Action getRouteAction(SideOfField sideOfField) {
+        if (sideOfField == SideOfField.NET) {
+            return getNetBotRoute();  // Consolidated method for BLUE AUDIENCE
+        } else return getObservationBotRoute();
+    }
 
-    //THIS SAYS RED BACKSTAGE BECAUSE ITS MIRRORED - DO NOT CHANGE THESE
-    protected Pose2d redObservationStartPose = OBSERVATION_START_POSE;
-    protected Pose2d blueObservationStartPose = OBSERVATION_START_POSE;
-
-    // Method to return the corresponding starting pose
-    public Pose2d getStartingPose(AllianceColor allianceColor, SideOfField sideOfField) {
-        switch (allianceColor) {
-            case BLUE:
-                switch (sideOfField) {
-                    case AUDIENCE:
-                        return blueObservationStartPose;
-                    case BACKSTAGE:
-                        return blueNetStartPose;
-                }
-                break;
-            case RED:
-                switch (sideOfField) {
-                    case AUDIENCE:
-                        return redNetStartPose;
-                    case BACKSTAGE:
-                        return redObservationStartPose;
-                }
-                break;
+    // Get the NetBotRoute only if it's available
+    public Action getNetBotRoute() {
+        if (netBotRoute == null) {
+            System.out.println("Net bot route not available.");
+            return null;
         }
-        return null;  // Fallback in case nothing matches
+        return netBotRoute;
     }
 
-    public Action getRouteAction(AllianceColor allianceColor, SideOfField sideOfField) {
-        switch (allianceColor) {
-            case BLUE:
-                switch (sideOfField) {
-                    case AUDIENCE:
-                        return getBlueObservationBotRoute();  // Consolidated method for BLUE AUDIENCE
-                    case BACKSTAGE:
-                        return getBlueNetBotRoute();  // Consolidated method for BLUE BACKSTAGE
-                }
-                break;
-            case RED:
-                switch (sideOfField) {
-                    case AUDIENCE:
-                        return getRedNetBotRoute();  // Consolidated method for RED AUDIENCE
-                    case BACKSTAGE:
-                        return getRedObservationBotRoute();  // Consolidated method for RED BACKSTAGE
-                }
-                break;
+    // Get the ObservationBotRoute only if it's available
+    public Action getObservationBotRoute() {
+        if (observationBotRoute == null) {
+            // Optional: Log or notify that the route is not available
+            System.out.println("Observation bot route not available.");
+            return null;
         }
-        return null;  // Fallback in case nothing matches
-    }
-
-    public Action getRedNetBotRoute() {
-        return redNetBotRoute;
-    }
-
-    public Action getBlueObservationBotRoute() {
-        return blueObservationBotRoute;
-    }
-
-    public Action getBlueNetBotRoute() {
-        return blueNetBotRoute;
-    }
-
-    public Action getRedObservationBotRoute() {
-        return redObservationBotRoute;
+        return observationBotRoute;
     }
 
     private void setupConstraints() {
@@ -150,7 +104,6 @@ public abstract class Routes {
     }
 
     public class RouteBuilder {
-
         Action ScorePreloadSpecimen(Pose2d startPose, Pose2d chamberPose) {
             return new SequentialAction(
                     //TODO: write this code for scoring a preloaded specimen

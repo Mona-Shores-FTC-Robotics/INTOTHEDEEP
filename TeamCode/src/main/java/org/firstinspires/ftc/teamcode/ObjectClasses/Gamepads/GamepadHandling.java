@@ -118,15 +118,15 @@ public class GamepadHandling {
             telemetry.addLine("Side Of Field (DPAD-LEFT/RIGHT)");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 if (finalAllianceColor == AllianceColor.BLUE) {
-                    finalSideOfField = SideOfField.AUDIENCE;
+                    finalSideOfField = SideOfField.NET;
                 } else if (finalAllianceColor == AllianceColor.RED) {
-                    finalSideOfField = SideOfField.BACKSTAGE;
+                    finalSideOfField = SideOfField.OBSERVATION;
                 }
             } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 if (finalAllianceColor == AllianceColor.RED) {
-                    finalSideOfField = SideOfField.AUDIENCE;
+                    finalSideOfField = SideOfField.NET;
                 } else if (finalAllianceColor == AllianceColor.BLUE) {
-                    finalSideOfField = SideOfField.BACKSTAGE;
+                    finalSideOfField = SideOfField.OBSERVATION;
                 }
             }
 
@@ -168,15 +168,15 @@ public class GamepadHandling {
 
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 if (finalAllianceColor == AllianceColor.BLUE) {
-                    finalSideOfField = SideOfField.AUDIENCE;
+                    finalSideOfField = SideOfField.NET;
                 } else if (finalAllianceColor == AllianceColor.RED) {
-                    finalSideOfField = SideOfField.BACKSTAGE;
+                    finalSideOfField = SideOfField.OBSERVATION;
                 }
             } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 if (finalAllianceColor == AllianceColor.RED) {
-                    finalSideOfField = SideOfField.AUDIENCE;
+                    finalSideOfField = SideOfField.NET;
                 } else if (finalAllianceColor == AllianceColor.BLUE) {
-                    finalSideOfField = SideOfField.BACKSTAGE;
+                    finalSideOfField = SideOfField.OBSERVATION;
                 }
             }
         }

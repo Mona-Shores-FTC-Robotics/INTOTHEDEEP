@@ -1,11 +1,12 @@
 package com.example.meepmeeptesting;
 
+import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.BASIC;
+import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SAMPLE;
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SPECIMEN;
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_THREE_SPECIMENS;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
-import static com.example.sharedconstants.FieldConstants.SideOfField.AUDIENCE;
-import static com.example.sharedconstants.FieldConstants.SideOfField.BACKSTAGE;
+import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
+import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.example.sharedconstants.FieldConstants;
@@ -31,10 +32,10 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    static RoutesToRun RED_OBSERVATION_ROUTE = PRELOAD_AND_ONE_SPECIMEN; // here
-    static RoutesToRun BLUE_OBSERVATION_ROUTE = PRELOAD_AND_ONE_SPECIMEN; // here
-    static RoutesToRun RED_NET_ROUTE = PRELOAD_AND_THREE_SPECIMENS; // here
-    static RoutesToRun BLUE_NET_ROUTE = PRELOAD_AND_THREE_SPECIMENS; // here
+    static RoutesToRun redObservationRoute = PRELOAD_AND_ONE_SPECIMEN; // here
+    static RoutesToRun blueObservationRoute = PRELOAD_AND_ONE_SPECIMEN; // here
+    static RoutesToRun redNetRoute = PRELOAD_AND_ONE_SAMPLE; // here
+    static RoutesToRun blueNetRoute = PRELOAD_AND_ONE_SAMPLE; // here
 
     enum RoutesToRun {
         BASIC,
@@ -49,46 +50,45 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(800);
 
         // Create the robots dynamically and configure them
-        if (RED_NET_ROUTE !=null) {
-            createAdaptedBotAndRunRoute(meepMeep, RED, AUDIENCE, new ColorSchemeRedDark(), FieldConstants.NET_START_POSE, RED_NET_ROUTE);
+        if (redNetRoute != null) {
+            createAdaptedBotAndRunRoute(meepMeep, RED, NET, new ColorSchemeRedDark(), redNetRoute);
         }
-        if (BLUE_NET_ROUTE !=null) {
-            createAdaptedBotAndRunRoute(meepMeep, BLUE, BACKSTAGE,  new ColorSchemeBlueDark(), FieldConstants.NET_START_POSE, BLUE_NET_ROUTE);
+        if (redObservationRoute != null) {
+            createAdaptedBotAndRunRoute(meepMeep, RED, OBSERVATION, new ColorSchemeRedLight(), redObservationRoute);
         }
-        if (BLUE_OBSERVATION_ROUTE != null) {
-            createAdaptedBotAndRunRoute(meepMeep, BLUE, AUDIENCE, new ColorSchemeBlueLight(), FieldConstants.OBSERVATION_START_POSE, BLUE_OBSERVATION_ROUTE);
+        if (blueNetRoute != null) {
+            createAdaptedBotAndRunRoute(meepMeep, BLUE, NET, new ColorSchemeBlueDark(), blueNetRoute);
         }
-        if (RED_OBSERVATION_ROUTE != null) {
-            createAdaptedBotAndRunRoute(meepMeep, RED, BACKSTAGE, new ColorSchemeRedLight(), FieldConstants.OBSERVATION_START_POSE, RED_OBSERVATION_ROUTE);
+        if (blueObservationRoute != null) {
+            createAdaptedBotAndRunRoute(meepMeep, BLUE, OBSERVATION, new ColorSchemeBlueLight(), blueObservationRoute);
         }
 
         startMeepMeep(meepMeep);
     }
     // Create an AdaptedBot and run the selected route
-    private static AdaptedBot createAdaptedBotAndRunRoute(MeepMeep meepMeep,
-                                                          FieldConstants.AllianceColor allianceColor,
-                                                          FieldConstants.SideOfField sideOfField,
-                                                          ColorScheme colorScheme,
-                                                          Pose2d startPose,
-                                                          RoutesToRun selectedRoute) {
-        // Create the adapted bot
-        AdaptedBot adaptedBot = new AdaptedBot(meepMeep, colorScheme, startPose);
+    private static void createAdaptedBotAndRunRoute(MeepMeep meepMeep,
+                                                    FieldConstants.AllianceColor allianceColor,
+                                                    FieldConstants.SideOfField sideOfField,
+                                                    ColorScheme colorScheme,
+                                                    RoutesToRun selectedRoute) {
 
-        // Set the alliance color in the adapter
-        adaptedBot.setAllianceColor(allianceColor);
-        adaptedBot.setSideOfField(sideOfField);
+        // Create the adapted bot
+        MeepMeepBot meepMeepBot = new MeepMeepBot(
+                meepMeep, colorScheme, allianceColor, sideOfField); // Default start
+
+        meepMeepBot.getAdapter().setSideOfField(sideOfField);
+        meepMeepBot.getAdapter().setAllianceColor(allianceColor);
 
         // Create and build the route based on the selected route
-        adaptedBot.setRoute(MeepMeepTesting.createRoute(adaptedBot.getAdapter(), selectedRoute));
+        meepMeepBot.setRoute(MeepMeepTesting.createRoute(meepMeepBot.getAdapter(), selectedRoute));
 
         // Run the route on the bot
-        adaptedBot.runAction(adaptedBot.getRoute().getRouteAction(allianceColor, sideOfField));
+        meepMeepBot.runAction(meepMeepBot.getRoute().getRouteAction(sideOfField));
 
         // Add the bot to the MeepMeep field
-        meepMeep.addEntity(adaptedBot.getBot());
-
-        return adaptedBot;
+        meepMeep.addEntity(meepMeepBot.getBot());
     }
+
 
 
     // Start MeepMeep with custom settings

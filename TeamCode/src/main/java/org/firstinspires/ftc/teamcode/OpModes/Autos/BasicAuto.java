@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.BasicRoute;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -38,18 +40,19 @@ public class BasicAuto extends LinearOpMode {
         // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
 
-        //Instantiate the robotDriveAdapter so we can use MeepMeep seamlessly
-        RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
+        RealRobotAdapter realRobotAdapter = new RealRobotAdapter();
 
         //Build all the routes using the adapter so we can select one quickly later
-        BasicRoute basicRoute = new BasicRoute(robotDriveAdapter);
+        BasicRoute basicRoute = new BasicRoute(realRobotAdapter);
         basicRoute.BuildRoutes();
 
-        //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = basicRoute.getRouteAction(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        //Pick one of the routes built previously based on the Side of Field (NET OR OBSERVATION)
+        Action selectedRoute = basicRoute.getRouteAction(MatchConfig.finalSideOfField);
+        realRobotAdapter.setSideOfField(MatchConfig.finalSideOfField);
+        realRobotAdapter.setAllianceColor(MatchConfig.finalAllianceColor);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= basicRoute.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose = FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         telemetry.clearAll();
 

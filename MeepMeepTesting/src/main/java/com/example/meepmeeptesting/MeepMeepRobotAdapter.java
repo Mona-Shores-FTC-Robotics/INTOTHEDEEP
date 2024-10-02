@@ -17,25 +17,23 @@ import com.noahbres.meepmeep.roadrunner.DriveShim;
 import com.noahbres.meepmeep.roadrunner.entity.TrajectoryActionStub;
 import com.noahbres.meepmeep.roadrunner.entity.TurnActionStub;
 
-public class MeepMeepDriveAdapter implements RobotAdapter {
+public class MeepMeepRobotAdapter implements RobotAdapter {
     private final DriveShim driveShim;
     private final ActionFactory actionFactory;
+    private TrajectoryActionBuilder trajectoryActionBuilder;  // Store a single builder instance
     private FieldConstants.AllianceColor allianceColor;
     private FieldConstants.SideOfField sideOfField;
 
-    public MeepMeepDriveAdapter(DriveShim driveShim) {
+    public MeepMeepRobotAdapter(DriveShim driveShim) {
         this.driveShim = driveShim;
         this.actionFactory = new ActionFactory(driveShim);  // Initialize the ActionFactory
     }
 
-    @Override
     public TrajectoryActionBuilder actionBuilder(Pose2d startPose) {
         return driveShim.actionBuilder(startPose);
     }
 
-    @Override
     public TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose) {
-
         // Define constraints similar to the original DriveShim
         TurnConstraints turnConstraints = new TurnConstraints(
                 Math.toRadians(180),  // maxAngVel
@@ -66,7 +64,6 @@ public class MeepMeepDriveAdapter implements RobotAdapter {
                 baseAccelConstraint, // Apply the acceleration constraint
                 pose -> new Pose2dDual<>(
                         pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.inverse()));
-
     }
 
     @Override

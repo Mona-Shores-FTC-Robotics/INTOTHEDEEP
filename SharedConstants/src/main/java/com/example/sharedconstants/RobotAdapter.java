@@ -31,12 +31,6 @@ public interface RobotAdapter {
     // The new method that will determine which builder to use
     TrajectoryActionBuilder getActionBuilder(Pose2d startPose);
 
-    // Method for creating trajectory actions
-    TrajectoryActionBuilder actionBuilder(Pose2d startPose);
-
-    // Method for mirrored driving actions
-    TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose);
-
     void setAllianceColor(FieldConstants.AllianceColor allianceColor);
     void setSideOfField(FieldConstants.SideOfField sideOfField);
 

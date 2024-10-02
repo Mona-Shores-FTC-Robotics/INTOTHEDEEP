@@ -32,13 +32,13 @@ public class Preload_and_Three_Specimens extends Routes {
         //TODO how can we make this easier to follow by making methods in our Routes class?
 
         /** RED AUDIENCE **/
-        redAudienceBotRoute = robotAdapter.actionBuilder(NET_START_POSE)
-                .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
+        redAudienceBotRoute = robotAdapter.getActionBuilder(NET_START_POSE)
+                .splineToLinearHeading(NET_CHAMBER, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
-                .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_1_TJ,FACE_135_DEGREES) // Moves robot behind first sample
+                .splineToConstantHeading(NET_SPIKE_ONE_BEHIND,FACE_135_DEGREES) // Moves robot behind first sample
                 .setReversed(false)
-                .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_1_TJ,FACE_TOWARD_BLUE) // Moves robot to grab first sample
+                .splineToConstantHeading(NET_SPIKE_ONE_VEC,FACE_TOWARD_BLUE) // Moves robot to grab first sample
                 .waitSeconds(1)
                 .setReversed(true)
                 .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_BLUE) // Moves robot to grab first sample
@@ -48,14 +48,14 @@ public class Preload_and_Three_Specimens extends Routes {
                 .waitSeconds(1)
                 .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_2_TJ, FACE_TOWARD_BLUE)
                 .waitSeconds(0.5)
-                .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_2_TJ, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(NET_SPIKE_TWO_VEC, FACE_TOWARD_BLUE)
                 .waitSeconds(1)
                 .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
                 .waitSeconds(0.5)
                 .setReversed(true)
                 .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
                 .waitSeconds(1)
-                .splineToLinearHeading(SPIKE_NEUTRAL_AUDIENCE_3_POS_TJ , FACE_TOWARD_BLUE)
+                .splineToLinearHeading(NET_SPIKE_THREE, FACE_TOWARD_BLUE)
                 .waitSeconds(1)
                 .setReversed(true)
                 .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
@@ -65,13 +65,13 @@ public class Preload_and_Three_Specimens extends Routes {
                 .build();
 
         /** BLUE BACKSTAGE - THIS SHOULD MATCH THE RED AUDIENCE PATH AND START LOCATION **/
-        blueBackstageBotRoute = robotAdapter.rotatedActionBuilder(NET_START_POSE)
-                .splineToLinearHeading(CHAMBER_RED_AUDIENCE, FACE_TOWARD_BLUE)
+        blueBackstageBotRoute = robotAdapter.getActionBuilder(NET_START_POSE)
+                .splineToLinearHeading(NET_CHAMBER, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
-                .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_1_TJ,FACE_135_DEGREES) // Moves robot behind first sample
+                .splineToConstantHeading(NET_SPIKE_ONE_BEHIND,FACE_135_DEGREES) // Moves robot behind first sample
                 .setReversed(false)
-                .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_1_TJ,FACE_TOWARD_BLUE) // Moves robot to grab first sample
+                .splineToConstantHeading(NET_SPIKE_ONE_VEC,FACE_TOWARD_BLUE) // Moves robot to grab first sample
                 .waitSeconds(1)
                 .setReversed(true)
                 .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_BLUE) // Moves robot to grab first sample
@@ -81,14 +81,14 @@ public class Preload_and_Three_Specimens extends Routes {
                 .waitSeconds(1)
                 .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_2_TJ, FACE_TOWARD_BLUE)
                 .waitSeconds(0.5)
-                .splineToConstantHeading(SPIKE_NEUTRAL_AUDIENCE_2_TJ, FACE_TOWARD_BLUE)
+                .splineToConstantHeading(NET_SPIKE_TWO_VEC, FACE_TOWARD_BLUE)
                 .waitSeconds(1)
                 .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
                 .waitSeconds(0.5)
                 .setReversed(true)
                 .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
                 .waitSeconds(1)
-                .splineToLinearHeading(SPIKE_NEUTRAL_AUDIENCE_3_POS_TJ , FACE_TOWARD_BLUE)
+                .splineToLinearHeading(NET_SPIKE_THREE, FACE_TOWARD_BLUE)
                 .waitSeconds(1)
                 .setReversed(true)
                 .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
@@ -98,16 +98,16 @@ public class Preload_and_Three_Specimens extends Routes {
                 .build();
 
         /** RED BACKSTAGE **/
-        redBackstageBotRoute = robotAdapter.actionBuilder(OBSERVATION_START_POSE)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
+        redBackstageBotRoute = robotAdapter.getActionBuilder(OBSERVATION_START_POSE)
+                .splineToConstantHeading(OBS_CHAMBER_PRELOAD_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
                 .splineToConstantHeading(NEXT_TO_ASCENT_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
-                .splineToLinearHeading(SPIKE_RED_1_OB, FACE_TOWARD_RED, baseVelConstraint)
+                .splineToLinearHeading(OBS_SPIKE_ONE, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE2, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(OBS_CHAMBER_TWO_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 // next cycle
                 .waitSeconds(2)
                 .setReversed(true)
@@ -116,7 +116,7 @@ public class Preload_and_Three_Specimens extends Routes {
                 .splineToLinearHeading(SPIKE_RED_2_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE3, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(OBS_CHAMBER_THREE_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 //last cycle
                 .waitSeconds(2)
                 .setReversed(true)
@@ -125,20 +125,20 @@ public class Preload_and_Three_Specimens extends Routes {
                 .splineToLinearHeading(SPIKE_RED_3_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE4, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(OBS_CHAMBER_FOUR_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 .build();
 
         /** BLUE AUDIENCE THIS SHOULD MATCH THE RED BACKSTAGE PATH AND START LOCATION **/
-        blueAudienceBotRoute = robotAdapter.rotatedActionBuilder(OBSERVATION_START_POSE)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
+        blueAudienceBotRoute = robotAdapter.getActionBuilder(OBSERVATION_START_POSE)
+                .splineToConstantHeading(OBS_CHAMBER_PRELOAD_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_TO_CHAMBER, FACE_TOWARD_BLUE, baseVelConstraint)
                 .splineToConstantHeading(NEXT_TO_ASCENT_RED_BACKSTAGE, FACE_TOWARD_BLUE, baseVelConstraint)
-                .splineToLinearHeading(SPIKE_RED_1_OB, FACE_TOWARD_RED, baseVelConstraint)
+                .splineToLinearHeading(OBS_SPIKE_ONE, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(OBS_CHAMBER_PRELOAD_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 // next cycle
                 .waitSeconds(2)
                 .setReversed(true)
@@ -147,7 +147,7 @@ public class Preload_and_Three_Specimens extends Routes {
                 .splineToLinearHeading(SPIKE_RED_2_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(OBS_CHAMBER_PRELOAD_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 //last cycle
                 .waitSeconds(2)
                 .setReversed(true)
@@ -156,28 +156,19 @@ public class Preload_and_Three_Specimens extends Routes {
                 .splineToLinearHeading(SPIKE_RED_3_OB, FACE_TOWARD_RED, baseVelConstraint)
                 .splineToConstantHeading(OBSERVATION_RED_ZONE, FACE_TOWARD_RED, baseVelConstraint)
                 .waitSeconds(1)
-                .splineToConstantHeading(CHAMBER_RED_BACKSTAGE_VECTOR, FACE_TOWARD_BLUE, baseVelConstraint)
+                .splineToConstantHeading(OBS_CHAMBER_PRELOAD_VEC, FACE_TOWARD_BLUE, baseVelConstraint)
                 .build();
 
     }
 
-    @Override
-    public Action getBlueNetBotRoute() {
-        return blueBackstageBotRoute;
-    }
 
     @Override
-    public Action getBlueObservationBotRoute() {
-        return blueAudienceBotRoute;
-    }
-
-    @Override
-    public Action getRedObservationBotRoute() {
+    public Action getObservationBotRoute() {
         return redBackstageBotRoute;
     }
 
     @Override
-    public Action getRedNetBotRoute() {
+    public Action getNetBotRoute() {
         return redAudienceBotRoute;
     }
 
