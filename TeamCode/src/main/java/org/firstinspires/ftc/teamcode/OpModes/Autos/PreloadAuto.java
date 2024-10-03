@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Autos;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.Preload;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -46,10 +47,10 @@ public class PreloadAuto extends LinearOpMode {
         preload.BuildRoutes();
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = preload.getRouteAction(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Action selectedRoute = preload.getRouteAction(MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= preload.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         telemetry.clearAll();
 

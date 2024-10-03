@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Autos;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.OBS_Preload_and_One_Specimen;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -49,10 +50,10 @@ public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
 
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = preloadAndOneSpecimen.getRouteAction(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Action selectedRoute = preloadAndOneSpecimen.getRouteAction(MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= preloadAndOneSpecimen.getStartingPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //Reset Gyro
         //TODO i suspect this is not needed or might be duplicative with what is happening in MecanumDrive
