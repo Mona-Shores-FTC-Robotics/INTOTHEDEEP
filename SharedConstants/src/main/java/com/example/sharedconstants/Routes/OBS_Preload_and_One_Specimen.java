@@ -1,6 +1,8 @@
 package com.example.sharedconstants.Routes;
 
+import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.OBS_CHAMBER_PRELOAD;
+import static com.example.sharedconstants.FieldConstants.OBS_CHAMBER_THREE_VEC;
 import static com.example.sharedconstants.FieldConstants.OBS_CHAMBER_TWO;
 import static com.example.sharedconstants.FieldConstants.OBSERVATION_ZONE_RED_PICKUP;
 import static com.example.sharedconstants.FieldConstants.OBSERVATION_START_POSE;

@@ -5,8 +5,11 @@ import static com.example.sharedconstants.FieldConstants.*;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
+import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
 import java.util.Arrays;
@@ -33,35 +36,41 @@ public class Preload_and_Three_Specimens extends Routes {
 
         /** RED AUDIENCE **/
         redAudienceBotRoute = robotAdapter.getActionBuilder(NET_START_POSE)
+//                .splineToLinearHeading(NET_CHAMBER, FACE_TOWARD_BLUE)
+//                .waitSeconds(2)
+//                .setReversed(true)
+//                .splineToConstantHeading(NET_SPIKE_ONE_BEHIND,FACE_135_DEGREES) // Moves robot behind first sample
+//                .setReversed(false)
+//                .splineToConstantHeading(NET_SPIKE_ONE_VEC,FACE_TOWARD_BLUE) // Moves robot to grab first sample
+//                .waitSeconds(1)
+//                .setReversed(true)
+//                .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_BLUE) // Moves robot to grab first sample
+//                .waitSeconds(0.5)
+//                .setReversed(true)
+//                .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
+//                .waitSeconds(1)
+//                .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_2_TJ, FACE_TOWARD_BLUE)
+//                .waitSeconds(0.5)
+//                .splineToConstantHeading(NET_SPIKE_TWO_VEC, FACE_TOWARD_BLUE)
+//                .waitSeconds(1)
+//                .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
+//                .waitSeconds(0.5)
+//                .setReversed(true)
+//                .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
+//                .waitSeconds(1)
+//                .splineToLinearHeading(NET_SPIKE_THREE, FACE_TOWARD_BLUE)
+//                .waitSeconds(1)
+//                .setReversed(true)
+//                .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
+//                .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
+//                .waitSeconds(1)
+//                .splineToLinearHeading(NET_START_POSE, FACE_TOWARD_RED)
                 .splineToLinearHeading(NET_CHAMBER, FACE_TOWARD_BLUE)
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineToConstantHeading(NET_SPIKE_ONE_BEHIND,FACE_135_DEGREES) // Moves robot behind first sample
-                .setReversed(false)
-                .splineToConstantHeading(NET_SPIKE_ONE_VEC,FACE_TOWARD_BLUE) // Moves robot to grab first sample
                 .waitSeconds(1)
-                .setReversed(true)
-                .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_BLUE) // Moves robot to grab first sample
-                .waitSeconds(0.5)
-                .setReversed(true)
-                .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
-                .waitSeconds(1)
-                .splineToConstantHeading(SPIKE_BEHIND_NEUTRAL_AUDIENCE_2_TJ, FACE_TOWARD_BLUE)
-                .waitSeconds(0.5)
-                .splineToConstantHeading(NET_SPIKE_TWO_VEC, FACE_TOWARD_BLUE)
-                .waitSeconds(1)
-                .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
-                .waitSeconds(0.5)
-                .setReversed(true)
-                .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
-                .waitSeconds(1)
-                .splineToLinearHeading(NET_SPIKE_THREE, FACE_TOWARD_BLUE)
-                .waitSeconds(1)
-                .setReversed(true)
-                .splineToLinearHeading(WALL_ALIGN_POS_AUDIENCE_TJ,FACE_TOWARD_RED) // Moves robot to grab first sample
-                .splineToLinearHeading(NET_POS_AUDIENCE_TJ, FACE_TOWARD_RED)
-                .waitSeconds(1)
-                .splineToLinearHeading(NET_START_POSE, FACE_TOWARD_RED)
+                .splineToLinearHeading(new Pose2d(PoseToVector(NET_POS_AUDIENCE_TJ),FACE_225_DEGREES), FACE_225_DEGREES)
                 .build();
 
         /** BLUE BACKSTAGE - THIS SHOULD MATCH THE RED AUDIENCE PATH AND START LOCATION **/
