@@ -145,6 +145,25 @@ public abstract class Routes {
                     robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)
             );
         }
+
+        Action PickupSpecimenRotated(Pose2d startPose, Pose2d pickupWaypoint) {
+            return new SequentialAction(
+                    //TODO: write this code for picking up a specimen
+                    //Drive to the Observation Zone while lowering the lift in parallel
+                    //Pickup the specimen off the wall
+                    new ParallelAction(
+                            DriveToPickupWaypointZoneFromChamber(startPose, pickupWaypoint),
+//                            DriveToObservationZoneFromChamber(startPose,observationZonePose),
+                            robotAdapter.getAction(LIFT_TO_HOME_POSITION)
+                    ),
+                    robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL),
+                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)
+            );
+        }
+
+
+
+
         Action DriveToChamberFromStart(Pose2d startPose, Pose2d chamberPose) {
             //TODO: write this code for driving to the chamber  from the start position
             return
@@ -167,6 +186,24 @@ public abstract class Routes {
             return robotAdapter.getActionBuilder(chamberPose)
                     .setReversed(true)
                     .splineToLinearHeading(observationZonePose,observationZonePose.heading,slowVelocity,slowAcceleration)
+                    .build();
+        }
+
+
+        Action DriveToPickupWaypoint(Pose2d chamberPose, Pose2d observationZonePose) {
+            //TODO: write this code for driving to the chamber from the observation zone
+            return robotAdapter.getActionBuilder(chamberPose)
+                    .setReversed(true)
+                    .splineToLinearHeading(observationZonePose,observationZonePose.heading,slowVelocity,slowAcceleration)
+                    .build();
+        }
+
+
+        Action DriveToPickupWaypointZoneFromChamber(Pose2d chamberPose, Pose2d waypoint) {
+            //TODO: write this code for driving to the chamber from the observation zone
+            return robotAdapter.getActionBuilder(chamberPose)
+                    .setReversed(true)
+                    .splineToLinearHeading(waypoint,waypoint.heading,slowVelocity,slowAcceleration)
                     .build();
         }
 

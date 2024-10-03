@@ -4,6 +4,7 @@ import static com.example.sharedconstants.FieldConstants.OBS_CHAMBER_PRELOAD;
 import static com.example.sharedconstants.FieldConstants.OBS_CHAMBER_TWO;
 import static com.example.sharedconstants.FieldConstants.OBSERVATION_ZONE_RED_PICKUP;
 import static com.example.sharedconstants.FieldConstants.OBSERVATION_START_POSE;
+import static com.example.sharedconstants.FieldConstants.OBS_PICKUP_WAYPOINT;
 
 import com.acmerobotics.roadrunner.Action;
 import com.example.sharedconstants.RobotAdapter;
@@ -20,10 +21,7 @@ public class OBS_Preload_and_One_Specimen extends Routes {
 
         observationBotRoute = robotAdapter.getActionBuilder(OBSERVATION_START_POSE)
                 .stopAndAdd(routeBuilder.ScorePreloadSpecimen(OBSERVATION_START_POSE, OBS_CHAMBER_PRELOAD))
-                .stopAndAdd(routeBuilder.PickupSpecimen(OBS_CHAMBER_PRELOAD, OBSERVATION_ZONE_RED_PICKUP))
-                .stopAndAdd(routeBuilder.ScoreSpecimen(OBSERVATION_ZONE_RED_PICKUP, OBS_CHAMBER_TWO))
-                .stopAndAdd(routeBuilder.PickupSpecimen(OBS_CHAMBER_TWO, OBSERVATION_ZONE_RED_PICKUP))
-                .stopAndAdd(routeBuilder.NullDriveAction(OBSERVATION_ZONE_RED_PICKUP))
-                .build();
+                .stopAndAdd(routeBuilder.DriveToPickupWaypoint(OBS_CHAMBER_PRELOAD, OBS_PICKUP_WAYPOINT))
+                 .build();
     }
 }

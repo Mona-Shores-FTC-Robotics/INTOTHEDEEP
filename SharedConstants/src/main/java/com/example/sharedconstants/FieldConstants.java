@@ -75,6 +75,7 @@ public class FieldConstants {
 
     public static Pose2d OBSERVATION_START_POSE = new Pose2d(HALF_TILE,-HALF_FIELD + HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Pose2d NET_START_POSE = new Pose2d(-HALF_TILE,  -HALF_FIELD+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    public static Pose2d OBS_PICKUP_WAYPOINT= new Pose2d(TILE,-TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
 
     public static Pose2d NET_CHAMBER = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Vector2d BASKET_RED_AUDIENCE_2_TJ = new Vector2d(-55.6, -51.6);
@@ -86,6 +87,7 @@ public class FieldConstants {
     public static Vector2d NET_SPIKE_TWO_VEC = PoseToVector(NET_SPIKE_TWO);
 
     public static Pose2d NET_SPIKE_THREE = new Pose2d(-55, -25.5, FACE_TOWARD_AUDIENCE);
+
 
 
 
