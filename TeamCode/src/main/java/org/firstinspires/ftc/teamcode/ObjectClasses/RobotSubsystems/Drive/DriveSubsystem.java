@@ -5,12 +5,10 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
@@ -56,7 +54,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void init()
     {
         Robot.getInstance().registerSubsystem(Robot.SubsystemType.DRIVE);
-        fieldOrientedControl=false; // Default to non-field-oriented
+        fieldOrientedControl=true; // Default to field-oriented control
         mecanumDrive.init();
 
         // Calculate yaw offset based on alliance color
@@ -65,7 +63,7 @@ public class DriveSubsystem extends SubsystemBase {
         //      -For blue start, the audience is on your right
         //  See this: https://ftc-docs.firstinspires.org/en/latest/game_specific_resources/field_coordinate_system/field-coordinate-system.html
 
-        yawOffset=0; // I think we actually dont need an offset this year
+        yawOffset=0; // I think we actually don't need an offset this year
 //        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
 //            yawOffset = Math.toRadians(90);  // 90 degrees for blue side
 //        } else {

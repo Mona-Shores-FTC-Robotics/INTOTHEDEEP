@@ -32,10 +32,12 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepDriverBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
@@ -45,6 +47,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 @TeleOp(name="TeleOp_IntoTheDeep [Select Robot]")
 public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
 {
+    GamepadHandling gamepadHandling;
+    private boolean pidfTuningMode = false;  // PIDF tuning mode flag
+
     @Override
     public void runOpMode()
     {
@@ -52,7 +57,7 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
         CommandScheduler.getInstance().reset();
 
         //Initialize the Game-pads
-        GamepadHandling gamepadHandling = new GamepadHandling(this);
+        gamepadHandling = new GamepadHandling(this);
 
         telemetry.clearAll();
 
@@ -96,6 +101,10 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
             // Read buttons
             gamepadHandling.getDriverGamepad().readButtons();
 
+            // Handle switching to PIDF tuning mode during TeleOp
+            // TODO: remove this later
+            handlePIDFTuningMode(telemetry);
+
             // Display Telemetry through the Robot's Telemetry Manager
             Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();
 
@@ -106,4 +115,22 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
             MatchConfig.telemetryPacket = new TelemetryPacket();
         }
     }
+
+
+
+    public void handlePIDFTuningMode(Telemetry telemetry) {
+        // Toggle PIDF tuning mode with a specific button (e.g., Left Bumper)
+        if (gamepadHandling.getDriverGamepad().wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+            pidfTuningMode = !pidfTuningMode;  // Toggle the mode
+        }
+
+        if (pidfTuningMode) {
+            telemetry.addLine("PIDF Tuning Mode Active");
+            gamepadHandling.AdjustPIDF(telemetry);  // Adjust the PIDF values
+            Robot.getInstance().getDriveSubsystem().mecanumDrive.configurePID();
+        } else {
+            telemetry.addLine("Normal Driving Mode Active");
+        }
+    }
+
 }

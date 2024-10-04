@@ -57,6 +57,11 @@ public class MecanumDriveMona extends MecanumDrive  {
         public double F = 8;
     }
 
+    // Getter method to expose MonaTeleopParams
+    public MonaTeleopParams getMonaTeleopParams() {
+        return MONA_PARAMS;
+    }
+
     public static class ChassisTwoDeadWheelInternalIMUParams extends MonaTeleopParams {
         public ChassisTwoDeadWheelInternalIMUParams() {
             logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
@@ -180,7 +185,7 @@ public class MecanumDriveMona extends MecanumDrive  {
         configurePID();
     }
 
-    private void configurePID() {
+    public void configurePID() {
         // Set PID values for motors
         leftFront.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
         rightFront.setVelocityPIDFCoefficients(MONA_PARAMS.P, MONA_PARAMS.I, MONA_PARAMS.D, MONA_PARAMS.F);
@@ -281,61 +286,35 @@ public class MecanumDriveMona extends MecanumDrive  {
         MecanumDrive drive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
         Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
 
-        setDrivePowersWithFeedback(new PoseVelocity2d(
-                new Vector2d(
-                        -left_stick_y,
-                        -left_stick_x
-                ),
-                -right_stick_x
-        ));
+        // Calculate the desired wheel velocities using RoadRunner kinematics
+        MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
+                PoseVelocity2dDual.constant(new PoseVelocity2d(
+                        new Vector2d(-left_stick_y, -left_stick_x),
+                        -right_stick_x
+                ), 1)
+        );
 
+        // Set target velocities using the motor's built-in PID controller
+        drive.leftFront.setVelocity(wheelVels.leftFront.get(0));
+        drive.leftBack.setVelocity(wheelVels.leftBack.get(0));
+        drive.rightFront.setVelocity(wheelVels.rightFront.get(0));
+        drive.rightBack.setVelocity(wheelVels.rightBack.get(0));
+
+        // Update the robot's pose estimate
         drive.updatePoseEstimate();
 
+        // Send telemetry for real-time feedback
         telemetry.addData("x", drive.pose.position.x);
         telemetry.addData("y", drive.pose.position.y);
         telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
         telemetry.update();
 
+        // Send feedback to the dashboard
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
         Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
-
-    public void setDrivePowersWithFeedback(PoseVelocity2d powers) {
-        MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
-                PoseVelocity2dDual.constant(powers, 1));
-
-        double maxPowerMag = 1;
-        for (DualNum<Time> power : wheelVels.all()) {
-            maxPowerMag = Math.max(maxPowerMag, power.value());
-        }
-
-        double kP = 0.1;  // Proportional gain for adjusting power based on velocity error
-
-        // Left front wheel
-        double errorLeftFront = wheelVels.leftFront.get(0) - leftFront.getVelocity();
-        double leftFrontPower = kP * errorLeftFront;
-
-        // Left back wheel
-        double errorLeftBack = wheelVels.leftBack.get(0) - leftBack.getVelocity();
-        double leftBackPower = kP * errorLeftBack;
-
-        // Right front wheel
-        double errorRightFront = wheelVels.rightFront.get(0) - rightFront.getVelocity();
-        double rightFrontPower = kP * errorRightFront;
-
-        // Right back wheel
-        double errorRightBack = wheelVels.rightBack.get(0) - rightBack.getVelocity();
-        double rightBackPower = kP * errorRightBack;
-
-        // Normalize powers if necessary
-        leftFront.setPower(leftFrontPower / maxPowerMag);
-        leftBack.setPower(leftBackPower / maxPowerMag);
-        rightFront.setPower(rightFrontPower / maxPowerMag);
-        rightBack.setPower(rightBackPower / maxPowerMag);
-    }
-
 
     // ========== Helper/Utility Methods ==========
     private double Ramp(double target, double currentValue, double ramp_amount) {
