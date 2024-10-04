@@ -116,6 +116,7 @@ public class MecanumDrive {
     public final LazyImu lazyImu;
 
     public final Localizer localizer;
+    public final Localizer localizer2;
     public Pose2d pose;
 
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
@@ -243,7 +244,8 @@ public class MecanumDrive {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick);
-                //new DriveLocalizer();
+        localizer2 = new DriveLocalizer();
+
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }

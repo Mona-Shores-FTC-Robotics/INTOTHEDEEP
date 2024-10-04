@@ -58,7 +58,7 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
 
         while (opModeInInit()) {
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSideAndRobotType();
+            gamepadHandling.SelectAndLockColorAndSideAndRobotType(telemetry);
 
             telemetry.update();
             sleep(10);

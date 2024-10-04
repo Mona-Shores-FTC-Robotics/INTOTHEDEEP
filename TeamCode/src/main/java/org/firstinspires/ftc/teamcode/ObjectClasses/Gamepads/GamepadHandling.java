@@ -83,8 +83,7 @@ public class GamepadHandling {
     public GamepadEx getOperatorGamepad() {
         return operatorGamepad;
     }
-    public void SelectAndLockColorAndSideAndRobotType() {
-        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
+    public void SelectAndLockColorAndSideAndRobotType(Telemetry telemetry) {
         telemetry.addLine("");
 
         if (LockedSettingsFlag) {

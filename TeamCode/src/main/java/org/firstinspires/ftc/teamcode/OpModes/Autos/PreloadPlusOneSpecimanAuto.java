@@ -28,7 +28,7 @@ public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
         while (opModeInInit()) {
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSideAndRobotType();
+            gamepadHandling.SelectAndLockColorAndSideAndRobotType(telemetry);
             telemetry.update();
             sleep(10);
         }

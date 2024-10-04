@@ -83,6 +83,7 @@ public class DriveSubsystem extends SubsystemBase {
         if (gamepadActive) {
             if (fieldOrientedControl) {
                 fieldOrientedControl(leftY, leftX);
+                rightXAdjusted = rightX * DriveParameters.TURN_SPEED_FACTOR;
             } else {
                 // Apply speed factors
                 leftYAdjusted = leftY * DriveParameters.DRIVE_SPEED_FACTOR;

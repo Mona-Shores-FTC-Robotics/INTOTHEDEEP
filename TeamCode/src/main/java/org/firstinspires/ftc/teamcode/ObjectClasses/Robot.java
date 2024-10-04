@@ -109,8 +109,8 @@ public class Robot {
     // Static method to get single instance of Robot
     public static synchronized Robot getInstance() {
         if (robot == null) {
-            telemetry.addLine("error: Robot instance is null");
-            telemetry.update();
+            activeOpMode.telemetry.addLine("error: Robot instance is null");
+            activeOpMode.telemetry.update();
         }
         return robot;
     }
@@ -118,15 +118,15 @@ public class Robot {
     // This method can be called to register subsystems
     public void registerSubsystem(SubsystemType subsystem) {
         availableSubsystems.add(subsystem);
-        telemetry.addLine("Registered subsystem: " + subsystem);
-        telemetry.update();
+        activeOpMode.telemetry.addLine("Registered subsystem: " + subsystem);
+        activeOpMode.telemetry.update();
     }
 
     // Check if the subsystem exists
     public boolean hasSubsystem(SubsystemType subsystem) {
         if (!availableSubsystems.contains(subsystem)) {
-            telemetry.addLine("Warning: Subsystem " + subsystem + " is not available on this robot.");
-            telemetry.update();
+            activeOpMode.telemetry.addLine("Warning: Subsystem " + subsystem + " is not available on this robot.");
+            activeOpMode.telemetry.update();
             return false;
         }
         return true;
