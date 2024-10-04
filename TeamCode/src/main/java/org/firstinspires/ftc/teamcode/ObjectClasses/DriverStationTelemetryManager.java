@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 
 public class DriverStationTelemetryManager {
 
     // Enum to define telemetry modes
     private enum TelemetryMode {
         BASIC,
-        VERBOSE_DRIVE
+        VERBOSE_DRIVE,
+        VERBOSE_ENCODERS  // New telemetry mode for encoders
         // You can add more modes later, like VERBOSE_OTHER_SUBSYSTEM, etc.
     }
 
@@ -36,6 +39,10 @@ public class DriverStationTelemetryManager {
             case VERBOSE_DRIVE:
                 displayVerboseDriveTelemetry();
                 break;
+            case VERBOSE_ENCODERS:
+                displayVerboseEncodersTelemetry();
+                break;
+
         }
         telemetry.update();  // Make sure to update telemetry after displaying data
     }
@@ -51,7 +58,6 @@ public class DriverStationTelemetryManager {
         }
     }
 
-
     // Basic telemetry method
     private void displayBasicTelemetry() {
         telemetry.addLine("Basic Telemetry:");
@@ -59,7 +65,6 @@ public class DriverStationTelemetryManager {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayBasicTelemetry(telemetry);
         }
-
         // Add more basic telemetry for other subsystems if needed
     }
 
@@ -70,6 +75,10 @@ public class DriverStationTelemetryManager {
         }
     }
 
-
+    private void displayVerboseEncodersTelemetry() {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE) && Robot.getInstance().robotType==Robot.RobotType.ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU) {
+            Robot.getInstance().getDriveSubsystem().displayVerboseEncodersTelemetry(telemetry);
+        }
+    }
 
 }

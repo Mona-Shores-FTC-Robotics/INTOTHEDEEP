@@ -9,9 +9,11 @@ import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
+import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -172,6 +174,38 @@ public class DriveSubsystem extends SubsystemBase {
         telemetry.addData("Motor Power FR", "%.2f", mecanumDrive.rightFront.getPower());
         telemetry.addData("Motor Power BL", "%.2f", mecanumDrive.leftBack.getPower());
         telemetry.addData("Motor Power BR", "%.2f", mecanumDrive.rightBack.getPower());
+    }
+
+
+    // New method to display verbose encoder telemetry
+    public void displayVerboseEncodersTelemetry(Telemetry telemetry) {
+        MecanumDrive mecanumDrive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
+        TwoDeadWheelLocalizer dl = (TwoDeadWheelLocalizer) mecanumDrive.localizer;
+
+        // Log motor power and encoder positions
+        telemetry.addData("Motor Power", "LF (%.2f), LB (%.2f), RF (%.2f), RB (%.2f)",
+                mecanumDrive.leftFront.getPower(), mecanumDrive.leftBack.getPower(),
+                mecanumDrive.rightFront.getPower(), mecanumDrive.rightBack.getPower());
+
+        telemetry.addData("Motor Encoder Positions", "LF (%d), LB (%d), RF (%d), RB (%d)",
+                mecanumDrive.leftFront.getCurrentPosition(), mecanumDrive.leftBack.getCurrentPosition(),
+                mecanumDrive.rightFront.getCurrentPosition(), mecanumDrive.rightBack.getCurrentPosition());
+
+        telemetry.addData("Motor Encoder Velocities", "LF (%d), LB (%d), RF (%d), RB (%d)",
+                mecanumDrive.leftFront.getVelocity(), mecanumDrive.leftBack.getVelocity(),
+                mecanumDrive.rightFront.getVelocity(), mecanumDrive.rightBack.getVelocity());
+
+        // Log dead wheel encoder positions
+        telemetry.addData("Dead Wheel Encoder Positions", "Parallel (%d), Perpendicular (%d)",
+                dl.par.getPositionAndVelocity().position, dl.perp.getPositionAndVelocity().position);
+
+        // Log dead wheel encoder velocities
+        telemetry.addData("Dead Wheel Encoder Velocities", "Parallel (%d), Perpendicular (%d)",
+                dl.par.getPositionAndVelocity().velocity, dl.perp.getPositionAndVelocity().velocity);
+
+        // Log dead wheel encoder directions
+        telemetry.addData("Dead Wheel Encoder Directions", "Parallel (%d), Perpendicular (%d)",
+                dl.par.getDirection(), dl.perp.getDirection());
     }
 
     // Display IMU absolute yaw, FTC field yaw, and RoadRunner pose heading

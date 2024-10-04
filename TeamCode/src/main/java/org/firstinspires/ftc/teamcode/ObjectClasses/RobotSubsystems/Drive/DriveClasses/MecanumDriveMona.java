@@ -2,12 +2,20 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Drive
 
 import static java.lang.Math.abs;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.DualNum;
+import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.PoseVelocity2dDual;
 import com.acmerobotics.roadrunner.ProfileParams;
 import com.acmerobotics.roadrunner.Rotation2d;
+import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
@@ -17,8 +25,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
@@ -242,9 +252,92 @@ public class MecanumDriveMona extends MecanumDrive  {
         rightBack.setPower(rightBackPower);
     }
 
+    public void rrDriveControl(double left_stick_y, double left_stick_x, double right_stick_x) {
+        MecanumDrive drive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
+        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
+
+        drive.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(
+                        -left_stick_y,
+                        -left_stick_x
+                ),
+                -right_stick_x
+        ));
+
+        drive.updatePoseEstimate();
+
+        telemetry.addData("x", drive.pose.position.x);
+        telemetry.addData("y", drive.pose.position.y);
+        telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+        telemetry.update();
+
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().setStroke("#3F51B5");
+        Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+    }
+
+    public void rrDriveControlWithFeedback(double left_stick_y, double left_stick_x, double right_stick_x) {
+        MecanumDrive drive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
+        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
+
+        setDrivePowersWithFeedback(new PoseVelocity2d(
+                new Vector2d(
+                        -left_stick_y,
+                        -left_stick_x
+                ),
+                -right_stick_x
+        ));
+
+        drive.updatePoseEstimate();
+
+        telemetry.addData("x", drive.pose.position.x);
+        telemetry.addData("y", drive.pose.position.y);
+        telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+        telemetry.update();
+
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().setStroke("#3F51B5");
+        Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+    }
+
+    public void setDrivePowersWithFeedback(PoseVelocity2d powers) {
+        MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
+                PoseVelocity2dDual.constant(powers, 1));
+
+        double maxPowerMag = 1;
+        for (DualNum<Time> power : wheelVels.all()) {
+            maxPowerMag = Math.max(maxPowerMag, power.value());
+        }
+
+        double kP = 0.1;  // Proportional gain for adjusting power based on velocity error
+
+        // Left front wheel
+        double errorLeftFront = wheelVels.leftFront.get(0) - leftFront.getVelocity();
+        double leftFrontPower = kP * errorLeftFront;
+
+        // Left back wheel
+        double errorLeftBack = wheelVels.leftBack.get(0) - leftBack.getVelocity();
+        double leftBackPower = kP * errorLeftBack;
+
+        // Right front wheel
+        double errorRightFront = wheelVels.rightFront.get(0) - rightFront.getVelocity();
+        double rightFrontPower = kP * errorRightFront;
+
+        // Right back wheel
+        double errorRightBack = wheelVels.rightBack.get(0) - rightBack.getVelocity();
+        double rightBackPower = kP * errorRightBack;
+
+        // Normalize powers if necessary
+        leftFront.setPower(leftFrontPower / maxPowerMag);
+        leftBack.setPower(leftBackPower / maxPowerMag);
+        rightFront.setPower(rightFrontPower / maxPowerMag);
+        rightBack.setPower(rightBackPower / maxPowerMag);
+    }
+
 
     // ========== Helper/Utility Methods ==========
-
     private double Ramp(double target, double currentValue, double ramp_amount) {
         if (Math.abs(currentValue) + MONA_PARAMS.RAMP_THRESHOLD < Math.abs(target)) {
             return Math.signum(target) * (Math.abs(currentValue) + ramp_amount);
@@ -288,16 +381,26 @@ public class MecanumDriveMona extends MecanumDrive  {
 
     // Helper methods to set motor and dead wheel encoder directions
     private void setMotorAndEncoderDirectionsForChassisTwoDeadWheelInternalIMU() {
+        //set motor directions
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftBack.setDirection(DcMotorEx.Direction.REVERSE);
         rightFront.setDirection(DcMotorEx.Direction.FORWARD);
         rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
-        //This changes the dead wheel encoder directions
-        ((TwoDeadWheelLocalizer) this.localizer).par.setDirection(DcMotorSimple.Direction.REVERSE);
-        ((TwoDeadWheelLocalizer) this.localizer).perp.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //This changes the motor encoder directions
+        // Set motor modes to reset encoders
+        leftFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set motors to run using encoders (important for velocity control)
+        leftFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        //Set up motor encoders
         Encoder leftFrontEncoder = new OverflowEncoder(new RawEncoder(leftFront));
         Encoder leftBackEncoder = new OverflowEncoder(new RawEncoder(leftBack));
         Encoder rightBackEncoder = new OverflowEncoder(new RawEncoder(rightBack));
@@ -306,6 +409,10 @@ public class MecanumDriveMona extends MecanumDrive  {
         //  reverse encoders if needed - overriding these
         leftFrontEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBackEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //This changes the dead wheel encoder directions
+        ((TwoDeadWheelLocalizer) this.localizer).par.setDirection(DcMotorSimple.Direction.REVERSE);
+        ((TwoDeadWheelLocalizer) this.localizer).perp.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     private void setMotorAndEncoderDirectionsForCenterStageTwoDeadWheelInternalIMU() {
