@@ -65,11 +65,12 @@ public class DriveSubsystem extends SubsystemBase {
         //      -For blue start, the audience is on your right
         //  See this: https://ftc-docs.firstinspires.org/en/latest/game_specific_resources/field_coordinate_system/field-coordinate-system.html
 
-        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
-            yawOffset = Math.toRadians(90);  // 90 degrees for blue side
-        } else {
-            yawOffset = Math.toRadians(-90);  // -90 degrees for red side
-        }
+        yawOffset=0; // I think we actually dont need an offset this year
+//        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+//            yawOffset = Math.toRadians(90);  // 90 degrees for blue side
+//        } else {
+//            yawOffset = Math.toRadians(-90);  // -90 degrees for red side
+//        }
     }
 
     public MecanumDriveMona getMecanumDrive()
@@ -103,9 +104,6 @@ public class DriveSubsystem extends SubsystemBase {
         drive = leftYAdjusted;
         strafe = leftXAdjusted;
         turn = rightXAdjusted;
-
-        // Pass these values to the Mecanum drive system
-        mecanumDrive.mecanumDriveSpeedControl(drive, strafe, turn);
     }
 
     /**
