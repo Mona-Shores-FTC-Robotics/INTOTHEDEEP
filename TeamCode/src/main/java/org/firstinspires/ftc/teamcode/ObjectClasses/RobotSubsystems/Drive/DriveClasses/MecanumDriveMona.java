@@ -5,14 +5,17 @@ import static java.lang.Math.abs;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.ProfileParams;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
+import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -145,7 +148,9 @@ public class MecanumDriveMona extends MecanumDrive  {
         switch (Robot.getInstance().robotType) {
             //Override the Roadrunner parameters for the chassis bot and the centerstage robot
             //The normal IntoTheDeep robot parameters should be stored in the MecancumDrive class
+
             case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
+
                 PARAMS = new ChassisTwoDeadWheelInternalIMUParams();
                 TwoDeadWheelLocalizer.PARAMS = new ChassisTwoDeadWheelInternalIMULocalizerParams();
                 setMotorAndEncoderDirectionsForChassisTwoDeadWheelInternalIMU();
@@ -281,16 +286,26 @@ public class MecanumDriveMona extends MecanumDrive  {
                         pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.inverse()));
     }
 
-    // Helper methods to set motor and encoder directions
+    // Helper methods to set motor and dead wheel encoder directions
     private void setMotorAndEncoderDirectionsForChassisTwoDeadWheelInternalIMU() {
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftBack.setDirection(DcMotorEx.Direction.REVERSE);
         rightFront.setDirection(DcMotorEx.Direction.FORWARD);
         rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
+        //This changes the dead wheel encoder directions
         ((TwoDeadWheelLocalizer) this.localizer).par.setDirection(DcMotorSimple.Direction.REVERSE);
         ((TwoDeadWheelLocalizer) this.localizer).perp.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        //This changes the motor encoder directions
+        Encoder leftFrontEncoder = new OverflowEncoder(new RawEncoder(leftFront));
+        Encoder leftBackEncoder = new OverflowEncoder(new RawEncoder(leftBack));
+        Encoder rightBackEncoder = new OverflowEncoder(new RawEncoder(rightBack));
+        Encoder rightFrontEncoder = new OverflowEncoder(new RawEncoder(rightFront));
+
+        //  reverse encoders if needed - overriding these
+        leftFrontEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     private void setMotorAndEncoderDirectionsForCenterStageTwoDeadWheelInternalIMU() {

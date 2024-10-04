@@ -143,7 +143,6 @@ public class Robot {
             }
         }
 
-
     private void initTele() {
         switch (robotType) {
             case ROBOT_INTOTHEDEEP:

@@ -116,7 +116,7 @@ public class MecanumDrive {
     public final LazyImu lazyImu;
 
     public final Localizer localizer;
-    public final Localizer localizer2;
+
     public Pose2d pose;
 
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
@@ -236,6 +236,7 @@ public class MecanumDrive {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+
         //   make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
@@ -244,8 +245,6 @@ public class MecanumDrive {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick);
-        localizer2 = new DriveLocalizer();
-
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
