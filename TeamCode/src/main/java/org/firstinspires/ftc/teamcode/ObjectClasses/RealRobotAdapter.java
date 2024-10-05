@@ -39,11 +39,11 @@ public class RealRobotAdapter implements RobotAdapter {
     }
 
     public TrajectoryActionBuilder actionBuilder(Pose2d startPose) {
-        return Robot.getInstance().getDriveSubsystem().mecanumDrive.actionBuilder(startPose);
+        return Robot.getInstance().getDriveSubsystem().getMecanumDrive().actionBuilder(startPose);
     }
 
     public TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose) {
-        return Robot.getInstance().getDriveSubsystem().mecanumDrive.mirroredActionBuilder(beginPose);
+        return Robot.getInstance().getDriveSubsystem().mirroredActionBuilder(beginPose);
     }
 
     @Override

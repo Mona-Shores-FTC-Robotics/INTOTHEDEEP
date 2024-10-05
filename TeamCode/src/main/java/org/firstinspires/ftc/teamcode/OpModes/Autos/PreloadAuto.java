@@ -50,7 +50,7 @@ public class PreloadAuto extends LinearOpMode {
         Action selectedRoute = preload.getRouteAction(MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose= FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         telemetry.clearAll();
 
@@ -61,7 +61,7 @@ public class PreloadAuto extends LinearOpMode {
 
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getYawDegrees();
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffset;
-        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().mecanumDrive.pose;
+        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
     }
 }
 
