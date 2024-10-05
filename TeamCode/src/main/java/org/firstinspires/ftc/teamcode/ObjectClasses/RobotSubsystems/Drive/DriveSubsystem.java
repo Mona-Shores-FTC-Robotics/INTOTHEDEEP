@@ -36,6 +36,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.LocalizerParams;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.RRParams;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.TeleopParams;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
@@ -43,171 +46,7 @@ import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 @Config
 public class DriveSubsystem extends SubsystemBase {
 
-
-    // these wer epretty good for the chassis with pinpoint and centerstage with pinpoint
-        public static class TeleopParams  {
-            /** Set these drive parameters for faster TeleOp driving**/
-            public double DRIVE_SPEED_FACTOR= 0.82;
-            public double STRAFE_SPEED_FACTOR= 1.0;
-            public double TURN_SPEED_FACTOR = 1.0;
-            public double DEAD_ZONE = .2;
-
-            public double DRIVE_RAMP = .2;
-            public double STRAFE_RAMP = .22;
-            public double TURN_RAMP = .4;
-            public double RAMP_THRESHOLD = .04;
-
-            public double P = 0;
-            public double D = 0;
-            public double I = 0;
-            public double F = 13;
-        }
-
-    public static class TeleopPowerTestParams  {
-        /** Set these drive parameters for faster TeleOp driving**/
-        public double DRIVE_SPEED_FACTOR= 1.0;
-        public double STRAFE_SPEED_FACTOR= 1.0;
-        public double TURN_SPEED_FACTOR = 1.0;
-        public double DEAD_ZONE = .2;
-
-        public double DRIVE_RAMP = 0;
-        public double STRAFE_RAMP = 0;
-        public double TURN_RAMP = 0;
-        public double RAMP_THRESHOLD = 0;
-
-        public double P = 0;
-        public double D = 0;
-        public double I = 0;
-        public double F = 0;
-    }
-
-    public static TeleopParams TELEOP_PARAMS = new TeleopParams();
-
-
-    public static class ChassisTwoDeadWheelInternalIMUParams extends MecanumDrive.Params {
-        public ChassisTwoDeadWheelInternalIMUParams() {
-            logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT ;
-            usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
-
-            // drive model parameters
-            this.inPerTick = 0.002996;
-            //TODO: update this lateralInPerTick based on lateralRampLogger
-            this.lateralInPerTick = 0.0023321641061384555;
-            this. trackWidthTicks = 4410.968285794866;
-
-            // feedforward parameters (in tick units)
-            this.kS = 1.1061809171010473;
-            this.kV = 0.0003917967378464592;
-            this.kA = 0.00001;
-
-            // path profile parameters (in inches)
-            this.maxWheelVel = 50;
-            this.minProfileAccel = -30;
-            this.maxProfileAccel = 50;
-
-            // turn profile parameters (in radians)
-            this.maxAngVel = Math.PI; // shared with path
-            this.maxAngAccel = Math.PI;
-
-            // path controller gains
-            this.axialGain = 10;
-            this. lateralGain = 10;
-            this.headingGain = 8; // shared with turn
-
-            this.axialVelGain = 1.5;
-            this.lateralVelGain = 0;
-            this. headingVelGain = 1.1;
-        }
-    }
-
-    public static class CenterStageTwoDeadWheelInternalIMUParams extends MecanumDrive.Params {
-        public CenterStageTwoDeadWheelInternalIMUParams() {
-            this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
-            this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
-
-            this.inPerTick = 0.002996;
-            this.lateralInPerTick = inPerTick; // inPerTick;
-            this.trackWidthTicks = 0;
-
-            this.kS = 1.3635356937629455;
-            this.kV = 0.00038558904047469167;
-            this.kA = 0.0;
-
-            // path profile parameters (in inches)
-            this.maxWheelVel = 50;
-            this.minProfileAccel = -30;
-            this.maxProfileAccel = 50;
-
-            // turn profile parameters (in radians)
-            this.maxAngVel = Math.PI; // shared with path
-            this.maxAngAccel = Math.PI;
-
-            // path controller gains
-            this.axialGain = 0.0;
-            this.lateralGain = 0.0;
-            this.headingGain = 0.0; // shared with turn
-
-            this.axialVelGain = 0.0;
-            this.lateralVelGain = 0.0;
-            this.headingVelGain = 0.0; // shared with turn
-        }
-    }
-
-    public static class ChassisPinpointParams extends PinpointDrive.Params {
-        public ChassisPinpointParams() {
-            // IMU orientation
-            // TODO: fill in these values based on
-            //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
-            RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                    RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
-            RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                    RevHubOrientationOnRobot.UsbFacingDirection.UP;
-
-            // drive model parameters
-            this.inPerTick = 1; // SparkFun OTOS Note: you can probably leave this at 1
-            this.lateralInPerTick = 0.7643640655048315;
-            this.trackWidthTicks = 12.756341533315288;
-
-            // feedforward parameters (in tick units)
-            this.kS = 0.8015924760256286;
-            this.kV = 0.13660250281616085;
-            this.kA = 0.0009;
-
-            // path profile parameters (in inches)
-            this.maxWheelVel = 30;
-            this.minProfileAccel = -30;
-            this.maxProfileAccel = 30;
-
-            // turn profile parameters (in radians)
-            this.maxAngVel = Math.PI; // shared with path
-            this.maxAngAccel = Math.PI;
-
-            // path controller gains
-            this.axialGain = 15.0;
-            this.lateralGain = 6.5;
-            this.headingGain = 8.0; // shared with turn
-
-            this.axialVelGain = 0.1;
-            this.lateralVelGain = 0.0;
-            this.headingVelGain = 0.1; // shared with
-        }
-    }
-
-    public static class ChassisTwoDeadWheelInternalIMULocalizerParams extends TwoDeadWheelLocalizer.Params {
-        public ChassisTwoDeadWheelInternalIMULocalizerParams() {
-            // Override parYTicks and perpXTicks with values specific to ChassisInternalIMU
-            this.parYTicks = -1450.0;
-            this.perpXTicks = 800.0;
-        }
-    }
-
-    public static class CenterStageTwoDeadWheelInternalIMULocalizerParams extends TwoDeadWheelLocalizer.Params {
-        public CenterStageTwoDeadWheelInternalIMULocalizerParams() {
-            // Override parYTicks and perpXTicks with values specific to CenterStageDEAD_WHEEL
-            this.parYTicks = -1440.0;
-            this.perpXTicks = 820.0;
-        }
-    }
+    TeleopParams TELEOP_PARAMS = new TeleopParams();
 
     // Instance of MecanumDrive (or other types like PinpointDrive)
     private MecanumDrive mecanumDrive;
@@ -244,13 +83,13 @@ public class DriveSubsystem extends SubsystemBase {
             case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-                // After initializing the drive, override the parameters with your custom ones
-                PARAMS = new ChassisTwoDeadWheelInternalIMUParams();  // Custom params for this robot type
+                // Use the separated ChassisTwoDeadWheelInternalIMUParams from RRParams
+                PARAMS = new RRParams.ChassisTwoDeadWheelInternalIMUParams();
                 MecanumDrive.PARAMS = PARAMS;  // Set the static PARAMS field to your custom one
 
-                // Set up localizer using the custom PARAMS
+                // Set up localizer using the separated ChassisTwoDeadWheelInternalIMULocalizerParams
                 mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), PARAMS.inPerTick);
-                TwoDeadWheelLocalizer.PARAMS = new ChassisTwoDeadWheelInternalIMULocalizerParams();
+                TwoDeadWheelLocalizer.PARAMS = new LocalizerParams.ChassisTwoDeadWheelInternalIMULocalizerParams();
 
                 setMotorAndEncoderDirectionsForChassisTwoDeadWheelInternalIMU();
                 break;
@@ -258,13 +97,13 @@ public class DriveSubsystem extends SubsystemBase {
             case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-                // After initializing the drive, override the parameters with your custom ones
-                PARAMS = new CenterStageTwoDeadWheelInternalIMUParams();
-                MecanumDrive.PARAMS = PARAMS;  // Set the static PARAMS field to your custom one
+                // Use the separated CenterStageTwoDeadWheelInternalIMUParams from RRParams
+                PARAMS = new RRParams.CenterStageTwoDeadWheelInternalIMUParams();
+                MecanumDrive.PARAMS = PARAMS;
 
-                // Set up localizer using the custom PARAMS
-                this.mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick );
-                TwoDeadWheelLocalizer.PARAMS = new CenterStageTwoDeadWheelInternalIMULocalizerParams();
+                // Set up localizer using the separated CenterStageTwoDeadWheelInternalIMULocalizerParams
+                this.mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), PARAMS.inPerTick);
+                TwoDeadWheelLocalizer.PARAMS = new LocalizerParams.CenterStageTwoDeadWheelInternalIMULocalizerParams();
 
                 setMotorAndEncoderDirectionsForCenterStageTwoDeadWheelInternalIMU();
                 break;
@@ -272,15 +111,16 @@ public class DriveSubsystem extends SubsystemBase {
             case ROBOT_CHASSIS_PINPOINT:
                 this.mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-                // After initializing the drive, override the parameters with your custom ones
-                PARAMS = new ChassisPinpointParams();
-                MecanumDrive.PARAMS = PARAMS;  // Set the static PARAMS field to your custom one
+                // Use the separated ChassisPinpointParams from RRParams
+                PARAMS = new RRParams.ChassisPinpointParams();
+                MecanumDrive.PARAMS = PARAMS;
 
                 setMotorAndEncoderDirectionsForChassisPinpoint();
                 break;
 
             case ROBOT_CENTERSTAGE_OTOS:
                 this.mecanumDrive = new SparkFunOTOSDrive(hardwareMap, new Pose2d(0, 0, 0));
+                // No custom params for OTOS in this case, keep using default
                 break;
         }
         configurePID();
@@ -737,7 +577,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void rrDriveControl(double left_stick_y, double left_stick_x, double right_stick_x) {
         MecanumDrive drive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
-        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
 
         drive.setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
@@ -748,11 +587,6 @@ public class DriveSubsystem extends SubsystemBase {
         ));
 
         drive.updatePoseEstimate();
-
-//        telemetry.addData("x", drive.pose.position.x);
-//        telemetry.addData("y", drive.pose.position.y);
-//        telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
-//        telemetry.update();
 
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
