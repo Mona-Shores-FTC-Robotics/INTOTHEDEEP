@@ -10,6 +10,7 @@ import static com.example.sharedconstants.FieldConstants.NET_POS_AUDIENCE_TJ;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_BEHIND;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_VEC;
+import static com.example.sharedconstants.FieldConstants.NET_SPIKE_TEST;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_TWO_VEC;
 import static com.example.sharedconstants.FieldConstants.OBS_CHAMBER_PRELOAD;
@@ -50,12 +51,11 @@ public class NET_Preload_and_One_Sample extends Routes {
 //                .waitSeconds(1)
 //                .splineToLinearHeading(new Pose2d(PoseToVector(NET_POS_AUDIENCE_TJ),FACE_225_DEGREES), FACE_225_DEGREES)
 
-//                .stopAndAdd(routeBuilder.ScorePreloadSpecimen(NET_START_POSE, NET_CHAMBER))
-//                .stopAndAdd(routeBuilder.PickupSpecimen(new Pose2d((NET_SPIKE_ONE_BEHIND),FACE_225_DEGREES)
-//                 //               .stopAndAdd(routeBuilder.PickupSpecimen()
-////                .stopAndAdd(routeBuilder.ScoreSpecimen(OBSERVATION_ZONE_RED_PICKUP, OBS_CHAMBER_TWO))
-////                .stopAndAdd(routeBuilder.PickupSpecimen(OBS_CHAMBER_TWO, OBSERVATION_ZONE_RED_PICKUP))
-////                .stopAndAdd(routeBuilder.NullDriveAction(OBSERVATION_ZONE_RED_PICKUP))
-                        .build();
+                .stopAndAdd(routeBuilder.ScorePreloadSpecimen(NET_START_POSE, NET_CHAMBER))
+                .stopAndAdd(routeBuilder.PickupSpecimen(NET_CHAMBER,NET_SPIKE_TEST))
+                .stopAndAdd(routeBuilder.ScoreSpecimen(NET_SPIKE_TEST, NET_POS_AUDIENCE_TJ))
+////            .stopAndAdd(routeBuilder.PickupSpecimen(OBS_CHAMBER_TWO, OBSERVATION_ZONE_RED_PICKUP))
+////            .stopAndAdd(routeBuilder.NullDriveAction(OBSERVATION_ZONE_RED_PICKUP))
+                .build();
     }
 }
