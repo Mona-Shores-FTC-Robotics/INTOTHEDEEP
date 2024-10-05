@@ -54,9 +54,10 @@ public class NET_Preload_and_One_Sample extends Routes {
 
                 .stopAndAdd(routeBuilder.ScorePreloadSpecimen(NET_START_POSE, NET_CHAMBER))
                 .stopAndAdd(routeBuilder.PickupSpecimen(NET_CHAMBER,NET_SPIKE_TEST))
-                .stopAndAdd(routeBuilder.ScoreSpecimen(NET_SPIKE_TEST, NET_POS_AUDIENCE_TJ))
+                .stopAndAdd(routeBuilder.GotoWall(NET_SPIKE_TEST, WALL_ALIGN_POS_AUDIENCE_TJ))
+                .stopAndAdd(routeBuilder.ScoreSpecimen(WALL_ALIGN_POS_AUDIENCE_TJ, NET_POS_AUDIENCE_TJ))
 ////            .stopAndAdd(routeBuilder.PickupSpecimen(OBS_CHAMBER_TWO, OBSERVATION_ZONE_RED_PICKUP))
-////            .stopAndAdd(routeBuilder.NullDriveAction(OBSERVATION_ZONE_RED_PICKUP))g
+////            .stopAndAdd(routeBuilder.NullDriveAction(OBSERVATION_ZONE_RED_PICKUP))
                 .build();
     }
 }

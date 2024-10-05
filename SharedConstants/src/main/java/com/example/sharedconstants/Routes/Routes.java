@@ -119,7 +119,6 @@ public abstract class Routes {
             );
         }
 
-
         Action ScoreSpecimen(Pose2d startPose, Pose2d chamberPose) {
             return new SequentialAction(
                     //TODO: write this code for scoring a specimen
@@ -179,6 +178,13 @@ public abstract class Routes {
                                     currentPose.position.y,
                                     currentPose.heading.log()),
                             currentPose.heading)
+                    .build();
+        }
+
+        public Action GotoWall(Pose2d startPose, Pose2d wallPose) {
+            return robotAdapter.getActionBuilder(startPose)
+                    .setReversed(true)
+                    .splineToLinearHeading(wallPose, wallPose.heading)
                     .build();
         }
     }
