@@ -5,10 +5,12 @@ import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.*;
+import com.arcrobotics.ftclib.util.Direction;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.teamcode.*;
@@ -18,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class TuningOpModes {
-    public static final Class<?> DRIVE_CLASS = PinpointDrive.class; // TODO: change to your drive class i.e. PinpointDrive if using pinpoint
+    public static final Class<?> DRIVE_CLASS = MecanumDrive.class; // TODO: change to your drive class i.e. PinpointDrive if using pinpoint
 
     public static final String GROUP = "quickstart";
     public static final boolean DISABLED = false;
@@ -44,6 +46,7 @@ public final class TuningOpModes {
 
                     List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                     List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
+
                     parEncs.add(new PinpointEncoder(pd.pinpoint,false, pd.leftBack));
                     perpEncs.add(new PinpointEncoder(pd.pinpoint,true, pd.leftBack));
 

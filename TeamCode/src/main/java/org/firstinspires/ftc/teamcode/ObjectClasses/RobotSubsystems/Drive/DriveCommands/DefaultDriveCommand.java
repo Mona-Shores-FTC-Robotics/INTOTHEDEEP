@@ -37,9 +37,10 @@ public class DefaultDriveCommand extends CommandBase {
     public void execute() {
 //        //this sets the drive/strafe/turn values based on the gamepad
         driveSubsystem.setDriveStrafeTurnValues(driveSupplier.getAsDouble(), strafeSupplier.getAsDouble(), turnSupplier.getAsDouble());
-//        driveSubsystem.mecanumDrive.mecanumDriveSpeedControl(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
+        driveSubsystem.mecanumDriveSpeedControl(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
 
-        driveSubsystem.rrDriveControl(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
+//        driveSubsystem.rrDriveControl(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
+//        driveSubsystem.mecanumDrivePowerControl(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
 
     }
 }
