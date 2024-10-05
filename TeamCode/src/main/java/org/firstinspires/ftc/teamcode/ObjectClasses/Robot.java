@@ -62,11 +62,11 @@ public class Robot {
             //Just the drive base
             case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
             case ROBOT_CHASSIS_PINPOINT: {
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
+                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 break;
             }
             case ROBOT_INTOTHEDEEP: {
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
+                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
 //                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
 //                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
 //                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
@@ -81,7 +81,7 @@ public class Robot {
 
             case ROBOT_CENTERSTAGE_OTOS:
             case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:{
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap);
+                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
                 intakeSubsystem = new IntakeSubsystem(hardwareMap, "par", "perp");
                 gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");

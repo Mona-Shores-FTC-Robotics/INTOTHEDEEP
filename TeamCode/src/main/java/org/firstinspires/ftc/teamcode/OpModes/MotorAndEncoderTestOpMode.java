@@ -87,16 +87,16 @@ public class MotorAndEncoderTestOpMode extends LinearOpMode {
                     mecanumDrive.rightFront.getVelocity(), mecanumDrive.rightBack.getVelocity());
 
             // Log dead wheel encoder positions
-            telemetry.addData("Dead Wheel Encoder Positions", "Parallel (%d), Perpendicular (%d)",
-                    parEncoder.getPositionAndVelocity().position, perpEncoder.getPositionAndVelocity().position);
+//            telemetry.addData("Dead Wheel Encoder Positions", "Parallel (%d), Perpendicular (%d)",
+//                    parEncoder.getPositionAndVelocity().position, perpEncoder.getPositionAndVelocity().position);
+//
+//            // Log dead wheel encoder positions
+//            telemetry.addData("Dead Wheel Encoder Velocities", "Parallel (%d), Perpendicular (%d)",
+//                    parEncoder.getPositionAndVelocity().velocity, perpEncoder.getPositionAndVelocity().velocity);
 
             // Log dead wheel encoder positions
-            telemetry.addData("Dead Wheel Encoder Velocities", "Parallel (%d), Perpendicular (%d)",
-                    parEncoder.getPositionAndVelocity().velocity, perpEncoder.getPositionAndVelocity().velocity);
-
-            // Log dead wheel encoder positions
-            telemetry.addData("Dead Wheel Encoder Directions", "Parallel (%d), Perpendicular (%d)",
-                    parEncoder.getDirection(), perpEncoder.getDirection());
+//            telemetry.addData("Dead Wheel Encoder Directions", "Parallel (%d), Perpendicular (%d)",
+//                    parEncoder.getDirection(), perpEncoder.getDirection());
 
             telemetry.update();
         }

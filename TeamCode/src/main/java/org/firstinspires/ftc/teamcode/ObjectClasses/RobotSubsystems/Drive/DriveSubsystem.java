@@ -130,34 +130,41 @@ public class DriveSubsystem extends SubsystemBase {
 
     public static class ChassisPinpointParams extends PinpointDrive.Params {
         public ChassisPinpointParams() {
-            this.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD ;
-            this.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+            // IMU orientation
+            // TODO: fill in these values based on
+            //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
+            RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
+                    RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+            RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
+                    RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
-            this.inPerTick = 1;
-            this.lateralInPerTick = inPerTick; // inPerTick;
-            this.trackWidthTicks = 0;
+            // drive model parameters
+            this.inPerTick = 1; // SparkFun OTOS Note: you can probably leave this at 1
+            this.lateralInPerTick = 0.7643640655048315;
+            this.trackWidthTicks = 12.756341533315288;
 
-            this.kS = 0.0;
-            this.kV = 0.0;
-            this.kA = 0.0;
+            // feedforward parameters (in tick units)
+            this.kS = 0.8015924760256286;
+            this.kV = 0.13660250281616085;
+            this.kA = 0.0009;
 
             // path profile parameters (in inches)
-            this.maxWheelVel = 50;
+            this.maxWheelVel = 30;
             this.minProfileAccel = -30;
-            this.maxProfileAccel = 50;
+            this.maxProfileAccel = 30;
 
             // turn profile parameters (in radians)
             this.maxAngVel = Math.PI; // shared with path
             this.maxAngAccel = Math.PI;
 
             // path controller gains
-            this.axialGain = 0.0;
-            this.lateralGain = 0.0;
-            this.headingGain = 0.0; // shared with turn
+            this.axialGain = 15.0;
+            this.lateralGain = 6.5;
+            this.headingGain = 8.0; // shared with turn
 
-            this.axialVelGain = 0.0;
+            this.axialVelGain = 0.1;
             this.lateralVelGain = 0.0;
-            this.headingVelGain = 0.0; // shared with turn
+            this.headingVelGain = 0.1; // shared with
         }
     }
 
@@ -206,10 +213,10 @@ public class DriveSubsystem extends SubsystemBase {
     private static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER_INCHES;
     private static final double GEAR_RATIO = 1.0;  // Adjust if you have a gear ratio
 
-    public DriveSubsystem(HardwareMap hardwareMap) {
+    public DriveSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType) {
         TELEOP_PARAMS = new TeleopParams();
         // Initialize appropriate drive system based on robot type
-        switch (Robot.getInstance().robotType) {
+        switch (robotType) {
 
             case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
