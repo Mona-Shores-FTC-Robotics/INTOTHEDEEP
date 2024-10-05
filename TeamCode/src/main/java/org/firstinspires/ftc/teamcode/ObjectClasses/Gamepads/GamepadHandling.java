@@ -13,17 +13,14 @@ import static com.example.sharedconstants.FieldConstants.*;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.getNextRobotType;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.getPreviousRobotType;
-
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem.DriveParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 
 public class GamepadHandling {
     private final GamepadEx driverGamepad;
     private final GamepadEx operatorGamepad;
 
     public boolean LockedSettingsFlag = false;
-    private boolean adjustmentModeActive = false;
 
     public GamepadHandling(LinearOpMode opMode) {
         driverGamepad = new GamepadEx(opMode.gamepad1);
@@ -85,24 +82,8 @@ public class GamepadHandling {
             telemetry.addLine("Robot Type: " + finalRobotType);
             telemetry.addLine("Press B to unlock settings");
 
-            if (!adjustmentModeActive) {
-                telemetry.addLine("Press X to adjust drive/strafe/turn speed factors");
-            }
-            // Check if the user pressed X to enter adjustment mode
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.X)) {
-                adjustmentModeActive = true;  // Activate adjustment mode
-            }
-
-            // While in adjustment mode, continuously adjust the speed factors
-            if (adjustmentModeActive) {
-                telemetry.addLine("---ADJUST drive/strafe/turn speed factors---");
-                telemetry.addLine("Press B to exit adjustment mode");
-                AdjustDriveStrafeTurnSpeedFactors(telemetry);
-            }
-
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
                 LockedSettingsFlag = false;  // Unlock settings if B is pressed again
-                adjustmentModeActive = false;  // Deactivate adjustment mode when unlocking settings
             }
         } else {
             telemetry.addLine("Lock settings with B");
@@ -191,76 +172,74 @@ public class GamepadHandling {
     }
 
     public void AdjustDriveStrafeTurnSpeedFactors(Telemetry telemetry) {
+        DriveSubsystem.TeleopParams teleopParams = Robot.getInstance().getDriveSubsystem().TELEOP_PARAMS;
         telemetry.addLine("");  // Just formatting
-
         // Adjust Drive Speed Factor using the D-Pad Left/Right
         telemetry.addLine("Adjust Drive Speed (D-Pad Left - Decrease, D-Pad Right - Increase)");
         if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            DriveParameters.DRIVE_SPEED_FACTOR = Math.max(0, Math.min(1, DriveParameters.DRIVE_SPEED_FACTOR - 0.01));  // Decrease and cap between 0 and 1
+            teleopParams.DRIVE_SPEED_FACTOR = Math.max(0, Math.min(1, teleopParams.DRIVE_SPEED_FACTOR - 0.01));  // Decrease and cap between 0 and 1
         } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            DriveParameters.DRIVE_SPEED_FACTOR = Math.max(0, Math.min(1, DriveParameters.DRIVE_SPEED_FACTOR + 0.01));  // Increase and cap between 0 and 1
+            teleopParams.DRIVE_SPEED_FACTOR = Math.max(0, Math.min(1, teleopParams.DRIVE_SPEED_FACTOR + 0.01));  // Increase and cap between 0 and 1
         }
-        telemetry.addData("Drive Speed Factor: ", DriveParameters.DRIVE_SPEED_FACTOR);
+        telemetry.addData("Drive Speed Factor: ", teleopParams.DRIVE_SPEED_FACTOR);
 
         // Adjust Strafe Speed Factor using X/Y buttons
         telemetry.addLine("Adjust Strafe Speed (X - Decrease, Y - Increase)");
         if (driverGamepad.wasJustPressed(GamepadKeys.Button.X)) {
-            DriveParameters.STRAFE_SPEED_FACTOR = Math.max(0, Math.min(1, DriveParameters.STRAFE_SPEED_FACTOR - 0.01));  // Decrease and cap between 0 and 1
+            teleopParams.STRAFE_SPEED_FACTOR = Math.max(0, Math.min(1, teleopParams.STRAFE_SPEED_FACTOR - 0.01));  // Decrease and cap between 0 and 1
         } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.Y)) {
-            DriveParameters.STRAFE_SPEED_FACTOR = Math.max(0, Math.min(1, DriveParameters.STRAFE_SPEED_FACTOR + 0.01));  // Increase and cap between 0 and 1
+            teleopParams.STRAFE_SPEED_FACTOR = Math.max(0, Math.min(1, teleopParams.STRAFE_SPEED_FACTOR + 0.01));  // Increase and cap between 0 and 1
         }
-        telemetry.addData("Strafe Speed Factor: ", DriveParameters.STRAFE_SPEED_FACTOR);
+        telemetry.addData("Strafe Speed Factor: ", teleopParams.STRAFE_SPEED_FACTOR);
 
         // Adjust Turn Speed Factor using A/B buttons
         telemetry.addLine("Adjust Turn Speed (A - Decrease, B - Increase)");
         if (driverGamepad.wasJustPressed(GamepadKeys.Button.A)) {
-            DriveParameters.TURN_SPEED_FACTOR = Math.max(0, Math.min(1, DriveParameters.TURN_SPEED_FACTOR - 0.01));  // Decrease and cap between 0 and 1
+            teleopParams.TURN_SPEED_FACTOR = Math.max(0, Math.min(1, teleopParams.TURN_SPEED_FACTOR - 0.01));  // Decrease and cap between 0 and 1
         } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-            DriveParameters.TURN_SPEED_FACTOR = Math.max(0, Math.min(1, DriveParameters.TURN_SPEED_FACTOR + 0.01));  // Increase and cap between 0 and 1
+            teleopParams.TURN_SPEED_FACTOR = Math.max(0, Math.min(1, teleopParams.TURN_SPEED_FACTOR + 0.01));  // Increase and cap between 0 and 1
         }
-        telemetry.addData("Turn Speed Factor: ", DriveParameters.TURN_SPEED_FACTOR);
+        telemetry.addData("Turn Speed Factor: ", teleopParams.TURN_SPEED_FACTOR);
     }
 
     public void AdjustPIDF(Telemetry telemetry) {
+        DriveSubsystem.TeleopParams teleopParams = Robot.getInstance().getDriveSubsystem().TELEOP_PARAMS;
         telemetry.addLine("");  // Just formatting
-
-        MecanumDriveMona.MonaTeleopParams monaTeleopParams = Robot.getInstance().getDriveSubsystem().getMecanumDrive().getMonaTeleopParams();
-
         // Adjust P value using D-Pad Left/Right
         telemetry.addLine("Adjust P Value (D-Pad Left - Decrease, D-Pad Right - Increase)");
         if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            monaTeleopParams.P = Math.max(0, monaTeleopParams.P - 0.01);  // Decrease
+            teleopParams.P = Math.max(0, teleopParams.P - 0.01);  // Decrease
         } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            monaTeleopParams.P = Math.min(1, monaTeleopParams.P + 0.01);  // Increase
+            teleopParams.P = Math.min(1, teleopParams.P + 0.01);  // Increase
         }
-        telemetry.addData("P: ", "%.2f", monaTeleopParams.P);
+        telemetry.addData("P: ", "%.2f", teleopParams.P);
 
         // Adjust I value using X/Y buttons
         telemetry.addLine("Adjust I Value (X - Decrease, Y - Increase)");
         if (driverGamepad.wasJustPressed(GamepadKeys.Button.X)) {
-            monaTeleopParams.I = Math.max(0, monaTeleopParams.I - 0.01);  // Decrease
+            teleopParams.I = Math.max(0, teleopParams.I - 0.01);  // Decrease
         } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.Y)) {
-            monaTeleopParams.I = Math.min(1, monaTeleopParams.I + 0.01);  // Increase
+            teleopParams.I = Math.min(1, teleopParams.I + 0.01);  // Increase
         }
-        telemetry.addData("I: ", "%.2f", monaTeleopParams.I);
+        telemetry.addData("I: ", "%.2f", teleopParams.I);
 
         // Adjust D value using A/B buttons
         telemetry.addLine("Adjust D Value (A - Decrease, B - Increase)");
         if (driverGamepad.wasJustPressed(GamepadKeys.Button.A)) {
-            monaTeleopParams.D = Math.max(0, monaTeleopParams.D - 0.01);  // Decrease
+            teleopParams.D = Math.max(0, teleopParams.D - 0.01);  // Decrease
         } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-            monaTeleopParams.D = Math.min(1, monaTeleopParams.D + 0.01);  // Increase
+            teleopParams.D = Math.min(1, teleopParams.D + 0.01);  // Increase
         }
-        telemetry.addData("D: ", "%.2f", monaTeleopParams.D);
+        telemetry.addData("D: ", "%.2f", teleopParams.D);
 
         // Adjust F value using Left/Right Trigger
         telemetry.addLine("Adjust F Value (Left Trigger - Decrease, Right Trigger - Increase)");
         if (driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            monaTeleopParams.F = Math.max(0, monaTeleopParams.F - 0.01);  // Decrease
+            teleopParams.F = Math.max(0, teleopParams.F - 0.01);  // Decrease
         } else if (driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
-            monaTeleopParams.F = Math.min(1, monaTeleopParams.F + 0.01);  // Increase
+            teleopParams.F = Math.min(1, teleopParams.F + 0.01);  // Increase
         }
-        telemetry.addData("F: ", "%.2f", monaTeleopParams.F);
+        telemetry.addData("F: ", "%.2f", teleopParams.F);
 
         telemetry.update();
     }

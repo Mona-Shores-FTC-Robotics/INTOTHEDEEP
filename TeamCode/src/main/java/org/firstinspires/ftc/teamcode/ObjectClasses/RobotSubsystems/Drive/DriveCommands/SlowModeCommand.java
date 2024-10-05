@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Drive
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
+
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -39,15 +41,16 @@ public class SlowModeCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        DriveSubsystem.TeleopParams teleopParams = Robot.getInstance().getDriveSubsystem().TELEOP_PARAMS;
         //save the normal speed factors to reset them after the command is finished
-        previousDriveFactor = DriveSubsystem.DriveParameters.DRIVE_SPEED_FACTOR;
-        previousStrafeFactor =  DriveSubsystem.DriveParameters.STRAFE_SPEED_FACTOR;
-        previousTurnFactor =  DriveSubsystem.DriveParameters.TURN_SPEED_FACTOR;
+        previousDriveFactor = teleopParams.DRIVE_SPEED_FACTOR;
+        previousStrafeFactor =  teleopParams.STRAFE_SPEED_FACTOR;
+        previousTurnFactor =  teleopParams.TURN_SPEED_FACTOR;
 
         //set the slow mode speed factors
-        DriveSubsystem.DriveParameters.DRIVE_SPEED_FACTOR = SLOW_DRIVE_FACTOR;
-        DriveSubsystem.DriveParameters.STRAFE_SPEED_FACTOR = SLOW_STRAFE_FACTOR;
-        DriveSubsystem.DriveParameters.TURN_SPEED_FACTOR = SLOW_TURN_FACTOR;
+        teleopParams.DRIVE_SPEED_FACTOR = SLOW_DRIVE_FACTOR;
+        teleopParams.STRAFE_SPEED_FACTOR = SLOW_STRAFE_FACTOR;
+        teleopParams.TURN_SPEED_FACTOR = SLOW_TURN_FACTOR;
     }
 
     @Override
@@ -58,14 +61,16 @@ public class SlowModeCommand extends CommandBase {
                 strafeSupplier.getAsDouble(),
                 turnSupplier.getAsDouble()
         );
-        driveSubsystem.mecanumDrive.mecanumDriveSpeedControl(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
+        driveSubsystem.mecanumDriveSpeedControl(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
     }
 
     @Override
     public void end(boolean interrupted) {
+        DriveSubsystem.TeleopParams teleopParams = Robot.getInstance().getDriveSubsystem().TELEOP_PARAMS;
+
         //set the speed factors back to normal
-        DriveSubsystem.DriveParameters.DRIVE_SPEED_FACTOR = previousDriveFactor;
-        DriveSubsystem.DriveParameters.STRAFE_SPEED_FACTOR = previousStrafeFactor;
-        DriveSubsystem.DriveParameters.TURN_SPEED_FACTOR = previousTurnFactor;
+        teleopParams.DRIVE_SPEED_FACTOR = previousDriveFactor;
+        teleopParams.STRAFE_SPEED_FACTOR = previousStrafeFactor;
+        teleopParams.TURN_SPEED_FACTOR = previousTurnFactor;
     }
 }

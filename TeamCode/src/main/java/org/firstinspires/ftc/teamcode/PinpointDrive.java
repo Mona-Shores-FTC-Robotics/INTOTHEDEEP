@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.messages.PoseMessage;
  * Unless otherwise noted, comments are from Gobilda
  */
 public class PinpointDrive extends MecanumDrive {
-    public static class Params {
+    public static class Params extends MecanumDrive.Params {
         /*
         Set the odometry pod positions relative to the point that the odometry computer tracks around.
         The X pod offset refers to how far sideways from the tracking point the

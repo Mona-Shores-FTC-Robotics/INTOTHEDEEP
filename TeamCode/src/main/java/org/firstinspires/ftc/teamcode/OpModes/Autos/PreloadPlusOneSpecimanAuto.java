@@ -53,7 +53,7 @@ public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
         Action selectedRoute = preloadAndOneSpecimen.getRouteAction(MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().mecanumDrive.pose= FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose= FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         //Reset Gyro
         //TODO i suspect this is not needed or might be duplicative with what is happening in MecanumDrive
@@ -69,7 +69,7 @@ public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
 
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getYawDegrees();
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffset;
-        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().mecanumDrive.pose;
+        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
     }
 }
 
