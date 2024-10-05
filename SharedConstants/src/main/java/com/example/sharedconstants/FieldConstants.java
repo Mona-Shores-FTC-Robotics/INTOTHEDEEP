@@ -92,7 +92,8 @@ public class FieldConstants {
     //Need descriptions of these positions, I don't understand what they mean
     public static Vector2d NET_SPIKE_ONE_BEHIND = new Vector2d(-48.1, -36.7);
     public static Pose2d NET_SPIKE_TEST = new Pose2d(-48.1, -36.7, FACE_TOWARD_BLUE);
-    public static Pose2d NET_POS_AUDIENCE_TJ = new Pose2d(-56.4, -56.4, FACE_225_DEGREES);
+    public static Pose2d NET_SPIKE_TEST_TURN = new Pose2d(-48.1, -36.7, FACE_225_DEGREES);
+    public static Pose2d NET_POS_AUDIENCE_TJ = new Pose2d(-54, -54, FACE_225_DEGREES);
     public static Vector2d SPIKE_BEHIND_NEUTRAL_AUDIENCE_2_TJ = new Vector2d(-58.5, -48);
     public static Pose2d WALL_ALIGN_POS_AUDIENCE_TJ = new Pose2d(-61.8, -38.6,  FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_NEUTRAL_AUDIENCE_3 = new Pose2d(-2*TILE-HALF_TILE-QUARTER_TILE, -TILE, FACE_TOWARD_BLUE);
