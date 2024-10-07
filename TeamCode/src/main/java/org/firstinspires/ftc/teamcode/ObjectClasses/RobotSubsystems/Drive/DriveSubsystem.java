@@ -5,13 +5,10 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.PoseVelocity2dDual;
 import com.acmerobotics.roadrunner.ProfileParams;
-import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -88,13 +85,6 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType) {
         // Initialize appropriate drive system based on robot type
         switch (robotType) {
-            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
-                mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                initializeMotorEncoders();
-                mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
-                DirectionParams.configureChassis19429A(mecanumDrive, this);
-                break;
-
             case CHASSIS_19429_A_PINPOINT:
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
@@ -102,8 +92,23 @@ public class DriveSubsystem extends SubsystemBase {
                 DirectionParams.configureChassis19429A(mecanumDrive, this);
                 break;
 
+            case CENTERSTAGE_PINPOINT:
+                mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+                initializeMotorEncoders();
+                mecanumDrive.localizer = mecanumDrive.new DriveLocalizer();
+                DirectionParams.configureCenterStage(mecanumDrive, this);
+                break;
+
+            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
+                mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                initializeMotorEncoders();
+                mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
+                DirectionParams.configureChassis19429A(mecanumDrive, this);
+                break;
+
             case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+                initializeMotorEncoders();
                 MecanumDrive.PARAMS =  new RRParams.CenterStageTwoDeadWheelInternalIMUParams();
                 mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
                 break;
@@ -258,6 +263,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 
     // New method to display verbose encoder telemetry
+    @SuppressLint("DefaultLocale")
     public void displayVerboseEncodersTelemetry(Telemetry telemetry) {
         MecanumDrive mecanumDrive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
         telemetry.addLine();
@@ -284,7 +290,12 @@ public class DriveSubsystem extends SubsystemBase {
         if (mecanumDrive instanceof PinpointDrive) {
             PinpointDrive.Params pinpointParams = PinpointDrive.PARAMS;
 
+            double roadrunnerPoseHeadingDegrees = Math.toDegrees(mecanumDrive.pose.heading.log());
+
             telemetry.addLine("Pinpoint Dead Wheels:");
+            telemetry.addLine(String.format("(X: %.1f, Y: %.1f, Pinpoint: %.1f°)",
+                    mecanumDrive.pose.position.x, mecanumDrive.pose.position.y, roadrunnerPoseHeadingDegrees));
+
             telemetry.addData("Direction", "Par(%s), Perp(%s)",
                     pinpointParams.xDirection, pinpointParams.yDirection);
 
@@ -404,40 +415,6 @@ public class DriveSubsystem extends SubsystemBase {
         mecanumDrive.rightFront.setPower(rF);
         mecanumDrive.leftBack.setPower(lB);
         mecanumDrive.rightBack.setPower(rB);
-    }
-
-    public void rrDriveControlWithFeedback(double left_stick_y, double left_stick_x, double right_stick_x) {
-        MecanumDrive drive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
-        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
-
-        // Calculate the desired wheel velocities using RoadRunner kinematics
-        MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
-                PoseVelocity2dDual.constant(new PoseVelocity2d(
-                        new Vector2d(-left_stick_y, -left_stick_x),
-                        -right_stick_x
-                ), 1)
-        );
-
-        // Set target velocities using the motor's built-in PID controller
-        drive.leftFront.setVelocity(wheelVels.leftFront.get(0));
-        drive.leftBack.setVelocity(wheelVels.leftBack.get(0));
-        drive.rightFront.setVelocity(wheelVels.rightFront.get(0));
-        drive.rightBack.setVelocity(wheelVels.rightBack.get(0));
-
-        // Update the robot's pose estimate
-        drive.updatePoseEstimate();
-
-        // Send telemetry for real-time feedback
-        telemetry.addData("x", drive.pose.position.x);
-        telemetry.addData("y", drive.pose.position.y);
-        telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
-//        telemetry.update();
-
-        // Send feedback to the dashboard
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     // ========== Helper/Utility Methods ==========

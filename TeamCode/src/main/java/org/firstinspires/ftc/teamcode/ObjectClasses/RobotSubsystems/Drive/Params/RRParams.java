@@ -77,4 +77,29 @@ public class RRParams {
             headingVelGain = 0.1;
         }
     }
+
+
+    public static class CenterStagePinpointParams extends PinpointDrive.Params {
+        public CenterStagePinpointParams() {
+            logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+            usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+            inPerTick = 0.002996;
+            lateralInPerTick = inPerTick;
+            trackWidthTicks = 0;
+            kS = 1.3635356937629455;
+            kV = 0.00038558904047469167;
+            kA = 0.0;
+            maxWheelVel = 50;
+            minProfileAccel = -30;
+            maxProfileAccel = 50;
+            maxAngVel = Math.PI;
+            maxAngAccel = Math.PI;
+            axialGain = 0.0;
+            lateralGain = 0.0;
+            headingGain = 0.0;
+            axialVelGain = 0.0;
+            lateralVelGain = 0.0;
+            headingVelGain = 0.0;
+        }
+    }
 }
