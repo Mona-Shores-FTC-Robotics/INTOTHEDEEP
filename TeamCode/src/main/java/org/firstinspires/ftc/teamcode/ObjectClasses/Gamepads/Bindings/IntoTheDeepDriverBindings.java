@@ -14,6 +14,7 @@ public class IntoTheDeepDriverBindings {
     public Command defaultDriveCommand;
     public Command slowModeCommand;
     public Command cycleTelemetryModeCommand;
+    public Command cycleDriveModeCommand;
 
     public IntoTheDeepDriverBindings(GamepadEx gamepad) {
 
@@ -46,15 +47,21 @@ public class IntoTheDeepDriverBindings {
 
         //////////////////////////////////////////////////////////
         //                                                      //
+        // BACK BUTTON - Cycle Drive Mode                       //
+        //                                                      //
+        //////////////////////////////////////////////////////////
+        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whenPressed(cycleDriveModeCommand);
+
+        //////////////////////////////////////////////////////////
+        //                                                      //
         //  START BUTTON  - FIELD ORIENTED CONTROL              //
         //                                                      //
         //////////////////////////////////////////////////////////
         gamepad.getGamepadButton(GamepadKeys.Button.START)
                 .toggleWhenPressed(new InstantCommand(() -> {
-                    Robot.getInstance().getActiveOpMode().telemetry.addLine("Field Centric Driving");
                     Robot.getInstance().getDriveSubsystem().fieldOrientedControl = true;
                 }), new InstantCommand(() -> {
-                    Robot.getInstance().getActiveOpMode().telemetry.addLine("Robot Centric Driving");
                     Robot.getInstance().getDriveSubsystem().fieldOrientedControl = false;
                 }));
     }
@@ -76,6 +83,12 @@ public class IntoTheDeepDriverBindings {
         cycleTelemetryModeCommand = new InstantCommand(() -> {
             Robot.getInstance().getDriverStationTelemetryManager().cycleTelemetryMode();
         });
+
+        // Command to cycle telemetry modes using DriverStationTelemetryManager
+        cycleDriveModeCommand = new InstantCommand(() -> {
+            Robot.getInstance().getDriveSubsystem().cycleDriveMode();
+        });
+
     }
 }
 

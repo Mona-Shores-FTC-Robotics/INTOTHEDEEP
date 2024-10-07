@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Param
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.PinpointDrive;
 
 public class RRParams {
 
@@ -53,7 +54,7 @@ public class RRParams {
         }
     }
 
-    public static class ChassisPinpointParams extends MecanumDrive.Params {
+    public static class ChassisPinpointParams extends PinpointDrive.Params {
         public ChassisPinpointParams() {
             logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
             usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
@@ -63,9 +64,9 @@ public class RRParams {
             kS = 0.8015924760256286;
             kV = 0.13660250281616085;
             kA = 0.0009;
-            maxWheelVel = 30;
+            maxWheelVel = 40;
             minProfileAccel = -30;
-            maxProfileAccel = 30;
+            maxProfileAccel = 40;
             maxAngVel = Math.PI;
             maxAngAccel = Math.PI;
             axialGain = 15.0;

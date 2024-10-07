@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 
 public class DriverStationTelemetryManager {
 
@@ -60,12 +58,10 @@ public class DriverStationTelemetryManager {
 
     // Basic telemetry method
     private void displayBasicTelemetry() {
-        telemetry.addLine("Basic Telemetry:");
         // Check and display DriveSubsystem telemetry if available
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayBasicTelemetry(telemetry);
         }
-        // Add more basic telemetry for other subsystems if needed
     }
 
     // Verbose telemetry method for DriveSubsystem
@@ -76,7 +72,7 @@ public class DriverStationTelemetryManager {
     }
 
     private void displayVerboseEncodersTelemetry() {
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE) && Robot.getInstance().robotType==Robot.RobotType.ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU) {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayVerboseEncodersTelemetry(telemetry);
         }
     }

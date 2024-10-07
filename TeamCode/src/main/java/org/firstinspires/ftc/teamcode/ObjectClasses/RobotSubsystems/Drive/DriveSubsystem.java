@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 
 import static java.lang.Math.abs;
-
 import android.annotation.SuppressLint;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -23,34 +21,31 @@ import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.LocalizerParams;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.DirectionParams;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.RRParams;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.TeleopParams;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
+
 @Config
 public class DriveSubsystem extends SubsystemBase {
 
-    TeleopParams TELEOP_PARAMS = new TeleopParams();
+    public static TeleopParams.StickParams STICK_PARAMS = new TeleopParams.StickParams();
+    public static TeleopParams.PIDParams PID_PARAMS = new TeleopParams.PIDParams();
+    public static TeleopParams.RampParams RAMP_PARAMS = new TeleopParams.RampParams();
 
-    // Instance of MecanumDrive (or other types like PinpointDrive)
     private MecanumDrive mecanumDrive;
-    private MecanumDrive.Params PARAMS;
 
     public boolean fieldOrientedControl;
     public double yawOffset;  // offset depending on alliance color
@@ -71,58 +66,54 @@ public class DriveSubsystem extends SubsystemBase {
     public double TICKS_PER_REV = 384.5;
     public double MAX_SPEED_TICK_PER_SEC = MAX_MOTOR_SPEED_RPS * TICKS_PER_REV;
 
-    // Constants for motor ticks, wheel diameter, and gear ratio
-    private static final double WHEEL_DIAMETER_INCHES = 4.0;  // Example wheel diameter in inches
-    private static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER_INCHES;
-    private static final double GEAR_RATIO = 1.0;  // Adjust if you have a gear ratio
+    public double leftFrontTargetSpeed;
+    public double rightFrontTargetSpeed;
+    public double leftBackTargetSpeed;
+    public double rightBackTargetSpeed;
+    public Encoder leftFrontEncoder, leftBackEncoder, rightBackEncoder, rightFrontEncoder;
+    private DriveModeConfig.DriveMode lastDriveMode = null;
 
+    @Config
+    public static class DriveModeConfig {
+        public static DriveMode selectedDriveMode = DriveMode.SPEED_CONTROL;
+
+        // Enum needs to be static or a top-level class for it to work smoothly with older JDK versions.
+        public enum DriveMode {
+            SPEED_CONTROL,
+            RR_SET_DRIVE_POWER,
+            POWER_WITH_ENCODERS,
+            POWER_WITHOUT_ENCODERS
+        }
+    }
     public DriveSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType) {
         // Initialize appropriate drive system based on robot type
         switch (robotType) {
-
-            case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
+            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-
-                // Use the separated ChassisTwoDeadWheelInternalIMUParams from RRParams
-                PARAMS = new RRParams.ChassisTwoDeadWheelInternalIMUParams();
-                MecanumDrive.PARAMS = PARAMS;  // Set the static PARAMS field to your custom one
-
-                // Set up localizer using the separated ChassisTwoDeadWheelInternalIMULocalizerParams
-                mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), PARAMS.inPerTick);
-                TwoDeadWheelLocalizer.PARAMS = new LocalizerParams.ChassisTwoDeadWheelInternalIMULocalizerParams();
-
-                setMotorAndEncoderDirectionsForChassisTwoDeadWheelInternalIMU();
+                initializeMotorEncoders();
+                mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
+                DirectionParams.configureChassis19429A(mecanumDrive, this);
                 break;
 
-            case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:
+            case CHASSIS_19429_A_PINPOINT:
+                mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+                initializeMotorEncoders();
+                mecanumDrive.localizer = mecanumDrive.new DriveLocalizer();
+                DirectionParams.configureChassis19429A(mecanumDrive, this);
+                break;
+
+            case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-
-                // Use the separated CenterStageTwoDeadWheelInternalIMUParams from RRParams
-                PARAMS = new RRParams.CenterStageTwoDeadWheelInternalIMUParams();
-                MecanumDrive.PARAMS = PARAMS;
-
-                // Set up localizer using the separated CenterStageTwoDeadWheelInternalIMULocalizerParams
-                this.mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), PARAMS.inPerTick);
-                TwoDeadWheelLocalizer.PARAMS = new LocalizerParams.CenterStageTwoDeadWheelInternalIMULocalizerParams();
-
-                setMotorAndEncoderDirectionsForCenterStageTwoDeadWheelInternalIMU();
+                MecanumDrive.PARAMS =  new RRParams.CenterStageTwoDeadWheelInternalIMUParams();
+                mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
                 break;
 
-            case ROBOT_CHASSIS_PINPOINT:
-                this.mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-
-                // Use the separated ChassisPinpointParams from RRParams
-                PARAMS = new RRParams.ChassisPinpointParams();
-                MecanumDrive.PARAMS = PARAMS;
-
-                setMotorAndEncoderDirectionsForChassisPinpoint();
-                break;
-
-            case ROBOT_CENTERSTAGE_OTOS:
+            case CENTERSTAGE_OTOS:
                 this.mecanumDrive = new SparkFunOTOSDrive(hardwareMap, new Pose2d(0, 0, 0));
                 // No custom params for OTOS in this case, keep using default
                 break;
         }
+        mecanumDrive.lazyImu.get().resetYaw();
         configurePID();
     }
 
@@ -135,6 +126,23 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void periodic(){
+        updatePIDFromDashboard();
+    }
+
+    private double lastP = 0, lastI = 0, lastD = 0, lastF = 0;
+    private void updatePIDFromDashboard() {
+        if (PID_PARAMS.P != lastP || PID_PARAMS.I != lastI ||
+                PID_PARAMS.D != lastD || PID_PARAMS.F != lastF) {
+
+            // Update the PID configuration when changes are detected
+            configurePID();
+
+            // Store the current values as the last known values
+            lastP = PID_PARAMS.P;
+            lastI = PID_PARAMS.I;
+            lastD = PID_PARAMS.D;
+            lastF = PID_PARAMS.F;
+        }
     }
 
     private void CalculateYawOffset() {
@@ -162,13 +170,11 @@ public class DriveSubsystem extends SubsystemBase {
     public void setDriveStrafeTurnValues(double leftY, double leftX, double rightX) {
         boolean gamepadActive = driverGamepadIsActive(leftY, leftX, rightX);
         if (gamepadActive) {
-            leftYAdjusted = leftY * TELEOP_PARAMS.DRIVE_SPEED_FACTOR;
-            leftXAdjusted = leftX * TELEOP_PARAMS.STRAFE_SPEED_FACTOR;
-            rightXAdjusted = rightX * TELEOP_PARAMS.TURN_SPEED_FACTOR;
+            leftYAdjusted = leftY * STICK_PARAMS.DRIVE_SPEED_FACTOR;
+            leftXAdjusted = leftX * STICK_PARAMS.STRAFE_SPEED_FACTOR;
+            rightXAdjusted = rightX *   STICK_PARAMS.TURN_SPEED_FACTOR;
             if (fieldOrientedControl) {
                 fieldOrientedControl(leftYAdjusted, leftXAdjusted);
-            } else {
-                // Apply speed factors
             }
         } else {
             // No input, set adjusted values to 0
@@ -204,92 +210,107 @@ public class DriveSubsystem extends SubsystemBase {
     // Display basic telemetry for Driver Station
     @SuppressLint("DefaultLocale")
     public void displayBasicTelemetry(Telemetry telemetry) {
+        //Display driving mode
+        telemetry.addData("Drive Mode", DriveModeConfig.selectedDriveMode);
+
+        // Display whether field-centric driving is enabled
+        telemetry.addData("Field-Centric Driving", fieldOrientedControl ? "Enabled" : "Disabled");
+
+        telemetry.addLine("");
+
         // Display the robot's current pose and headings on a single line
         double imuYawDegrees = getYawDegrees();
         double roadrunnerPoseHeadingDegrees = Math.toDegrees(mecanumDrive.pose.heading.log());
 
-        telemetry.addLine(String.format("Pose: (X: %.2f, Y: %.2f, IMU Heading: %.2f°, RR Heading: %.2f°)",
+
+        telemetry.addLine(String.format("(X: %.1f, Y: %.1f, IMU: %.1f°, Pinpoint: %.1f°)",
                 mecanumDrive.pose.position.x, mecanumDrive.pose.position.y, imuYawDegrees, roadrunnerPoseHeadingDegrees));
-
-        // Display whether field-centric driving is enabled
-        telemetry.addData("Field-Centric Driving: ", fieldOrientedControl ? "Enabled" : "Disabled");
-
-        // Display the current speed of the robot
-        double averageSpeed = calculateAverageSpeed();
-        telemetry.addData("Average Speed: ", "%.2f in/s", averageSpeed);
-    }
-
-    /**
-     * Calculate the average speed of the robot based on motor velocities.
-     */
-    private double calculateAverageSpeed() {
-        // Read the current motor velocities in ticks per second
-        double lfTicksPerSecond = mecanumDrive.leftFront.getVelocity();
-        double lbTicksPerSecond = mecanumDrive.leftBack.getVelocity();
-        double rfTicksPerSecond = mecanumDrive.rightFront.getVelocity();
-        double rbTicksPerSecond = mecanumDrive.rightBack.getVelocity();
-
-        // Average the motor velocities in ticks per second
-        double averageTicksPerSecond = (lfTicksPerSecond + lbTicksPerSecond + rfTicksPerSecond + rbTicksPerSecond) / 4.0;
-
-        // Convert ticks per second to inches per second
-        double averageSpeedInchesPerSecond = (averageTicksPerSecond / TICKS_PER_REV) * WHEEL_CIRCUMFERENCE * GEAR_RATIO;
-
-        return averageSpeedInchesPerSecond;
     }
 
     // Display verbose telemetry for Driver Station
+    @SuppressLint("DefaultLocale")
     public void displayVerboseTelemetry(Telemetry telemetry) {
-        telemetry.addLine("---- Drive Subsystem (Verbose) ----");
-//        displayYawTelemetry(telemetry);  // Detailed yaw telemetry
-//        telemetry.addData("Pose X", "%.2f",(float) mecanumDrive.pose.position.x);
-//        telemetry.addData("Pose Y", "%.2f",(float) mecanumDrive.pose.position.y);
-//        telemetry.addData("Pose Heading", "%.2f",(float) Math.toDegrees(mecanumDrive.pose.heading.log()));
-
-        telemetry.addData("Motor Power", "LF (%.2f), LB (%.2f), RF (%.2f), RB (%.2f)",
-                 mecanumDrive.leftFront.getPower(),  mecanumDrive.leftBack.getPower(),
-                mecanumDrive.rightFront.getPower(),  mecanumDrive.rightBack.getPower());
-
-        telemetry.addData("Motor Speed", "LF (%.2f), LB (%.2f), RF (%.2f), RB (%.2f)",
-                mecanumDrive.leftFront.getVelocity(),  mecanumDrive.leftBack.getVelocity(),
-                mecanumDrive.rightFront.getVelocity(),  mecanumDrive.rightBack.getVelocity());
-
-        telemetry.addData("Motor Speed FL", mecanumDrive.leftFront.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        telemetry.addData("Motor Speed FR", mecanumDrive.rightFront.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        telemetry.addData("Motor Speed BL", mecanumDrive.leftBack.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        telemetry.addData("Motor Speed BR",  mecanumDrive.rightBack.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        telemetry.addData("Drive Mode", DriveModeConfig.selectedDriveMode);
+        telemetry.addData("Field-Centric Driving", fieldOrientedControl ? "Enabled" : "Disabled");
+        telemetry.addLine();
+        telemetry.addLine("Motor Directions");
+        telemetry.addData("Front Motors", "LF: %s    RF: %s",
+                mecanumDrive.leftFront.getDirection(),
+                mecanumDrive.rightFront.getDirection());
+        telemetry.addData("Back Motors", "LB: %s    RB: %s",
+                mecanumDrive.leftBack.getDirection(),
+                mecanumDrive.rightBack.getDirection());
+        telemetry.addLine(String.format("Power: LF(%.2f), LB(%.2f)",
+                mecanumDrive.leftFront.getPower(), mecanumDrive.leftBack.getPower()));
+        telemetry.addLine(String.format("Power: RF(%.2f), RB(%.2f)",
+                mecanumDrive.rightFront.getPower(), mecanumDrive.rightBack.getPower()));
+        telemetry.addLine();
+        // Speed for each motor
+                telemetry.addLine(String.format("Speed: LF(%d/%d)",
+                        (int) mecanumDrive.leftFront.getVelocity(), (int) leftFrontTargetSpeed));
+                telemetry.addLine(String.format("Speed: LB(%d/%d)",
+                        (int) mecanumDrive.leftBack.getVelocity(), (int) leftBackTargetSpeed));
+                telemetry.addLine(String.format("Speed: RF(%d/%d)",
+                        (int) mecanumDrive.rightFront.getVelocity(), (int) rightFrontTargetSpeed));
+                telemetry.addLine(String.format("Speed: RB(%d/%d)",
+                        (int) mecanumDrive.rightBack.getVelocity(), (int) rightBackTargetSpeed));
     }
 
 
     // New method to display verbose encoder telemetry
     public void displayVerboseEncodersTelemetry(Telemetry telemetry) {
         MecanumDrive mecanumDrive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
-        TwoDeadWheelLocalizer dl = (TwoDeadWheelLocalizer) mecanumDrive.localizer;
+        telemetry.addLine();
+        // Motor Encoder Directions Header
+        telemetry.addLine("Motor Encoder Directions");
+        telemetry.addData("Front Encoders", "LF: %s    RF: %s",
+                leftFrontEncoder.getDirection(),
+                rightFrontEncoder.getDirection());
+        telemetry.addData("Back Encoders", "LB: %s    RB: %s",
+                leftBackEncoder.getDirection(),
+                rightBackEncoder.getDirection());
+        telemetry.addLine();
 
-        telemetry.addData("Motor Power FL", "%.2f", mecanumDrive.leftFront.getPower());
-        telemetry.addData("Motor Power FR", "%.2f", mecanumDrive.rightFront.getPower());
-        telemetry.addData("Motor Power BL", "%.2f", mecanumDrive.leftBack.getPower());
-        telemetry.addData("Motor Power BR", "%.2f", mecanumDrive.rightBack.getPower());
-//
-//        telemetry.addData("Motor Encoder Positions", "LF (%i), LB (%i), RF (%i), RB (%i)",
-//                 mecanumDrive.leftFront.getCurrentPosition(),  mecanumDrive.leftBack.getCurrentPosition(),
-//                mecanumDrive.rightFront.getCurrentPosition(),  mecanumDrive.rightBack.getCurrentPosition());
+        // Motor Encoder Ticks
+        telemetry.addLine("Motor Encoder Ticks");
+        telemetry.addData("Front Encoder Ticks", "LF: %d    RF: %d",
+                mecanumDrive.leftFront.getCurrentPosition(),
+                mecanumDrive.rightFront.getCurrentPosition());
+        telemetry.addData("Back Encoder Ticks", "LB: %d    RB: %d",
+                mecanumDrive.leftBack.getCurrentPosition(),
+                mecanumDrive.rightBack.getCurrentPosition());
 
-        telemetry.addData("Motor Encoder Velocities", "LF (%2f), LB (%2f), RF (%2f), RB (%2f)",
-                mecanumDrive.leftFront.getVelocity(), mecanumDrive.leftBack.getVelocity(),
-                mecanumDrive.rightFront.getVelocity(), mecanumDrive.rightBack.getVelocity());
+        telemetry.addLine();
+        if (mecanumDrive instanceof PinpointDrive) {
+            PinpointDrive.Params pinpointParams = PinpointDrive.PARAMS;
 
-        // Log dead wheel encoder positions
-//        telemetry.addData("Dead Wheel Encoder Positions", "Parallel (%d), Perpendicular (%d)",
-//                dl.par.getPositionAndVelocity().position,  dl.perp.getPositionAndVelocity().position);
-//
-//        // Log dead wheel encoder velocities
-//        telemetry.addData("Dead Wheel Encoder Velocities", "Parallel (%d), Perpendicular (%d)",
-//                 dl.par.getPositionAndVelocity().velocity,  dl.perp.getPositionAndVelocity().velocity);
+            telemetry.addLine("Pinpoint Dead Wheels:");
+            telemetry.addData("Direction", "Par(%s), Perp(%s)",
+                    pinpointParams.xDirection, pinpointParams.yDirection);
 
-//        // Log dead wheel encoder directions
-//        telemetry.addData("Dead Wheel Encoder Directions", "Parallel (%d), Perpendicular (%d)",
-//                dl.par.getDirection(), dl.perp.getDirection());
+            telemetry.addData("Ticks", "Par(%d), Perp(%d)",
+                    ((PinpointDrive) mecanumDrive).pinpoint.getEncoderX(),
+                    ((PinpointDrive) mecanumDrive).pinpoint.getEncoderY());
+
+            // Add ticks if the parallel and perpendicular encoders are available in the pinpoint params
+            telemetry.addData("Velocities", "Par(%d), Perp(%d)",
+                    (int)  ((PinpointDrive) mecanumDrive).pinpoint.getVelocity().getX(DistanceUnit.INCH),
+                    (int)  ((PinpointDrive) mecanumDrive).pinpoint.getVelocity().getY(DistanceUnit.INCH));
+
+        } else if (mecanumDrive.localizer instanceof TwoDeadWheelLocalizer) {
+            // Assuming these are from TwoDeadWheelLocalizer, retrieve and log directions
+            TwoDeadWheelLocalizer localizer = (TwoDeadWheelLocalizer) mecanumDrive.localizer;
+
+            telemetry.addData("Hub Dead Wheel Directions", "Parallel (%s), Perpendicular (%s)",
+                    localizer.par.getDirection(), localizer.perp.getDirection());
+
+            telemetry.addData("Hub Dead Wheel Ticks", "Parallel (%d), Perpendicular (%d)",
+                    (int) localizer.par.getPositionAndVelocity().position,  (int) localizer.perp.getPositionAndVelocity().position);
+
+            telemetry.addData("Hub Dead Wheel Velocities", "Parallel (%d), Perpendicular (%d)",
+                    (int) localizer.par.getPositionAndVelocity().velocity,  (int) localizer.perp.getPositionAndVelocity().velocity);
+
+        }
     }
 
     // Display IMU absolute yaw, FTC field yaw, and RoadRunner pose heading
@@ -327,14 +348,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     //Helper method to decide if driver gamepad is active
     public Boolean driverGamepadIsActive(double leftY, double leftX, double rightX) {
-        return (Math.abs(leftY) > TELEOP_PARAMS.DEAD_ZONE ||
-                Math.abs(leftX) > TELEOP_PARAMS.DEAD_ZONE ||
-                Math.abs(rightX) > TELEOP_PARAMS.DEAD_ZONE);
+        return (Math.abs(leftY) > STICK_PARAMS.DEAD_ZONE ||
+                Math.abs(leftX) > STICK_PARAMS.DEAD_ZONE ||
+                Math.abs(rightX) > STICK_PARAMS.DEAD_ZONE);
     }
 
     public void configurePID() {
-
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(TELEOP_PARAMS.P, TELEOP_PARAMS.I, TELEOP_PARAMS.D, TELEOP_PARAMS.F);
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(PID_PARAMS.P, PID_PARAMS.I, PID_PARAMS.D, PID_PARAMS.F);
 
         // Set PID values for motors
         mecanumDrive.leftFront.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
@@ -342,84 +362,6 @@ public class DriveSubsystem extends SubsystemBase {
         mecanumDrive.leftBack.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         mecanumDrive.rightBack.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
-    // Helper methods to set motor and dead wheel encoder directions
-    private void setMotorAndEncoderDirectionsForChassisTwoDeadWheelInternalIMU() {
-        //set motor directions
-        mecanumDrive.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-        mecanumDrive.leftBack.setDirection(DcMotorEx.Direction.REVERSE);
-        mecanumDrive.rightFront.setDirection(DcMotorEx.Direction.FORWARD);
-        mecanumDrive.rightBack.setDirection(DcMotorEx.Direction.FORWARD);
-
-        // Set motor modes to reset encoders
-//        mecanumDrive.leftFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        mecanumDrive.leftBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        mecanumDrive.rightFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        mecanumDrive.rightBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//
-//        // Set motors to run using encoders (important for velocity control)
-//        mecanumDrive.leftFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        mecanumDrive.leftBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        mecanumDrive.rightFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//        mecanumDrive.rightBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        //Set up motor encoders
-        Encoder leftFrontEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.leftFront));
-        Encoder leftBackEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.leftBack));
-        Encoder rightBackEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.rightBack));
-        Encoder rightFrontEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.rightFront));
-
-        //  reverse encoders if needed - overriding these
-        leftFrontEncoder.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBackEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFrontEncoder.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        //This changes the dead wheel encoder directions
-        ((TwoDeadWheelLocalizer) mecanumDrive.localizer).par.setDirection(DcMotorSimple.Direction.REVERSE);
-        ((TwoDeadWheelLocalizer) mecanumDrive.localizer).perp.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-
-    private void setMotorAndEncoderDirectionsForCenterStageTwoDeadWheelInternalIMU() {
-        mecanumDrive.leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        mecanumDrive.leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        mecanumDrive.rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        mecanumDrive.rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        ((TwoDeadWheelLocalizer) mecanumDrive.localizer).par.setDirection(DcMotorSimple.Direction.REVERSE);
-        ((TwoDeadWheelLocalizer) mecanumDrive.localizer).perp.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-
-    private void setMotorAndEncoderDirectionsForChassisPinpoint() {
-        //set motor directions
-        mecanumDrive.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-        mecanumDrive.leftBack.setDirection(DcMotorEx.Direction.REVERSE);
-        mecanumDrive.rightFront.setDirection(DcMotorEx.Direction.FORWARD);
-        mecanumDrive.rightBack.setDirection(DcMotorEx.Direction.FORWARD);
-
-        // Set motor modes to reset encoders
-        mecanumDrive.leftFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        mecanumDrive.leftBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        mecanumDrive.rightFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        mecanumDrive.rightBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Set motors to run using encoders (important for velocity control)
-        mecanumDrive.leftFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        mecanumDrive. leftBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        mecanumDrive.rightFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        mecanumDrive.rightBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        //Set up motor encoders
-        Encoder leftFrontEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.leftFront));
-        Encoder leftBackEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.leftBack));
-        Encoder rightBackEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.rightBack));
-        Encoder rightFrontEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.rightFront));
-
-        //  reverse encoders if needed - overriding these
-        leftFrontEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBackEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-
-
 
     /**
      * Method to get current yaw (heading) in degrees from the IMU.
@@ -464,7 +406,6 @@ public class DriveSubsystem extends SubsystemBase {
         mecanumDrive.rightBack.setPower(rB);
     }
 
-
     public void rrDriveControlWithFeedback(double left_stick_y, double left_stick_x, double right_stick_x) {
         MecanumDrive drive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
         Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
@@ -501,7 +442,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // ========== Helper/Utility Methods ==========
     private double Ramp(double target, double currentValue, double ramp_amount) {
-        if (Math.abs(currentValue) + TELEOP_PARAMS.RAMP_THRESHOLD < Math.abs(target)) {
+        if (Math.abs(currentValue) + RAMP_PARAMS.RAMP_THRESHOLD < Math.abs(target)) {
             return Math.signum(target) * (Math.abs(currentValue) + ramp_amount);
         }  else
         {
@@ -509,15 +450,176 @@ public class DriveSubsystem extends SubsystemBase {
         }
     }
 
-    // ========== Main Logic/Control Methods ==========
+    public static class TeleopParams {
+
+        public enum TeleopMode {
+            DEFAULT,
+            POWER_TEST,
+            HIGH_SPEED
+        }
+
+        public static class StickParams {
+
+            public double DEAD_ZONE = 0.2;
+            public double DRIVE_SPEED_FACTOR = 0.82;
+            public double STRAFE_SPEED_FACTOR = 1.0;
+            public double TURN_SPEED_FACTOR = 1.0;
+        }
+
+        public static class RampParams {
+            public double DRIVE_RAMP = 0.2;
+            public double STRAFE_RAMP = 0.22;
+            public double TURN_RAMP = 0.4;
+            public double RAMP_THRESHOLD = 0.04;
+        }
+
+        public static class PIDParams {
+            public double P = 0;
+            public double D = 0;
+            public double I = 0;
+            public double F = 8;
+        }
+
+        // Inner class for Power Test configuration
+        public static class TeleopPowerTestParams extends TeleopParams {
+            public static double DRIVE_SPEED_FACTOR = 1.0;
+            public static double STRAFE_SPEED_FACTOR = 1.0;
+            public static double TURN_SPEED_FACTOR = 1.0;
+            public static double DEAD_ZONE = 0.2;
+            public static double DRIVE_RAMP = 0;
+            public static double STRAFE_RAMP = 0;
+            public static double TURN_RAMP = 0;
+            public static double RAMP_THRESHOLD = 0;
+            public static double P = 0;
+            public static double D = 0;
+            public static double I = 0;
+            public static double F = 0;
+
+            public TeleopPowerTestParams() {
+                // Constructor can initialize specific values if needed, but static values should be used
+            }
+        }
+
+        // Inner class for High Speed Teleop
+        public static class HighSpeedTeleopParams extends TeleopParams {
+            public static double DRIVE_SPEED_FACTOR = 1.2;
+            public static double STRAFE_SPEED_FACTOR = 1.1;
+            public static double TURN_SPEED_FACTOR = 1.1;
+            public static double DEAD_ZONE = 0.15;
+            public static double DRIVE_RAMP = 0.25;
+            public static double STRAFE_RAMP = 0.25;
+            public static double TURN_RAMP = 0.45;
+            public static double RAMP_THRESHOLD = 0.05;
+            public static double P = 0;
+            public static double D = 0;
+            public static double I = 0;
+            public static double F = 10;
+
+            public HighSpeedTeleopParams() {
+                // Constructor can initialize specific values if needed, but static values should be used
+            }
+        }
+
+        // Method to choose which params to use based on the enum
+        public static TeleopParams getParamsFor(TeleopMode mode) {
+            switch (mode) {
+                case POWER_TEST:
+                    return new TeleopPowerTestParams();
+                case HIGH_SPEED:
+                    return new HighSpeedTeleopParams();
+                default:
+                    return new TeleopParams();  // Return default if no match
+            }
+        }
+    }
+
+    public void cycleDriveMode() {
+        // Get the current drive mode
+        DriveModeConfig.DriveMode currentMode = DriveModeConfig.selectedDriveMode;
+
+        // Cycle to the next drive mode by incrementing the ordinal and wrapping around using modulus
+        DriveModeConfig.selectedDriveMode = DriveModeConfig.DriveMode.values()[(currentMode.ordinal() + 1) % DriveModeConfig.DriveMode.values().length];
+    }
+
+
+    public void drive(double drive, double strafe, double turn) {
+        DriveModeConfig.DriveMode currentMode = DriveModeConfig.selectedDriveMode;
+
+        // Only change motor modes when the drive mode changes
+        if (currentMode != lastDriveMode) {
+            switch (currentMode) {
+                case SPEED_CONTROL:
+                case RR_SET_DRIVE_POWER:
+                case POWER_WITH_ENCODERS:
+                    setMotorsRunUsingEncoder();
+                    break;
+
+                case POWER_WITHOUT_ENCODERS:
+                    setMotorsRunWithoutEncoder();
+                    break;
+            }
+
+            // Update the last drive mode to the current one
+            lastDriveMode = currentMode;
+        }
+
+        // Now handle the actual drive logic based on the current mode
+        switch (currentMode) {
+            case SPEED_CONTROL:
+                mecanumDriveSpeedControl(drive, strafe, turn);
+                break;
+
+            case RR_SET_DRIVE_POWER:
+                rrDriveControl(drive, strafe, turn);
+                break;
+
+            case POWER_WITH_ENCODERS:
+            case POWER_WITHOUT_ENCODERS:
+                mecanumDrivePowerControl(drive, strafe, turn);
+                break;
+
+            default:
+                mecanumDrivePowerControl(drive, strafe, turn);
+                break;
+        }
+    }
+
+    private void setMotorsRunUsingEncoder() {
+        mecanumDrive.leftFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        mecanumDrive.leftBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        mecanumDrive.rightFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        mecanumDrive.rightBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        mecanumDrive.leftFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        mecanumDrive.leftBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        mecanumDrive.rightFront.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        mecanumDrive.rightBack.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    }
+
+    private void setMotorsRunWithoutEncoder() {
+        mecanumDrive.leftFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        mecanumDrive.leftBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        mecanumDrive.rightFront.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        mecanumDrive.rightBack.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        mecanumDrive.leftFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        mecanumDrive.leftBack.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        mecanumDrive.rightFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        mecanumDrive.rightBack.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
     public void mecanumDriveSpeedControl(double drive, double strafe, double turn) {
         if (drive==0 && strafe ==0 && turn==0) {
             //if power is not set to zero its jittery, doesn't work at all if we don't reset the motors back to run using encoders...
-            mecanumDrive.leftFront.setVelocity(0);
-            mecanumDrive.leftBack.setVelocity(0);
-            mecanumDrive.rightFront.setVelocity(0);
-            mecanumDrive.rightBack.setVelocity(0);
+            leftFrontTargetSpeed=0;
+            rightFrontTargetSpeed=0;
+            leftBackTargetSpeed=0;
+            rightBackTargetSpeed=0;
+
+            mecanumDrive.leftFront.setVelocity(leftFrontTargetSpeed);
+            mecanumDrive.leftBack.setVelocity(leftBackTargetSpeed);
+            mecanumDrive.rightFront.setVelocity(rightFrontTargetSpeed);
+            mecanumDrive.rightBack.setVelocity(rightBackTargetSpeed);
 
             mecanumDrive.leftFront.setPower(0);
             mecanumDrive.leftBack.setPower(0);
@@ -527,36 +629,35 @@ public class DriveSubsystem extends SubsystemBase {
             current_drive_ramp=0;
             current_strafe_ramp=0;
             current_turn_ramp=0;
-
         } else
         {
             Robot.getInstance().getDriveSubsystem().mecanumDrive.updatePoseEstimate();
 
             //If we see blue tags and we are red and we are driving toward them, then use the safetydrivespeedfactor to slow us down
-            current_drive_ramp = Ramp(drive, current_drive_ramp, TELEOP_PARAMS.DRIVE_RAMP);
-            current_strafe_ramp = Ramp(strafe, current_strafe_ramp, TELEOP_PARAMS.STRAFE_RAMP);
-            current_turn_ramp = Ramp(turn, current_turn_ramp, TELEOP_PARAMS.TURN_RAMP);
+            current_drive_ramp = Ramp(drive, current_drive_ramp, RAMP_PARAMS.DRIVE_RAMP);
+            current_strafe_ramp = Ramp(strafe, current_strafe_ramp, RAMP_PARAMS.STRAFE_RAMP);
+            current_turn_ramp = Ramp(turn, current_turn_ramp, RAMP_PARAMS.TURN_RAMP);
 
             double dPercent = abs(current_drive_ramp) / (abs(current_drive_ramp) + abs(current_strafe_ramp) + abs(current_turn_ramp));
             double sPercent = abs(current_strafe_ramp) / (abs(current_drive_ramp) + abs(current_turn_ramp) + abs(current_strafe_ramp));
             double tPercent = abs(current_turn_ramp) / (abs(current_drive_ramp) + abs(current_turn_ramp) + abs(current_strafe_ramp));
 
-            double leftFrontTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
-            double rightFrontTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
-            double leftBackTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
-            double rightBackTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
-
-
-            Robot.getInstance().getActiveOpMode().telemetry.addData("Target Velocity FL", "%.2f", leftFrontTargetSpeed);
-            Robot.getInstance().getActiveOpMode().telemetry.addData("Target Velocity FR", "%.2f", rightFrontTargetSpeed);
-            Robot.getInstance().getActiveOpMode().telemetry.addData("Target Velocity BL", "%.2f", leftBackTargetSpeed);
-            Robot.getInstance().getActiveOpMode().telemetry.addData("Target Velocity BR", "%.2f", rightBackTargetSpeed);
+            leftFrontTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
+            rightFrontTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
+            leftBackTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
+            rightBackTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
 
             mecanumDrive.leftFront.setVelocity(leftFrontTargetSpeed);
             mecanumDrive.rightFront.setVelocity(rightFrontTargetSpeed);
             mecanumDrive.leftBack.setVelocity(leftBackTargetSpeed);
             mecanumDrive.rightBack.setVelocity(rightBackTargetSpeed);
         }
+
+        mecanumDrive.updatePoseEstimate();
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().setStroke("#3F51B5");
+        Drawing.drawRobot(packet.fieldOverlay(), mecanumDrive.pose);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     public void mecanumDrivePowerControl (double drive, double strafe, double turn){
@@ -573,26 +674,46 @@ public class DriveSubsystem extends SubsystemBase {
         mecanumDrive.rightFront.setPower(rightFrontPower);
         mecanumDrive.leftBack.setPower(leftBackPower);
         mecanumDrive.rightBack.setPower(rightBackPower);
+
+        mecanumDrive.updatePoseEstimate();
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().setStroke("#3F51B5");
+        Drawing.drawRobot(packet.fieldOverlay(), mecanumDrive.pose);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     public void rrDriveControl(double left_stick_y, double left_stick_x, double right_stick_x) {
-        MecanumDrive drive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
-
-        drive.setDrivePowers(new PoseVelocity2d(
+        mecanumDrive.setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
-                        -left_stick_y,
+                        left_stick_y,
                         -left_stick_x
                 ),
                 -right_stick_x
         ));
 
-        drive.updatePoseEstimate();
-
+        mecanumDrive.updatePoseEstimate();
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
+        Drawing.drawRobot(packet.fieldOverlay(), mecanumDrive.pose);
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
+
+    // Getters for accessing the encoders, if necessary
+    public Encoder getLeftFrontEncoder() { return leftFrontEncoder; }
+    public Encoder getLeftBackEncoder() { return leftBackEncoder; }
+    public Encoder getRightFrontEncoder() { return rightFrontEncoder; }
+    public Encoder getRightBackEncoder() { return rightBackEncoder; }
+
+    private void initializeMotorEncoders() {
+        leftFrontEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.leftFront));
+        leftBackEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.leftBack));
+        rightBackEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.rightBack));
+        rightFrontEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.rightFront));
+    }
+
 }
+
+
+
 
 

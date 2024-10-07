@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands;
 
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem.STICK_PARAMS;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 
@@ -41,16 +43,15 @@ public class SlowModeCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        DriveSubsystem.TeleopParams teleopParams = Robot.getInstance().getDriveSubsystem().TELEOP_PARAMS;
         //save the normal speed factors to reset them after the command is finished
-        previousDriveFactor = teleopParams.DRIVE_SPEED_FACTOR;
-        previousStrafeFactor =  teleopParams.STRAFE_SPEED_FACTOR;
-        previousTurnFactor =  teleopParams.TURN_SPEED_FACTOR;
+        previousDriveFactor = STICK_PARAMS.DRIVE_SPEED_FACTOR;
+        previousStrafeFactor = STICK_PARAMS.STRAFE_SPEED_FACTOR;
+        previousTurnFactor =  STICK_PARAMS.TURN_SPEED_FACTOR;
 
         //set the slow mode speed factors
-        teleopParams.DRIVE_SPEED_FACTOR = SLOW_DRIVE_FACTOR;
-        teleopParams.STRAFE_SPEED_FACTOR = SLOW_STRAFE_FACTOR;
-        teleopParams.TURN_SPEED_FACTOR = SLOW_TURN_FACTOR;
+        STICK_PARAMS.DRIVE_SPEED_FACTOR = SLOW_DRIVE_FACTOR;
+        STICK_PARAMS.STRAFE_SPEED_FACTOR = SLOW_STRAFE_FACTOR;
+        STICK_PARAMS.TURN_SPEED_FACTOR = SLOW_TURN_FACTOR;
     }
 
     @Override
@@ -66,11 +67,9 @@ public class SlowModeCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        DriveSubsystem.TeleopParams teleopParams = Robot.getInstance().getDriveSubsystem().TELEOP_PARAMS;
-
         //set the speed factors back to normal
-        teleopParams.DRIVE_SPEED_FACTOR = previousDriveFactor;
-        teleopParams.STRAFE_SPEED_FACTOR = previousStrafeFactor;
-        teleopParams.TURN_SPEED_FACTOR = previousTurnFactor;
+        STICK_PARAMS.DRIVE_SPEED_FACTOR = previousDriveFactor;
+        STICK_PARAMS.STRAFE_SPEED_FACTOR = previousStrafeFactor;
+        STICK_PARAMS.TURN_SPEED_FACTOR = previousTurnFactor;
     }
 }

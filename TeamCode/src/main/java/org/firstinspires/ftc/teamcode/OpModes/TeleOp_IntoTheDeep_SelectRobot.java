@@ -101,10 +101,6 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
             // Read buttons
             gamepadHandling.getDriverGamepad().readButtons();
 
-            // Handle switching to PIDF tuning mode during TeleOp
-            // TODO: remove this later
-            handlePIDFTuningMode(telemetry);
-
             // Display Telemetry through the Robot's Telemetry Manager
             Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();
 
@@ -113,23 +109,6 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
 
             // Clear the packet for the next loop
             MatchConfig.telemetryPacket = new TelemetryPacket();
-        }
-    }
-
-
-
-    public void handlePIDFTuningMode(Telemetry telemetry) {
-        // Toggle PIDF tuning mode with a specific button (e.g., Left Bumper)
-        if (gamepadHandling.getDriverGamepad().wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
-            pidfTuningMode = !pidfTuningMode;  // Toggle the mode
-        }
-
-        if (pidfTuningMode) {
-            telemetry.addLine("PIDF Tuning Mode Active");
-            gamepadHandling.AdjustPIDF(telemetry);  // Adjust the PIDF values
-            Robot.getInstance().getDriveSubsystem().configurePID();
-        } else {
-            telemetry.addLine("Normal Driving Mode Active");
         }
     }
 

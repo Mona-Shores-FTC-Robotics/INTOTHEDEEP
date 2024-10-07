@@ -44,7 +44,6 @@ public final class VisionSubsystem extends SubsystemBase {
 
     public static TunableVisionConstants tunableVisionConstants = new TunableVisionConstants();
 
-    @Config
     public static class TunableVisionConstants {
         // Adjust these numbers to suit your robot.
         public double DESIRED_DISTANCE = 18; //  this is how close the camera should get to the target for alignment (inches)

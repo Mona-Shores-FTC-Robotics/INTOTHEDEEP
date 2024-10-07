@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@Config
 public final class GripperSubsystem extends SubsystemBase {
 
     public static GripperStates GRIPPER_STARTING_STATE = GripperStates.OPEN;

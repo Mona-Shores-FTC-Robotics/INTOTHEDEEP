@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -42,6 +43,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
+@Disabled
 @TeleOp(name="TeleOp_IntoTheDeep Hardcoded Robot [Chassis_Pinpoint]")
 public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
 {
@@ -55,7 +57,7 @@ public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
         // Create the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_CHASSIS_PINPOINT);
+        Robot.createInstance(this, Robot.RobotType.CHASSIS_19429_A_PINPOINT);
 
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);

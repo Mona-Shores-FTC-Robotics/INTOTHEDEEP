@@ -9,7 +9,7 @@ public class MatchConfig {
 
     public static AllianceColor finalAllianceColor = AllianceColor.RED;
     public static SideOfField finalSideOfField = SideOfField.OBSERVATION;
-    public static Robot.RobotType finalRobotType = Robot.RobotType.ROBOT_CHASSIS_PINPOINT;  // Default to an initial type
+    public static Robot.RobotType finalRobotType = Robot.RobotType.CHASSIS_19429_A_PINPOINT;  // Default to an initial type
 
     public static boolean verboseMode = false;
 

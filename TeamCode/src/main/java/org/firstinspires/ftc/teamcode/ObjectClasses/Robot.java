@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -24,12 +23,10 @@ public class Robot {
     public RobotType robotType;
     public OpModeType opModeType;
     public enum RobotType {
-        ROBOT_INTOTHEDEEP,
-        ROBOT_PIT_MODE,
-        ROBOT_CHASSIS_PINPOINT,
-        ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU,
-        ROBOT_CENTERSTAGE_OTOS,
-        ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU
+        CHASSIS_19429_A_PINPOINT,
+        CHASSIS_19429_HUB_TWO_DEAD_WHEELS,
+        CENTERSTAGE_OTOS,
+        CENTERSTAGE_HUB_TWO_DEAD_WHEELS
     }
     public enum OpModeType {TELEOP, AUTO}
 
@@ -60,27 +57,14 @@ public class Robot {
     private void CreateSubsystems(HardwareMap hardwareMap) {
         switch (robotType) {
             //Just the drive base
-            case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
-            case ROBOT_CHASSIS_PINPOINT: {
+            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
+            case CHASSIS_19429_A_PINPOINT: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 break;
             }
-            case ROBOT_INTOTHEDEEP: {
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
-//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam 1");
-//                intakeSubsystem = new IntakeSubsystem(hardwareMap, "intake", "intake2");
-//                gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
-//                liftSlideSubsystem = new LiftSlideSubsystem(hardwareMap, "liftslide");
-//                shoulderSubsystem = new ShoulderSubsystem(hardwareMap, "shoulder");
-//                climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
-            }
 
-            case ROBOT_PIT_MODE: {
-                break;
-            }
-
-            case ROBOT_CENTERSTAGE_OTOS:
-            case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:{
+            case CENTERSTAGE_OTOS:
+            case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:{
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
                 intakeSubsystem = new IntakeSubsystem(hardwareMap, "par", "perp");
@@ -145,14 +129,15 @@ public class Robot {
 
     private void initTele() {
         switch (robotType) {
-            case ROBOT_INTOTHEDEEP:
-            case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
-            case ROBOT_CHASSIS_PINPOINT: {
+            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
+            case CHASSIS_19429_A_PINPOINT: {
                 mecanumDriveSubsystem.init();
                 break;
             }
-            case ROBOT_CENTERSTAGE_OTOS:
-            case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:
+            case CENTERSTAGE_OTOS:
+
+
+            case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
             {
                 visionSubsystem.init();
                 mecanumDriveSubsystem.init();
@@ -164,23 +149,19 @@ public class Robot {
                 break;
             }
 
-            case ROBOT_PIT_MODE: {
-                break;
-            }
         }
     }
 
     private void initAuto() {
         // initialize auto-specific scheduler
         switch (robotType) {
-            case ROBOT_INTOTHEDEEP:
-            case ROBOT_CHASSIS_TWO_DEAD_WHEEL_INTERNAL_IMU:
-            case ROBOT_CHASSIS_PINPOINT:
+            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
+            case CHASSIS_19429_A_PINPOINT:
                 mecanumDriveSubsystem.init();
                 break;
 
-            case ROBOT_CENTERSTAGE_OTOS:
-            case ROBOT_CENTERSTAGE_TWO_DEAD_WHEEL_INTERNAL_IMU:{
+            case CENTERSTAGE_OTOS:
+            case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:{
                 visionSubsystem.init();
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
@@ -227,6 +208,8 @@ public class Robot {
     }
 
 }
+
+
 
 
 
