@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Param
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
@@ -52,10 +53,10 @@ public class DirectionParams {
     // Static method for configuring motor and encoder directions for CenterStage
     public static void configureCenterStage(MecanumDrive mecanumDrive, DriveSubsystem driveSubsystem) {
         // Set motor directions
-        mecanumDrive.leftFront.setDirection(DcMotorEx.Direction.FORWARD);
-        mecanumDrive.leftBack.setDirection(DcMotorEx.Direction.FORWARD);
-        mecanumDrive.rightFront.setDirection(DcMotorEx.Direction.REVERSE);
-        mecanumDrive.rightBack.setDirection(DcMotorEx.Direction.REVERSE);
+        mecanumDrive.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+        mecanumDrive.leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+        mecanumDrive.rightFront.setDirection(DcMotorEx.Direction.FORWARD);
+        mecanumDrive.rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
         // Set encoder directions
         driveSubsystem.leftFrontEncoder.setDirection(DcMotorEx.Direction.REVERSE);
@@ -63,15 +64,13 @@ public class DirectionParams {
         driveSubsystem.rightFrontEncoder.setDirection(DcMotorEx.Direction.REVERSE);
         driveSubsystem.rightBackEncoder.setDirection(DcMotorEx.Direction.FORWARD);
 
-        // Set deadwheel encoder directions (if applicable)
-
         if (mecanumDrive instanceof PinpointDrive) {
             PinpointDrive.PARAMS = new RRParams.CenterStagePinpointParams();
             PinpointDrive.PARAMS.xOffset = 0;
             PinpointDrive.PARAMS.yOffset = 0;
             PinpointDrive.PARAMS.encoderResolution = GoBildaPinpointDriverRR.goBILDA_4_BAR_POD;
-            PinpointDrive.PARAMS.xDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
-            PinpointDrive.PARAMS.yDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+            PinpointDrive.PARAMS.xDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
+            PinpointDrive.PARAMS.yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
 
             PinpointDrive pinpointDrive = (PinpointDrive) mecanumDrive;
 
