@@ -132,13 +132,13 @@ public abstract class Routes {
             );
         }
 
-        Action PickupSpecimen(Pose2d startPose, Pose2d observationZonePose) {
+        Action PickupSpecimen(Pose2d startPose, Pose2d waypoint, Pose2d observationZonePose) {
             return new SequentialAction(
                     //TODO: write this code for picking up a specimen
                         //Drive to the Observation Zone while lowering the lift in parallel
                         //Pickup the specimen off the wall
                     new ParallelAction(
-                            DriveToObservationZoneFromChamber(startPose,observationZonePose),
+                            DriveToObservationZoneFromChamber(startPose, waypoint, observationZonePose),
                             robotAdapter.getAction(LIFT_TO_HOME_POSITION)
                     ),
                     robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL),
@@ -162,10 +162,11 @@ public abstract class Routes {
                         .build();
         }
 
-        Action DriveToObservationZoneFromChamber(Pose2d chamberPose, Pose2d observationZonePose) {
+        Action DriveToObservationZoneFromChamber(Pose2d chamberPose,Pose2d waypoint, Pose2d observationZonePose) {
             //TODO: write this code for driving to the chamber from the observation zone
             return robotAdapter.getActionBuilder(chamberPose)
                     .setReversed(true)
+                    .splineToLinearHeading(waypoint,waypoint.heading,slowVelocity,slowAcceleration)
                     .splineToLinearHeading(observationZonePose,observationZonePose.heading,slowVelocity,slowAcceleration)
                     .build();
         }

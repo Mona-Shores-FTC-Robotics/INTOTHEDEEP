@@ -68,7 +68,7 @@ public class Robot {
             case CENTERSTAGE_PINPOINT:
             case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:{
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
-                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
+//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
                 intakeSubsystem = new IntakeSubsystem(hardwareMap, "par", "perp");
                 gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
                 liftSubsystem = new LiftSubsystem(hardwareMap, "liftslide");
@@ -142,7 +142,7 @@ public class Robot {
             case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
             case CENTERSTAGE_PINPOINT:
             {
-                visionSubsystem.init();
+//                visionSubsystem.init();
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
                 gripperSubsystem.init();
@@ -166,7 +166,7 @@ public class Robot {
             case CENTERSTAGE_OTOS:
             case CENTERSTAGE_PINPOINT:
             case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:{
-                visionSubsystem.init();
+//                visionSubsystem.init();
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
                 gripperSubsystem.init();

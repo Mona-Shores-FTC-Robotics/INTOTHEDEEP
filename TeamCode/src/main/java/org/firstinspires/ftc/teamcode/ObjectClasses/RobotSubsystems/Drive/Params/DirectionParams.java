@@ -66,8 +66,8 @@ public class DirectionParams {
 
         if (mecanumDrive instanceof PinpointDrive) {
             PinpointDrive.PARAMS = new RRParams.CenterStagePinpointParams();
-            PinpointDrive.PARAMS.xOffset = 0;
-            PinpointDrive.PARAMS.yOffset = 0;
+            PinpointDrive.PARAMS.xOffset = 2;
+            PinpointDrive.PARAMS.yOffset = -2;
             PinpointDrive.PARAMS.encoderResolution = GoBildaPinpointDriverRR.goBILDA_4_BAR_POD;
             PinpointDrive.PARAMS.xDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
             PinpointDrive.PARAMS.yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;

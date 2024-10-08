@@ -39,7 +39,7 @@ public class NET_Preload_and_One_Sample extends Routes {
 
         netBotRoute = builder
                 .stopAndAdd(routeBuilder.DriveToChamberFromStart(NET_START_POSE, NET_CHAMBER_PRELOAD))
-                .stopAndAdd(routeBuilder.DriveToObservationZoneFromChamber(NET_CHAMBER_PRELOAD, NET_SPIKE_THREE))
+//                .stopAndAdd(routeBuilder.DriveToObservationZoneFromChamber(NET_CHAMBER_PRELOAD, NET_SPIKE_THREE))
                 .build();
     }
 }

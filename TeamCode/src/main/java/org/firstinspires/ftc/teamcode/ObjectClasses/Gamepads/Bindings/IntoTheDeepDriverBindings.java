@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.example.sharedconstants.FieldConstants;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
@@ -52,6 +53,18 @@ public class IntoTheDeepDriverBindings {
         //////////////////////////////////////////////////////////
         gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(cycleDriveModeCommand);
+
+
+        //////////////////////////////////////////////////////////
+        //                                                      //
+        // BACK BUTTON - Cycle Drive Mode                       //
+        //                                                      //
+        //////////////////////////////////////////////////////////
+        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(new InstantCommand(() -> {
+                    Robot.getInstance().getDriveSubsystem().getMecanumDrive().lazyImu.get().resetYaw();
+                    Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.OBSERVATION_START_POSE;
+                }));
 
         //////////////////////////////////////////////////////////
         //                                                      //
