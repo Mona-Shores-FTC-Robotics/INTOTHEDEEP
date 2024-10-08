@@ -16,7 +16,7 @@ public class OBS_Preload_and_One_Specimen extends Routes {
     }
 
     public void BuildRoutes() {
-        // Initialize RouteBuilder once 
+        // Initialize RouteBuilder once
         RouteBuilder routeBuilder = new RouteBuilder();
 
         observationBotRoute = robotAdapter.getActionBuilder(OBSERVATION_START_POSE)

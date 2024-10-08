@@ -153,6 +153,21 @@ public abstract class Routes {
                             .build();
         }
 
+        Action DriveToNeutralFromChamber(Pose2d chamberPose, Pose2d netNeutralSpikeOnePose) {
+            //TODO: write this code for driving to the neutral spike one from the chamber position
+            return
+                    robotAdapter.getActionBuilder(chamberPose)
+                            .splineToLinearHeading(netNeutralSpikeOnePose,netNeutralSpikeOnePose.heading,slowVelocity,slowAcceleration)
+                            .build();
+        }
+
+        Action DriveToNetFromSpike(Pose2d netNeutralSpikeOnePose, Pose2d netZoneScore) {
+            //TODO: write this code for driving to the neutral spike one from the chamber position
+            return
+                    robotAdapter.getActionBuilder(netNeutralSpikeOnePose)
+                            .splineToLinearHeading(netZoneScore,netZoneScore.heading,slowVelocity,slowAcceleration)
+                            .build();
+        }
         Action DriveToChamberFromObservation(Pose2d observationZonePose, Pose2d chamberPose) {
             //TODO: write this code for driving to the chamber from the observation zone
             return
