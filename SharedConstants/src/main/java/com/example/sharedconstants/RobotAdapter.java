@@ -17,7 +17,7 @@ public interface RobotAdapter {
         DEPOSIT_SAMPLE,
         LIFT_TO_HIGH_CHAMBER,
         LIFT_TO_LOW_CHAMBER,
-        LIFT_TO_HOME_POSITION,
+        HOME,
         LIFT_TO_HIGH_BASKET,
         LIFT_TO_LOW_BASKET,
         LEVEL_1_ASCENT,

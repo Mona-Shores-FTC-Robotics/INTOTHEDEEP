@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static java.lang.Math.abs;
+import static java.lang.Thread.sleep;
+
 import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -9,6 +12,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.ProfileParams;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -28,6 +32,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.DirectionParams;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.RRParams;
@@ -83,8 +88,16 @@ public class DriveSubsystem extends SubsystemBase {
         }
     }
     public DriveSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType) {
+
+    }
+
+    public void init()
+    {
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.DRIVE);
+
         // Initialize appropriate drive system based on robot type
-        switch (robotType) {
+        HardwareMap hardwareMap = Robot.getInstance().getActiveOpMode().hardwareMap;
+        switch (MatchConfig.finalRobotType) {
             case CHASSIS_19429_A_PINPOINT:
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
@@ -93,10 +106,15 @@ public class DriveSubsystem extends SubsystemBase {
                 break;
 
             case CENTERSTAGE_PINPOINT:
+                Robot.getInstance().getActiveOpMode().telemetry.addData("Current kS in PARAMS", MecanumDrive.PARAMS.kS);
+
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
                 mecanumDrive.localizer = mecanumDrive.new DriveLocalizer();
                 DirectionParams.configureCenterStage(mecanumDrive, this);
+                Robot.getInstance().getActiveOpMode().telemetry.addData("Current kS in PARAMS", MecanumDrive.PARAMS.kS);
+
+                Robot.getInstance().getActiveOpMode().telemetry.update();
                 break;
 
             case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
@@ -120,11 +138,8 @@ public class DriveSubsystem extends SubsystemBase {
         }
         mecanumDrive.lazyImu.get().resetYaw();
         configurePID();
-    }
 
-    public void init()
-    {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.DRIVE);
+
         fieldOrientedControl=false; // Default to field-oriented control
         CalculateYawOffset();
 

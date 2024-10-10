@@ -112,7 +112,7 @@ public class RealRobotAdapter implements RobotAdapter {
                 case LIFT_TO_LOW_CHAMBER:
                 case LIFT_TO_HIGH_BASKET:
                 case LIFT_TO_LOW_BASKET:
-                case LIFT_TO_HOME_POSITION:
+                case HOME:
                     if (robot.hasSubsystem(Robot.SubsystemType.LIFT)) {
                         return new MoveLiftAction(LiftSubsystem.LiftStates.valueOf(actionType.name()));
                     } else {

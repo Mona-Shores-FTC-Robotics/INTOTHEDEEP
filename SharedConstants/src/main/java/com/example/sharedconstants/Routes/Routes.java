@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.Action;
 import static com.example.sharedconstants.FieldConstants.*;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HIGH_CHAMBER;
-import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HOME_POSITION;
+import static com.example.sharedconstants.RobotAdapter.ActionType.HOME;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PICKUP_SPECIMEN_OFF_WALL;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SECURE_PRELOAD_SPECIMEN;
 
@@ -17,7 +17,6 @@ import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.VelConstraint;
-import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
 import java.util.Arrays;
@@ -139,7 +138,7 @@ public abstract class Routes {
                         //Pickup the specimen off the wall
                     new ParallelAction(
                             DriveToObservationZoneFromChamber(startPose, waypoint, observationZonePose),
-                            robotAdapter.getAction(LIFT_TO_HOME_POSITION)
+                            robotAdapter.getAction(HOME)
                     ),
                     robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL),
                     robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)

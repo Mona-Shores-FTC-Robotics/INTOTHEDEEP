@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.messages.PoseMessage;
  * Portions of this code made and released under the MIT License by Gobilda (Base 10 Assets, LLC)
  * Unless otherwise noted, comments are from Gobilda
  */
+@Config
 public class PinpointDrive extends MecanumDrive {
     public static class Params extends MecanumDrive.Params {
         /*

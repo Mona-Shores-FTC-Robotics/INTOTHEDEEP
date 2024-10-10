@@ -105,14 +105,12 @@ public class Robot {
     public void registerSubsystem(SubsystemType subsystem) {
         availableSubsystems.add(subsystem);
         activeOpMode.telemetry.addLine("Registered subsystem: " + subsystem);
-        activeOpMode.telemetry.update();
     }
 
     // Check if the subsystem exists
     public boolean hasSubsystem(SubsystemType subsystem) {
         if (!availableSubsystems.contains(subsystem)) {
             activeOpMode.telemetry.addLine("Warning: Subsystem " + subsystem + " is not available on this robot.");
-            activeOpMode.telemetry.update();
             return false;
         }
         return true;
