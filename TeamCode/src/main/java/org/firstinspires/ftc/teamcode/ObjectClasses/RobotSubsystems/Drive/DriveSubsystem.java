@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static java.lang.Math.abs;
 import static java.lang.Thread.sleep;
 
@@ -12,7 +11,6 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.ProfileParams;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -34,8 +32,6 @@ import org.firstinspires.ftc.teamcode.Drawing;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.DirectionParams;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Params.RRParams;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
@@ -101,37 +97,32 @@ public class DriveSubsystem extends SubsystemBase {
             case CHASSIS_19429_A_PINPOINT:
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
-                mecanumDrive.localizer = mecanumDrive.new DriveLocalizer();
-                DirectionParams.configureChassis19429A(mecanumDrive, this);
+                DriveParams.configureChassis19429A(mecanumDrive, this);
                 break;
 
             case CENTERSTAGE_PINPOINT:
                 Robot.getInstance().getActiveOpMode().telemetry.addData("Current kS in PARAMS", MecanumDrive.PARAMS.kS);
-
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
-                mecanumDrive.localizer = mecanumDrive.new DriveLocalizer();
-                DirectionParams.configureCenterStage(mecanumDrive, this);
-                Robot.getInstance().getActiveOpMode().telemetry.addData("Current kS in PARAMS", MecanumDrive.PARAMS.kS);
-
-                Robot.getInstance().getActiveOpMode().telemetry.update();
+                DriveParams.configureCenterStage(mecanumDrive, this);
                 break;
 
             case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
                 mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
-                DirectionParams.configureChassis19429A(mecanumDrive, this);
+                DriveParams.configureChassis19429A(mecanumDrive, this);
                 break;
 
             case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
-                MecanumDrive.PARAMS =  new RRParams.CenterStageTwoDeadWheelInternalIMUParams();
                 mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
+                DriveParams.configureCenterStage(mecanumDrive, this);
                 break;
 
             case CENTERSTAGE_OTOS:
+                //TODO This is not complete
                 this.mecanumDrive = new SparkFunOTOSDrive(hardwareMap, new Pose2d(0, 0, 0));
                 // No custom params for OTOS in this case, keep using default
                 break;
@@ -689,12 +680,6 @@ public class DriveSubsystem extends SubsystemBase {
         Drawing.drawRobot(packet.fieldOverlay(), mecanumDrive.pose);
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
-
-    // Getters for accessing the encoders, if necessary
-    public Encoder getLeftFrontEncoder() { return leftFrontEncoder; }
-    public Encoder getLeftBackEncoder() { return leftBackEncoder; }
-    public Encoder getRightFrontEncoder() { return rightFrontEncoder; }
-    public Encoder getRightBackEncoder() { return rightBackEncoder; }
 
     private void initializeMotorEncoders() {
         leftFrontEncoder = new OverflowEncoder(new RawEncoder(mecanumDrive.leftFront));
