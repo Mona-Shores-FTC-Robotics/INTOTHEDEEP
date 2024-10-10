@@ -616,8 +616,6 @@ public class DriveSubsystem extends SubsystemBase {
             current_turn_ramp=0;
         } else
         {
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.updatePoseEstimate();
-
             //If we see blue tags and we are red and we are driving toward them, then use the safetydrivespeedfactor to slow us down
             current_drive_ramp = Ramp(drive, current_drive_ramp, RAMP_PARAMS.DRIVE_RAMP);
             current_strafe_ramp = Ramp(strafe, current_strafe_ramp, RAMP_PARAMS.STRAFE_RAMP);
