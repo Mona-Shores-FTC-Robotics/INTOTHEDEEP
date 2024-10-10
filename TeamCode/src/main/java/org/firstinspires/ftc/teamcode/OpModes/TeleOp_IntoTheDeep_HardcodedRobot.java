@@ -57,7 +57,7 @@ public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
         // Create the robot
-        Robot.createInstance(this, Robot.RobotType.CHASSIS_19429_A_PINPOINT);
+        Robot.createInstance(this, Robot.RobotType.CHASSIS_19429_B_PINPOINT);
 
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);

@@ -71,6 +71,11 @@ public class DriveSubsystem extends SubsystemBase {
     private DriveModeConfig.DriveMode lastDriveMode = null;
     private YawPitchRollAngles angles;
 
+    private double prevLeftFrontTargetSpeed = 0;
+    private double prevRightFrontTargetSpeed = 0;
+    private double prevLeftBackTargetSpeed = 0;
+    private double prevRightBackTargetSpeed = 0;
+
     @Config
     public static class DriveModeConfig {
         public static DriveMode selectedDriveMode = DriveMode.SPEED_CONTROL;
@@ -86,11 +91,11 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType) {
         // Initialize appropriate drive system based on robot type
         switch (robotType) {
-            case CHASSIS_19429_A_PINPOINT:
-                DriveParams.configureChassis19429PinpointRRParams();
+            case CHASSIS_19429_B_PINPOINT:
+                DriveParams.configureChassis19429BPinpointRRParams();
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
-                DriveParams.configureChassis19429ADirections(mecanumDrive, this);
+                DriveParams.configureChassis19429BDirections(mecanumDrive, this);
                 break;
 
             case CENTERSTAGE_PINPOINT:
@@ -100,11 +105,11 @@ public class DriveSubsystem extends SubsystemBase {
                 DriveParams.configureCenterStageDirections(mecanumDrive, this);
                 break;
 
-            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
-                DriveParams.configureChassis19429TwoDeadWheelRRParams();
+            case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
+                DriveParams.configureChassis19429BTwoDeadWheelRRParams();
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
-                DriveParams.configureChassis19429ADirections(mecanumDrive, this);
+                DriveParams.configureChassis19429BDirections(mecanumDrive, this);
                 mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
                 ((TwoDeadWheelLocalizer) mecanumDrive.localizer).par.setDirection(DcMotorEx.Direction.REVERSE);
                 ((TwoDeadWheelLocalizer) mecanumDrive.localizer).perp.setDirection(DcMotorEx.Direction.REVERSE);
@@ -601,10 +606,10 @@ public class DriveSubsystem extends SubsystemBase {
             leftBackTargetSpeed=0;
             rightBackTargetSpeed=0;
 
-            mecanumDrive.leftFront.setVelocity(leftFrontTargetSpeed);
-            mecanumDrive.leftBack.setVelocity(leftBackTargetSpeed);
-            mecanumDrive.rightFront.setVelocity(rightFrontTargetSpeed);
-            mecanumDrive.rightBack.setVelocity(rightBackTargetSpeed);
+//            mecanumDrive.leftFront.setVelocity(leftFrontTargetSpeed);
+//            mecanumDrive.leftBack.setVelocity(leftBackTargetSpeed);
+//            mecanumDrive.rightFront.setVelocity(rightFrontTargetSpeed);
+//            mecanumDrive.rightBack.setVelocity(rightBackTargetSpeed);
 
             mecanumDrive.leftFront.setPower(0);
             mecanumDrive.leftBack.setPower(0);
@@ -614,6 +619,13 @@ public class DriveSubsystem extends SubsystemBase {
             current_drive_ramp=0;
             current_strafe_ramp=0;
             current_turn_ramp=0;
+
+            // Update the previous velocities so they match the new targets
+            prevLeftFrontTargetSpeed = leftFrontTargetSpeed;
+            prevRightFrontTargetSpeed = rightFrontTargetSpeed;
+            prevLeftBackTargetSpeed = leftBackTargetSpeed;
+            prevRightBackTargetSpeed = rightBackTargetSpeed;
+
         } else
         {
             //If we see blue tags and we are red and we are driving toward them, then use the safetydrivespeedfactor to slow us down
@@ -630,10 +642,23 @@ public class DriveSubsystem extends SubsystemBase {
             leftBackTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (-current_strafe_ramp * sPercent) + (current_turn_ramp * tPercent));
             rightBackTargetSpeed = MAX_SPEED_TICK_PER_SEC * ((current_drive_ramp * dPercent) + (current_strafe_ramp * sPercent) + (-current_turn_ramp * tPercent));
 
-            mecanumDrive.leftFront.setVelocity(leftFrontTargetSpeed);
-            mecanumDrive.rightFront.setVelocity(rightFrontTargetSpeed);
-            mecanumDrive.leftBack.setVelocity(leftBackTargetSpeed);
-            mecanumDrive.rightBack.setVelocity(rightBackTargetSpeed);
+            // Update only if the target speed has changed
+            if (leftFrontTargetSpeed != prevLeftFrontTargetSpeed) {
+                mecanumDrive.leftFront.setVelocity(leftFrontTargetSpeed);
+                prevLeftFrontTargetSpeed = leftFrontTargetSpeed;
+            }
+            if (rightFrontTargetSpeed != prevRightFrontTargetSpeed) {
+                mecanumDrive.rightFront.setVelocity(rightFrontTargetSpeed);
+                prevRightFrontTargetSpeed = rightFrontTargetSpeed;
+            }
+            if (leftBackTargetSpeed != prevLeftBackTargetSpeed) {
+                mecanumDrive.leftBack.setVelocity(leftBackTargetSpeed);
+                prevLeftBackTargetSpeed = leftBackTargetSpeed;
+            }
+            if (rightBackTargetSpeed != prevRightBackTargetSpeed) {
+                mecanumDrive.rightBack.setVelocity(rightBackTargetSpeed);
+                prevRightBackTargetSpeed = rightBackTargetSpeed;
+            }
         }
 
         mecanumDrive.updatePoseEstimate();

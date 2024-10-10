@@ -49,7 +49,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
 {
     GamepadHandling gamepadHandling;
-    private boolean pidfTuningMode = false;  // PIDF tuning mode flag
+
 
     @Override
     public void runOpMode()
@@ -73,11 +73,13 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
         // Create the robot
         Robot.createInstance(this, MatchConfig.finalRobotType);
 
+        Robot robot = Robot.getInstance();
+
         // Initialize the robot
-        Robot.getInstance().init(Robot.OpModeType.TELEOP);
+        robot.init(Robot.OpModeType.TELEOP);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         // Setup Button Bindings
         new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
@@ -90,12 +92,12 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
         MatchConfig.loopTimer = new ElapsedTime();
         MatchConfig.loopTimer.reset();
 
-        MatchConfig.timestampTimer = new ElapsedTime();
-        MatchConfig.timestampTimer.reset();
-
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
+            // Add the loop time to the sliding window average
+            MatchConfig.addLoopTime( MatchConfig.loopTimer.milliseconds());
+
             // Reset the loop timer
             MatchConfig.loopTimer.reset();
 
@@ -115,5 +117,7 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
             MatchConfig.telemetryPacket = new TelemetryPacket();
         }
     }
+
+
 
 }

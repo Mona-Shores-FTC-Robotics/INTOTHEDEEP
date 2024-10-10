@@ -23,8 +23,8 @@ public class Robot {
     public RobotType robotType;
     public OpModeType opModeType;
     public enum RobotType {
-        CHASSIS_19429_A_PINPOINT,
-        CHASSIS_19429_HUB_TWO_DEAD_WHEELS,
+        CHASSIS_19429_B_PINPOINT,
+        CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS,
         CENTERSTAGE_OTOS,
         CENTERSTAGE_HUB_TWO_DEAD_WHEELS,
         CENTERSTAGE_PINPOINT
@@ -58,8 +58,8 @@ public class Robot {
     private void CreateSubsystems(HardwareMap hardwareMap) {
         switch (robotType) {
             //Just the drive base
-            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
-            case CHASSIS_19429_A_PINPOINT: {
+            case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
+            case CHASSIS_19429_B_PINPOINT: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 break;
             }
@@ -129,8 +129,8 @@ public class Robot {
 
     private void initTele() {
         switch (robotType) {
-            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
-            case CHASSIS_19429_A_PINPOINT: {
+            case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
+            case CHASSIS_19429_B_PINPOINT: {
                 mecanumDriveSubsystem.init();
                 break;
             }
@@ -156,8 +156,8 @@ public class Robot {
     private void initAuto() {
         // initialize auto-specific scheduler
         switch (robotType) {
-            case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
-            case CHASSIS_19429_A_PINPOINT:
+            case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
+            case CHASSIS_19429_B_PINPOINT:
                 mecanumDriveSubsystem.init();
                 break;
 

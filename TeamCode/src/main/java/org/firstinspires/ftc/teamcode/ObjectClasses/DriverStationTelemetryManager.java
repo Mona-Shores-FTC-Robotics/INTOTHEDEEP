@@ -17,6 +17,7 @@ public class DriverStationTelemetryManager {
         // You can add more modes later, like VERBOSE_OTHER_SUBSYSTEM, etc.
     }
 
+
     private final Telemetry telemetry;
     private TelemetryMode currentMode = TelemetryMode.BASIC;  // Start with BASIC mode
 
@@ -97,8 +98,8 @@ public class DriverStationTelemetryManager {
 
 
     private void displayTimeTelemetry(Telemetry telemetry) {
-        telemetry.addData("Loop Time (milliSec)", "%d", MatchConfig.loopTimer.time(TimeUnit.MILLISECONDS));
-        telemetry.addData("Teleop Time (Sec)", "%d", MatchConfig.teleOpTimer.time(TimeUnit.SECONDS));
+        // Display average loop time in telemetry
+        telemetry.addData("Average Loop Time (ms)", "%.1f", MatchConfig.getAverageLoopTime());
+        telemetry.addData("Teleop Time (s)", "%d", MatchConfig.teleOpTimer.time(TimeUnit.SECONDS));
     }
-
 }

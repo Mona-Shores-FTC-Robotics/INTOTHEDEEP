@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public class DriveParams {
-    public static void configureChassis19429PinpointRRParams() {
+    public static void configureChassis19429BPinpointRRParams() {
             MecanumDrive.PARAMS.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
             MecanumDrive.PARAMS.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
             MecanumDrive.PARAMS.inPerTick = 1.0;
@@ -38,7 +38,7 @@ public class DriveParams {
             PinpointDrive.PARAMS.xDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
             PinpointDrive.PARAMS.yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
         }
-    public static void configureChassis19429TwoDeadWheelRRParams() {
+    public static void configureChassis19429BTwoDeadWheelRRParams() {
             MecanumDrive.PARAMS.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
             MecanumDrive.PARAMS.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
             MecanumDrive.PARAMS.inPerTick = 0.002996;
@@ -110,7 +110,7 @@ public class DriveParams {
         MecanumDrive.PARAMS.headingVelGain = 0.0;
     }
 
-    public static void configureChassis19429ADirections(MecanumDrive mecanumDrive, DriveSubsystem driveSubsystem) {
+    public static void configureChassis19429BDirections(MecanumDrive mecanumDrive, DriveSubsystem driveSubsystem) {
         // Set motor directions
         mecanumDrive.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         mecanumDrive.leftBack.setDirection(DcMotorEx.Direction.REVERSE);
