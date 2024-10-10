@@ -3,7 +3,9 @@ package com.example.sharedconstants.Routes;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
 import static com.example.sharedconstants.FieldConstants.*;
+import static com.example.sharedconstants.RobotAdapter.ActionType.DEPOSIT_SAMPLE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
+import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HIGH_CHAMBER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HOME;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PICKUP_SPECIMEN_OFF_WALL;
@@ -131,6 +133,16 @@ public abstract class Routes {
             );
         }
 
+        Action ScoreSample(Pose2d startPose, Pose2d chamberPose) {
+            return new SequentialAction(
+                    new ParallelAction(
+                            DriveToNetFromSpike(startPose,chamberPose),
+                            robotAdapter.getAction(LIFT_TO_HIGH_BASKET)
+                    ),
+                    robotAdapter.getAction(DEPOSIT_SAMPLE)
+            );
+        }
+
         Action PickupSpecimen(Pose2d startPose, Pose2d waypoint, Pose2d observationZonePose) {
             return new SequentialAction(
                     //TODO: write this code for picking up a specimen
@@ -144,6 +156,22 @@ public abstract class Routes {
                     robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)
             );
         }
+
+        Action PickupSample(Pose2d startPose, Pose2d netZonePose) {
+            return new SequentialAction(
+                    //TODO: write this code for picking up a specimen
+                    //Drive to the Observation Zone while lowering the lift in parallel
+                    //Pickup the specimen off the wall
+                    new ParallelAction(
+                            DriveToNeutralFromChamber(startPose, netZonePose),
+                            robotAdapter.getAction(HOME)
+                    ),
+                    robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL),
+                    robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN)
+            );
+        }
+
+
         Action DriveToChamberFromStart(Pose2d startPose, Pose2d chamberPose) {
             //TODO: write this code for driving to the chamber  from the start position
             return
@@ -156,6 +184,7 @@ public abstract class Routes {
             //TODO: write this code for driving to the neutral spike one from the chamber position
             return
                     robotAdapter.getActionBuilder(chamberPose)
+                            .setReversed(true)
                             .splineToLinearHeading(netNeutralSpikeOnePose,netNeutralSpikeOnePose.heading,slowVelocity,slowAcceleration)
                             .build();
         }

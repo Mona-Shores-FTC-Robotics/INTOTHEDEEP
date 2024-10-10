@@ -42,21 +42,10 @@ public class NET_Preload_and_One_Sample extends Routes {
         //not sure how to fix this, tried a lot of stuff
 
         netBotRoute = builder
-//                .stopAndAdd(routeBuilder.DriveToChamberFromStart(NET_START_POSE, NET_CHAMBER_PRELOAD))
-//                .stopAndAdd(routeBuilder.DriveToObservationZoneFromChamber(NET_CHAMBER_PRELOAD, NET_SPIKE_THREE))
-//                .splineToLinearHeading(NET_CHAMBER, FACE_TOWARD_BLUE)
-//                .waitSeconds(2)
-//                .setReversed(true)
-//                .splineToConstantHeading(NET_SPIKE_ONE_BEHIND,FACE_135_DEGREES) // Moves robot behind first sample
-//                .waitSeconds(1)
-//                .splineToLinearHeading(new Pose2d(PoseToVector(NET_POS_AUDIENCE_TJ),FACE_225_DEGREES), FACE_225_DEGREES)
-
                 .stopAndAdd(routeBuilder.ScorePreloadSpecimen(NET_START_POSE, NET_CHAMBER))
-                .stopAndAdd(routeBuilder.PickupSpecimen(NET_CHAMBER,NET_SPIKE_TEST))
-                .stopAndAdd(routeBuilder.GotoWall(NET_SPIKE_TEST, WALL_ALIGN_POS_AUDIENCE_TJ))
-                .stopAndAdd(routeBuilder.ScoreSpecimen(WALL_ALIGN_POS_AUDIENCE_TJ, NET_POS_AUDIENCE_TJ))
-////            .stopAndAdd(routeBuilder.PickupSpecimen(OBS_CHAMBER_TWO, OBSERVATION_ZONE_RED_PICKUP))
-////            .stopAndAdd(routeBuilder.NullDriveAction(OBSERVATION_ZONE_RED_PICKUP))
+                .stopAndAdd(routeBuilder.PickupSample(NET_CHAMBER,NET_SPIKE_TEST))
+//                .stopAndAdd(routeBuilder.GotoWall(NET_SPIKE_TEST, WALL_ALIGN_POS_AUDIENCE_TJ))
+                .stopAndAdd(routeBuilder.ScoreSample(NET_SPIKE_TEST, NET_POS_AUDIENCE_TJ))
                 .stopAndAdd(routeBuilder.NullDriveAction(NET_POS_AUDIENCE_TJ))
                 .build();
     }
