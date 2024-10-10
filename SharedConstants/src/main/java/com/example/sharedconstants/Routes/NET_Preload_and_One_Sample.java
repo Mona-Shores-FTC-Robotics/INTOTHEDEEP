@@ -6,10 +6,13 @@ import static com.example.sharedconstants.FieldConstants.FACE_TOWARD_RED;
 import static com.example.sharedconstants.FieldConstants.NET_CHAMBER;
 import static com.example.sharedconstants.FieldConstants.NET_CHAMBER_PRELOAD;
 import static com.example.sharedconstants.FieldConstants.NET_POS_AUDIENCE_TJ;
+import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_BEHIND;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_VEC;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_TWO_VEC;
+import static com.example.sharedconstants.FieldConstants.NET_ZONE_RED;
+import static com.example.sharedconstants.FieldConstants.NET_ZONE_SCORE;
 import static com.example.sharedconstants.FieldConstants.OBS_CHAMBER_PRELOAD;
 import static com.example.sharedconstants.FieldConstants.OBSERVATION_ZONE_RED_PICKUP;
 import static com.example.sharedconstants.FieldConstants.NET_START_POSE;
@@ -40,6 +43,10 @@ public class NET_Preload_and_One_Sample extends Routes {
         netBotRoute = builder
                 .stopAndAdd(routeBuilder.DriveToChamberFromStart(NET_START_POSE, NET_CHAMBER_PRELOAD))
 //                .stopAndAdd(routeBuilder.DriveToObservationZoneFromChamber(NET_CHAMBER_PRELOAD, NET_SPIKE_THREE))
+                .stopAndAdd(routeBuilder.DriveToNeutralFromChamber(NET_CHAMBER_PRELOAD, NET_SPIKE_ONE))
+                .setReversed(true)
+                .stopAndAdd(routeBuilder.DriveToNetFromSpike(NET_SPIKE_ONE,NET_ZONE_SCORE))
                 .build();
+
     }
 }

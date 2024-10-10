@@ -100,6 +100,7 @@ public class FieldConstants {
     public static Pose2d NET_ZONE_RED = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
     public static Pose2d ASCENT_RED_AUDIENCE = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
     public static Vector2d RUNG_RED_BACKSTAGE = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
+    public static Pose2d NET_ZONE_SCORE = new Pose2d(-55.5, -52.2, FACE_45_DEGREES);
 
     // POSITIONS FOR PLACING SPECIMEN ON CHAMBER DURING AUTO
     public static Pose2d NET_CHAMBER_PRELOAD = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
