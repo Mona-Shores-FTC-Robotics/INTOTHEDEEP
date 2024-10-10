@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Disabled
-@TeleOp(name="TeleOp_IntoTheDeep Hardcoded Robot [Chassis_Pinpoint]")
+@TeleOp(name="TeleOp_IntoTheDeep [Chassis_19429-B_Pinpoint]")
 public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
 {
     @Override

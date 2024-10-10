@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
@@ -61,8 +60,8 @@ public class BasicAuto extends LinearOpMode {
 
         Actions.runBlocking(selectedRoute);
 
-        MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getYawDegrees();
-        MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffset;
+        MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
+        MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;
         MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
     }
 }

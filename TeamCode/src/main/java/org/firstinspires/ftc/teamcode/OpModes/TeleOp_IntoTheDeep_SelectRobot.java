@@ -33,6 +33,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -74,6 +75,9 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
 
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);
+
+        //set the starting location of the robot on the field
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
         // Setup Button Bindings
         new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());

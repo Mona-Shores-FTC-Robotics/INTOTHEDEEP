@@ -6,10 +6,13 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.*;
 
+@Disabled
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,7 +35,9 @@ public class LocalizationTest extends LinearOpMode {
 
             telemetry.addData("x", drive.pose.position.x);
             telemetry.addData("y", drive.pose.position.y);
-            telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+            telemetry.addData("heading Pos (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+//            telemetry.addData("heading _PP (deg)", Math.toDegrees(drive.pinpoint.getHeading()));
+            telemetry.addData("heading IMU (deg)", drive.lazyImu.get().getRobotYawPitchRollAngles().getYaw());
             telemetry.update();
 
             TelemetryPacket packet = new TelemetryPacket();

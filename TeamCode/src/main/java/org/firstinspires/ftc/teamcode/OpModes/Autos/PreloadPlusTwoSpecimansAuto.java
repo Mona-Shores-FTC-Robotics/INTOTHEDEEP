@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.OBS_Preload_and_One_Specimen;
 import com.example.sharedconstants.Routes.OBS_Preload_and_Two_Specimens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -67,8 +66,8 @@ public class PreloadPlusTwoSpecimansAuto extends LinearOpMode {
 
         Actions.runBlocking(selectedRoute);
 
-        MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getYawDegrees();
-        MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffset;
+        MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
+        MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;
         MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
     }
 }

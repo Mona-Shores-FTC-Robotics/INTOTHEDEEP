@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 
 import static java.lang.Math.abs;
-import static java.lang.Thread.sleep;
-
 import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -20,6 +18,7 @@ import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -46,7 +45,7 @@ public class DriveSubsystem extends SubsystemBase {
     private MecanumDrive mecanumDrive;
 
     public boolean fieldOrientedControl;
-    public double yawOffset;  // offset depending on alliance color
+    public double yawOffsetDegrees;  // offset depending on alliance color
 
     public double drive;
     public double strafe;
@@ -70,6 +69,7 @@ public class DriveSubsystem extends SubsystemBase {
     public double rightBackTargetSpeed;
     public Encoder leftFrontEncoder, leftBackEncoder, rightBackEncoder, rightFrontEncoder;
     private DriveModeConfig.DriveMode lastDriveMode = null;
+    private YawPitchRollAngles angles;
 
     @Config
     public static class DriveModeConfig {
@@ -84,41 +84,44 @@ public class DriveSubsystem extends SubsystemBase {
         }
     }
     public DriveSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType) {
-
-    }
-
-    public void init()
-    {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.DRIVE);
-
         // Initialize appropriate drive system based on robot type
-        HardwareMap hardwareMap = Robot.getInstance().getActiveOpMode().hardwareMap;
-        switch (MatchConfig.finalRobotType) {
+        switch (robotType) {
             case CHASSIS_19429_A_PINPOINT:
+                DriveParams.configureChassis19429PinpointRRParams();
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
-                DriveParams.configureChassis19429A(mecanumDrive, this);
+                DriveParams.configureChassis19429ADirections(mecanumDrive, this);
                 break;
 
             case CENTERSTAGE_PINPOINT:
-                Robot.getInstance().getActiveOpMode().telemetry.addData("Current kS in PARAMS", MecanumDrive.PARAMS.kS);
+                DriveParams.configureCenterstagePinpointRRParams();
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
-                DriveParams.configureCenterStage(mecanumDrive, this);
+                DriveParams.configureCenterStageDirections(mecanumDrive, this);
                 break;
 
             case CHASSIS_19429_HUB_TWO_DEAD_WHEELS:
+                DriveParams.configureChassis19429TwoDeadWheelRRParams();
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
+                DriveParams.configureChassis19429ADirections(mecanumDrive, this);
                 mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
-                DriveParams.configureChassis19429A(mecanumDrive, this);
+                ((TwoDeadWheelLocalizer) mecanumDrive.localizer).par.setDirection(DcMotorEx.Direction.REVERSE);
+                ((TwoDeadWheelLocalizer) mecanumDrive.localizer).perp.setDirection(DcMotorEx.Direction.REVERSE);
+                TwoDeadWheelLocalizer.PARAMS.parYTicks = -1450.0;
+                TwoDeadWheelLocalizer.PARAMS.perpXTicks =  800.0;
                 break;
 
             case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
+                DriveParams.configureCenterstageTwoDeadWheelRRParams();
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
+                DriveParams.configureCenterStageDirections(mecanumDrive, this);
                 mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
-                DriveParams.configureCenterStage(mecanumDrive, this);
+                ((TwoDeadWheelLocalizer) mecanumDrive.localizer).par.setDirection(DcMotorEx.Direction.FORWARD);
+                ((TwoDeadWheelLocalizer) mecanumDrive.localizer).perp.setDirection(DcMotorEx.Direction.FORWARD);
+                TwoDeadWheelLocalizer.PARAMS.parYTicks = -1440.0;
+                TwoDeadWheelLocalizer.PARAMS.perpXTicks =  820.0;
                 break;
 
             case CENTERSTAGE_OTOS:
@@ -129,15 +132,19 @@ public class DriveSubsystem extends SubsystemBase {
         }
         mecanumDrive.lazyImu.get().resetYaw();
         configurePID();
+    }
 
-
-        fieldOrientedControl=false; // Default to field-oriented control
+    public void init()
+    {
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.DRIVE);
+        fieldOrientedControl=true; // Default to field-oriented control
         CalculateYawOffset();
 
     }
 
     public void periodic(){
         updatePIDFromDashboard();
+        updateIMU();
     }
 
     private double lastP = 0, lastI = 0, lastD = 0, lastF = 0;
@@ -162,12 +169,11 @@ public class DriveSubsystem extends SubsystemBase {
         //      -For red start, the audience is on your left
         //      -For blue start, the audience is on your right
         //  See this: https://ftc-docs.firstinspires.org/en/latest/game_specific_resources/field_coordinate_system/field-coordinate-system.html
-        yawOffset=0; // I think we actually don't need an offset this year
-//        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
-//            yawOffset = Math.toRadians(90);  // 90 degrees for blue side
-//        } else {
-//            yawOffset = Math.toRadians(-90);  // -90 degrees for red side
-//        }
+        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+            yawOffsetDegrees = 90;  // 90 degrees for blue side
+        } else {
+            yawOffsetDegrees = -90;  // -90 degrees for red side
+        }
     }
 
     public MecanumDrive getMecanumDrive()
@@ -180,6 +186,7 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void setDriveStrafeTurnValues(double leftY, double leftX, double rightX) {
         boolean gamepadActive = driverGamepadIsActive(leftY, leftX, rightX);
+
         if (gamepadActive) {
             leftYAdjusted = leftY * STICK_PARAMS.DRIVE_SPEED_FACTOR;
             leftXAdjusted = leftX * STICK_PARAMS.STRAFE_SPEED_FACTOR;
@@ -205,14 +212,11 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void fieldOrientedControl(double y, double x) {
         // Get the robot's current heading in radians (directly from the gyro)
-        double botHeading = Math.toRadians(getYawDegrees());
-
-        // Adjust the robot's heading by the stored offset
-        double adjustedHeading = botHeading - yawOffset;
+        double botHeading = mecanumDrive.pose.heading.toDouble() + Math.toRadians(yawOffsetDegrees);  //this is in radians
 
         // Rotate the movement direction relative to the robot's adjusted heading
-        leftXAdjusted = x * Math.cos(-adjustedHeading) - y * Math.sin(-adjustedHeading);
-        leftYAdjusted = x * Math.sin(-adjustedHeading) + y * Math.cos(-adjustedHeading);
+        leftXAdjusted = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        leftYAdjusted = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
         // Optionally counteract imperfect strafing
         leftYAdjusted = Math.min(leftYAdjusted * 1.1, 1);
@@ -226,16 +230,10 @@ public class DriveSubsystem extends SubsystemBase {
 
         // Display whether field-centric driving is enabled
         telemetry.addData("Field-Centric Driving", fieldOrientedControl ? "Enabled" : "Disabled");
-
         telemetry.addLine("");
-
-        // Display the robot's current pose and headings on a single line
-        double imuYawDegrees = getYawDegrees();
         double roadrunnerPoseHeadingDegrees = Math.toDegrees(mecanumDrive.pose.heading.log());
-
-
-        telemetry.addLine(String.format("(X: %.1f, Y: %.1f, IMU: %.1f°, Pinpoint: %.1f°)",
-                mecanumDrive.pose.position.x, mecanumDrive.pose.position.y, imuYawDegrees, roadrunnerPoseHeadingDegrees));
+        telemetry.addLine(String.format("(X: %.1f, Y: %.1f, Yaw: %.1f°)",
+                mecanumDrive.pose.position.x, mecanumDrive.pose.position.y, roadrunnerPoseHeadingDegrees));
     }
 
     // Display verbose telemetry for Driver Station
@@ -333,22 +331,21 @@ public class DriveSubsystem extends SubsystemBase {
     // Display IMU absolute yaw, FTC field yaw, and RoadRunner pose heading
     public void displayYawTelemetry(Telemetry telemetry) {
         // 1. IMU absolute yaw (in degrees)
-        double imuYawDegrees = getYawDegrees();  // IMU's yaw from MecanumDrive
+        double imuYawDegrees = getInternalIMUYawDegrees();  // IMU's yaw from MecanumDrive
 
-        // 2. RoadRunner pose heading (in degrees, without correction)
+        // 2. IMU offset yaw (in degrees)
+        double imuYawDegreesOffset = getInternalIMUYawDegreesWithOffsetApplied();
+
+        // 3. RoadRunner pose heading (in degrees)
         double roadrunnerPoseHeadingDegrees = Math.toDegrees(mecanumDrive.pose.heading.log());
 
-        // 3. FTC field convention yaw (based on the stored offset and IMU)
-        double ftcYawDegrees = imuYawDegrees + Math.toDegrees(yawOffset);  // Use the stored yawOffset
-        ftcYawDegrees = normalizeAngle(ftcYawDegrees);  // Normalize to -180 to 180 for display
-
         // Display telemetry data
-        telemetry.addData("IMU Absolute Yaw (Degrees)", imuYawDegrees);
-        telemetry.addData("FTC Field Convention Yaw (Degrees)", ftcYawDegrees);
-        telemetry.addData("RoadRunner Pose Heading (Degrees)", roadrunnerPoseHeadingDegrees);
+        telemetry.addData("IMU (Degrees)", "%.1f", imuYawDegrees);
+        telemetry.addData("IMU w/ Offset (Degrees)", "%.1f", imuYawDegreesOffset);
+        telemetry.addData("RoadRunner Pose Heading (Degrees)", "%.1f", roadrunnerPoseHeadingDegrees);
 
         // Optionally display any difference between field convention yaw and RoadRunner heading
-        double yawDifference = ftcYawDegrees - roadrunnerPoseHeadingDegrees;
+        double yawDifference = imuYawDegreesOffset - roadrunnerPoseHeadingDegrees;
         telemetry.addData("IMU vs RoadRunner Yaw Difference", yawDifference);
     }
 
@@ -383,9 +380,19 @@ public class DriveSubsystem extends SubsystemBase {
     /**
      * Method to get current yaw (heading) in degrees from the IMU.
      */
-    public double getYawDegrees() {
-        YawPitchRollAngles angles = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles(); // Access IMU
+    public double getInternalIMUYawDegrees() {
         return angles.getYaw(AngleUnit.DEGREES);  // Return yaw in degrees
+    }
+
+    /**
+     * Method to get current yaw (heading) in degrees from the IMU.
+     */
+    public double getInternalIMUYawDegreesWithOffsetApplied() {
+        return normalizeAngle(angles.getYaw(AngleUnit.DEGREES) - yawOffsetDegrees);  // Return yaw in degrees
+    }
+
+    public void updateIMU() {
+        angles = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles(); // Access IMU
     }
 
     public TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose) {
@@ -410,11 +417,6 @@ public class DriveSubsystem extends SubsystemBase {
                 pose -> new Pose2dDual<>(
                         pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.inverse()));
     }
-
-
-
-
-    public void setAllPower(double p) {setMotorPower(p,p,p,p);}
 
     public void setMotorPower (double lF, double rF, double lB, double rB){
         mecanumDrive.leftFront.setPower(lF);

@@ -30,11 +30,11 @@ public abstract class Routes {
 
     public static final double NORMAL_VELOCITY_OVERRIDE = 30;
     public static final double NORMAL_ACCELERATION_OVERRIDE = 35;
-    public static final double NORMAL_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
+    public static final double NORMAL_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
 
     public static final double FAST_VELOCITY_OVERRIDE = 40;
     public static final double FAST_ACCELERATION_OVERRIDE = 45;
-    public static final double FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(120);
+    public static final double FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
     // Shared constraints for all routes
     public static VelConstraint slowVelocity;

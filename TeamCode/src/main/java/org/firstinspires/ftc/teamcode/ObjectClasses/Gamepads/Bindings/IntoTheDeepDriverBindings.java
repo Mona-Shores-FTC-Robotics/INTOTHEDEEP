@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.example.sharedconstants.FieldConstants;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeCommand;
@@ -63,7 +64,7 @@ public class IntoTheDeepDriverBindings {
         gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new InstantCommand(() -> {
                     Robot.getInstance().getDriveSubsystem().getMecanumDrive().lazyImu.get().resetYaw();
-                    Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.OBSERVATION_START_POSE;
+                    Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
                 }));
 
         //////////////////////////////////////////////////////////

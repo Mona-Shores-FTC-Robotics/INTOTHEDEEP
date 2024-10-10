@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
+import android.service.autofill.FieldClassification;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.concurrent.TimeUnit;
 
 public class DriverStationTelemetryManager {
 
@@ -8,7 +12,8 @@ public class DriverStationTelemetryManager {
     private enum TelemetryMode {
         BASIC,
         VERBOSE_DRIVE,
-        VERBOSE_ENCODERS  // New telemetry mode for encoders
+        VERBOSE_ENCODERS,  // New telemetry mode for encoders
+        VERBOSE_HEADING
         // You can add more modes later, like VERBOSE_OTHER_SUBSYSTEM, etc.
     }
 
@@ -40,6 +45,9 @@ public class DriverStationTelemetryManager {
             case VERBOSE_ENCODERS:
                 displayVerboseEncodersTelemetry();
                 break;
+            case VERBOSE_HEADING:
+                displayVerboseHeadingTelemetry();
+                break;
 
         }
         telemetry.update();  // Make sure to update telemetry after displaying data
@@ -62,7 +70,17 @@ public class DriverStationTelemetryManager {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayBasicTelemetry(telemetry);
         }
+        displayTimeTelemetry(telemetry);
     }
+
+    // Basic telemetry method
+    private void displayVerboseHeadingTelemetry() {
+        // Check and display DriveSubsystem telemetry if available
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            Robot.getInstance().getDriveSubsystem().displayYawTelemetry(telemetry);
+        }
+    }
+
 
     // Verbose telemetry method for DriveSubsystem
     private void displayVerboseDriveTelemetry() {
@@ -75,6 +93,12 @@ public class DriverStationTelemetryManager {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayVerboseEncodersTelemetry(telemetry);
         }
+    }
+
+
+    private void displayTimeTelemetry(Telemetry telemetry) {
+        telemetry.addData("Loop Time (milliSec)", "%d", MatchConfig.loopTimer.time(TimeUnit.MILLISECONDS));
+        telemetry.addData("Teleop Time (Sec)", "%d", MatchConfig.teleOpTimer.time(TimeUnit.SECONDS));
     }
 
 }

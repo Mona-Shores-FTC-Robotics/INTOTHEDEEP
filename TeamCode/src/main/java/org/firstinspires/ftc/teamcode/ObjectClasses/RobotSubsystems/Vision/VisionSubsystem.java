@@ -10,7 +10,6 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Visio
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -408,7 +407,7 @@ public final class VisionSubsystem extends SubsystemBase {
         //save the tag.detection.ftPose.yaw as the cameraYaw
         double cameraYaw = tag.detection.ftcPose.yaw;
 
-        Pose2d newPose = new Pose2d(tagPosXOnField-distanceX, tagPosYOnField+distanceY, Robot.getInstance().getDriveSubsystem().getYawDegrees());
+        Pose2d newPose = new Pose2d(tagPosXOnField-distanceX, tagPosYOnField+distanceY, Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees());
 
         telemetry.addLine();
         telemetry.addData("Tag", tag.detection.metadata.name);
