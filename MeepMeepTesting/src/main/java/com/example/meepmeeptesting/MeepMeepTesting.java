@@ -1,19 +1,28 @@
 package com.example.meepmeeptesting;
 
-import static com.example.meepmeeptesting.MeepMeepRobots.*;
+import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.BASIC;
+import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SAMPLE;
+import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SPECIMEN;
+import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
+import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
+import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
+import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Pose2dDual;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TrajectoryBuilder;
-import com.example.sharedconstants.Routes.DirectRoutes.BasicRoute;
-import com.example.sharedconstants.Routes.DirectRoutes.RRPathGenExample;
-import com.example.sharedconstants.Routes.FunctionalRoutes.FunctionalRoutesExample;
+import com.example.sharedconstants.FieldConstants;
+import com.example.sharedconstants.RobotAdapter;
+import com.example.sharedconstants.Routes.BasicRoute;
+import com.example.sharedconstants.Routes.Preload;
+import com.example.sharedconstants.Routes.NET_Preload_and_One_Sample;
+import com.example.sharedconstants.Routes.OBS_Preload_and_One_Specimen;
 import com.example.sharedconstants.Routes.Routes;
-import com.example.sharedconstants.Routes.DirectRoutes.DirectRoutesExample;
-import com.example.sharedconstants.RobotDriveAdapter;
+import com.example.sharedconstants.Routes.Preload_and_Three_Specimens;
 import com.noahbres.meepmeep.MeepMeep;
-import com.noahbres.meepmeep.roadrunner.DriveShim;
+import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedLight;
 
 import java.awt.Image;
 import java.io.File;
@@ -23,86 +32,95 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    /**
-     * SET TO PICK WHICH ROUTES TO RUN:
-     * Prop Location: LEFT, RIGHT, OR CENTER
-     * Routes:
-     *      SPIKE_BACKDROP_PARK,
-     **/
+    static RoutesToRun redObservationRoute = PRELOAD_AND_ONE_SPECIMEN; // here
+    static RoutesToRun blueObservationRoute = PRELOAD_AND_ONE_SPECIMEN; // here
+    static RoutesToRun redNetRoute = PRELOAD_AND_ONE_SAMPLE; // here
+    static RoutesToRun blueNetRoute = PRELOAD_AND_ONE_SAMPLE; // here
 
-    //TODO Naming convention
-    // discuss how to name our OpModes, does this make sense: AUD_2_1_BACK_0_4
-
-    public static RoutesToRun routesToRunSelection = RoutesToRun.DIRECT_ROUTES_EXAMPLE; // here
-
-    /** Set which robots should show up **/
-    public static boolean SHOW_BLUE_AUDIENCE_BOT = false;
-    public static boolean SHOW_BLUE_BACKSTAGE_BOT = false;
-    public static boolean SHOW_RED_AUDIENCE_BOT = true;
-    public static boolean SHOW_RED_BACKSTAGE_BOT = true;
-
-    public enum TeamPropLocation {LEFT, CENTER, RIGHT, ALL, NONE}
-    enum RoutesToRun {DIRECT_ROUTES_EXAMPLE, FUNCTIONAL_ROUTES_EXAMPLE, RRPATHGEN, BASIC_ROUTE} // here
+    enum RoutesToRun {
+        BASIC,
+        PRELOAD_AND_THREE_SPECIMENS,
+        PRELOAD,
+        PRELOAD_AND_ONE_SPECIMEN,
+        PRELOAD_AND_ONE_SAMPLE} // here
 
     public static void main(String[] args) {
 
         //Set the window Size for MeepMeep
-        MeepMeep meepMeep = new MeepMeep(1400);
+        MeepMeep meepMeep = new MeepMeep(800);
 
-        //This method makes 4 robots (2 red robots and 2 blue robots)
-        MeepMeepRobots.createRobots(meepMeep);
-
-        //This sets the drive for a "dummy robot"
-        DriveShim driveShim = MeepMeepRobots.roadRunnerBot.getDrive();
-
-        // Use the adapter
-        RobotDriveAdapter robotDriveAdapter = new MeepMeepDriveAdapter(driveShim);
-
-        // Create a Routes instance based on the selected route
-        Routes routes;
-
-        if (routesToRunSelection == RoutesToRun.DIRECT_ROUTES_EXAMPLE) { // here
-            routes = new DirectRoutesExample(robotDriveAdapter);
-        } else if (routesToRunSelection == RoutesToRun.RRPATHGEN){
-            routes = new RRPathGenExample(robotDriveAdapter);
-        } else if (routesToRunSelection == RoutesToRun.BASIC_ROUTE) {
-            routes = new BasicRoute(robotDriveAdapter);
-        } else { //if(routesToRunSelection == RoutesToRun.FUNCTIONAL_ROUTES_EXAMPLE){
-            routes = new FunctionalRoutesExample(robotDriveAdapter);
+        // Create the robots dynamically and configure them
+        if (redNetRoute != null) {
+            createAdaptedBotAndRunRoute(meepMeep, RED, NET, new ColorSchemeRedDark(), redNetRoute);
+        }
+        if (redObservationRoute != null) {
+            createAdaptedBotAndRunRoute(meepMeep, RED, OBSERVATION, new ColorSchemeRedLight(), redObservationRoute);
+        }
+        if (blueNetRoute != null) {
+            createAdaptedBotAndRunRoute(meepMeep, BLUE, NET, new ColorSchemeBlueDark(), blueNetRoute);
+        }
+        if (blueObservationRoute != null) {
+            createAdaptedBotAndRunRoute(meepMeep, BLUE, OBSERVATION, new ColorSchemeBlueLight(), blueObservationRoute);
         }
 
-        // Build the routes
-        routes.BuildRoutes();
+        startMeepMeep(meepMeep);
+    }
+    // Create an AdaptedBot and run the selected route
+    private static void createAdaptedBotAndRunRoute(MeepMeep meepMeep,
+                                                    FieldConstants.AllianceColor allianceColor,
+                                                    FieldConstants.SideOfField sideOfField,
+                                                    ColorScheme colorScheme,
+                                                    RoutesToRun selectedRoute) {
 
-        MeepMeepRobots.setRoutes(routes);
+        // Create the adapted bot
+        MeepMeepBot meepMeepBot = new MeepMeepBot(
+                meepMeep, colorScheme, allianceColor, sideOfField); // Default start
 
-        addRobotsToField(meepMeep);
+        meepMeepBot.getAdapter().setSideOfField(sideOfField);
+        meepMeepBot.getAdapter().setAllianceColor(allianceColor);
+
+        // Create and build the route based on the selected route
+        meepMeepBot.setRoute(MeepMeepTesting.createRoute(meepMeepBot.getAdapter(), selectedRoute));
+
+        // Run the route on the bot
+        meepMeepBot.runAction(meepMeepBot.getRoute().getRouteAction(sideOfField));
+
+        // Add the bot to the MeepMeep field
+        meepMeep.addEntity(meepMeepBot.getBot());
     }
 
-    private static void addRobotsToField(MeepMeep meepMeep_local) {
 
-        if (SHOW_BLUE_AUDIENCE_BOT) meepMeep_local.addEntity(blueAudienceBot);
-        if (SHOW_BLUE_BACKSTAGE_BOT) meepMeep_local.addEntity(blueBackstageBot);
-        if (SHOW_RED_AUDIENCE_BOT) meepMeep_local.addEntity(redAudienceBot);
-        if (SHOW_RED_BACKSTAGE_BOT) meepMeep_local.addEntity(redBackstageBot);
 
-//        String filePath = "intothedeep1.png";
-        String filePath = "intothedeep2.png";
-//        String filePath = "intothedeep3.png";
-        Image img = null;
+    // Start MeepMeep with custom settings
+    private static void startMeepMeep(MeepMeep meepMeep_local) {
+        String filePath = "intothedeep2.png";  // Customize the field background
+
         try {
-            img = ImageIO.read(new File(filePath));
+            Image img = ImageIO.read(new File(filePath));
+            meepMeep_local.setBackground(img);
         } catch (IOException e) {
-            e.printStackTrace();  // Log the exception details
+            e.printStackTrace();
         }
 
-        meepMeep_local.setBackground(img)
-                .setDarkMode(false)
+        meepMeep_local.setDarkMode(false)
                 .setBackgroundAlpha(.95f)
                 .start();
-
     }
 
-
+    // Helper method to create the route based on the route selection
+    public static Routes createRoute(RobotAdapter adapter, RoutesToRun routeToRunSelection) {
+        switch (routeToRunSelection) {
+            case PRELOAD_AND_THREE_SPECIMENS:
+                return new Preload_and_Three_Specimens(adapter);
+            case PRELOAD_AND_ONE_SPECIMEN:
+                return new OBS_Preload_and_One_Specimen(adapter);
+            case PRELOAD_AND_ONE_SAMPLE:
+                return new NET_Preload_and_One_Sample(adapter);
+            case PRELOAD:
+                return new Preload(adapter);
+            default:
+                return new BasicRoute(adapter);
+        }
+    }
 }
 

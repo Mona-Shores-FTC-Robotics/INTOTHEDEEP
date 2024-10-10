@@ -16,9 +16,29 @@ import com.acmerobotics.roadrunner.Vector2d;
 //  - should we change how we name our "facings"?
 
 public class FieldConstants {
-    public static enum AllianceColor {BLUE, RED}
-    public static enum SideOfField {BACKSTAGE, AUDIENCE}
-    public static enum TeamPropLocation {LEFT, CENTER, RIGHT}
+    public enum AllianceColor {BLUE, RED}
+    public enum SideOfField {OBSERVATION, NET}
+    public enum TeamPropLocation {LEFT, CENTER, RIGHT}
+
+    // Centralized method to calculate the starting pose based on alliance color and side of the field
+    public static Pose2d getStartPose(AllianceColor allianceColor, SideOfField sideOfField) {
+        Pose2d baseStartPose;
+
+        // Determine the starting pose based on the side of the field
+        if (sideOfField == SideOfField.NET) {
+            baseStartPose = NET_START_POSE;
+        } else {
+            baseStartPose = OBSERVATION_START_POSE;
+        }
+
+        // Flip for blue alliance
+        if (allianceColor == AllianceColor.BLUE) {
+            baseStartPose = rotate(baseStartPose);  // Rotate the pose 180 degrees for blue alliance
+        }
+
+        return baseStartPose;
+    }
+
 
     public static double END_GAME_TIME=90;
 
@@ -53,73 +73,75 @@ public class FieldConstants {
     public static double TANGENT_TOWARD_RED = Math.toRadians(270);
     public static double TANGENT_315_DEGREES = Math.toRadians(315);
 
-    public static Pose2d BLUE_AUDIENCE_START_POSE = new Pose2d(-HALF_TILE, HALF_FIELD-HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
-    public static Pose2d RED_AUDIENCE_START_POSE = new Pose2d(-HALF_TILE,  -HALF_FIELD+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
-    public static Pose2d RED_BACKSTAGE_START_POSE = new Pose2d(HALF_TILE,-HALF_FIELD + HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
-    public static Pose2d BLUE_BACKSTAGE_START_POSE = new Pose2d(HALF_TILE, HALF_FIELD-HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
+    public static Pose2d OBSERVATION_START_POSE = new Pose2d(HALF_TILE,-HALF_FIELD + HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    public static Pose2d NET_START_POSE = new Pose2d(-HALF_TILE,  -HALF_FIELD+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
 
-    //Red Points of Interest
-    public static Pose2d CHAMBER_RED_AUDIENCE = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    public static Pose2d NET_CHAMBER = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
     public static Vector2d BASKET_RED_AUDIENCE_2_TJ = new Vector2d(-55.6, -51.6);
-    public static Pose2d SPIKE_NEUTRAL_AUDIENCE_3_POS_TJ = new Pose2d(-55, -25.5, FACE_TOWARD_AUDIENCE);
 
-    public static Pose2d SPIKE_NEUTRAL_AUDIENCE_1 = new Pose2d(-2*TILE, -TILE-QUARTER_TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
-    public static Vector2d SPIKE_NEUTRAL_AUDIENCE_1_TJ = new Vector2d(-48.1, -38.6);
-    public static Vector2d SPIKE_BEHIND_NEUTRAL_AUDIENCE_1_TJ = new Vector2d(-48.1, -48);
+    public static Pose2d NET_SPIKE_ONE = new Pose2d(-2*TILE, -TILE-QUARTER_TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    public static Vector2d NET_SPIKE_ONE_VEC = PoseToVector(NET_SPIKE_ONE);
 
-    public static Pose2d SPIKE_NEUTRAL_AUDIENCE_2 = new Pose2d(-2*TILE-HALF_TILE, -TILE, FACE_TOWARD_BLUE);
+    public static Pose2d NET_SPIKE_TWO = new Pose2d(-2*TILE-HALF_TILE, -TILE, FACE_TOWARD_BLUE);
+    public static Vector2d NET_SPIKE_TWO_VEC = PoseToVector(NET_SPIKE_TWO);
+
+    public static Pose2d NET_SPIKE_THREE = new Pose2d(-55, -25.5, FACE_TOWARD_AUDIENCE);
+
+
+
+    //Need descriptions of these positions, I don't understand what they mean
+    public static Vector2d NET_SPIKE_ONE_BEHIND = new Vector2d(-48.1, -48);
     public static Pose2d NET_POS_AUDIENCE_TJ = new Pose2d(-61.8, -52, FACE_TOWARD_BLUE);
-    public static Vector2d SPIKE_NEUTRAL_AUDIENCE_2_TJ = new Vector2d(-58.5, -38.6);
     public static Vector2d SPIKE_BEHIND_NEUTRAL_AUDIENCE_2_TJ = new Vector2d(-58.5, -48);
-
+    public static Pose2d WALL_ALIGN_POS_AUDIENCE_TJ = new Pose2d(-61.8, -38.6,  FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_NEUTRAL_AUDIENCE_3 = new Pose2d(-2*TILE-HALF_TILE-QUARTER_TILE, -TILE, FACE_TOWARD_BLUE);
     public static Vector2d SPIKE_NEUTRAL_AUDIENCE_3_TJ = new Vector2d(-68, -38.6);
     public static Vector2d SPIKE_BEHIND_NEUTRAL_AUDIENCE_3_TJ = new Vector2d(-68, -48);
-
     public static Pose2d NET_ZONE_RED = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
     public static Pose2d ASCENT_RED_AUDIENCE = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
-
     public static Vector2d RUNG_RED_BACKSTAGE = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
-    public static Pose2d WALL_ALIGN_POS_AUDIENCE_TJ = new Pose2d(-61.8, -38.6,  FACE_TOWARD_BLUE);
-   // public static Vector2d NET_POS_AUDIENCE_TJ = new Vector2d(-61.8, -52);
-    public static Vector2d CHAMBER_RED_BACKSTAGE = new Vector2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH);
-    public static Pose2d SPIKE_RED_1 = new Pose2d(2*TILE, -TILE, FACE_TOWARD_BLUE);
-    public static Vector2d SPIKE_RED_1_Vec = new Vector2d(48.1, -38.6);
+    public static Pose2d NET_ZONE_SCORE = new Pose2d(-55.5, -52.2, FACE_45_DEGREES);
 
-    public static Pose2d SPIKE_RED_1_OB = new Pose2d(2*TILE, -TILE+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    // POSITIONS FOR PLACING SPECIMEN ON CHAMBER DURING AUTO
+    public static Pose2d NET_CHAMBER_PRELOAD = new Pose2d(-HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    public static Pose2d OBS_CHAMBER_PRELOAD = new Pose2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    public static Vector2d OBS_CHAMBER_PRELOAD_VEC = PoseToVector(OBS_CHAMBER_PRELOAD);
+
+    public static Pose2d OBS_CHAMBER_TWO = new Pose2d(HALF_TILE - QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+    public static Vector2d OBS_CHAMBER_TWO_VEC = PoseToVector(OBS_CHAMBER_TWO);
+    public static Vector2d OBS_CHAMBER_THREE_VEC = new Vector2d(0, -TILE-HALF_ROBOT_LENGTH);
+    public static Vector2d OBS_CHAMBER_FOUR_VEC = new Vector2d(HALF_TILE - TILE*0.75, -TILE-HALF_ROBOT_LENGTH);
+
+    //    public static Pose2d OBS_SPIKE_ONE = new Pose2d(2*TILE, -TILE, FACE_TOWARD_BLUE);
+//    public static Pose2d OBS_SPIKE_ONE = new Pose2d(2*TILE, -TILE+HALF_ROBOT_LENGTH, FACE_TOWARD_BLUE);
+//    public static Vector2d OBS_SPIKE_ONE_VEC = PoseToVector(OBS_SPIKE_ONE);
+
+    public static Pose2d OBS_SPIKE_ONE = flipXAxis(NET_SPIKE_ONE);
+    public static Vector2d OBS_SPIKE_ONE_VEC = PoseToVector(OBS_SPIKE_ONE);
+
+    //Finish refactoring these
     public static Pose2d RIGHT_TO_CHAMBER = new Pose2d(TILE+HALF_TILE, -TILE-HALF_TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_2 = new Pose2d(2*TILE+HALF_TILE, -TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_3 = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, -TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_2_OB = new Pose2d(2*TILE+HALF_TILE, -HALF_TILE-QUARTER_TILE, FACE_TOWARD_BLUE);
     public static Pose2d SPIKE_RED_3_OB = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, -HALF_TILE-QUARTER_TILE, FACE_TOWARD_BLUE);
+    public static Pose2d OBS_WAYPOINT = new Pose2d(46.5,-46,FACE_TOWARD_RED);
+    public static Pose2d OBSERVATION_ZONE_RED_PICKUP = new Pose2d(2*TILE, -2*TILE-HALF_TILE, FACE_TOWARD_RED);
     public static Vector2d OBSERVATION_RED_ZONE = new Vector2d(2*TILE, -2*TILE-HALF_TILE);
     public static Pose2d ASCENT_RED_BACKSTAGE = new Pose2d(TILE, -HALF_TILE, FACE_TOWARD_AUDIENCE);
     public static Vector2d NEXT_TO_ASCENT_RED_BACKSTAGE = new Vector2d(TILE+HALF_TILE, -HALF_TILE-QUARTER_TILE);
 
+    public static Pose2d rotate(Pose2d pose) {
+        return new Pose2d(-pose.position.x, -pose.position.y, pose.heading.inverse().log());
+    }
 
-
-    //Blue points of interest, should not be needed
-//    public static Pose2d NET_ZONE_BLUE = new Pose2d(2*TILE, 2*TILE, FACE_45_DEGREES);
-//    public static Pose2d OBSERVATION_BLUE_ZONE = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
-//
-//    public static Pose2d ASCENT_BLUE_BACKSTAGE = new Pose2d(TILE, HALF_TILE, FACE_TOWARD_AUDIENCE);
-//    public static Pose2d ASCENT_BLUE_AUDIENCE = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
-//
-//    public static Pose2d RUNG_BLUE_AUDIENCE = new Pose2d(-HALF_TILE, TILE+HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
-//    public static Pose2d RUNG_BLUE_BACKSTAGE = new Pose2d(-TILE-QUARTER_TILE, -TILE-HALF_TILE, FACE_45_DEGREES);
-//
-//    public static Pose2d SPIKE_BLUE_1 = new Pose2d(-2*TILE, TILE, FACE_TOWARD_RED);
-//    public static Pose2d SPIKE_BLUE_2 = new Pose2d(-2*TILE-HALF_TILE, TILE, FACE_TOWARD_RED);
-//    public static Pose2d SPIKE_BLUE_3 = new Pose2d(-2*TILE-HALF_TILE-QUARTER_TILE, TILE, FACE_TOWARD_RED);
-//    public static Pose2d SPIKE_NEUTRAL_BACKSTAGE_1 = new Pose2d(2*TILE, TILE+HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
-//    public static Pose2d SPIKE_NEUTRAL_BACKSTAGE_2 = new Pose2d(2*TILE+HALF_TILE, TILE+HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
-//    public static Pose2d SPIKE_NEUTRAL_BACKSTAGE_3 = new Pose2d(2*TILE+HALF_TILE+QUARTER_TILE, TILE+HALF_ROBOT_LENGTH, FACE_TOWARD_RED);
-
-
-
+    public static Pose2d flipXAxis(Pose2d pose) {
+        Pose2d output = new Pose2d(-pose.position.x, pose.position.y, pose.heading.log());
+        return output;
+    }
 
     public static Pose2d flipYAxis(Pose2d pose) {
-        Pose2d output = new Pose2d(pose.position.x, -pose.position.y, Math.toRadians(pose.heading.imag+pose.heading.real));
+        Pose2d output = new Pose2d(pose.position.x, -pose.position.y, pose.heading.log());
         return output;
     }
 
@@ -130,8 +152,5 @@ public class FieldConstants {
 
     public static Vector2d PoseToVector(Pose2d pose){
         return new Vector2d (pose.position.x, pose.position.y);
-
-
-
     }
 }

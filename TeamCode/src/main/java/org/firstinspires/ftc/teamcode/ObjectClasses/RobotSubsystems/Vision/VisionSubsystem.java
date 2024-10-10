@@ -10,7 +10,6 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Visio
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -28,10 +27,9 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSlideSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionProcessors.InitVisionProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -45,7 +43,6 @@ public final class VisionSubsystem extends SubsystemBase {
 
     public static TunableVisionConstants tunableVisionConstants = new TunableVisionConstants();
 
-    @Config
     public static class TunableVisionConstants {
         // Adjust these numbers to suit your robot.
         public double DESIRED_DISTANCE = 18; //  this is how close the camera should get to the target for alignment (inches)
@@ -91,7 +88,7 @@ public final class VisionSubsystem extends SubsystemBase {
     private static InitVisionProcessor initVisionProcessor; // Used for managing detection of 1) team prop; 2) Alliance Color; and 3) Side of Field
     private Telemetry telemetry;
     private LinearOpMode activeOpMode;
-    private MecanumDriveMona mecanumDrive;
+    private MecanumDrive mecanumDrive;
 
     public void periodic()
     {
@@ -172,7 +169,6 @@ public final class VisionSubsystem extends SubsystemBase {
     private DeliverLocation deliverLocationBlue = DeliverLocation.CENTER;
     private DeliverLocation deliverLocationRed = DeliverLocation.CENTER;
 
-    public LiftSlideSubsystem.LiftStates currentDeliverHeight = LiftSlideSubsystem.LiftStates.LOW;
 
     public boolean blueBackdropAprilTagFoundRecently = false;
     public boolean redBackdropAprilTagFoundRecently = false;
@@ -204,9 +200,9 @@ public final class VisionSubsystem extends SubsystemBase {
     }
 
     public void init() {
-
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.VISION);
         telemetry = Robot.getInstance().getActiveOpMode().telemetry;
-        mecanumDrive = Robot.getInstance().getDriveSubsystem().mecanumDrive;
+        mecanumDrive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
         initVisionProcessor= Robot.getInstance().getVisionSubsystem().getInitVisionProcessor();
         aprilTagProcessor = Robot.getInstance().getVisionSubsystem().getAprilTagProcessor();
         visionPortal = Robot.getInstance().getVisionSubsystem().getVisionPortal();
@@ -411,7 +407,7 @@ public final class VisionSubsystem extends SubsystemBase {
         //save the tag.detection.ftPose.yaw as the cameraYaw
         double cameraYaw = tag.detection.ftcPose.yaw;
 
-        Pose2d newPose = new Pose2d(tagPosXOnField-distanceX, tagPosYOnField+distanceY, Robot.getInstance().getGyroSubsystem().currentRelativeYawRadians);
+        Pose2d newPose = new Pose2d(tagPosXOnField-distanceX, tagPosYOnField+distanceY, Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees());
 
         telemetry.addLine();
         telemetry.addData("Tag", tag.detection.metadata.name);
@@ -661,13 +657,7 @@ public final class VisionSubsystem extends SubsystemBase {
         deliverLocationBlue = location;
     }
 
-    public void setDeliverHeight(LiftSlideSubsystem.LiftStates targetLiftState) {
-        currentDeliverHeight = targetLiftState;
-    }
 
-    public LiftSlideSubsystem.LiftStates getDeliverHeight() {
-        return currentDeliverHeight;
-    }
 
 
     public DeliverLocation getDeliverLocationRed() {

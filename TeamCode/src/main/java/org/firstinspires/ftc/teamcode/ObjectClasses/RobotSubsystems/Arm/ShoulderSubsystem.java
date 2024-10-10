@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Config
 public class ShoulderSubsystem extends SubsystemBase {
@@ -42,6 +43,7 @@ public class ShoulderSubsystem extends SubsystemBase {
     }
 
     public void init() {
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.SHOULDER);
         currentState= ShoulderStates.STARTING_POSITION;
         shoulder.setPosition(currentState.position);
     }

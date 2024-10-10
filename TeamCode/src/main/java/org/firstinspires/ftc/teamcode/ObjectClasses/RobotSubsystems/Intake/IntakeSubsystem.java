@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Config
 public class IntakeSubsystem extends SubsystemBase {
@@ -57,19 +58,18 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void init() {
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.INTAKE);
         intake1.setDirection(DcMotor.Direction.FORWARD);
         intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         currentIntake1State = IntakeStates.INTAKE_OFF;
-        intake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake1.setPower(0);
-        intake1.setVelocity(0);
 
         intake2.setDirection(DcMotor.Direction.REVERSE);
         intake2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         currentIntake2State = IntakeStates.INTAKE_OFF;
-        intake2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake2.setPower(0);
-        intake2.setVelocity(0);
     }
 
     @Override

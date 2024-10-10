@@ -6,11 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-//TODO Will we have an arm in intothedeep?
-// - Will this code work as a starting point? Do we need to start over?
-
-@Config
 public final class GripperSubsystem extends SubsystemBase {
 
     public static GripperStates GRIPPER_STARTING_STATE = GripperStates.OPEN;
@@ -37,6 +34,7 @@ public final class GripperSubsystem extends SubsystemBase {
     }
 
     public void init() {
+        Robot.getInstance().registerSubsystem(Robot.SubsystemType.GRIPPER);
         currentState= GRIPPER_STARTING_STATE;
         endEffector.setPosition(currentState.position);
     }

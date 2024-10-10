@@ -29,55 +29,27 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import static org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase.getCurrentGameTagLibrary;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepDriverBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
-import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 
-@TeleOp(name="TeleOp_AprilTag")
-public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
+@Disabled
+@TeleOp(name="TeleOp_IntoTheDeep [Chassis_19429-B_Pinpoint]")
+public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
 {
-    AprilTagLibrary intoTheDeepAprilTagLibrary;
-    AprilTagMetadata[] aprilTagMetadata;
-
     @Override
     public void runOpMode()
     {
-        // Get the April Tag library for the current game
-        intoTheDeepAprilTagLibrary = getCurrentGameTagLibrary();
-
-        // Get all the tags from the library
-        aprilTagMetadata = intoTheDeepAprilTagLibrary.getAllTags();
-
-        // Print out the number of tags
-        telemetry.addData("Number of Tags", aprilTagMetadata.length);
-
-        // Loop through each tag and print out its information
-        for (int i = 0; i < aprilTagMetadata.length; i++) {
-            telemetry.addLine("April Tag " + i + " name: " + aprilTagMetadata[i].id);
-            telemetry.addLine("April Tag " + i + " name: " + aprilTagMetadata[i].name);
-            telemetry.addData("April Tag " + i + " Distance Unit", aprilTagMetadata[i].distanceUnit);
-            telemetry.addData("April Tag " + i + " Field Orientation", aprilTagMetadata[i].fieldOrientation);
-            telemetry.addData("April Tag " + i + " Field Position", aprilTagMetadata[i].fieldPosition);
-            telemetry.addData("April Tag " + i + " Tag Size", aprilTagMetadata[i].tagsize);
-        }
-
-        // Update telemetry to display all the data
-        telemetry.update();
-
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
@@ -85,7 +57,7 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
         // Create the robot
-        Robot.createInstance(this, Robot.RobotType.ROBOT_INTOTHEDEEP);
+        Robot.createInstance(this, Robot.RobotType.CHASSIS_19429_A_PINPOINT);
 
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);
@@ -94,24 +66,15 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
         new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
         new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad());
 
-        while (opModeInInit()) {
+        telemetry.clearAll();
 
-//            VisionTelemetry.telemetryForInitProcessing(gamepadHandling);
+        while (opModeInInit()) {
             gamepadHandling.getDriverGamepad().readButtons();
-//            gamepadHandling.lockColorAndSide();
+            gamepadHandling.SelectAndLockColorAndSide();
 
             telemetry.update();
             sleep(10);
         }
-
-        //Switch the vision processing to AprilTags
-//        Robot.getInstance().getVisionSubsystem().SwitchToAprilTagProcessor();
-
-        //Reset Gyro and pose to be 0 at whatever heading the robot is at
-        Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
-
-        //Set the flag so we reset the gyro/pose heading to zero the next time we go to the backdrop
-//        Robot.getInstance().getVisionSubsystem().resetHeading=true;
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
@@ -126,43 +89,21 @@ public class TeleOp_IntoTheDeep_AprilTagPlayground extends LinearOpMode
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
-            LoopDriverStationTelemetry();
-
             //Reset the timer for the loop timer
             MatchConfig.loopTimer.reset();
 
             //Run the Scheduler
             CommandScheduler.getInstance().run();
 
+            // Display Telemetry through the Robot's Telemetry Manager
+            Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();
+
             //Read all buttons
             gamepadHandling.getDriverGamepad().readButtons();
-
-            //Look for AprilTags
-//            Robot.getInstance().getVisionSubsystem().LookForAprilTags();
-
-            //Activate End Game Rumble at 87 seconds into TeleOp
-            gamepadHandling.endGameRumble();
 
             telemetry.update();
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);
             MatchConfig.telemetryPacket = new TelemetryPacket();
         }
-    }
-
-    private void LoopDriverStationTelemetry() {
-        //Print our color,
-        telemetry.addData("Alliance Color", MatchConfig.finalAllianceColor);
-        telemetry.addLine("TeleOp Time " + JavaUtil.formatNumber(MatchConfig.teleOpTimer.seconds(), 4, 1) + " / 120 seconds");
-        telemetry.addData("Loop Time ", JavaUtil.formatNumber(MatchConfig.loopTimer.milliseconds(), 4, 1));
-
-        Robot.getInstance().getActiveOpMode().telemetry.addLine();
-        telemetry.addData("Current Pose", "X %5.2f, Y %5.2f, heading %5.2f ",
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.x,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.y,
-                Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.heading.log());
-
-        Robot.getInstance().getActiveOpMode().telemetry.addLine();
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Absolute (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentAbsoluteYawDegrees, 5, 2));
-        Robot.getInstance().getActiveOpMode().telemetry.addLine("Yaw Angle Relative (Degrees)" + JavaUtil.formatNumber(Robot.getInstance().getGyroSubsystem().currentRelativeYawDegrees, 5, 2));
     }
 }

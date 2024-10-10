@@ -13,7 +13,6 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
-@Config
 public class AutoDriveToBackDrop implements Action {
     public static double P_TERM = .016;
     public static double I_TERM;
@@ -52,18 +51,18 @@ public class AutoDriveToBackDrop implements Action {
 
 //        driveSubsystem.mecanumDrive.mecanumDriveSpeedControl(driveSubsystem.mecanumDrive.aprilTagDrive, driveSubsystem.mecanumDrive.aprilTagStrafe, driveSubsystem.mecanumDrive.aprilTagTurn);
 
-        Robot.getInstance().getDriveSubsystem().mecanumDrive.updatePoseEstimate();
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().updatePoseEstimate();
 
         if (Robot.getInstance().getVisionSubsystem().resetPoseReady){
             Robot.getInstance().getVisionSubsystem().resetPoseReady=false;
-            Robot.getInstance().getDriveSubsystem().mecanumDrive.pose = Robot.getInstance().getVisionSubsystem().resetPose;
+            Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = Robot.getInstance().getVisionSubsystem().resetPose;
         }
 
         Canvas c = telemetryPacket.fieldOverlay();
 
-        telemetryPacket.put("x", Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.x);
-        telemetryPacket.put("y", Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.position.y);
-        telemetryPacket.put("heading (deg)", Math.toDegrees(Robot.getInstance().getDriveSubsystem().mecanumDrive.pose.heading.log()));
+        telemetryPacket.put("x", Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose.position.x);
+        telemetryPacket.put("y", Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose.position.y);
+        telemetryPacket.put("heading (deg)", Math.toDegrees(Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose.heading.log()));
 //        telemetryPacket.put("April Tag Drive", driveSubsystem.mecanumDrive.aprilTagDrive);
 //        telemetryPacket.put("April Tag Strafe", driveSubsystem.mecanumDrive.aprilTagStrafe);
 //        telemetryPacket.put("April Tag Turn", driveSubsystem.mecanumDrive.aprilTagTurn);

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Drive
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveClasses.MecanumDriveMona;
 
 import java.util.function.DoubleSupplier;
 
@@ -16,8 +15,6 @@ public class DefaultDriveCommand extends CommandBase {
     private final DoubleSupplier driveSupplier;
     private final DoubleSupplier strafeSupplier;
     private final DoubleSupplier turnSupplier;
-
-    private MecanumDriveMona mecanumDrive;
 
     /**
      * Creates a new DefaultDrive.
@@ -40,6 +37,6 @@ public class DefaultDriveCommand extends CommandBase {
     public void execute() {
         //this sets the drive/strafe/turn values based on the gamepad
         driveSubsystem.setDriveStrafeTurnValues(driveSupplier.getAsDouble(), strafeSupplier.getAsDouble(), turnSupplier.getAsDouble());
-        driveSubsystem.mecanumDrive.mecanumDriveSpeedControl(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
+        driveSubsystem.drive(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
     }
 }

@@ -4,18 +4,18 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.BasicRoute;
+import com.example.sharedconstants.Routes.OBS_Preload_and_One_Specimen;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@Autonomous(name = "Basic Auto")
-public class BasicAuto extends LinearOpMode {
+@Autonomous(name = "Preload Auto Plus One Speciman")
+public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -33,25 +33,32 @@ public class BasicAuto extends LinearOpMode {
             sleep(10);
         }
 
+        //TODO: before competition we must hardcode for a single robot and move this to before the init to save precious auto time
+
         // Create and Initialize the robot
         Robot.createInstance(this, MatchConfig.finalRobotType);
 
         // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
 
-        RealRobotAdapter realRobotAdapter = new RealRobotAdapter();
+        //Instantiate the robotDriveAdapter so we can use MeepMeep seamlessly
+        RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
         //Build all the routes using the adapter so we can select one quickly later
-        BasicRoute basicRoute = new BasicRoute(realRobotAdapter);
-        basicRoute.BuildRoutes();
+        OBS_Preload_and_One_Specimen preloadAndOneSpecimen = new OBS_Preload_and_One_Specimen(robotDriveAdapter);
+        preloadAndOneSpecimen.BuildRoutes();
 
-        //Pick one of the routes built previously based on the Side of Field (NET OR OBSERVATION)
-        Action selectedRoute = basicRoute.getRouteAction(MatchConfig.finalSideOfField);
-        realRobotAdapter.setSideOfField(MatchConfig.finalSideOfField);
-        realRobotAdapter.setAllianceColor(MatchConfig.finalAllianceColor);
+
+        //Pick one of the routes built previously based on the final Alliance Color and Side of Field
+        Action selectedRoute = preloadAndOneSpecimen.getRouteAction(MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose= FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+
+        //Reset Gyro
+        //TODO i suspect this is not needed or might be duplicative with what is happening in MecanumDrive
+        // can we run a test without this and see what happens?
+        //Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
 
         telemetry.clearAll();
 
