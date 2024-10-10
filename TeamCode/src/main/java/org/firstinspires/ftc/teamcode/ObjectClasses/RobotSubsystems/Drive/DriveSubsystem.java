@@ -2,9 +2,8 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 
 import static java.lang.Math.abs;
 import android.annotation.SuppressLint;
-import com.acmerobotics.dashboard.FtcDashboard;
+
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -144,12 +143,15 @@ public class DriveSubsystem extends SubsystemBase {
         Robot.getInstance().registerSubsystem(Robot.SubsystemType.DRIVE);
         fieldOrientedControl=true; // Default to field-oriented control
         CalculateYawOffset();
-
     }
 
     public void periodic(){
         updatePIDFromDashboard();
-        updateIMU();
+        updateInternalIMU();
+
+        mecanumDrive.updatePoseEstimate();
+        MatchConfig.telemetryPacket.fieldOverlay().setStroke("#3F51B5");
+        Drawing.drawRobot( MatchConfig.telemetryPacket.fieldOverlay(), mecanumDrive.pose);
     }
 
     private double lastP = 0, lastI = 0, lastD = 0, lastF = 0;
@@ -396,7 +398,7 @@ public class DriveSubsystem extends SubsystemBase {
         return normalizeAngle(angles.getYaw(AngleUnit.DEGREES) - yawOffsetDegrees);  // Return yaw in degrees
     }
 
-    public void updateIMU() {
+    public void updateInternalIMU() {
         angles = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles(); // Access IMU
     }
 
@@ -606,25 +608,31 @@ public class DriveSubsystem extends SubsystemBase {
             leftBackTargetSpeed=0;
             rightBackTargetSpeed=0;
 
-//            mecanumDrive.leftFront.setVelocity(leftFrontTargetSpeed);
-//            mecanumDrive.leftBack.setVelocity(leftBackTargetSpeed);
-//            mecanumDrive.rightFront.setVelocity(rightFrontTargetSpeed);
-//            mecanumDrive.rightBack.setVelocity(rightBackTargetSpeed);
-
-            mecanumDrive.leftFront.setPower(0);
-            mecanumDrive.leftBack.setPower(0);
-            mecanumDrive.rightFront.setPower(0);
-            mecanumDrive.rightBack.setPower(0);
+            // Only set power and velocity to zero if they are not already zero
+            if (prevLeftFrontTargetSpeed != 0) {
+                mecanumDrive.leftFront.setPower(0);
+                mecanumDrive.leftFront.setVelocity(0);
+                prevLeftFrontTargetSpeed = 0;
+            }
+            if (prevRightFrontTargetSpeed != 0) {
+                mecanumDrive.rightFront.setPower(0);
+                mecanumDrive.rightFront.setVelocity(0);
+                prevRightFrontTargetSpeed = 0;
+            }
+            if (prevLeftBackTargetSpeed != 0) {
+                mecanumDrive.leftBack.setPower(0);
+                mecanumDrive.leftBack.setVelocity(0);
+                prevLeftBackTargetSpeed = 0;
+            }
+            if (prevRightBackTargetSpeed != 0) {
+                mecanumDrive.rightBack.setPower(0);
+                mecanumDrive.rightBack.setVelocity(0);
+                prevRightBackTargetSpeed = 0;
+            }
 
             current_drive_ramp=0;
             current_strafe_ramp=0;
             current_turn_ramp=0;
-
-            // Update the previous velocities so they match the new targets
-            prevLeftFrontTargetSpeed = leftFrontTargetSpeed;
-            prevRightFrontTargetSpeed = rightFrontTargetSpeed;
-            prevLeftBackTargetSpeed = leftBackTargetSpeed;
-            prevRightBackTargetSpeed = rightBackTargetSpeed;
 
         } else
         {
@@ -660,12 +668,6 @@ public class DriveSubsystem extends SubsystemBase {
                 prevRightBackTargetSpeed = rightBackTargetSpeed;
             }
         }
-
-        mecanumDrive.updatePoseEstimate();
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), mecanumDrive.pose);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     public void mecanumDrivePowerControl (double drive, double strafe, double turn){
@@ -682,12 +684,6 @@ public class DriveSubsystem extends SubsystemBase {
         mecanumDrive.rightFront.setPower(rightFrontPower);
         mecanumDrive.leftBack.setPower(leftBackPower);
         mecanumDrive.rightBack.setPower(rightBackPower);
-
-        mecanumDrive.updatePoseEstimate();
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), mecanumDrive.pose);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     public void rrDriveControl(double left_stick_y, double left_stick_x, double right_stick_x) {
@@ -698,12 +694,6 @@ public class DriveSubsystem extends SubsystemBase {
                 ),
                 -right_stick_x
         ));
-
-        mecanumDrive.updatePoseEstimate();
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), mecanumDrive.pose);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     private void initializeMotorEncoders() {

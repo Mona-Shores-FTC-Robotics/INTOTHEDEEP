@@ -54,11 +54,6 @@ public class PreloadPlusTwoSpecimansAuto extends LinearOpMode {
         //set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose= FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
 
-        //Reset Gyro
-        //TODO i suspect this is not needed or might be duplicative with what is happening in MecanumDrive
-        // can we run a test without this and see what happens?
-        //Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
-
         telemetry.clearAll();
 
         MatchConfig.timestampTimer = new ElapsedTime();

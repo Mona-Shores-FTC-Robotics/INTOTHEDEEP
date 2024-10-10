@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -43,7 +44,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@Disabled
 @TeleOp(name="TeleOp_IntoTheDeep [Chassis_19429-B_Pinpoint]")
 public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
 {
@@ -76,6 +76,9 @@ public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
             sleep(10);
         }
 
+        //set the starting location of the robot on the field
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
         MatchConfig.teleOpTimer.reset();
@@ -83,26 +86,28 @@ public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
         MatchConfig.loopTimer = new ElapsedTime();
         MatchConfig.loopTimer.reset();
 
-        MatchConfig.timestampTimer = new ElapsedTime();
-        MatchConfig.timestampTimer.reset();
-
         MatchConfig.telemetryPacket = new TelemetryPacket();
         while (opModeIsActive())
         {
+            // Add the loop time to the sliding window average
+            MatchConfig.addLoopTime(MatchConfig.loopTimer.milliseconds());
+
             //Reset the timer for the loop timer
             MatchConfig.loopTimer.reset();
 
             //Run the Scheduler
             CommandScheduler.getInstance().run();
 
-            // Display Telemetry through the Robot's Telemetry Manager
-            Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();
-
             //Read all buttons
             gamepadHandling.getDriverGamepad().readButtons();
 
-            telemetry.update();
+            // Display Telemetry through the Robot's Telemetry Manager
+            Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();
+
+            // Send packet to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);
+
+            // Clear the packet for the next loop
             MatchConfig.telemetryPacket = new TelemetryPacket();
         }
     }
