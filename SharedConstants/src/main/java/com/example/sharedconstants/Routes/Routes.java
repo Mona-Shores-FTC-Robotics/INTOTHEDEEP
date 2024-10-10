@@ -195,5 +195,12 @@ public abstract class Routes {
                             currentPose.heading)
                     .build();
         }
+
+        public Action GotoWall(Pose2d startPose, Pose2d wallPose) {
+            return robotAdapter.getActionBuilder(startPose)
+                    .setReversed(false)
+                    .splineToLinearHeading(wallPose, wallPose.heading)
+                    .build();
+        }
     }
 }
