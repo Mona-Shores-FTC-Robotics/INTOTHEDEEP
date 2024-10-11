@@ -402,14 +402,13 @@ public class DriveSubsystem extends SubsystemBase {
         angles = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles(); // Access IMU
     }
 
-    public TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose) {
+    public TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose) {
 
-        //todo is this correct? maybe this should be the same as the meepmeepadapter?
-        Pose2d rotatedStartingPose = new Pose2d(
-                -beginPose.position.x,
-                -beginPose.position.y,
-                beginPose.heading.plus(Math.toRadians(180)).log()
-        );
+//        Pose2d rotatedStartingPose = new Pose2d(
+//                -beginPose.position.x,
+//                -beginPose.position.y,
+//                beginPose.heading.plus(Math.toRadians(180)).log()
+//        );
 
         return new TrajectoryActionBuilder(
                 (TimeTurn turn) -> mecanumDrive.new TurnAction(turn),
@@ -419,7 +418,7 @@ public class DriveSubsystem extends SubsystemBase {
                         new ProfileParams(.25, .1, 1e-2
                         )
                 ),
-                rotatedStartingPose, 0.0,
+                beginPose, 0.0,
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultTurnConstraints,
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultVelConstraint,
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultAccelConstraint,

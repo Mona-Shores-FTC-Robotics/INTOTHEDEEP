@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@Autonomous(name = "Preload Auto Plus One Speciman")
-public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
+@Autonomous(name = "Preload Auto Plus One Specimen")
+public class PreloadPlusOneSpecimenAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -67,6 +67,7 @@ public class PreloadPlusOneSpecimanAuto extends LinearOpMode {
 
         Actions.runBlocking(selectedRoute);
 
+        Robot.getInstance().getDriveSubsystem().updateInternalIMU();
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;
         MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;

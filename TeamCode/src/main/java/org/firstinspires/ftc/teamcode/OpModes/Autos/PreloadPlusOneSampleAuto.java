@@ -67,6 +67,7 @@ public class PreloadPlusOneSampleAuto extends LinearOpMode {
         MatchConfig.timestampTimer.reset();
 
         Actions.runBlocking(selectedRoute);
+
         Robot.getInstance().getDriveSubsystem().updateInternalIMU();
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;

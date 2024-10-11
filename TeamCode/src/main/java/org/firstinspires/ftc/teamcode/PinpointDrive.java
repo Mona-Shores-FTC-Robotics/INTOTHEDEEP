@@ -114,11 +114,7 @@ public class PinpointDrive extends MecanumDrive {
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
-
         FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
-
         return pinpoint.getVelocityRR();
     }
-
-
 }

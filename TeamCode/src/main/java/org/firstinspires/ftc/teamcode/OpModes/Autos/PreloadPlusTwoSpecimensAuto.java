@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Autonomous(name = "Preload Auto Plus Two Specimens")
-public class PreloadPlusTwoSpecimansAuto extends LinearOpMode {
+public class PreloadPlusTwoSpecimensAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {

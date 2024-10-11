@@ -31,7 +31,7 @@ public class FieldConstants {
             baseStartPose = OBSERVATION_START_POSE;
         }
 
-//         Flip for blue alliance
+        //  Flip for blue alliance
         if (allianceColor == AllianceColor.BLUE) {
             baseStartPose = rotate(baseStartPose);  // Rotate the pose 180 degrees for blue alliance
         }
