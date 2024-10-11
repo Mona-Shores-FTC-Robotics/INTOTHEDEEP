@@ -31,7 +31,7 @@ public abstract class Routes {
     public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
 
     public static final double NORMAL_VELOCITY_OVERRIDE = 30;
-    public static final double NORMAL_ACCELERATION_OVERRIDE = 35;
+    public static final double NORMAL_ACCELERATION_OVERRIDE = 30;
     public static final double NORMAL_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
 
     public static final double FAST_VELOCITY_OVERRIDE = 40;
@@ -176,7 +176,7 @@ public abstract class Routes {
             //TODO: write this code for driving to the chamber  from the start position
             return
                     robotAdapter.getActionBuilder(startPose)
-                            .splineToLinearHeading(chamberPose,chamberPose.heading,slowVelocity,slowAcceleration)
+                            .splineToLinearHeading(chamberPose,chamberPose.heading,normalVelocity,normalAcceleration)
                             .build();
         }
 
@@ -185,7 +185,7 @@ public abstract class Routes {
             return
                     robotAdapter.getActionBuilder(chamberPose)
                             .setReversed(true)
-                            .splineToLinearHeading(netNeutralSpikeOnePose,netNeutralSpikeOnePose.heading,slowVelocity,slowAcceleration)
+                            .splineToLinearHeading(netNeutralSpikeOnePose,netNeutralSpikeOnePose.heading,normalVelocity,normalAcceleration)
                             .build();
         }
 
@@ -193,7 +193,7 @@ public abstract class Routes {
             //TODO: write this code for driving to the neutral spike one from the chamber position
             return
                     robotAdapter.getActionBuilder(netNeutralSpikeOnePose)
-                            .splineToLinearHeading(netZoneScore,netZoneScore.heading,slowVelocity,slowAcceleration)
+                            .splineToLinearHeading(netZoneScore,netZoneScore.heading,normalVelocity,normalAcceleration)
                             .build();
         }
         Action DriveToChamberFromObservation(Pose2d observationZonePose, Pose2d chamberPose) {
@@ -201,7 +201,7 @@ public abstract class Routes {
             return
                     robotAdapter.getActionBuilder(observationZonePose)
                             .setReversed(true)
-                            .splineToLinearHeading(chamberPose,chamberPose.heading,slowVelocity,slowAcceleration)
+                            .splineToLinearHeading(chamberPose,chamberPose.heading,normalVelocity,normalAcceleration)
                         .build();
         }
 
@@ -209,8 +209,8 @@ public abstract class Routes {
             //TODO: write this code for driving to the chamber from the observation zone
             return robotAdapter.getActionBuilder(chamberPose)
                     .setReversed(true)
-                    .splineToLinearHeading(waypoint,waypoint.heading,slowVelocity,slowAcceleration)
-                    .splineToLinearHeading(observationZonePose,observationZonePose.heading,slowVelocity,slowAcceleration)
+                    .splineToLinearHeading(waypoint,waypoint.heading,normalVelocity,normalAcceleration)
+                    .splineToLinearHeading(observationZonePose,observationZonePose.heading,normalVelocity,normalAcceleration)
                     .build();
         }
 

@@ -31,10 +31,10 @@ public class FieldConstants {
             baseStartPose = OBSERVATION_START_POSE;
         }
 
-        // Flip for blue alliance
-//        if (allianceColor == AllianceColor.BLUE) {
-//            baseStartPose = rotate(baseStartPose);  // Rotate the pose 180 degrees for blue alliance
-//        }
+//         Flip for blue alliance
+        if (allianceColor == AllianceColor.BLUE) {
+            baseStartPose = rotate(baseStartPose);  // Rotate the pose 180 degrees for blue alliance
+        }
 
         return baseStartPose;
     }
@@ -134,7 +134,7 @@ public class FieldConstants {
     public static Vector2d NEXT_TO_ASCENT_RED_BACKSTAGE = new Vector2d(TILE+HALF_TILE, -HALF_TILE-QUARTER_TILE);
 
     public static Pose2d rotate(Pose2d pose) {
-        return new Pose2d(-pose.position.x, -pose.position.y, pose.heading.inverse().log());
+        return new Pose2d(-pose.position.x, -pose.position.y, pose.heading.plus(Math.toRadians(180)).log());
     }
 
     public static Pose2d flipXAxis(Pose2d pose) {

@@ -403,6 +403,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public TrajectoryActionBuilder mirroredActionBuilder(Pose2d beginPose) {
+
+        //todo is this correct? maybe this should be the same as the meepmeepadapter?
         Pose2d rotatedStartingPose = new Pose2d(
                 -beginPose.position.x,
                 -beginPose.position.y,

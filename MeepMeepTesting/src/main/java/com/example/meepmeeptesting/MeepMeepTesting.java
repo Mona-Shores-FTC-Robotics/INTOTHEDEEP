@@ -5,6 +5,7 @@ import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD;
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SAMPLE;
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SPECIMEN;
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_THREE_SPECIMENS;
+import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_TWO_SPECIMENS;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
@@ -14,6 +15,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.BasicRoute;
+import com.example.sharedconstants.Routes.OBS_Preload_and_Two_Specimens;
 import com.example.sharedconstants.Routes.Preload;
 import com.example.sharedconstants.Routes.NET_Preload_and_One_Sample;
 import com.example.sharedconstants.Routes.OBS_Preload_and_One_Specimen;
@@ -34,14 +36,15 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    static RoutesToRun redObservationRoute = PRELOAD; // here
-    static RoutesToRun blueObservationRoute = PRELOAD; // here
+    static RoutesToRun redObservationRoute = PRELOAD_AND_TWO_SPECIMENS; // here
+    static RoutesToRun blueObservationRoute = PRELOAD_AND_TWO_SPECIMENS; // here
     static RoutesToRun redNetRoute =PRELOAD_AND_ONE_SAMPLE; // here
     static RoutesToRun blueNetRoute = PRELOAD_AND_ONE_SAMPLE; // here
 
     enum RoutesToRun {
         BASIC,
         PRELOAD_AND_THREE_SPECIMENS,
+        PRELOAD_AND_TWO_SPECIMENS,
         PRELOAD,
         PRELOAD_AND_ONE_SPECIMEN,
         PRELOAD_AND_ONE_SAMPLE} // here
@@ -120,6 +123,8 @@ public class MeepMeepTesting {
                 return new NET_Preload_and_One_Sample(adapter);
             case PRELOAD:
                 return new Preload(adapter);
+            case PRELOAD_AND_TWO_SPECIMENS:
+                return new OBS_Preload_and_Two_Specimens(adapter);
             default:
                 return new BasicRoute(adapter);
         }
