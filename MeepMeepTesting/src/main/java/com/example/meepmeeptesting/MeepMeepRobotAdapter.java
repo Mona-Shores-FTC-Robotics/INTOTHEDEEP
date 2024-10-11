@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.MinMax;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.ProfileParams;
+import com.acmerobotics.roadrunner.Rotation2dDual;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
@@ -62,8 +63,9 @@ public class MeepMeepRobotAdapter implements RobotAdapter {
                 turnConstraints,   // Apply the turn constraints
                 baseVelConstraint, // Apply the velocity constraint
                 baseAccelConstraint, // Apply the acceleration constraint
-                pose -> new Pose2dDual<>(
-                        pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.inverse()));
+                pose ->
+                        new Pose2dDual<>(
+                        pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.plus(Math.toRadians(180))));
     }
 
     @Override

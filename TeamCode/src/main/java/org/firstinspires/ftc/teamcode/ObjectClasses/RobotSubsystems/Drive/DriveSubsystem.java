@@ -406,7 +406,7 @@ public class DriveSubsystem extends SubsystemBase {
         Pose2d rotatedStartingPose = new Pose2d(
                 -beginPose.position.x,
                 -beginPose.position.y,
-                beginPose.heading.inverse().log()
+                beginPose.heading.plus(Math.toRadians(180)).log()
         );
 
         return new TrajectoryActionBuilder(
@@ -422,7 +422,7 @@ public class DriveSubsystem extends SubsystemBase {
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultVelConstraint,
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultAccelConstraint,
                 pose -> new Pose2dDual<>(
-                        pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.inverse()));
+                        pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.plus(Math.toRadians(180))));
     }
 
     public void setMotorPower (double lF, double rF, double lB, double rB){

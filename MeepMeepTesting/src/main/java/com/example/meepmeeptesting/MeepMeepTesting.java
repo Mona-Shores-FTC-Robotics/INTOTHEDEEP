@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.BASIC;
+import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD;
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SAMPLE;
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_ONE_SPECIMEN;
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.PRELOAD_AND_THREE_SPECIMENS;
@@ -33,9 +34,9 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    static RoutesToRun redObservationRoute = PRELOAD_AND_ONE_SPECIMEN; // here
-    static RoutesToRun blueObservationRoute = PRELOAD_AND_ONE_SPECIMEN; // here
-    static RoutesToRun redNetRoute = PRELOAD_AND_ONE_SAMPLE; // here
+    static RoutesToRun redObservationRoute = PRELOAD; // here
+    static RoutesToRun blueObservationRoute = PRELOAD; // here
+    static RoutesToRun redNetRoute =PRELOAD_AND_ONE_SAMPLE; // here
     static RoutesToRun blueNetRoute = PRELOAD_AND_ONE_SAMPLE; // here
 
     enum RoutesToRun {

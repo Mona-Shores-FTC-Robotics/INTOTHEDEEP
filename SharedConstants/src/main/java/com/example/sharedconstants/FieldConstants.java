@@ -32,9 +32,9 @@ public class FieldConstants {
         }
 
         // Flip for blue alliance
-        if (allianceColor == AllianceColor.BLUE) {
-            baseStartPose = rotate(baseStartPose);  // Rotate the pose 180 degrees for blue alliance
-        }
+//        if (allianceColor == AllianceColor.BLUE) {
+//            baseStartPose = rotate(baseStartPose);  // Rotate the pose 180 degrees for blue alliance
+//        }
 
         return baseStartPose;
     }

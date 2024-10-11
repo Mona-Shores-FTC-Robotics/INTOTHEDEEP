@@ -32,7 +32,7 @@ public class RealRobotAdapter implements RobotAdapter {
     @Override
     public TrajectoryActionBuilder getActionBuilder(Pose2d startPose) {
         if (isRotated()) {
-            return rotatedActionBuilder(startPose);
+            return actionBuilder(startPose);
         } else {
             return actionBuilder(startPose);
         }
