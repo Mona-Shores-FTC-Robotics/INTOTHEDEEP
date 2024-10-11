@@ -32,7 +32,7 @@ public class RealRobotAdapter implements RobotAdapter {
     @Override
     public TrajectoryActionBuilder getActionBuilder(Pose2d startPose) {
         if (isRotated()) {
-            return actionBuilder(startPose);
+            return rotatedActionBuilder(startPose);
         } else {
             return actionBuilder(startPose);
         }
@@ -43,7 +43,7 @@ public class RealRobotAdapter implements RobotAdapter {
     }
 
     public TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose) {
-        return Robot.getInstance().getDriveSubsystem().mirroredActionBuilder(beginPose);
+        return Robot.getInstance().getDriveSubsystem().rotatedActionBuilder(beginPose);
     }
 
     @Override
