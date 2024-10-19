@@ -46,17 +46,13 @@ public class RealRobotAdapter implements RobotAdapter {
         return Robot.getInstance().getDriveSubsystem().rotatedActionBuilder(beginPose);
     }
 
-    @Override
     public void setAllianceColor(FieldConstants.AllianceColor allianceColor) {
         this.allianceColor = allianceColor;
     }
 
-    @Override
     public void setSideOfField(FieldConstants.SideOfField sideOfField) {
         this.sideOfField = sideOfField;
     }
-
-
 
     // Check if the robot is on the blue alliance and therefore should use the rotated trajectory
     public boolean isRotated() {
@@ -72,7 +68,7 @@ public class RealRobotAdapter implements RobotAdapter {
             switch (actionType) {
                 case SECURE_PRELOAD_SPECIMEN:
                 case PICKUP_SPECIMEN_OFF_WALL:
-                case PICKUP_SAMPLE:
+                case SAMPLE_INTAKE_ON:
                     if (robot.hasSubsystem(Robot.SubsystemType.GRIPPER)) {
                         return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.CLOSED);
                     } else {

@@ -2,32 +2,46 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.Routes;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
+import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
+import com.noahbres.meepmeep.roadrunner.Constraints;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.DriveShim;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepBot {
+
+    static double MAX_VEL = 53;
+    static double MAX_ACCELERATION = 53;
+    static double MAX_ANGULAR_VELOCITY = Math.toRadians(360);
+    static double MAX_ANGULAR_ACCELERATION = Math.toRadians(360);
+    static double TRACK_WIDTH = 13;
+
     private final RoadRunnerBotEntity bot;
     private final RobotAdapter adapter;
+    public static Constraints constraints = new Constraints(MAX_VEL,MAX_ACCELERATION,MAX_ANGULAR_VELOCITY, MAX_ANGULAR_ACCELERATION,TRACK_WIDTH);;
     private Routes route;
 
     public MeepMeepBot(MeepMeep meepMeep, ColorScheme colorScheme, FieldConstants.AllianceColor allianceColor, FieldConstants.SideOfField sideOfField) {
-        // Create the bot
-        this.bot = new DefaultBotBuilder(meepMeep)
-                .setConstraints(40, 40, Math.toRadians(180), Math.toRadians(180), 15)
+        constraints = new Constraints(MAX_VEL,MAX_ACCELERATION,MAX_ANGULAR_VELOCITY, MAX_ANGULAR_ACCELERATION,TRACK_WIDTH);;
+
+        bot = new DefaultBotBuilder(meepMeep)
+                .setConstraints(constraints.getMaxVel(), constraints.getMaxAccel(), constraints.getMaxAngVel(), constraints.getMaxAngAccel(), constraints.getTrackWidth())
                 .setColorScheme(colorScheme)
                 .setDimensions(18, 18)
-                .setStartPose(FieldConstants.getStartPose(allianceColor, sideOfField))
+                .setStartPose(FieldConstants.getStartPose(sideOfField))
                 .build();
 
         // Create the adapter with the DriveShim from the bot
         DriveShim driveShim = bot.getDrive();
-        this.adapter = new MeepMeepRobotAdapter(driveShim);
+        adapter = new MeepMeepRobotAdapter(driveShim);
+        adapter.setSideOfField(sideOfField);
+        adapter.setAllianceColor(allianceColor); //set alliance color in adapter so it can rotate appropriately
     }
 
     public RoadRunnerBotEntity getBot() {
@@ -40,7 +54,7 @@ public class MeepMeepBot {
 
     public void setRoute(Routes route) {
         this.route = route;
-        this.route.BuildRoutes(); // Build the route when it's set
+        route.buildRoute();
     }
 
     public Routes getRoute() {

@@ -13,7 +13,7 @@ public interface RobotAdapter {
         PICKUP_SPECIMEN_OFF_WALL,
         HANG_SPECIMEN_ON_HIGH_CHAMBER,
         HANG_SPECIMEN_ON_LOW_CHAMBER,
-        PICKUP_SAMPLE,
+        SAMPLE_INTAKE_ON,
         DEPOSIT_SAMPLE,
         LIFT_TO_HIGH_CHAMBER,
         LIFT_TO_LOW_CHAMBER,

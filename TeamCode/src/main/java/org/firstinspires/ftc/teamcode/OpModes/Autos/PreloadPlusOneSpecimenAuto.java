@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.OBS_Preload_and_One_Specimen;
+import com.example.sharedconstants.Routes.MoveOnly;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -45,7 +45,7 @@ public class PreloadPlusOneSpecimenAuto extends LinearOpMode {
         RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
         //Build all the routes using the adapter so we can select one quickly later
-        OBS_Preload_and_One_Specimen preloadAndOneSpecimen = new OBS_Preload_and_One_Specimen(robotDriveAdapter);
+        MoveOnly.OBS_Preload_and_One_Specimen preloadAndOneSpecimen = new MoveOnly.OBS_Preload_and_One_Specimen(robotDriveAdapter);
         preloadAndOneSpecimen.BuildRoutes();
 
 

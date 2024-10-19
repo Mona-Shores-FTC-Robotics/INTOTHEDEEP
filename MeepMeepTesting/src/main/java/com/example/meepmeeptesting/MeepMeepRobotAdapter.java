@@ -2,9 +2,12 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.MinMax;
+import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
+import com.acmerobotics.roadrunner.PosePath;
 import com.acmerobotics.roadrunner.ProfileParams;
 import com.acmerobotics.roadrunner.Rotation2dDual;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -17,6 +20,8 @@ import com.example.sharedconstants.RobotAdapter;
 import com.noahbres.meepmeep.roadrunner.DriveShim;
 import com.noahbres.meepmeep.roadrunner.entity.TrajectoryActionStub;
 import com.noahbres.meepmeep.roadrunner.entity.TurnActionStub;
+
+import org.jetbrains.annotations.NotNull;
 
 public class MeepMeepRobotAdapter implements RobotAdapter {
     private final DriveShim driveShim;
@@ -35,24 +40,6 @@ public class MeepMeepRobotAdapter implements RobotAdapter {
     }
 
     public TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose) {
-        // Define constraints similar to the original DriveShim
-        TurnConstraints turnConstraints = new TurnConstraints(
-                Math.toRadians(180),  // maxAngVel
-                Math.toRadians(90),   // minAngAccel
-                Math.toRadians(180)   // maxAngAccel
-        );
-
-        VelConstraint baseVelConstraint = (robotPose, path, s) -> {
-            return 40;  // Hardcoded max velocity
-        };
-
-        AccelConstraint baseAccelConstraint = (robotPose, path, s) -> {
-            double minAccel = -30;  // Example min acceleration (negative for deceleration)
-            double maxAccel = 30;   // Example max acceleration
-
-            return new MinMax(minAccel, maxAccel);
-        };
-
         // Return a TrajectoryActionBuilder using the mirrored pose and constraints
         return new TrajectoryActionBuilder(
                 TurnActionStub::new,
@@ -60,9 +47,9 @@ public class MeepMeepRobotAdapter implements RobotAdapter {
                 new TrajectoryBuilderParams(1e-6, new ProfileParams(.25, .1, 1e-2)),
                 beginPose,
                 0.0,
-                turnConstraints,   // Apply the turn constraints
-                baseVelConstraint, // Apply the velocity constraint
-                baseAccelConstraint, // Apply the acceleration constraint
+                driveShim.actionBuilder(beginPose).getBaseTurnConstraints(),   // Apply the turn constraints
+                driveShim.actionBuilder(beginPose).getBaseVelConstraint(), // Apply the velocity constraint
+                driveShim.actionBuilder(beginPose).getBaseAccelConstraint(), // Apply the acceleration constraint
                 pose ->
                         new Pose2dDual<>(
                         pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.plus(Math.toRadians(180))));
@@ -84,30 +71,25 @@ public class MeepMeepRobotAdapter implements RobotAdapter {
         public Action createAction(ActionType actionType) {
             switch (actionType) {
                 default:
-                    return new SleepAction(1);
+                    return new NullAction();
             }
         }
     }
 
-    public Pose2d getCurrentPose(){
-        return driveShim.getPoseEstimate();
-    }
-
-    @Override
     public void setAllianceColor(FieldConstants.AllianceColor allianceColor) {
         this.allianceColor = allianceColor;
     }
-    @Override
+
     public void setSideOfField(FieldConstants.SideOfField sideOfField) {
         this.sideOfField = sideOfField;
     }
 
     public TrajectoryActionBuilder getActionBuilder(Pose2d startPose) {
-        if (isRotated()) {
-            return rotatedActionBuilder(startPose);
-        } else {
-            return actionBuilder(startPose);
-        }
+            if (isRotated()) {
+                return rotatedActionBuilder(startPose);
+            } else {
+                return actionBuilder(startPose);
+            }
     }
 
     public boolean isRotated() {

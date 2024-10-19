@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.OBS_Preload_and_Two_Specimens;
+import com.example.sharedconstants.Routes.OBS.OBS_Score_Preload_and_Two_Premade_Specimens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -45,7 +45,7 @@ public class PreloadPlusTwoSpecimensAuto extends LinearOpMode {
         RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
         //Build all the routes using the adapter so we can select one quickly later
-        OBS_Preload_and_Two_Specimens preloadAndTwoSpecimens = new OBS_Preload_and_Two_Specimens(robotDriveAdapter);
+        OBS_Score_Preload_and_Two_Premade_Specimens preloadAndTwoSpecimens = new OBS_Score_Preload_and_Two_Premade_Specimens(robotDriveAdapter);
         preloadAndTwoSpecimens.BuildRoutes();
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field

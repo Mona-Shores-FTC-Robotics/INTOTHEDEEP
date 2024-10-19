@@ -404,12 +404,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     public TrajectoryActionBuilder rotatedActionBuilder(Pose2d beginPose) {
 
-//        Pose2d rotatedStartingPose = new Pose2d(
-//                -beginPose.position.x,
-//                -beginPose.position.y,
-//                beginPose.heading.plus(Math.toRadians(180)).log()
-//        );
-
         return new TrajectoryActionBuilder(
                 (TimeTurn turn) -> mecanumDrive.new TurnAction(turn),
                 (TimeTrajectory trajectory) -> mecanumDrive.new FollowTrajectoryAction(trajectory),
