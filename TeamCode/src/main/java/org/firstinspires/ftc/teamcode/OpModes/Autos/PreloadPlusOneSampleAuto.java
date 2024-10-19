@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.NET.NET_Net_Preload_and_One_Sample;
+import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_2_Preload_and_1_Sample;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -45,7 +45,7 @@ public class PreloadPlusOneSampleAuto extends LinearOpMode {
         RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
         //Build all the routes using the adapter so we can select one quickly later
-        NET_Net_Preload_and_One_Sample preloadAndOneSample = new NET_Net_Preload_and_One_Sample(robotDriveAdapter);
+        NET_Score_2_Preload_and_1_Sample preloadAndOneSample = new NET_Score_2_Preload_and_1_Sample(robotDriveAdapter);
         preloadAndOneSample.BuildRoutes();
 
 

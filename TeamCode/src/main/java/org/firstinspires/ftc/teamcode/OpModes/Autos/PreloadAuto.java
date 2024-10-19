@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.NET.NetPreload;
+import com.example.sharedconstants.Routes.NET.NET_Score_1_Preload;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -43,7 +43,7 @@ public class PreloadAuto extends LinearOpMode {
         RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
         //Build all the routes using the adapter so we can select one quickly later
-        NetPreload preload = new NetPreload(robotDriveAdapter);
+        NET_Score_1_Preload preload = new NET_Score_1_Preload(robotDriveAdapter);
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRoute = preload.getRouteAction(MatchConfig.finalSideOfField);

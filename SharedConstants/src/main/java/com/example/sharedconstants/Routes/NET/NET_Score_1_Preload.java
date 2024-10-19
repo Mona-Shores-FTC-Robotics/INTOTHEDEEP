@@ -10,8 +10,8 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.Routes;
 
-public class NetPreload extends Routes {
-    public NetPreload(RobotAdapter robotAdapter) {
+public class NET_Score_1_Preload extends Routes {
+    public NET_Score_1_Preload(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
 
