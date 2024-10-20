@@ -1,4 +1,4 @@
-package com.example.sharedconstants.Routes.OBS;
+package com.example.sharedconstants.Routes.OBS.PushAndScore;
 
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FIVE;
 
@@ -13,7 +13,7 @@ public class OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike exte
     public void buildRoute()
     {
         super.buildRoute();
-        pickupSpecimenFromWall(true);
+        pickupSpecimenFromWall();
         scoreOnHighChamber(CHAMBER_SLOT_FIVE);
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }

@@ -16,8 +16,8 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepBot {
 
-    static double MAX_VEL = 53;
-    static double MAX_ACCELERATION = 53;
+    static double MAX_VEL = 45;
+    static double MAX_ACCELERATION = 45;
     static double MAX_ANGULAR_VELOCITY = Math.toRadians(360);
     static double MAX_ANGULAR_ACCELERATION = Math.toRadians(360);
     static double TRACK_WIDTH = 13;

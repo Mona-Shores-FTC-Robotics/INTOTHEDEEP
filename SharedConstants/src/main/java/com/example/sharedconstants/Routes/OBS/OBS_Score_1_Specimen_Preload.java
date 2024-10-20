@@ -1,5 +1,7 @@
 package com.example.sharedconstants.Routes.OBS;
 
+import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
+import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_START_POSE;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
@@ -17,8 +19,6 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
     public OBS_Score_1_Specimen_Preload(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
-    // This route scores a preload Specimen
-    // The preload Specimen comes from
 
     public void buildRoute() {
         scoreObservationPreload(CHAMBER_SLOT_ONE);
@@ -31,7 +31,8 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
                 .afterDisp(0, robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN))
                 .afterDisp(.1, robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER))
                 .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
-                .strafeTo(PoseToVector(CHAMBER_SLOT_ONE).minus(new Vector2d(0, 3)))
+                .setTangent(Math.toRadians(-45))
+                .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_OBSERVATION)
                 .afterDisp(0, robotAdapter.getAction(HOME));
     }
 

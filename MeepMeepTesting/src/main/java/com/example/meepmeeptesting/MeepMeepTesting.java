@@ -1,32 +1,36 @@
 package com.example.meepmeeptesting;
 
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT;
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
+import com.example.sharedconstants.Routes.DoNothing;
 import com.example.sharedconstants.Routes.MoveOnly;
 import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_4_Preload_and_3_Samples;
 import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_3_Preload_and_2_Samples;
 import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample;
 import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples;
+import com.example.sharedconstants.Routes.NET.NET_Score5_SamplePreload;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_2_Preload_and_1_Sample_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_3_Preload_and_2_Samples_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_4_Preload_and_3_Samples_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short;
-import com.example.sharedconstants.Routes.OBS.OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike;
+import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike;
+import com.example.sharedconstants.Routes.OBS.PushAllAtOnce.OBS_Push2SpikeSamplesInOnePath;
+import com.example.sharedconstants.Routes.OBS.PushAllAtOnce.OBS_Push3SpikeSampleInOnePath;
+import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_4_SampleFirst_Push_2_Spike_Samples;
+import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_5_SampleFirst_Push_3_Spike_Samples;
+import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
-import com.example.sharedconstants.Routes.OBS.Push2Alt.OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
-import com.example.sharedconstants.Routes.OBS.OBS_Push_1_Score_2_Specimens_Preload_And_1_Premade;
-import com.example.sharedconstants.Routes.OBS.OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike;
+import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
+import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Preload;
 import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.Routes;
-import com.example.sharedconstants.Routes.OBS.OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
+import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
@@ -41,10 +45,95 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
+    // Set the initial routes to run for each bot
+    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_SCORE_1_PRELOAD;
     private static final RoutesToRun blueObservationRoute = redObservationRoute;
-    private static final RoutesToRun redNetRoute = NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT;
+    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_1_PRELOAD;
     private static final RoutesToRun blueNetRoute = redNetRoute;
+
+    /**
+     * Most Reasonable Paths - Alliance Partner does nothing
+     * Uncomment one of the sets of routes below to test in MeepMeep.
+     */
+
+    // Example: Alliance Partner does nothing, we score 3 specimens (30 POINTS)
+    // Uncomment the following lines to test this configuration
+//    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_PUSH_2_SCORE_3_PRELOAD_AND_1_PREMADE_AND_1_SPIKE_SPECIMENS;
+//    private static final RoutesToRun blueObservationRoute = redObservationRoute;
+//    private static final RoutesToRun redNetRoute = RoutesToRun.DO_NOTHING;
+//    private static final RoutesToRun blueNetRoute = redNetRoute;
+
+    // Example: Alliance partner does nothing, we score 1 specimen and 3 samples (34 points)
+    // Uncomment the following lines to test this configuration
+//    private static final RoutesToRun redObservationRoute = RoutesToRun.DO_NOTHING;
+//    private static final RoutesToRun blueObservationRoute = redObservationRoute;
+//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_4_PRELOAD_AND_3_SAMPLES;
+//    private static final RoutesToRun blueNetRoute = RoutesToRun.NET_SCORE_4_PRELOAD_AND_3_SAMPLES_SHORT;
+
+    /**
+     * Paths that are Reasonable and Close to Optimized
+     * Uncomment these paths to experiment with different autonomous strategies.
+     */
+
+    // OBS bot pushes 2 samples and focuses on scoring 4 specimens (Total Auto: 83 - over time)
+    // NET bot focuses on scoring 5 samples (only has to grab one from observation since it has a preload)
+    // Uncomment the following lines to test this configuration
+//    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS;
+//    private static final RoutesToRun blueObservationRoute = RoutesToRun.OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS;
+//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
+//    private static final RoutesToRun blueNetRoute = redNetRoute;
+
+    //  OBS bot scores 4 specimens on high chamber, NET bot scores 5 samples in high basket
+    //  OBS bot has a preload specimen and NET bot has a preload sample
+    //  OBS bot:
+    //      - Scores preload specimen on chamber
+    //      - Pushes spike sample 1 to human player
+    //      - Grabs premade specimen from human player and scores it on chamber
+    //      - Pushes spike sample 2 to human player
+    //      - Grabs specimen from human player (spike sample 1 turned into specimen) and scores it on chamber
+    //      - Grabs specimen from human player (spike sample 2 turned into specimen) and scores it on chamber
+    //  NET bot:
+    //      - Scores the preload sample
+    //      - Grabs the three neutrals and scores them
+    //      - Grabs second yellow sample from Human Player
+
+    /**
+     * Paired Paths - these are designed to work together, but need work
+     * Uncomment these paths to explore paired strategies.
+     */
+
+    // OBS bot pushes spike samples in one path
+    // NET bot does its thing and tacks on two samples from human player at end (Total Auto: 90 - close)
+    // Uncomment the following lines to test this scenario
+//    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH;
+//    private static final RoutesToRun blueObservationRoute = redObservationRoute;
+//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT;
+//    private static final RoutesToRun blueNetRoute = redNetRoute;
+
+    // Strategy:
+    //  Both robots start with a preload specimen, which means the human player has no specimens to make at the beginning of auto
+    //  OBS bot scores the preload and then pushes three samples into observation zone to give the human player time to make specimens
+    //  NET bot scores the preload and the three neutral spike samples, plenty of time left to grab two yellow samples from Observation Zone
+    //  OBS bot has to stay out of the way of the NET bot.
+    //  OBS bot needs to be pretty fast to pull this off, might have to score one fewer, but general logic should still work
+
+    // **Obs Bot Sample First**
+    // OBS bot starts with sample first to allow the human player to prepare specimens (Total Auto: 80)
+    // Uncomment the following lines to test this scenario
+
+//    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_SCORE_4_SAMPLEFIRST_PUSH_2_SPIKE_SAMPLES;
+//    private static final RoutesToRun blueObservationRoute = redObservationRoute;
+//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE;
+//    private static final RoutesToRun blueNetRoute = redNetRoute;
+
+    // Strategy:
+    //  4 specimens, 5 samples
+    //  OBS bot:
+    //      - Scores preload sample
+    //      - Pushes three samples into observation zone, grabbing a specimen each time to score
+    //  NET bot:
+    //      - Scores the preload specimen and the three neutral spike samples
+    //      - Grabs two yellow samples from Observation Zone
 
     enum RoutesToRun {
         NET_SCORE_1_PRELOAD,
@@ -66,15 +155,24 @@ public class MeepMeepTesting {
         NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT,
 
         //Path to push first and second neutral samples
-        OBS_PUSH_1_SCORE_2_PRELOAD_AND_1_PREMADE_SPECIMEN,
         OBS_PUSH_2_SCORE_3_PRELOAD_AND_1_PREMADE_AND_1_SPIKE_SPECIMENS,
 
-        //Path to push the third neutral sample
+        //Path to push the third neutral sample - Assuming partner has no preload (do nothing or just moves)
         OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS,
         OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS,
 
-        //Save time by not pushing the third neutral sample
+        //Save time by not pushing the third neutral sample - Assuming partner has no preload (do nothing or just moves)
         OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS,
+        OBS_SCORE_1_SAMPLE_PRELOAD_PUSH_1_SPIKE_SCORE_1_PREMADE,
+
+        //Experiment with double specimen preload - push multiple samples in one path to give human player time to make specimen
+        OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH,
+        OBS_PUSH_2_SPIKE_SAMPLES_IN_ONE_PATH,
+
+        //Experiment with obs bot doing a sample first so human player can get a specimen ready
+        OBS_SCORE_4_SAMPLEFIRST_PUSH_2_SPIKE_SAMPLES,
+        DO_NOTHING, NET_SCORE_5_SAMPLE_PRELOAD, OBS_SCORE_4_SAMPLEFIRST_PUSH_3_SPIKE_SAMPLES
+
     }
 
     public static void main(String[] args) {
@@ -135,7 +233,6 @@ public class MeepMeepTesting {
                 return new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample(adapter);
             case NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE:
                 return new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples(adapter);
-
             case NET_SCORE_2_PRELOAD_AND_1_SAMPLE_SHORT:
                 return new NET_Score_2_Preload_and_1_Sample_Short(adapter);
             case NET_SCORE_3_PRELOAD_AND_2_SAMPLES_SHORT:
@@ -146,8 +243,6 @@ public class MeepMeepTesting {
                 return new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter);
             case NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT:
                 return new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter);
-            case OBS_PUSH_1_SCORE_2_PRELOAD_AND_1_PREMADE_SPECIMEN:
-                return new OBS_Push_1_Score_2_Specimens_Preload_And_1_Premade(adapter);
             case OBS_PUSH_2_SCORE_3_PRELOAD_AND_1_PREMADE_AND_1_SPIKE_SPECIMENS:
                 return new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(adapter);
             case OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS:
@@ -156,13 +251,27 @@ public class MeepMeepTesting {
                 return new OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
             case OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS:
                 return new OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
+            case OBS_SCORE_1_SAMPLE_PRELOAD_PUSH_1_SPIKE_SCORE_1_PREMADE:
+                return new OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade(adapter);
             case NET_SCORE_1_PRELOAD:
                 return new NET_Score_1_Preload(adapter);
             case OBS_SCORE_1_PRELOAD:
                 return new OBS_Score_1_Specimen_Preload(adapter);
+            case OBS_SCORE_4_SAMPLEFIRST_PUSH_2_SPIKE_SAMPLES:
+                return new OBS_Score_4_SampleFirst_Push_2_Spike_Samples(adapter);
+            case OBS_SCORE_4_SAMPLEFIRST_PUSH_3_SPIKE_SAMPLES:
+                return new OBS_Score_5_SampleFirst_Push_3_Spike_Samples(adapter);
+            case OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH:
+                return new OBS_Push3SpikeSampleInOnePath(adapter);
+            case OBS_PUSH_2_SPIKE_SAMPLES_IN_ONE_PATH:
+                return new OBS_Push2SpikeSamplesInOnePath(adapter);
+            case NET_SCORE_5_SAMPLE_PRELOAD:
+                return new NET_Score5_SamplePreload(adapter);
             case MOVE_ONLY:
-            default:
                 return new MoveOnly(adapter);
+            case DO_NOTHING:
+            default:
+                return new DoNothing(adapter);
         }
     }
 }

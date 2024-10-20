@@ -123,34 +123,16 @@ public abstract class Routes {
     public void scoreOnHighChamber(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
-                .splineToSplineHeading(CHAMBER_STAGING, ANGLE_135_DEGREES)
-                .splineToLinearHeading(chamberSlot, ANGLE_135_DEGREES)
+                .splineToSplineHeading(CHAMBER_STAGING_FOR_SCORING, ANGLE_TOWARD_NET)
+                .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_NET)
+                .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE)
                 .afterDisp(.1, robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER))
-                .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));
+                .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER))
+                .setTangent(ANGLE_315_DEGREES)
+                .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_OBSERVATION)
+                .afterDisp(0, robotAdapter.getAction(HOME));
     }
 
-    public void pushFirstNeutralSpecimen() {
-        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setTangent(Math.toRadians(-10))
-                .splineToSplineHeading(RIGHT_OF_CHAMBER, ANGLE_TOWARD_BLUE)
-                .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_ONE), ANGLE_TOWARD_OBSERVATION)
-                .splineToLinearHeading(OBS_WAYPOINT, ANGLE_TOWARD_OBSERVATION);
-    }
 
-    public void pushSecondNeutralSpecimen() {
-        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setTangent(Math.toRadians(-30))
-                .splineToSplineHeading(RIGHT_OF_CHAMBER, ANGLE_TOWARD_BLUE)
-                .splineToLinearHeading(OBS_BEHIND_SPIKE_TWO, ANGLE_TOWARD_RED)
-                .splineToLinearHeading(OBS_DELIVER_SPIKE_TWO, ANGLE_TOWARD_RED);
-    }
 
-    public void pushThirdNeutralSpecimen() {
-        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setTangent(Math.toRadians(-10))
-                .splineToSplineHeading(RIGHT_OF_CHAMBER, ANGLE_TOWARD_BLUE)
-                .splineToConstantHeading(PoseToVector(NEXT_TO_OBS_ASCENT), ANGLE_TOWARD_BLUE)
-                .splineToLinearHeading(OBS_BEHIND_SPIKE_THREE, ANGLE_TOWARD_RED)
-                .splineToLinearHeading(OBS_DELIVER_SPIKE_THREE, ANGLE_TOWARD_RED);
-    }
 }
