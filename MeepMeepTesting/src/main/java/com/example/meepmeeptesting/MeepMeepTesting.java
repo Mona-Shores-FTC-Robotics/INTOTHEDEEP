@@ -4,6 +4,11 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
+
+import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
+import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkRed;
+import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeLightBlue;
+import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeLightRed;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.DoNothing;
@@ -35,21 +40,30 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
-import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedLight;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
     // Set the initial routes to run for each bot
-    private static final RoutesToRun redObservationRoute = RoutesToRun.DO_NOTHING;
-    private static final RoutesToRun blueObservationRoute = redObservationRoute;
-    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_2_PRELOAD_AND_1_SAMPLE;
-    private static final RoutesToRun blueNetRoute = redNetRoute;
+//    private static final RoutesToRun redObservationRoute = RoutesToRun.DO_NOTHING;
+//    private static final RoutesToRun blueObservationRoute = redObservationRoute;
+//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_2_PRELOAD_AND_1_SAMPLE;
+//    private static final RoutesToRun blueNetRoute = redNetRoute;
+
+    //If you make the routes null, then it will let you select with numbers
+//    private static final RoutesToRun redObservationRoute = null;
+//    private static final RoutesToRun blueObservationRoute = null;
+//    private static final RoutesToRun redNetRoute = null;
+//    private static final RoutesToRun blueNetRoute = null;
 
     /**
      * Most Reasonable Paths - Alliance Partner does nothing
@@ -78,10 +92,10 @@ public class MeepMeepTesting {
     // OBS bot pushes 2 samples and focuses on scoring 4 specimens (Total Auto: 83 - over time)
     // NET bot focuses on scoring 5 samples (only has to grab one from observation since it has a preload)
     // Uncomment the following lines to test this configuration
-//    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS;
-//    private static final RoutesToRun blueObservationRoute = RoutesToRun.OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS;
-//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
-//    private static final RoutesToRun blueNetRoute = redNetRoute;
+    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS;
+    private static final RoutesToRun blueObservationRoute = RoutesToRun.OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS;
+    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
+    private static final RoutesToRun blueNetRoute = redNetRoute;
 
     //  OBS bot scores 4 specimens on high chamber, NET bot scores 5 samples in high basket
     //  OBS bot has a preload specimen and NET bot has a preload sample
@@ -177,20 +191,116 @@ public class MeepMeepTesting {
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
+        String filePath = "intothedeep2.png";  // Customize the field background
+        try {
+            Image img = ImageIO.read(new File(filePath));
+            meepMeep.setBackground(img);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        // Create the robots and configure them
-        createAdaptedBotAndRunRoute(meepMeep, RED, NET, new ColorSchemeRedDark(), redNetRoute);
-        createAdaptedBotAndRunRoute(meepMeep, RED, OBSERVATION, new ColorSchemeRedLight(), redObservationRoute);
-        createAdaptedBotAndRunRoute(meepMeep, BLUE, NET, new ColorSchemeBlueDark(), blueNetRoute);
-        createAdaptedBotAndRunRoute(meepMeep, BLUE, OBSERVATION, new ColorSchemeBlueLight(), blueObservationRoute);
-        startMeepMeep(meepMeep);
+        meepMeep.setDarkMode(false)
+                .setBackgroundAlpha(.95f);
+
+        boolean useRandomSelection = false; // Hardcoded toggle for random selection
+
+        final RoutesToRun[] observationRoute = new RoutesToRun[1];
+        final RoutesToRun[] netRoute = new RoutesToRun[1];
+
+        if (redObservationRoute != null && blueObservationRoute != null && redNetRoute != null && blueNetRoute != null) {
+            observationRoute[0] = redObservationRoute;
+            netRoute[0] = redNetRoute;
+            System.out.println("Using predefined routes:");
+            System.out.println("Red Observation Bot: " + redObservationRoute);
+            System.out.println("Blue Observation Bot: " + blueObservationRoute);
+            System.out.println("Red NET Bot: " + redNetRoute);
+            System.out.println("Blue NET Bot: " + blueNetRoute);
+        } else if (!useRandomSelection) {
+            Scanner scanner = new Scanner(System.in);
+            observationRoute[0] = selectRoute(scanner, "Observation Bot", "OBS");
+            netRoute[0] = selectRoute(scanner, "NET Bot", "NET");
+            System.out.println("Manually selected routes:");
+            System.out.println("\u001B[36mObservation Bot: " + observationRoute[0] + "\u001B[0m");
+            System.out.println("\u001B[33mNET Bot: " + netRoute[0] + "\u001B[0m");
+        } else {
+            observationRoute[0] = getRandomRoute("OBS");
+            netRoute[0] = getRandomRoute("NET");
+            System.out.println("Randomly selected routes:");
+            System.out.println("Observation Bot: " + observationRoute[0]);
+            System.out.println("NET Bot: " + netRoute[0]);
+        }
+
+        List<MeepMeepBot> entities = new ArrayList<>();
+
+
+        // Create the robots and configure them initially
+        entities.add(createAdaptedBotAndRunRoute(meepMeep, RED, NET, new CustomColorSchemeDarkRed(), netRoute[0]));
+        entities.add(createAdaptedBotAndRunRoute(meepMeep, RED, OBSERVATION, new CustomColorSchemeLightRed(), observationRoute[0]));
+        entities.add(createAdaptedBotAndRunRoute(meepMeep, BLUE, NET, new CustomColorSchemeDarkBlue(), netRoute[0]));
+        entities.add(createAdaptedBotAndRunRoute(meepMeep, BLUE, OBSERVATION, new CustomColorSchemeLightBlue(), observationRoute[0]));
+        // Start MeepMeep
+        meepMeep.start();
     }
-    // Create a robot and associated adapter and run the selected route
-    private static void createAdaptedBotAndRunRoute(MeepMeep meepMeep,
-                                                    FieldConstants.AllianceColor allianceColor,
-                                                    FieldConstants.SideOfField sideOfField,
-                                                    ColorScheme colorScheme,
-                                                    RoutesToRun selectedRoute) {
+
+    private static RoutesToRun selectRoute(Scanner scanner, String botDescription, String prefix) {
+        System.out.println("Select route for " + botDescription + ":");
+        RoutesToRun[] routes = RoutesToRun.values();
+
+        // Display available routes that match the given prefix, renumbered sequentially
+        int displayIndex = 0;
+        for (int i = 0; i < routes.length; i++) {
+            if (routes[i].name().startsWith(prefix)) {
+                System.out.println(displayIndex + ": " + routes[i]);
+                displayIndex++;
+            }
+        }
+
+        // Get user's selection
+        int routeIndex = -1;
+        while (routeIndex < 0 || routeIndex >= displayIndex) {
+            System.out.print("Enter a valid number for " + botDescription + " route: ");
+            if (scanner.hasNextInt()) {
+                routeIndex = scanner.nextInt();
+                if (routeIndex < 0 || routeIndex >= displayIndex) {
+                    System.out.println("Invalid selection. Please try again.");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.next(); // Clear invalid input
+            }
+        }
+
+        // Retrieve the corresponding route based on the sequential index
+        displayIndex = 0;
+        for (int i = 0; i < routes.length; i++) {
+            if (routes[i].name().startsWith(prefix)) {
+                if (displayIndex == routeIndex) {
+                    return routes[i];
+                }
+                displayIndex++;
+            }
+        }
+
+        return null; // This should never be reached
+    }
+
+    private static RoutesToRun getRandomRoute(String prefix) {
+        RoutesToRun[] routes = RoutesToRun.values();
+        Random random = new Random();
+        RoutesToRun selectedRoute;
+
+        do {
+            selectedRoute = routes[random.nextInt(routes.length)];
+        } while (!selectedRoute.name().startsWith(prefix));
+
+        return selectedRoute;
+    }
+
+    private static MeepMeepBot createAdaptedBotAndRunRoute(MeepMeep meepMeep,
+                                                           FieldConstants.AllianceColor allianceColor,
+                                                           FieldConstants.SideOfField sideOfField,
+                                                           ColorScheme colorScheme,
+                                                           RoutesToRun selectedRoute) {
         // Create the adapted bot
         MeepMeepBot meepMeepBot = new MeepMeepBot(
                 meepMeep, colorScheme, allianceColor, sideOfField); // Default start
@@ -203,21 +313,8 @@ public class MeepMeepTesting {
 
         // Add the bot to the MeepMeep field
         meepMeep.addEntity(meepMeepBot.getBot());
-    }
 
-    private static void startMeepMeep(MeepMeep meepMeep_local) {
-        String filePath = "intothedeep2.png";  // Customize the field background
-
-        try {
-            Image img = ImageIO.read(new File(filePath));
-            meepMeep_local.setBackground(img);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        meepMeep_local.setDarkMode(false)
-                .setBackgroundAlpha(.95f)
-                .start();
+        return meepMeepBot;
     }
 
     // Helper method to create the route based on the route selection
@@ -275,4 +372,5 @@ public class MeepMeepTesting {
         }
     }
 }
+
 
