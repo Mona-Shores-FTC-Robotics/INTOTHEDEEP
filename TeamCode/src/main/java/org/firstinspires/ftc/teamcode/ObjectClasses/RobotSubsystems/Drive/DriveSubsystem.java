@@ -129,7 +129,6 @@ public class DriveSubsystem extends SubsystemBase {
                 break;
 
             case CENTERSTAGE_OTOS:
-                //TODO This is not complete
                 this.mecanumDrive = new SparkFunOTOSDrive(hardwareMap, new Pose2d(0, 0, 0));
                 // No custom params for OTOS in this case, keep using default
                 break;

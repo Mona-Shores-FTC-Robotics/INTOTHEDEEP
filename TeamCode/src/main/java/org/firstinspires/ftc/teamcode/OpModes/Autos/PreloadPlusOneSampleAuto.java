@@ -33,8 +33,6 @@ public class PreloadPlusOneSampleAuto extends LinearOpMode {
             sleep(10);
         }
 
-        //TODO: before competition we must hardcode for a single robot and move this to before the init to save precious auto time
-
         // Create and Initialize the robot
         Robot.createInstance(this, MatchConfig.finalRobotType);
 
@@ -46,19 +44,14 @@ public class PreloadPlusOneSampleAuto extends LinearOpMode {
 
         //Build all the routes using the adapter so we can select one quickly later
         NET_Score_2_Preload_and_1_Sample preloadAndOneSample = new NET_Score_2_Preload_and_1_Sample(robotDriveAdapter);
-        preloadAndOneSample.BuildRoutes();
+        preloadAndOneSample.buildRoute();
 
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRoute = preloadAndOneSample.getRouteAction(MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose= FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
-
-        //Reset Gyro
-        //TODO i suspect this is not needed or might be duplicative with what is happening in MecanumDrive
-        // can we run a test without this and see what happens?
-        //Robot.getInstance().getGyroSubsystem().synchronizeGyroAndPoseHeading();
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose= FieldConstants.getStartPose(MatchConfig.finalSideOfField);
 
         telemetry.clearAll();
 

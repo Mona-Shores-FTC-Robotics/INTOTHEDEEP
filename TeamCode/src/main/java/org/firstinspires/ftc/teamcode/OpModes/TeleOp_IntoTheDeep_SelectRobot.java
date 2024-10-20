@@ -79,7 +79,7 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
         robot.init(Robot.OpModeType.TELEOP);
 
         //set the starting location of the robot on the field
-        robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+        robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField);
 
         // Setup Button Bindings
         new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());

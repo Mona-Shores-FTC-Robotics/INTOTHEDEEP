@@ -64,7 +64,7 @@ public class IntoTheDeepDriverBindings {
         gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new InstantCommand(() -> {
                     Robot.getInstance().getDriveSubsystem().getMecanumDrive().lazyImu.get().resetYaw();
-                    Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalAllianceColor, MatchConfig.finalSideOfField);
+                    Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField);
                 }));
 
         //////////////////////////////////////////////////////////

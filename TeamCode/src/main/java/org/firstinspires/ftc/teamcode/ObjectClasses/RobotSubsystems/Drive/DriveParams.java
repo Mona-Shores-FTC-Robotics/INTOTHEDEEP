@@ -88,7 +88,6 @@ public class DriveParams {
         }
 
     public static void configureCenterstageTwoDeadWheelRRParams() {
-        //TODO: Needs tuning
         MecanumDrive.PARAMS.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
         MecanumDrive.PARAMS.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
         MecanumDrive.PARAMS.inPerTick = 0.002996;
