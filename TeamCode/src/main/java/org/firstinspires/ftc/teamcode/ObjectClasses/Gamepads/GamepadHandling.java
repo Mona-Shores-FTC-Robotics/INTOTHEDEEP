@@ -7,14 +7,16 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
+import com.example.sharedconstants.FieldConstants;
 import static com.example.sharedconstants.FieldConstants.*;
-
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.getNextRobotType;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.getPreviousRobotType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
+import com.example.sharedconstants.Routes.Routes;
+
+import java.util.List;
 
 public class GamepadHandling {
     private final GamepadEx driverGamepad;
@@ -31,38 +33,7 @@ public class GamepadHandling {
 
         //Set Operator Gamepad to White
         opMode.gamepad2.setLedColor(1, 1, 1, LED_DURATION_CONTINUOUS);
-
-//        CreateRumbleEffects();
-//        CreateLEDEffects();
     }
-
-//    private void CreateLEDEffects() {
-//        problemLedEffect = new Gamepad.LedEffect.Builder()
-//                .addStep(0, 1, 0, 500) // Show green for 250ms
-//                .addStep(0, 0, 0, 500) // Show white for 250ms
-//                .addStep(0, 1, 0, LED_DURATION_CONTINUOUS) // Show white for 250ms
-//                .build();
-//    }
-
-//    private void CreateRumbleEffects() {
-//        endGameRumbleEffect = new Gamepad.RumbleEffect.Builder()
-//                .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
-//                .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
-//                .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
-//                .addStep(0.0, 0.0, 250)  //  Pause for 250 mSec
-//                .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
-//                .build();
-//
-//        problemRumbleEffect = new Gamepad.RumbleEffect.Builder()
-//                .addStep(1.0, 1.0, 500)  //  Rumble both motors 100% for 500 mSec
-//                .addStep(0.0, 0.0, 1000)  //  Pause for 1 Sec
-//                .addStep(.5, .5, 250)  //  Rumble both motors 50% for 250 mSec
-//                .addStep(0.0, 0.0, 1000)  //  Pause for 1 Sec
-//                .build();
-//
-//        //set the rumble counter to 0
-//        timeoutRumbleCounter = 0;
-//    }
 
     public GamepadEx getDriverGamepad() {
         return driverGamepad;
@@ -129,6 +100,22 @@ public class GamepadHandling {
         }
     }
 
+    public int cycleThroughRoutes(List<Class<? extends Routes>> availableRoutes, int currentIndex) {
+        // Use operator gamepad DPAD to cycle through the list of routes
+        if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+            currentIndex--;
+            if (currentIndex < 0) {
+                currentIndex = availableRoutes.size() - 1;
+            }
+        } else if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+            currentIndex++;
+            if (currentIndex >= availableRoutes.size()) {
+                currentIndex = 0;
+            }
+        }
+        return currentIndex;
+    }
+
     public void SelectAndLockColorAndSide() {
         Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
         telemetry.addLine("");
@@ -170,5 +157,4 @@ public class GamepadHandling {
             }
         }
     }
-
 }
