@@ -17,9 +17,22 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
     public OBS_Score_1_Specimen_Preload(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
+    // This route scores a preload Specimen
+    // The preload Specimen comes from
 
     public void buildRoute() {
         scoreObservationPreload(CHAMBER_SLOT_ONE);
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
+
+    public void scoreObservationPreload(Pose2d chamberSlot) {
+        obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(OBS_START_POSE)
+                .splineToLinearHeading(chamberSlot, CHAMBER_SLOT_ONE.heading.toDouble())
+                .afterDisp(0, robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN))
+                .afterDisp(.1, robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER))
+                .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
+                .strafeTo(PoseToVector(CHAMBER_SLOT_ONE).minus(new Vector2d(0, 3)))
+                .afterDisp(0, robotAdapter.getAction(HOME));
+    }
+
 }

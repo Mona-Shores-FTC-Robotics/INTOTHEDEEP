@@ -1,13 +1,7 @@
 package com.example.meepmeeptesting;
 
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.NET_SCORE_2_PRELOAD_AND_1_SAMPLE_SHORT;
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.NET_SCORE_3_PRELOAD_AND_2_SAMPLES_SHORT;
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.NET_SCORE_4_PRELOAD_AND_3_SAMPLES;
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.NET_SCORE_4_PRELOAD_AND_3_SAMPLES_SHORT;
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE_SHORT;
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE;
 import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT;
-import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.OBS_SCORE_3_PRELOAD_AND_2_PREMADE_SPECIMENS;
+import static com.example.meepmeeptesting.MeepMeepTesting.RoutesToRun.OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
@@ -24,19 +18,15 @@ import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_3_Preloa
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_4_Preload_and_3_Samples_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short;
-import com.example.sharedconstants.Routes.OBS.OBS_Push_3_Score_5_Specimens_Preload_And_2_Premade_And_2_Neutral;
+import com.example.sharedconstants.Routes.OBS.OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
-import com.example.sharedconstants.Routes.OBS.Push.OBS_Push_2_Score_5_Specimens_Preload_And_2_Premade_And_2_Neutral;
-import com.example.sharedconstants.Routes.OBS.Push.OBS_Push_2_Score_4_Specimens_Preload_And_2_Premade_And_1_Neutral;
-import com.example.sharedconstants.Routes.OBS.OBS_Push_3_Score_6_Specimens_Preload_And_2_Premade_And_3_Neutral;
-import com.example.sharedconstants.Routes.OBS.OBS_Score_2_Specimens_Preload_and_1_Premade;
-import com.example.sharedconstants.Routes.OBS.OBS_Score_3_Specimens_Preload_and_2_Premade;
+import com.example.sharedconstants.Routes.OBS.Push2Alt.OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
 import com.example.sharedconstants.Routes.OBS.OBS_Push_1_Score_2_Specimens_Preload_And_1_Premade;
-import com.example.sharedconstants.Routes.OBS.OBS_Push_2_Score_3_Specimens_Preload_And_2_Premade;
+import com.example.sharedconstants.Routes.OBS.OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Preload;
 import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.Routes;
-import com.example.sharedconstants.Routes.OBS.OBS_Push_3_Score_4_Specimens_Preload_And_2_Premade_And_1_Neutral;
+import com.example.sharedconstants.Routes.OBS.OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
@@ -51,10 +41,10 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_SCORE_3_PRELOAD_AND_2_PREMADE_SPECIMENS;
+    private static final RoutesToRun redObservationRoute = OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
     private static final RoutesToRun blueObservationRoute = redObservationRoute;
     private static final RoutesToRun redNetRoute = NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT;
-    private static final RoutesToRun blueNetRoute = NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE;
+    private static final RoutesToRun blueNetRoute = redNetRoute;
 
     enum RoutesToRun {
         NET_SCORE_1_PRELOAD,
@@ -75,22 +65,16 @@ public class MeepMeepTesting {
         NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE_SHORT,
         NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT,
 
-        //No pushing of neutral samples
-        OBS_SCORE_2_PRELOAD_AND_1_PREMADE_SPECIMEN,
-        OBS_SCORE_3_PRELOAD_AND_2_PREMADE_SPECIMENS,
-
         //Path to push first and second neutral samples
         OBS_PUSH_1_SCORE_2_PRELOAD_AND_1_PREMADE_SPECIMEN,
-        OBS_PUSH_2_SCORE_3_PRELOAD_AND_2_PREMADE_SPECIMENS,
+        OBS_PUSH_2_SCORE_3_PRELOAD_AND_1_PREMADE_AND_1_SPIKE_SPECIMENS,
 
         //Path to push the third neutral sample
-        OBS_PUSH_3_SCORE_4_PRELOAD_AND_2_PREMADE_AND_1_NEUTRAL_SPECIMENS,
-        OBS_PUSH_3_SCORE_5_PRELOAD_AND_2_PREMADE_AND_2_NEUTRAL_SPECIMENS,
-        OBS_PUSH_3_SCORE_6_PRELOAD_AND_2_PREMADE_AND_3_NEUTRAL_SPECIMENS,
+        OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS,
+        OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS,
 
         //Save time by not pushing the third neutral sample
-        OBS_PUSH_2_SCORE_4_PRELOAD_AND_2_PREMADE_AND_1_NEUTRAL_SPECIMENS,
-        OBS_PUSH_2_SCORE_5_PRELOAD_AND_2_PREMADE_AND_2_NEUTRAL_SPECIMENS
+        OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS,
     }
 
     public static void main(String[] args) {
@@ -162,25 +146,16 @@ public class MeepMeepTesting {
                 return new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter);
             case NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT:
                 return new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter);
-
-            case OBS_SCORE_2_PRELOAD_AND_1_PREMADE_SPECIMEN:
-                return new OBS_Score_2_Specimens_Preload_and_1_Premade(adapter);
-            case OBS_SCORE_3_PRELOAD_AND_2_PREMADE_SPECIMENS:
-                return new OBS_Score_3_Specimens_Preload_and_2_Premade(adapter);
             case OBS_PUSH_1_SCORE_2_PRELOAD_AND_1_PREMADE_SPECIMEN:
                 return new OBS_Push_1_Score_2_Specimens_Preload_And_1_Premade(adapter);
-            case OBS_PUSH_2_SCORE_3_PRELOAD_AND_2_PREMADE_SPECIMENS:
-                return new OBS_Push_2_Score_3_Specimens_Preload_And_2_Premade(adapter);
-            case OBS_PUSH_3_SCORE_4_PRELOAD_AND_2_PREMADE_AND_1_NEUTRAL_SPECIMENS:
-                return new OBS_Push_3_Score_4_Specimens_Preload_And_2_Premade_And_1_Neutral(adapter);
-            case OBS_PUSH_3_SCORE_5_PRELOAD_AND_2_PREMADE_AND_2_NEUTRAL_SPECIMENS:
-                return new OBS_Push_3_Score_5_Specimens_Preload_And_2_Premade_And_2_Neutral(adapter);
-            case OBS_PUSH_3_SCORE_6_PRELOAD_AND_2_PREMADE_AND_3_NEUTRAL_SPECIMENS:
-                return new OBS_Push_3_Score_6_Specimens_Preload_And_2_Premade_And_3_Neutral(adapter);
-            case OBS_PUSH_2_SCORE_4_PRELOAD_AND_2_PREMADE_AND_1_NEUTRAL_SPECIMENS:
-                return new OBS_Push_2_Score_4_Specimens_Preload_And_2_Premade_And_1_Neutral(adapter);
-            case OBS_PUSH_2_SCORE_5_PRELOAD_AND_2_PREMADE_AND_2_NEUTRAL_SPECIMENS:
-                return new OBS_Push_2_Score_5_Specimens_Preload_And_2_Premade_And_2_Neutral(adapter);
+            case OBS_PUSH_2_SCORE_3_PRELOAD_AND_1_PREMADE_AND_1_SPIKE_SPECIMENS:
+                return new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(adapter);
+            case OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS:
+                return new OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
+            case OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS:
+                return new OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
+            case OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS:
+                return new OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
             case NET_SCORE_1_PRELOAD:
                 return new NET_Score_1_Preload(adapter);
             case OBS_SCORE_1_PRELOAD:

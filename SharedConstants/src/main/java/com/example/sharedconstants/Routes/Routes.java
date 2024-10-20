@@ -113,25 +113,6 @@ public abstract class Routes {
         fastAcceleration = new ProfileAccelConstraint(-FAST_ACCELERATION_OVERRIDE, FAST_ACCELERATION_OVERRIDE);
     }
 
-    public void scoreObservationPreload(Pose2d chamberSlot) {
-        obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(OBS_START_POSE)
-                .splineToLinearHeading(chamberSlot, CHAMBER_SLOT_ONE.heading.toDouble())
-                .afterDisp(0, robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN))
-                .afterDisp(.1, robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER))
-                .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
-                .strafeTo(PoseToVector(CHAMBER_SLOT_ONE).minus(new Vector2d(0, 3)))
-                .afterDisp(0, robotAdapter.getAction(HOME));
-    }
-
-//    public void pickupSpecimenFromWall(){
-//        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-//                .setTangent(FACE_315_DEGREES)
-//                .splineToLinearHeading(OBS_WAYPOINT, ANGLE_TOWARD_RED)
-//                .afterDisp(.1, robotAdapter.getAction(HOME))
-//                .splineTo(PoseToVector(OBS_ZONE_PICKUP), ANGLE_TOWARD_RED)
-//                .stopAndAdd(robotAdapter.getAction(PICKUP_SPECIMEN_OFF_WALL));
-//    }
-
     public void pickupSpecimenFromWall(Boolean reversed) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(reversed)
@@ -139,11 +120,11 @@ public abstract class Routes {
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.PICKUP_SPECIMEN_OFF_WALL));
     }
 
-
     public void scoreOnHighChamber(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
-                .splineToLinearHeading(chamberSlot, ANGLE_TOWARD_BLUE)
+                .splineToSplineHeading(CHAMBER_STAGING, ANGLE_135_DEGREES)
+                .splineToLinearHeading(chamberSlot, ANGLE_135_DEGREES)
                 .afterDisp(.1, robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER))
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));
     }
@@ -153,7 +134,7 @@ public abstract class Routes {
                 .setTangent(Math.toRadians(-10))
                 .splineToSplineHeading(RIGHT_OF_CHAMBER, ANGLE_TOWARD_BLUE)
                 .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_ONE), ANGLE_TOWARD_OBSERVATION)
-                .splineToLinearHeading(OBS_WAYPOINT, ANGLE_TOWARD_RED);
+                .splineToLinearHeading(OBS_WAYPOINT, ANGLE_TOWARD_OBSERVATION);
     }
 
     public void pushSecondNeutralSpecimen() {

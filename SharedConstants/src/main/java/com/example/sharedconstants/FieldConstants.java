@@ -87,7 +87,7 @@ public class FieldConstants {
     public static Pose2d NET_SPIKE_THREE_PICKUP = NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(5,0), 0));
 
     public static Pose2d HUMAN_PLAYER_SAMPLE_STAGING = new Pose2d(TILE-HALF_ROBOT_LENGTH, -3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
-    public static Pose2d HUMAN_PLAYER_SAMPLE_PICKUP = HUMAN_PLAYER_SAMPLE_STAGING.plus(new Twist2d(new Vector2d(TILE,0), 0));
+    public static Pose2d HUMAN_PLAYER_SAMPLE_PICKUP = HUMAN_PLAYER_SAMPLE_STAGING.plus(new Twist2d(new Vector2d(THREE_QUARTER_TILE,0), 0));
     public static Pose2d NET_BASKET_WALL = new Pose2d(-2*TILE, -3*TILE+HALF_ROBOT_LENGTH, ANGLE_TOWARD_OBSERVATION);
 
     //NET Short Poses
@@ -98,18 +98,20 @@ public class FieldConstants {
     public static Pose2d NET_SPIKE_THREE_SHORT = new Pose2d(-3*TILE+HALF_ROBOT_WIDTH,-TILE-HALF_ROBOT_LENGTH, ANGLE_TOWARD_BLUE);
 
     //Observation Poses
-    public static Pose2d OBS_WAYPOINT = new Pose2d(2*TILE,-2*TILE, ANGLE_TOWARD_RED);
-    public static Pose2d OBS_ZONE_PICKUP = new Pose2d(2*TILE, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_RED);
+    public static Pose2d OBS_WAYPOINT = new Pose2d(2*TILE+HALF_ROBOT_WIDTH,-2*TILE, ANGLE_TOWARD_RED);
+    public static Pose2d OBS_ZONE_PICKUP = new Pose2d(2*TILE+HALF_ROBOT_WIDTH, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_RED);
 
     public static Pose2d RIGHT_OF_CHAMBER = new Pose2d(TILE+HALF_TILE, -TILE-HALF_ROBOT_WIDTH, ANGLE_TOWARD_RED);
     public static Pose2d NEXT_TO_OBS_ASCENT = new Pose2d(TILE+HALF_TILE, -HALF_TILE-QUARTER_TILE, ANGLE_TOWARD_OBSERVATION);
-    public static Pose2d OBS_BEHIND_SPIKE_ONE = new Pose2d(2*TILE-5, -HALF_TILE, ANGLE_TOWARD_RED);
+    public static Pose2d OBS_BEHIND_SPIKE_ONE = new Pose2d(2*TILE-QUARTER_TILE-2, -HALF_TILE, ANGLE_TOWARD_RED);
 
     public static Pose2d OBS_BEHIND_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-2, -TILE+HALF_ROBOT_LENGTH, ANGLE_TOWARD_RED);
     public static Pose2d OBS_DELIVER_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-2, -TILE*2, ANGLE_TOWARD_RED);
 
     public static Pose2d OBS_BEHIND_SPIKE_THREE = new Pose2d(3*TILE-HALF_ROBOT_WIDTH, -HALF_TILE-QUARTER_TILE, ANGLE_TOWARD_RED);
     public static Pose2d OBS_DELIVER_SPIKE_THREE = new Pose2d(3*TILE-HALF_ROBOT_WIDTH, -TILE*2, ANGLE_TOWARD_RED);
+
+    public static Pose2d CHAMBER_STAGING = new Pose2d(2*TILE+QUARTER_TILE, -TILE-HALF_TILE-QUARTER_TILE, ANGLE_TOWARD_BLUE);
 
     public static Pose2d rotate(Pose2d pose) {
         return new Pose2d(-pose.position.x, -pose.position.y, pose.heading.plus(Math.toRadians(180)).log());

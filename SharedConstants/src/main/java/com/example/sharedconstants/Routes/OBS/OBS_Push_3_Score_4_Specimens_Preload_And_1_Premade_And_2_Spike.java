@@ -4,9 +4,9 @@ import com.example.sharedconstants.RobotAdapter;
 
 import static com.example.sharedconstants.FieldConstants.*;
 
-public class OBS_Push_3_Score_4_Specimens_Preload_And_2_Premade_And_1_Neutral extends OBS_Push_2_Score_3_Specimens_Preload_And_2_Premade {
+public class OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike extends OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike {
 
-    public OBS_Push_3_Score_4_Specimens_Preload_And_2_Premade_And_1_Neutral(RobotAdapter robotAdapter) {
+    public OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
 
