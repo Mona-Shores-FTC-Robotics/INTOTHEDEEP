@@ -116,6 +116,8 @@ public class NetAutos extends LinearOpMode {
             gamepadHandling.SelectAndLockColor();
 
             // Display the selected route on the driver station
+            telemetry.addLine();
+            telemetry.addLine("Use Operator D-PAD LEFT/RIGHT to cycle through NET Auto Routes");
             telemetry.addData("Selected Net Auto Route: ", availableRoutes.get(selectedIndex).getClass().getSimpleName());
             telemetry.update();
             sleep(50);  // Prevent overloading the loop

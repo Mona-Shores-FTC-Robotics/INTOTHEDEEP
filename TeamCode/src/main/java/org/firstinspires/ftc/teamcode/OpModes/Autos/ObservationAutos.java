@@ -115,6 +115,8 @@ public class ObservationAutos extends LinearOpMode {
             gamepadHandling.SelectAndLockColor();
 
             // Display the selected route on the driver station
+            telemetry.addLine();
+            telemetry.addLine("Use Operator D-PAD LEFT/RIGHT to cycle through OBSERVATION Auto Routes");
             telemetry.addData("Selected Observation Auto Route: ", availableRoutes.get(selectedIndex).getClass().getSimpleName());
             telemetry.update();
             sleep(50);  // Prevent overloading the loop
