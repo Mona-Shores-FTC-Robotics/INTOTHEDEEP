@@ -4,8 +4,13 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
+import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Preload;
+import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
+import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike;
+import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,7 +19,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 
-@Autonomous(name = "Preload Auto")
+
+@Autonomous(name = "Preload Specimen")
 public class PreloadAuto extends LinearOpMode {
 
     @Override
@@ -42,11 +48,17 @@ public class PreloadAuto extends LinearOpMode {
         //Instantiate the robotDriveAdapter so we can use MeepMeep seamlessly
         RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
-        //Build all the routes using the adapter so we can select one quickly later
-        NET_Score_1_Preload preload = new NET_Score_1_Preload(robotDriveAdapter);
+        Routes route;
+        //Build route depending on side of field
+        if (MatchConfig.finalSideOfField == FieldConstants.SideOfField.NET) {
+            route = new NET_Score_1_Preload(robotDriveAdapter);
+        } else{
+            route = new OBS_Score_1_Specimen_Preload(robotDriveAdapter);
+        }
+        route.buildRoute();
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = preload.getRouteAction(MatchConfig.finalSideOfField);
+        Action selectedRoute = route.getRouteAction(MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose= FieldConstants.getStartPose(MatchConfig.finalSideOfField);

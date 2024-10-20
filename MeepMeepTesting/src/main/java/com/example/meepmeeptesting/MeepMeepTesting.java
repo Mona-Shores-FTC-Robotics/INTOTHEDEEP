@@ -46,9 +46,9 @@ import javax.imageio.ImageIO;
 public class MeepMeepTesting {
 
     // Set the initial routes to run for each bot
-    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_SCORE_1_PRELOAD;
+    private static final RoutesToRun redObservationRoute = RoutesToRun.DO_NOTHING;
     private static final RoutesToRun blueObservationRoute = redObservationRoute;
-    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_1_PRELOAD;
+    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_2_PRELOAD_AND_1_SAMPLE;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
     /**

@@ -5,7 +5,10 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_2_Preload_and_1_Sample;
+import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike;
+import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -13,9 +16,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-
-@Autonomous(name = "Preload Auto Plus One Sample")
-public class PreloadPlusOneSampleAuto extends LinearOpMode {
+@Autonomous(name = "Preload Plus")
+public class PreloadPlus extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -42,13 +44,17 @@ public class PreloadPlusOneSampleAuto extends LinearOpMode {
         //Instantiate the robotDriveAdapter so we can use MeepMeep seamlessly
         RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
 
-        //Build all the routes using the adapter so we can select one quickly later
-        NET_Score_2_Preload_and_1_Sample preloadAndOneSample = new NET_Score_2_Preload_and_1_Sample(robotDriveAdapter);
-        preloadAndOneSample.buildRoute();
-
+        Routes route;
+        //Build route depending on side of field
+        if (MatchConfig.finalSideOfField == FieldConstants.SideOfField.NET) {
+            route = new NET_Score_2_Preload_and_1_Sample(robotDriveAdapter);
+        } else{
+            route = new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(robotDriveAdapter);
+        }
+        route.buildRoute();
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
-        Action selectedRoute = preloadAndOneSample.getRouteAction(MatchConfig.finalSideOfField);
+        Action selectedRoute = route.getRouteAction(MatchConfig.finalSideOfField);
 
         //set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose= FieldConstants.getStartPose(MatchConfig.finalSideOfField);

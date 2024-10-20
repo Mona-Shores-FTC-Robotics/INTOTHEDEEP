@@ -116,6 +116,22 @@ public class GamepadHandling {
         return currentIndex;
     }
 
+    public int cycleThroughRoutes2(List<Routes> availableRoutes, int currentIndex) {
+        // Use operator gamepad DPAD to cycle through the list of routes
+        if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+            currentIndex--;
+            if (currentIndex < 0) {
+                currentIndex = availableRoutes.size() - 1;
+            }
+        } else if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+            currentIndex++;
+            if (currentIndex >= availableRoutes.size()) {
+                currentIndex = 0;
+            }
+        }
+        return currentIndex;
+    }
+
     public void SelectAndLockColorAndSide() {
         Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
         telemetry.addLine("");
@@ -154,6 +170,34 @@ public class GamepadHandling {
                 } else if (finalAllianceColor == AllianceColor.BLUE) {
                     finalSideOfField = SideOfField.OBSERVATION;
                 }
+            }
+        }
+    }
+
+
+    public void SelectAndLockColor() {
+        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
+        telemetry.addLine("");
+
+        if (LockedSettingsFlag) {
+            telemetry.addData("Alliance Color Locked", finalAllianceColor);
+            telemetry.addLine("Press B to unlock Alliance Color");
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
+                LockedSettingsFlag = false;
+            }
+        } else {
+            telemetry.addLine("Lock Alliance Color with B");
+            telemetry.addLine("Alliance Color: " + finalAllianceColor);
+
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
+                LockedSettingsFlag = true;
+            }
+
+            telemetry.addLine("Color (DPAD-UP/DOWN)");
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                finalAllianceColor = AllianceColor.BLUE;
+            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                finalAllianceColor = AllianceColor.RED;
             }
         }
     }

@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,19 +10,70 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import com.example.sharedconstants.Routes.Routes;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-@Autonomous(name = "Auto Selection OP Mode")
+@Autonomous(name = "Auto Select Op Mode")
 public class AutoSelectionOpMode extends LinearOpMode {
+    private RealRobotAdapter robotDriveAdapter;
+    private GamepadHandling gamepadHandling;
+    private List<Class<? extends Routes>> availableRoutes;
+    private List<Class<? extends Routes>> filteredRoutes;
+    private int selectedIndex = 0;
+    private Routes selectedRoute;
+    private FieldConstants.SideOfField previousSideOfField = null;
 
     @Override
     public void runOpMode() {
-        // Reset the Singleton CommandScheduler and Robot
+        // Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
-        // Initialize the Game-pads
-        GamepadHandling gamepadHandling = new GamepadHandling(this);
+        // Initialize the Gamepad Handling
+        gamepadHandling = new GamepadHandling(this);
+
+        // Find available routes dynamically using Reflections
+        Reflections reflections = new Reflections("com.example.sharedconstants.Routes", new SubTypesScanner(false));
+        Set<Class<? extends Routes>> routesSet = reflections.getSubTypesOf(Routes.class);
+        availableRoutes = new ArrayList<>(routesSet);
+
+        // Sort the routes alphabetically for easier navigation
+        availableRoutes.sort((r1, r2) -> r1.getSimpleName().compareToIgnoreCase(r2.getSimpleName()));
+
+        while (opModeInInit()) {
+            // Allow driver to override/lock the vision and select settings
+            gamepadHandling.getDriverGamepad().readButtons();
+            gamepadHandling.SelectAndLockColorAndSideAndRobotType(telemetry);
+
+            // Update filtered routes if side of field changes
+            updateFilteredRoutesIfSideChanged();
+
+            // Use the gamepadHandling method to cycle through filtered routes
+            if (filteredRoutes != null && !filteredRoutes.isEmpty()) {
+                selectedIndex = gamepadHandling.cycleThroughRoutes(filteredRoutes, selectedIndex);
+
+                // Display the selected route on the driver station
+                telemetry.addData("Selected Auto Route", filteredRoutes.get(selectedIndex).getSimpleName());
+            }
+
+            telemetry.update();
+            sleep(50);  // Prevent overloading the loop
+        }
+
+        // Lock in the selected route
+        try {
+            robotDriveAdapter = new RealRobotAdapter();
+            selectedRoute = filteredRoutes.get(selectedIndex).getConstructor(RealRobotAdapter.class).newInstance(robotDriveAdapter);
+            selectedRoute.buildRoute();
+        } catch (Exception e) {
+            telemetry.addData("Error", "Failed to instantiate selected route.");
+            telemetry.update();
+            return;
+        }
 
         // Create and Initialize the robot
         Robot.createInstance(this, MatchConfig.finalRobotType);
@@ -33,68 +81,38 @@ public class AutoSelectionOpMode extends LinearOpMode {
         // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
 
-        int selectedIndex = 0;
-        Routes selectedRoute = null;
-        List<Class<? extends Routes>> availableRoutes = null;
+        // Set the starting location of the robot on the field
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField);
 
-        while (opModeInInit()) {
-            // Allow driver to override/lock the vision
-            gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSideAndRobotType(telemetry);
+        telemetry.clearAll();
 
-            if (gamepadHandling.LockedSettingsFlag && availableRoutes == null) {
-                // Use AutoRouteSelector to get the list of available routes
-                AutoRouteSelector autoRouteSelector = new AutoRouteSelector();
-                availableRoutes = autoRouteSelector.getAvailableRoutes();
+        MatchConfig.timestampTimer = new ElapsedTime();
+        MatchConfig.timestampTimer.reset();
 
-                // Use the gamepadHandling method to cycle through available routes
-                selectedIndex = gamepadHandling.cycleThroughOptions(availableRoutes, selectedIndex);
+        // Run the selected route
+        Actions.runBlocking(selectedRoute.getRouteAction(MatchConfig.finalSideOfField));
 
-                // Display the currently selected route
-                telemetry.addData("Selected Route", availableRoutes.get(selectedIndex).getSimpleName());
+        // Update final autonomous data
+        Robot.getInstance().getDriveSubsystem().updateInternalIMU();
+        MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
+        MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;
+        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+    }
+
+    private void updateFilteredRoutesIfSideChanged() {
+        if (MatchConfig.finalSideOfField != null && !MatchConfig.finalSideOfField.equals(previousSideOfField)) {
+            // Update the previous side of field
+            previousSideOfField = MatchConfig.finalSideOfField;
+
+            // Filter routes based on the selected side of the field
+            String sidePrefix = MatchConfig.finalSideOfField == FieldConstants.SideOfField.OBSERVATION ? "OBS_" : "NET_";
+            filteredRoutes = new ArrayList<>();
+            for (Class<? extends Routes> route : availableRoutes) {
+                if (route.getSimpleName().startsWith(sidePrefix)) {
+                    filteredRoutes.add(route);
+                }
             }
-
-            telemetry.update();
-            sleep(10);
-        }
-
-        if (availableRoutes != null) {
-            // Instantiate the RealRobotAdapter after settings are locked
-            RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
-
-// Select the desired route dynamically
-            try {
-                selectedRoute = availableRoutes.get(selectedIndex).getConstructor(RealRobotAdapter.class).newInstance(robotDriveAdapter);
-            } catch (Exception e) {
-                telemetry.addData("Error", "Failed to instantiate selected route.");
-                telemetry.update();
-                return;
-            }
-
-            // Build the selected route
-            selectedRoute.buildRoute();
-
-            // Pick the route action for the selected side of the field
-            Action routeAction = selectedRoute.getRouteAction(MatchConfig.finalSideOfField);
-
-            // Set the starting location of the robot on the field
-            Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField);
-
-            telemetry.clearAll();
-
-            MatchConfig.timestampTimer = new ElapsedTime();
-            MatchConfig.timestampTimer.reset();
-
-            // Execute the selected route
-            Actions.runBlocking(routeAction);
-
-            Robot.getInstance().getDriveSubsystem().updateInternalIMU();
-            MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
-            MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;
-            MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
-        } else {
-            telemetry.addData("Error", "Available routes were not initialized.");
-            telemetry.update();
+            selectedIndex = 0; // Reset selected index when filtering changes
         }
     }
 }
