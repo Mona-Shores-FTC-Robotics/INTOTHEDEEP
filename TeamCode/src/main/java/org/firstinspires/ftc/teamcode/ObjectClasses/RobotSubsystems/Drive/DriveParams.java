@@ -18,9 +18,9 @@ public class DriveParams {
             MecanumDrive.PARAMS.kS = 1.2382853119904196;
             MecanumDrive.PARAMS.kV = 0.12361974545404217;
             MecanumDrive.PARAMS.kA = .018;
-            MecanumDrive.PARAMS.maxWheelVel = 50;
+            MecanumDrive.PARAMS.maxWheelVel = 30;
             MecanumDrive.PARAMS.minProfileAccel = -30;
-            MecanumDrive.PARAMS.maxProfileAccel = 50;
+            MecanumDrive.PARAMS.maxProfileAccel = 30;
 
             MecanumDrive.PARAMS.maxAngVel = 2*Math.PI;
             MecanumDrive.PARAMS.maxAngAccel = 2*Math.PI;
@@ -72,8 +72,8 @@ public class DriveParams {
             MecanumDrive.PARAMS.maxWheelVel = 30;
             MecanumDrive.PARAMS.minProfileAccel = -30;
             MecanumDrive.PARAMS.maxProfileAccel = 30;
-            MecanumDrive.PARAMS.maxAngVel = Math.PI;
-            MecanumDrive.PARAMS.maxAngAccel = Math.PI;
+            MecanumDrive.PARAMS.maxAngVel = 2*Math.PI;
+            MecanumDrive.PARAMS.maxAngAccel = 2*Math.PI;
             MecanumDrive.PARAMS.axialGain = 9.6;
             MecanumDrive.PARAMS.lateralGain = 3;
             MecanumDrive.PARAMS.headingGain = 3;
