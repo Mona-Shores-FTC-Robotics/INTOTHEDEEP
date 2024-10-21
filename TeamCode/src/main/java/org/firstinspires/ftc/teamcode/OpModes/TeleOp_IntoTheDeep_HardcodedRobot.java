@@ -77,7 +77,7 @@ public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
         }
 
         //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();

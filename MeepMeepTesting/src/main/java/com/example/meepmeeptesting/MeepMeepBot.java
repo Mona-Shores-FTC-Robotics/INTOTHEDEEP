@@ -34,7 +34,7 @@ public class MeepMeepBot {
                 .setConstraints(constraints.getMaxVel(), constraints.getMaxAccel(), constraints.getMaxAngVel(), constraints.getMaxAngAccel(), constraints.getTrackWidth())
                 .setColorScheme(colorScheme)
                 .setDimensions(18, 18)
-                .setStartPose(FieldConstants.getStartPose(sideOfField))
+                .setStartPose(FieldConstants.getStartPose(sideOfField, allianceColor))
                 .build();
 
         // Create the adapter with the DriveShim from the bot

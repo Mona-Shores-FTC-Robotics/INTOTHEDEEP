@@ -64,7 +64,7 @@ public class NetAutos extends LinearOpMode {
         Robot.getInstance().init(Robot.OpModeType.AUTO);
 
         // Set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField);
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
 
         // Create the RealRobotAdapter instance
         robotDriveAdapter = new RealRobotAdapter();

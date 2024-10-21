@@ -18,12 +18,17 @@ public class FieldConstants {
     public enum TeamPropLocation {LEFT, CENTER, RIGHT}
 
     // Centralized method to calculate the starting pose based on alliance color and side of the field
-    public static Pose2d getStartPose(SideOfField sideOfField) {
+    public static Pose2d getStartPose(SideOfField sideOfField, AllianceColor allianceColor) {
         Pose2d baseStartPose;
         if (sideOfField == SideOfField.NET) {
             baseStartPose = NET_START_POSE;
         } else {
             baseStartPose = OBS_START_POSE;
+        }
+
+        //  Flip for blue alliance
+        if ( allianceColor== AllianceColor.BLUE) {
+            baseStartPose = rotate(baseStartPose);  // Rotate the pose 180 degrees for blue alliance
         }
         return baseStartPose;
     }

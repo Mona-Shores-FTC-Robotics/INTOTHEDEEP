@@ -53,16 +53,16 @@ import javax.imageio.ImageIO;
 public class MeepMeepTesting {
 
     // Set the initial routes to run for each bot
-    private static final RoutesToRun redObservationRoute = RoutesToRun.DO_NOTHING;
-    private static final RoutesToRun blueObservationRoute = redObservationRoute;
-    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_2_PRELOAD_AND_1_SAMPLE;
-    private static final RoutesToRun blueNetRoute = redNetRoute;
+//    private static final RoutesToRun redObservationRoute = RoutesToRun.DO_NOTHING;
+//    private static final RoutesToRun blueObservationRoute = redObservationRoute;
+//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_2_PRELOAD_AND_1_SAMPLE;
+//    private static final RoutesToRun blueNetRoute = redNetRoute;
 
     //If you make the routes null, then it will let you select with numbers
-//    private static final RoutesToRun redObservationRoute = null;
-//    private static final RoutesToRun blueObservationRoute = null;
-//    private static final RoutesToRun redNetRoute = null;
-//    private static final RoutesToRun blueNetRoute = null;
+    private static final RoutesToRun redObservationRoute = null;
+    private static final RoutesToRun blueObservationRoute = null;
+    private static final RoutesToRun redNetRoute = null;
+    private static final RoutesToRun blueNetRoute = null;
 
     /**
      * Most Reasonable Paths - Alliance Partner does nothing
@@ -189,7 +189,7 @@ public class MeepMeepTesting {
     }
 
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(600);
         String filePath = "intothedeep2.png";  // Customize the field background
         try {
             Image img = ImageIO.read(new File(filePath));
