@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.GripperSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ShoulderSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ShoulderSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Intake.IntakeSubsystem;
@@ -36,12 +36,12 @@ public class Robot {
     private static VisionSubsystem visionSubsystem;
     private static IntakeSubsystem intakeSubsystem;
     private static GripperSubsystem gripperSubsystem;
-    private static LiftSubsystem liftSubsystem;
+    private static SampleLiftSubsystem sampleLiftSubsystem;
     private static ShoulderSubsystem shoulderSubsystem;
     private static ClimberSubsystem climberSubsystem;
 
     public enum SubsystemType {
-        DRIVE, GYRO, VISION, INTAKE, GRIPPER, LIFT, SHOULDER, CLIMBER
+        DRIVE, GYRO, VISION, INTAKE, GRIPPER, SAMPLE_LIFT, SHOULDER, CLIMBER
     }
 
     // Use an EnumSet for tracking available subsystems
@@ -71,7 +71,7 @@ public class Robot {
 //                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
                 intakeSubsystem = new IntakeSubsystem(hardwareMap, "par", "perp");
                 gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
-                liftSubsystem = new LiftSubsystem(hardwareMap, "liftslide");
+                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "liftslide");
                 shoulderSubsystem = new ShoulderSubsystem(hardwareMap, "shoulder");
                 climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
                 break;
@@ -144,7 +144,7 @@ public class Robot {
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
                 gripperSubsystem.init();
-                liftSubsystem.init();
+                sampleLiftSubsystem.init();
                 shoulderSubsystem.init();
                 climberSubsystem.init();
                 break;
@@ -168,23 +168,22 @@ public class Robot {
                 mecanumDriveSubsystem.init();
                 intakeSubsystem.init();
                 gripperSubsystem.init();
-                liftSubsystem.init();
+                sampleLiftSubsystem.init();
                 shoulderSubsystem.init();
                 break;
             }
         }
     }
-
+    public SampleLiftSubsystem getSampleLiftSubsystem()  {return sampleLiftSubsystem;}
     public DriveSubsystem getDriveSubsystem()  {return mecanumDriveSubsystem;}
+    public LinearOpMode getActiveOpMode()  {return activeOpMode;}
+    public DriverStationTelemetryManager getDriverStationTelemetryManager() {return driverStationTelemetryManager;}
+
     public VisionSubsystem getVisionSubsystem()  {return visionSubsystem;}
     public IntakeSubsystem getIntakeSubsystem()  {return intakeSubsystem;}
     public GripperSubsystem getEndEffectorSubsystem()  {return gripperSubsystem;}
-    public LiftSubsystem getLiftSubsystem()  {return liftSubsystem;}
     public ShoulderSubsystem getShoulderSubsystem()  {return shoulderSubsystem;}
-    public LinearOpMode getActiveOpMode()  {return activeOpMode;}
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;}
-    public DriverStationTelemetryManager getDriverStationTelemetryManager() {return driverStationTelemetryManager;
-    }
 
     public static RobotType getPreviousRobotType(RobotType currentType) {
         RobotType[] types = RobotType.values();

@@ -1,22 +1,18 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
-import android.service.autofill.FieldClassification;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import java.util.concurrent.TimeUnit;
-
 public class DriverStationTelemetryManager {
 
     // Enum to define telemetry modes
     private enum TelemetryMode {
         BASIC,
         VERBOSE_DRIVE,
-        VERBOSE_ENCODERS,  // New telemetry mode for encoders
-        VERBOSE_HEADING
+        VERBOSE_ENCODERS,
+        VERBOSE_HEADING,
+        VERBOSE_SAMPLE_LIFT // Updated telemetry mode name for sample lift
         // You can add more modes later, like VERBOSE_OTHER_SUBSYSTEM, etc.
     }
-
 
     private final Telemetry telemetry;
     private TelemetryMode currentMode = TelemetryMode.BASIC;  // Start with BASIC mode
@@ -49,7 +45,9 @@ public class DriverStationTelemetryManager {
             case VERBOSE_HEADING:
                 displayVerboseHeadingTelemetry();
                 break;
-
+            case VERBOSE_SAMPLE_LIFT:
+                displayVerboseSampleLiftTelemetry();
+                break;
         }
         telemetry.update();  // Make sure to update telemetry after displaying data
     }
@@ -71,17 +69,19 @@ public class DriverStationTelemetryManager {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayBasicTelemetry(telemetry);
         }
+        // Check and display SampleLiftSubsystem telemetry if available
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
+            Robot.getInstance().getSampleLiftSubsystem().displayBasicTelemetry(telemetry);
+        }
         displayTimeTelemetry(telemetry);
     }
 
-    // Basic telemetry method
+    // Verbose telemetry method for DriveSubsystem heading
     private void displayVerboseHeadingTelemetry() {
-        // Check and display DriveSubsystem telemetry if available
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayYawTelemetry(telemetry);
         }
     }
-
 
     // Verbose telemetry method for DriveSubsystem
     private void displayVerboseDriveTelemetry() {
@@ -90,12 +90,19 @@ public class DriverStationTelemetryManager {
         }
     }
 
+    // Verbose telemetry method for DriveSubsystem encoders
     private void displayVerboseEncodersTelemetry() {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayVerboseEncodersTelemetry(telemetry);
         }
     }
 
+    // Verbose telemetry method for SampleLiftSubsystem
+    private void displayVerboseSampleLiftTelemetry() {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
+            Robot.getInstance().getSampleLiftSubsystem().displayVerboseTelemetry(telemetry);
+        }
+    }
 
     private void displayTimeTelemetry(Telemetry telemetry) {
         // Display average loop time in telemetry

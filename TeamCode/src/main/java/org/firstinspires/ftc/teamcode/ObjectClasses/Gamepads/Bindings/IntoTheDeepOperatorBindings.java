@@ -7,12 +7,12 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.GripperSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmCommands.ActuateGripperCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmCommands.MoveLiftSlideCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmCommands.RotateShoulderCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ShoulderSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmCommands.ActuateGripperCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmCommands.MoveSampleLiftCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmCommands.RotateShoulderCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ShoulderSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
@@ -207,23 +207,23 @@ public class IntoTheDeepOperatorBindings {
 
         GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
         ShoulderSubsystem shoulderSubsystem = Robot.getInstance().getShoulderSubsystem();
-        LiftSubsystem liftSubsystem = Robot.getInstance().getLiftSubsystem();
+        SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
 
         private Command ReadyToScorePixelCommand() {
 
             GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
             ShoulderSubsystem shoulderSubsystem = Robot.getInstance().getShoulderSubsystem();
-            LiftSubsystem liftSubsystem = Robot.getInstance().getLiftSubsystem();
+            SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
             return new ParallelCommandGroup(
                     new SequentialCommandGroup(
                             new ActuateGripperCommand(gripperSubsystem,
                                     GripperSubsystem.GripperStates.CLOSED),
-                            new MoveLiftSlideCommand(liftSubsystem,
-                                    LiftSubsystem.LiftStates.SAFE),
+                            new MoveSampleLiftCommand(sampleLiftSubsystem,
+                                    SampleLiftSubsystem.SampleLiftStates.SAFE),
                             new RotateShoulderCommand(shoulderSubsystem,
                                     ShoulderSubsystem.ShoulderStates.BACKDROP),
-                            new MoveLiftSlideCommand(liftSubsystem,
-                                    Robot.getInstance().getLiftSubsystem().getDeliverHeight())
+                            new MoveSampleLiftCommand(sampleLiftSubsystem,
+                                    Robot.getInstance().getSampleLiftSubsystem().getDeliverHeight())
                     ));
         }
 

@@ -154,11 +154,11 @@ public class MeepMeepTesting {
         MOVE_ONLY,
 
         //Pickup the samples on their long side
-        NET_SCORE_2_PRELOAD_AND_1_SAMPLE,
-        NET_SCORE_3_PRELOAD_AND_2_SAMPLES,
-        NET_SCORE_4_PRELOAD_AND_3_SAMPLES,
-        NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE,
-        NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE,
+//        NET_SCORE_2_PRELOAD_AND_1_SAMPLE,
+//        NET_SCORE_3_PRELOAD_AND_2_SAMPLES,
+//        NET_SCORE_4_PRELOAD_AND_3_SAMPLES,
+//        NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE,
+//        NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE,
 
         //Pickup the samples on their short side
         NET_SCORE_2_PRELOAD_AND_1_SAMPLE_SHORT,
@@ -319,16 +319,16 @@ public class MeepMeepTesting {
     // Helper method to create the route based on the route selection
     private static Routes createRoute(RobotAdapter adapter, RoutesToRun routeToRunSelection) {
         switch (routeToRunSelection) {
-            case NET_SCORE_2_PRELOAD_AND_1_SAMPLE:
-                return new NET_Score_2_Preload_and_1_Sample(adapter);
-            case NET_SCORE_3_PRELOAD_AND_2_SAMPLES:
-                return new NET_Score_3_Preload_and_2_Samples(adapter);
-            case NET_SCORE_4_PRELOAD_AND_3_SAMPLES:
-                return new NET_Score_4_Preload_and_3_Samples(adapter);
-            case NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE:
-                return new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample(adapter);
-            case NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE:
-                return new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples(adapter);
+//            case NET_SCORE_2_PRELOAD_AND_1_SAMPLE:
+//                return new NET_Score_2_Preload_and_1_Sample(adapter);
+//            case NET_SCORE_3_PRELOAD_AND_2_SAMPLES:
+//                return new NET_Score_3_Preload_and_2_Samples(adapter);
+//            case NET_SCORE_4_PRELOAD_AND_3_SAMPLES:
+//                return new NET_Score_4_Preload_and_3_Samples(adapter);
+//            case NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE:
+//                return new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample(adapter);
+//            case NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE:
+//                return new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples(adapter);
             case NET_SCORE_2_PRELOAD_AND_1_SAMPLE_SHORT:
                 return new NET_Score_2_Preload_and_1_Sample_Short(adapter);
             case NET_SCORE_3_PRELOAD_AND_2_SAMPLES_SHORT:

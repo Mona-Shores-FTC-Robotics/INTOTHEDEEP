@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.ScoringArmActions;
+package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmActions;
 
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem.LIFT_PARAMS;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftSubsystem.LIFT_PARAMS;
 
 import androidx.annotation.NonNull;
 
@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Arm.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftSubsystem;
 
 public class MoveLiftSlideActionFinishImmediate implements Action {
     //Declare and set a timeout threshold for the command called TIMEOUT_TIME_SECONDS - I suggest 1.5 seconds for now
@@ -19,7 +19,7 @@ public class MoveLiftSlideActionFinishImmediate implements Action {
     //Declare currentTicks and targetTicks for use locally
     int targetTicks;
     int currentTicks;
-    private final LiftSubsystem.LiftStates targetState;
+    private final SampleLiftSubsystem.SampleLiftStates targetState;
 
     private boolean hasNotInit = true;
     private boolean finished = false;
@@ -30,7 +30,7 @@ public class MoveLiftSlideActionFinishImmediate implements Action {
     //declare a timeout boolean
     boolean timeout;
 
-    public MoveLiftSlideActionFinishImmediate(LiftSubsystem.LiftStates inputState) {
+    public MoveLiftSlideActionFinishImmediate(SampleLiftSubsystem.SampleLiftStates inputState) {
         targetState = inputState;
         timeoutTimer = new ElapsedTime();
     }
@@ -38,8 +38,8 @@ public class MoveLiftSlideActionFinishImmediate implements Action {
         public void init() {
         hasNotInit=false;
         //When the command is first run set the targetState of the subsystem to the targetState and set the target ticks to the target ticks of that state
-            Robot.getInstance().getLiftSubsystem().setTargetState(targetState);
-            Robot.getInstance().getLiftSubsystem().setTargetTicks(Robot.getInstance().getLiftSubsystem().getTargetState().ticks);
+            Robot.getInstance().getSampleLiftSubsystem().setTargetState(targetState);
+            Robot.getInstance().getSampleLiftSubsystem().setTargetTicks(Robot.getInstance().getSampleLiftSubsystem().getTargetState().ticks);
 
             //reset the timer
         timeoutTimer.reset();
@@ -47,8 +47,8 @@ public class MoveLiftSlideActionFinishImmediate implements Action {
         timeout=false;
 
         //get the currentTicks and the targetTicks from the subsystem
-        currentTicks = Robot.getInstance().getLiftSubsystem().getCurrentTicks();
-        targetTicks = Robot.getInstance().getLiftSubsystem().getTargetTicks();
+        currentTicks = Robot.getInstance().getSampleLiftSubsystem().getCurrentTicks();
+        targetTicks = Robot.getInstance().getSampleLiftSubsystem().getTargetTicks();
 
         //Check if targetTicks is greater than MAX_TARGET_TICKS and if it is set the target to the max
         //This makes sure that if we accidentally put a very large number as our target ticks we don't break the robot
@@ -66,19 +66,19 @@ public class MoveLiftSlideActionFinishImmediate implements Action {
 
         //if the target ticks are higher than the current ticks, then use EXTENSION_POWER
         if (targetTicks > currentTicks) {
-            Robot.getInstance().getLiftSubsystem().lift.setPower(LIFT_PARAMS.EXTENSION_LIFT_POWER);
+            Robot.getInstance().getSampleLiftSubsystem().lift.setPower(LIFT_PARAMS.EXTENSION_LIFT_POWER);
         }
 
         //if the target ticks are lower than the current ticks, then use RETRACTION_POWER
         if (targetTicks < currentTicks) {
-            Robot.getInstance().getLiftSubsystem().lift.setPower(LIFT_PARAMS.RETRACTION_LIFT_POWER);
+            Robot.getInstance().getSampleLiftSubsystem().lift.setPower(LIFT_PARAMS.RETRACTION_LIFT_POWER);
         }
 
         //Set the target position using the targetTicks
-            Robot.getInstance().getLiftSubsystem().lift.setTargetPosition(targetTicks);
+            Robot.getInstance().getSampleLiftSubsystem().lift.setTargetPosition(targetTicks);
 
         //set the lift motor to RUN TO POSITION - this might not be necessary
-            Robot.getInstance().getLiftSubsystem().lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Robot.getInstance().getSampleLiftSubsystem().lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
