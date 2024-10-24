@@ -29,7 +29,8 @@ public class Robot {
         CENTERSTAGE_OTOS,
         CENTERSTAGE_HUB_TWO_DEAD_WHEELS,
         CENTERSTAGE_PINPOINT,
-        INTO_THE_DEEP
+        INTO_THE_DEEP,
+        INTAKE_TESTER
     }
     public enum OpModeType {TELEOP, AUTO}
 
@@ -70,6 +71,13 @@ public class Robot {
 
             case INTO_THE_DEEP: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
+                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
+                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
+                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
+                break;
+            }
+
+            case INTAKE_TESTER: {
                 sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
                 sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
                 sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
@@ -134,66 +142,59 @@ public class Robot {
         return true;
     }
 
-    // Initialize teleop or autonomous, depending on which is used
-    public void init(OpModeType oType){
+    // Initialize shared subsystems for both TeleOp and Autonomous
+    public void init(OpModeType oType) {
         driverStationTelemetryManager = new DriverStationTelemetryManager(activeOpMode.telemetry);
         opModeType = oType;
-            if (opModeType == OpModeType.TELEOP) {
-                initTele();
-            } else {
-                initAuto();
-            }
-        }
 
-    private void initTele() {
+        // Common initialization for both TeleOp and Auto
+        initCommon();
+
+        // If specific TeleOp or Auto differences arise later, you can re-separate here.
+        // For example, if you add vision later, you could add something like:
+        // if (opModeType == OpModeType.AUTONOMOUS) {
+        //     visionSubsystem.init();
+        // }
+    }
+
+    // Common initialization method for all modes
+    private void initCommon() {
         switch (robotType) {
-            case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
-            case CHASSIS_19429_B_PINPOINT: {
-                mecanumDriveSubsystem.init();
-                break;
-            }
-            case CENTERSTAGE_OTOS:
-
-
-            case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
-            case CENTERSTAGE_PINPOINT:
-            {
-                mecanumDriveSubsystem.init();
-
-                //Sample Handling Subsystems
+            case INTAKE_TESTER:
                 sampleIntakeSubsystem.init();
                 sampleLiftSubsystem.init();
                 sampleLinearActuatorSubsystem.init();
-
-                //Specimen Handling Subsystems
-                gripperSubsystem.init();
-                shoulderSubsystem.init();
-                climberSubsystem.init();
                 break;
-            }
 
-        }
-    }
-
-    private void initAuto() {
-        // initialize auto-specific scheduler
-        switch (robotType) {
             case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
             case CHASSIS_19429_B_PINPOINT:
                 mecanumDriveSubsystem.init();
                 break;
 
-            case CENTERSTAGE_OTOS:
-            case CENTERSTAGE_PINPOINT:
-            case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:{
-//                visionSubsystem.init();
+            case INTO_THE_DEEP:
                 mecanumDriveSubsystem.init();
+                // Sample Handling Subsystems
                 sampleIntakeSubsystem.init();
-                gripperSubsystem.init();
                 sampleLiftSubsystem.init();
-                shoulderSubsystem.init();
+                sampleLinearActuatorSubsystem.init();
                 break;
-            }
+
+            case CENTERSTAGE_OTOS:
+            case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
+            case CENTERSTAGE_PINPOINT:
+
+                mecanumDriveSubsystem.init();
+
+                // Sample Handling Subsystems
+                sampleIntakeSubsystem.init();
+                sampleLiftSubsystem.init();
+                sampleLinearActuatorSubsystem.init();
+
+                // Specimen Handling Subsystems
+                gripperSubsystem.init();
+                shoulderSubsystem.init();
+                climberSubsystem.init();
+                break;
         }
     }
     public SampleLiftSubsystem getSampleLiftSubsystem()  {return sampleLiftSubsystem;}

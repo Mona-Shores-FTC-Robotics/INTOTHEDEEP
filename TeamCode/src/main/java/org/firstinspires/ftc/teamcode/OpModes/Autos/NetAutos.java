@@ -71,33 +71,33 @@ public class NetAutos extends LinearOpMode {
     }
 
     private void buildRoutes() {
-        // Find and build available routes dynamically using Reflections
-        Reflections reflections = new Reflections("com.example.sharedconstants.Routes", new SubTypesScanner(false));
+
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Reflections reflections = new Reflections("com.example.sharedconstants.Routes", new SubTypesScanner(false), classLoader);
+
         Set<Class<? extends Routes>> routesSet = reflections.getSubTypesOf(Routes.class);
+
+        // Log found routes for debugging
+        for (Class<? extends Routes> routeClass : routesSet) {
+            telemetry.addData("Discovered Route Class", routeClass.getSimpleName());
+        }
+        telemetry.update();
+
         availableRoutes = new ArrayList<>();
 
         // Instantiate and build routes for both alliance colors
         for (Class<? extends Routes> routeClass : routesSet) {
+            // Filter based on route names that start with "NET_"
             if (routeClass.getSimpleName().startsWith("NET_")) {
                 try {
+                    // Instantiate the route with the RealRobotAdapter
                     Routes route = routeClass.getConstructor(RealRobotAdapter.class).newInstance(robotDriveAdapter);
 
-                    // Build route for RED alliance
-                    robotDriveAdapter.setAllianceColor(FieldConstants.AllianceColor.RED);
-                    route.buildRoute();
-                    Action redRouteAction = route.getNetBotRoute();
+                    // Build and store actions for RED and BLUE alliance
+                    buildAndStoreActionsForRoute(route);
 
-                    // Build route for BLUE alliance
-                    robotDriveAdapter.setAllianceColor(FieldConstants.AllianceColor.BLUE);
-                    route.buildRoute();
-                    Action blueRouteAction = route.getNetBotRoute();
-
-                    // Store route and corresponding actions
+                    // Add the route to the available routes list
                     availableRoutes.add(route);
-                    Map<FieldConstants.AllianceColor, Action> actionsMap = new HashMap<>();
-                    actionsMap.put(FieldConstants.AllianceColor.RED, redRouteAction);
-                    actionsMap.put(FieldConstants.AllianceColor.BLUE, blueRouteAction);
-                    routeActionsMap.put(route, actionsMap);
 
                 } catch (Exception e) {
                     telemetry.addData("Error", "Failed to instantiate route: " + routeClass.getSimpleName());
@@ -107,6 +107,30 @@ public class NetAutos extends LinearOpMode {
 
         // Sort the routes alphabetically for easier navigation
         availableRoutes.sort((r1, r2) -> r1.getClass().getSimpleName().compareToIgnoreCase(r2.getClass().getSimpleName()));
+    }
+
+
+    private void buildAndStoreActionsForRoute(Routes route) {
+        try {
+            // Build route for RED alliance
+            robotDriveAdapter.setAllianceColor(FieldConstants.AllianceColor.RED);
+            route.buildRoute();
+            Action redRouteAction = route.getNetBotRoute();
+
+            // Build route for BLUE alliance
+            robotDriveAdapter.setAllianceColor(FieldConstants.AllianceColor.BLUE);
+            route.buildRoute();
+            Action blueRouteAction = route.getNetBotRoute();
+
+            // Store the route and corresponding actions in the map
+            Map<FieldConstants.AllianceColor, Action> actionsMap = new HashMap<>();
+            actionsMap.put(FieldConstants.AllianceColor.RED, redRouteAction);
+            actionsMap.put(FieldConstants.AllianceColor.BLUE, blueRouteAction);
+            routeActionsMap.put(route, actionsMap);
+
+        } catch (Exception e) {
+            telemetry.addData("Error", "Failed to build actions for route: " + route.getClass().getSimpleName());
+        }
     }
 
     private void initRouteSelection() {
