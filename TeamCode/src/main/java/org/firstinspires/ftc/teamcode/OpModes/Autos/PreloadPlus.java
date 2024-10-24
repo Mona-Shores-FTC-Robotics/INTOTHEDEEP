@@ -6,6 +6,11 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike;
+import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
+import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
+import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike;
+import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade;
+import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_4_SampleFirst_Push_2_Spike_Samples;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -18,6 +23,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 @Autonomous(name = "Preload Plus")
 public class PreloadPlus extends LinearOpMode {
+
 
     @Override
     public void runOpMode() {
@@ -49,7 +55,7 @@ public class PreloadPlus extends LinearOpMode {
         if (MatchConfig.finalSideOfField == FieldConstants.SideOfField.NET) {
             route = new NET_Score_2_Preload_and_1_Sample(robotDriveAdapter);
         } else{
-            route = new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(robotDriveAdapter);
+            route = new OBS_Score_4_SampleFirst_Push_2_Spike_Samples(robotDriveAdapter);
         }
         route.buildRoute();
 

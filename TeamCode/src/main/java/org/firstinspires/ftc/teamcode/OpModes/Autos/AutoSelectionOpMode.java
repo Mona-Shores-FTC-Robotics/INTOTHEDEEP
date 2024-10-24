@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
@@ -17,7 +18,7 @@ import org.reflections.scanners.SubTypesScanner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
+@Disabled
 @Autonomous(name = "Auto Select Op Mode")
 public class AutoSelectionOpMode extends LinearOpMode {
     private RealRobotAdapter robotDriveAdapter;
