@@ -69,7 +69,7 @@ public class RealRobotAdapter implements RobotAdapter {
                 case SECURE_PRELOAD_SPECIMEN:
                 case PICKUP_SPECIMEN_OFF_WALL:
                 case SAMPLE_INTAKE_ON:
-                    if (robot.hasSubsystem(Robot.SubsystemType.GRIPPER)) {
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_GRIPPER)) {
                         return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.CLOSED);
                     } else {
                         telemetryManger.displayError("Gripper subsystem is not available on this robot.");
@@ -77,7 +77,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     }
 
                 case HANG_SPECIMEN_ON_HIGH_CHAMBER:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT) && robot.hasSubsystem(Robot.SubsystemType.GRIPPER)) {
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_GRIPPER)) {
                         return new SequentialAction(
 //                                new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HANG_HIGH_CHAMBER),
                                 new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN));
@@ -87,7 +87,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     }
 
                 case HANG_SPECIMEN_ON_LOW_CHAMBER:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT) && robot.hasSubsystem(Robot.SubsystemType.GRIPPER)) {
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_GRIPPER)) {
                         return new SequentialAction(
 //                                new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HANG_LOW_CHAMBER),
                                 new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN));
@@ -97,10 +97,13 @@ public class RealRobotAdapter implements RobotAdapter {
                     }
 
                 case DEPOSIT_SAMPLE:
-                    if (robot.hasSubsystem(Robot.SubsystemType.GRIPPER)) {
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+                        //todo FIXME
                         return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN);
                     } else {
-                        telemetryManger.displayError("Gripper subsystem is not available on this robot.");
+                        telemetryManger.displayError("Sample subsystems are not available on this robot.");
                         return new SleepAction(0.1);  // Returning nonce action
                     }
 
@@ -112,7 +115,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
                         return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.valueOf(actionType.name()));
                     } else {
-                        telemetryManger.displayError("Lift subsystem is not available on this robot.");
+                        telemetryManger.displayError("Sample Lift subsystem is not available on this robot.");
                         return new SleepAction(0.1);  // Returning nonce action
                     }
 
