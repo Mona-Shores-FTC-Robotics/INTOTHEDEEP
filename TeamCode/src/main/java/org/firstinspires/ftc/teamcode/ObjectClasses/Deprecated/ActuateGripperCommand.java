@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmCommands;
+package org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.GripperSubsystem;
 
 public class ActuateGripperCommand extends CommandBase {
         private final GripperSubsystem gripperSubsystem;

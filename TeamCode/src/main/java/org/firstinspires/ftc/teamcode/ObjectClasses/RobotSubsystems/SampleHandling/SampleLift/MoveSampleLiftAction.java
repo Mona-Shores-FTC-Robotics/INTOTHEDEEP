@@ -1,19 +1,13 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmActions;
-
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftSubsystem.LIFT_PARAMS;
+package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift;
 
 import android.annotation.SuppressLint;
-
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftSubsystem;
 
 public class MoveSampleLiftAction implements Action {
     // State tracking variables
@@ -23,10 +17,17 @@ public class MoveSampleLiftAction implements Action {
     private SampleLiftSubsystem sampleLiftSubsystem;
     private final SampleLiftSubsystem.SampleLiftStates targetState;
     private final ElapsedTime timeoutTimer = new ElapsedTime();
+    private final double timeoutTimeSeconds;  // Now we have an optional timeout
 
-    // Constructor to set the target state
+    // Constructor with default timeout (from LIFT_PARAMS)
     public MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates inputState) {
+        this(inputState, SampleLiftSubsystem.SAMPLE_LIFT_PARAMS.TIMEOUT_TIME_SECONDS);  // Default to the one in LIFT_PARAMS
+    }
+
+    // Constructor with custom timeout
+    public MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates inputState, double timeoutTimeSeconds) {
         targetState = inputState;
+        this.timeoutTimeSeconds = timeoutTimeSeconds;  // Use provided timeout
     }
 
     // Initialization method
@@ -36,14 +37,13 @@ public class MoveSampleLiftAction implements Action {
 
         // Set the target state and target ticks in the subsystem
         sampleLiftSubsystem.setTargetState(targetState);
-        sampleLiftSubsystem.setTargetTicks(targetState.getLiftHeightTicks());
 
         // Reset the timeout timer and set timeout to false
         timeoutTimer.reset();
         timeout = false;
 
         // Set motor power and target position
-        sampleLiftSubsystem.lift.setPower(LIFT_PARAMS.LIFT_POWER);
+        sampleLiftSubsystem.lift.setPower(SampleLiftSubsystem.SAMPLE_LIFT_PARAMS.LIFT_POWER);
         sampleLiftSubsystem.lift.setTargetPosition(sampleLiftSubsystem.getTargetTicks());
 
         // Set motor mode to RUN_TO_POSITION
@@ -70,11 +70,11 @@ public class MoveSampleLiftAction implements Action {
 
     // Method to check if the action is finished
     public boolean isFinished() {
-        // Check if the lift is within the threshold of the target position
-        boolean finished = Math.abs(sampleLiftSubsystem.getCurrentTicks() - sampleLiftSubsystem.getTargetTicks()) < LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD;
+        // Check if the subsystem reports that the lift has finished its move
+        boolean finished = sampleLiftSubsystem.getCurrentState() == targetState;
 
-        // Check for timeout
-        boolean timedOut = timeoutTimer.seconds() > LIFT_PARAMS.TIMEOUT_TIME_SECONDS;
+        // Check for timeout using the specified timeout time (can be default or custom)
+        boolean timedOut = timeoutTimer.seconds() > timeoutTimeSeconds;
 
         // If finished, update the state immediately
         if (finished) {

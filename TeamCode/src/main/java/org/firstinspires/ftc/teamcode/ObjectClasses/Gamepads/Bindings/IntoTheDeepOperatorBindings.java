@@ -3,19 +3,20 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.GripperSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmCommands.ActuateGripperCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmCommands.MoveSampleLiftCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmCommands.RotateShoulderCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ShoulderSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Intake.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class IntoTheDeepOperatorBindings {
 
@@ -28,7 +29,6 @@ public class IntoTheDeepOperatorBindings {
     public IntoTheDeepOperatorBindings(GamepadEx operatorGamepad) {
 
         VisionSubsystem visionSubsystem = Robot.getInstance().getVisionSubsystem();
-        IntakeSubsystem intakeSubsystem = Robot.getInstance().getIntakeSubsystem();
         GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
         ClimberSubsystem climberSubsystem = Robot.getInstance().getClimberSubsystem();
 
@@ -205,26 +205,11 @@ public class IntoTheDeepOperatorBindings {
 
     private class MakeOperatorCombinationCommands{
 
-        GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
-        ShoulderSubsystem shoulderSubsystem = Robot.getInstance().getShoulderSubsystem();
         SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
-
-        private Command ReadyToScorePixelCommand() {
-
-            GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
-            ShoulderSubsystem shoulderSubsystem = Robot.getInstance().getShoulderSubsystem();
-            SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
-            return new ParallelCommandGroup(
-                    new SequentialCommandGroup(
-                            new ActuateGripperCommand(gripperSubsystem,
-                                    GripperSubsystem.GripperStates.CLOSED),
-                            new MoveSampleLiftCommand(sampleLiftSubsystem,
-                                    SampleLiftSubsystem.SampleLiftStates.SAFE),
-                            new RotateShoulderCommand(shoulderSubsystem,
-                                    ShoulderSubsystem.ShoulderStates.BACKDROP),
-                            new MoveSampleLiftCommand(sampleLiftSubsystem,
-                                    Robot.getInstance().getSampleLiftSubsystem().getDeliverHeight())
-                    ));
+        private Command ReadyToScoreSampleCommand() {
+            Set<Subsystem> requirements = Collections.singleton(sampleLiftSubsystem);
+            MoveSampleLiftAction liftSampleHighBasketAction = new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET);
+            return new ActionCommand(liftSampleHighBasketAction, requirements);
         }
 
         private Command ReleasePixels() {

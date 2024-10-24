@@ -8,10 +8,10 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.GripperSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmActions.ActuateEndEffectorAction;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ScoringArmActions.MoveSampleLiftAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.ActuateEndEffectorAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
 
 public class RealRobotAdapter implements RobotAdapter {
     private final ActionFactory actionFactory;
@@ -79,7 +79,7 @@ public class RealRobotAdapter implements RobotAdapter {
                 case HANG_SPECIMEN_ON_HIGH_CHAMBER:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT) && robot.hasSubsystem(Robot.SubsystemType.GRIPPER)) {
                         return new SequentialAction(
-                                new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HANG_HIGH_CHAMBER),
+//                                new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HANG_HIGH_CHAMBER),
                                 new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN));
                     } else {
                         telemetryManger.displayError("Lift or Gripper subsystem is not available on this robot.");
@@ -89,7 +89,7 @@ public class RealRobotAdapter implements RobotAdapter {
                 case HANG_SPECIMEN_ON_LOW_CHAMBER:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT) && robot.hasSubsystem(Robot.SubsystemType.GRIPPER)) {
                         return new SequentialAction(
-                                new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HANG_LOW_CHAMBER),
+//                                new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HANG_LOW_CHAMBER),
                                 new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN));
                     } else {
                         telemetryManger.displayError("Lift or Gripper subsystem is not available on this robot.");

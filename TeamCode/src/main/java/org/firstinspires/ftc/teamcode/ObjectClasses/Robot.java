@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.GripperSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.ShoulderSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.ShoulderSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Intake.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
 import java.util.EnumSet;
@@ -27,21 +28,30 @@ public class Robot {
         CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS,
         CENTERSTAGE_OTOS,
         CENTERSTAGE_HUB_TWO_DEAD_WHEELS,
-        CENTERSTAGE_PINPOINT
+        CENTERSTAGE_PINPOINT,
+        INTO_THE_DEEP
     }
     public enum OpModeType {TELEOP, AUTO}
 
     private static LinearOpMode activeOpMode;
+
     private static DriveSubsystem mecanumDriveSubsystem;
-    private static VisionSubsystem visionSubsystem;
-    private static IntakeSubsystem intakeSubsystem;
-    private static GripperSubsystem gripperSubsystem;
+
+    //Sample Subsystems
+    private static SampleIntakeSubsystem sampleIntakeSubsystem;
     private static SampleLiftSubsystem sampleLiftSubsystem;
+    private static SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem;
+
+    //Specimen Subsystems
     private static ShoulderSubsystem shoulderSubsystem;
+    private static GripperSubsystem gripperSubsystem;
+
     private static ClimberSubsystem climberSubsystem;
+    private static VisionSubsystem visionSubsystem;
+
 
     public enum SubsystemType {
-        DRIVE, GYRO, VISION, INTAKE, GRIPPER, SAMPLE_LIFT, SHOULDER, CLIMBER
+        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT, SPECIMEN_GRIPPER, SPECIMEN_ARM, CLIMBER, VISION
     }
 
     // Use an EnumSet for tracking available subsystems
@@ -57,6 +67,15 @@ public class Robot {
 
     private void CreateSubsystems(HardwareMap hardwareMap) {
         switch (robotType) {
+
+            case INTO_THE_DEEP: {
+                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
+                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
+                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
+                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
+                break;
+            }
+
             //Just the drive base
             case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
             case CHASSIS_19429_B_PINPOINT: {
@@ -68,10 +87,9 @@ public class Robot {
             case CENTERSTAGE_PINPOINT:
             case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:{
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
-//                visionSubsystem = new VisionSubsystem(hardwareMap, "Webcam");
-                intakeSubsystem = new IntakeSubsystem(hardwareMap, "par", "perp");
+                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
+                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
                 gripperSubsystem = new GripperSubsystem(hardwareMap, "endeffector");
-                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "liftslide");
                 shoulderSubsystem = new ShoulderSubsystem(hardwareMap, "shoulder");
                 climberSubsystem = new ClimberSubsystem(hardwareMap, "climb", "climbWinch");
                 break;
@@ -140,11 +158,15 @@ public class Robot {
             case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
             case CENTERSTAGE_PINPOINT:
             {
-//                visionSubsystem.init();
                 mecanumDriveSubsystem.init();
-                intakeSubsystem.init();
-                gripperSubsystem.init();
+
+                //Sample Handling Subsystems
+                sampleIntakeSubsystem.init();
                 sampleLiftSubsystem.init();
+                sampleLinearActuatorSubsystem.init();
+
+                //Specimen Handling Subsystems
+                gripperSubsystem.init();
                 shoulderSubsystem.init();
                 climberSubsystem.init();
                 break;
@@ -166,7 +188,7 @@ public class Robot {
             case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:{
 //                visionSubsystem.init();
                 mecanumDriveSubsystem.init();
-                intakeSubsystem.init();
+                sampleIntakeSubsystem.init();
                 gripperSubsystem.init();
                 sampleLiftSubsystem.init();
                 shoulderSubsystem.init();
@@ -175,12 +197,14 @@ public class Robot {
         }
     }
     public SampleLiftSubsystem getSampleLiftSubsystem()  {return sampleLiftSubsystem;}
+    public SampleIntakeSubsystem getSampleIntakeSubsystem()  {return sampleIntakeSubsystem;}
+    public SampleLinearActuatorSubsystem getSampleLinearActuatorSubsystem()  {return sampleLinearActuatorSubsystem;}
+
     public DriveSubsystem getDriveSubsystem()  {return mecanumDriveSubsystem;}
     public LinearOpMode getActiveOpMode()  {return activeOpMode;}
     public DriverStationTelemetryManager getDriverStationTelemetryManager() {return driverStationTelemetryManager;}
 
     public VisionSubsystem getVisionSubsystem()  {return visionSubsystem;}
-    public IntakeSubsystem getIntakeSubsystem()  {return intakeSubsystem;}
     public GripperSubsystem getEndEffectorSubsystem()  {return gripperSubsystem;}
     public ShoulderSubsystem getShoulderSubsystem()  {return shoulderSubsystem;}
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;}

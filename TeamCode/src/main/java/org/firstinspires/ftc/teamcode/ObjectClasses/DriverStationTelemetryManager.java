@@ -10,7 +10,8 @@ public class DriverStationTelemetryManager {
         VERBOSE_DRIVE,
         VERBOSE_ENCODERS,
         VERBOSE_HEADING,
-        VERBOSE_SAMPLE_LIFT // Updated telemetry mode name for sample lift
+        VERBOSE_SAMPLE_LIFT,
+        VERBOSE_SAMPLE_LINEAR_ACTUATOR // Updated telemetry mode name for sample lift
         // You can add more modes later, like VERBOSE_OTHER_SUBSYSTEM, etc.
     }
 
@@ -48,6 +49,9 @@ public class DriverStationTelemetryManager {
             case VERBOSE_SAMPLE_LIFT:
                 displayVerboseSampleLiftTelemetry();
                 break;
+            case VERBOSE_SAMPLE_LINEAR_ACTUATOR:
+                displayVerboseSampleLiftTelemetry();
+                break;
         }
         telemetry.update();  // Make sure to update telemetry after displaying data
     }
@@ -69,10 +73,17 @@ public class DriverStationTelemetryManager {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayBasicTelemetry(telemetry);
         }
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+            Robot.getInstance().getSampleIntakeSubsystem().displayBasicTelemetry(telemetry);
+        }
         // Check and display SampleLiftSubsystem telemetry if available
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
             Robot.getInstance().getSampleLiftSubsystem().displayBasicTelemetry(telemetry);
         }
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+            Robot.getInstance().getSampleLinearActuatorSubsystem().displayBasicTelemetry(telemetry);
+        }
+
         displayTimeTelemetry(telemetry);
     }
 
@@ -101,6 +112,13 @@ public class DriverStationTelemetryManager {
     private void displayVerboseSampleLiftTelemetry() {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
             Robot.getInstance().getSampleLiftSubsystem().displayVerboseTelemetry(telemetry);
+        }
+    }
+
+    // Verbose telemetry method for SampleLiftSubsystem
+    private void displayVerboseSampleLinearActuatorTelemetry() {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+            Robot.getInstance().getSampleLinearActuatorSubsystem().displayVerboseTelemetry(telemetry);
         }
     }
 
