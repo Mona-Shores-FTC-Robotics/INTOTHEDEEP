@@ -106,7 +106,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                 Robot.getInstance().getSampleIntakeSubsystem().setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
             }
         }
-
     }
 
     // Set the target state of the actuator
