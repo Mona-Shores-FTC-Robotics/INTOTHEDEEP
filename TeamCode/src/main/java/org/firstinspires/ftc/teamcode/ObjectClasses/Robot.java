@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.ShoulderSubsystem;
@@ -49,6 +50,7 @@ public class Robot {
 
     private static ClimberSubsystem climberSubsystem;
     private static VisionSubsystem visionSubsystem;
+    private static SampleHandlingStateMachine sampleHandlingStateMachine;
 
 
     public enum SubsystemType {
@@ -71,8 +73,10 @@ public class Robot {
 
             case INTO_THE_DEEP: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
+//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake", "colorsensor");
                 sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
                 sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
+                // sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator", "actuatorlimitSwitch");
                 sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
                 break;
             }
@@ -152,9 +156,9 @@ public class Robot {
 
         // If specific TeleOp or Auto differences arise later, you can re-separate here.
         // For example, if you add vision later, you could add something like:
-        // if (opModeType == OpModeType.AUTONOMOUS) {
-        //     visionSubsystem.init();
-        // }
+         if (opModeType == OpModeType.TELEOP) {
+             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftSubsystem);
+         }
     }
 
     // Common initialization method for all modes
@@ -209,6 +213,7 @@ public class Robot {
     public GripperSubsystem getEndEffectorSubsystem()  {return gripperSubsystem;}
     public ShoulderSubsystem getShoulderSubsystem()  {return shoulderSubsystem;}
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;}
+    public SampleHandlingStateMachine getSampleHandlingStateMachine(){return sampleHandlingStateMachine;}
 
     public static RobotType getPreviousRobotType(RobotType currentType) {
         RobotType[] types = RobotType.values();

@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
@@ -64,10 +65,22 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     private int targetTicks;   // Cached target position
     private double currentPower;
     FieldConstants.AllianceColor colorSensor = null;
+    private DigitalChannel retractedLimitSwitch;
 
-    // Constructor
-    public SampleLinearActuatorSubsystem(final HardwareMap hMap, final String actuatorMotorName) {
-        sampleActuator = hMap.get(DcMotorEx.class, actuatorMotorName);
+    // Constructor with limit switch
+    public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, String actuatorMotorName, String limitSwitchName) {
+        sampleActuator = hardwareMap.get(DcMotorEx.class, actuatorMotorName);
+
+        // Initialize the limit switch if the name is provided
+        if (limitSwitchName != null && !limitSwitchName.isEmpty()) {
+            retractedLimitSwitch = hardwareMap.get(DigitalChannel.class, limitSwitchName);
+            retractedLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
+        }
+    }
+
+    // Constructor without limit switch
+    public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, String actuatorMotorName) {
+        this(hardwareMap, actuatorMotorName, null);  // Calls the main constructor with no limit switch name
     }
 
     // Initialize actuator motor with encoders and PID configuration
@@ -123,6 +136,15 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     // Check if the actuator has reached its target
     public boolean isActuatorAtTarget() {
         return Math.abs(currentTicks - targetTicks) < ACTUATOR_PARAMS.TICK_THRESHOLD;
+    }
+
+    // Method to check if the actuator is fully retracted
+    public boolean isFullyRetracted() {
+        if (retractedLimitSwitch == null) {
+            System.out.println("Limit switch not configured; assuming fully retracted.");
+            return currentState == SampleActuatorStates.RETRACT && isActuatorAtTarget();
+        }
+        return !retractedLimitSwitch.getState();  // Assuming switch triggers when low
     }
 
     // Update the actuator state based on whether it has reached its target
@@ -217,4 +239,5 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public SampleActuatorStates getCurrentState() {
         return currentState;
     }
+
 }

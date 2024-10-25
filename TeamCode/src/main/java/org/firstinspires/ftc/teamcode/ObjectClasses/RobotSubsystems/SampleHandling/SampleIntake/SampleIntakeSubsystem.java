@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import static com.example.sharedconstants.FieldConstants.SampleColor;
+import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 @Config
 public class SampleIntakeSubsystem extends SubsystemBase {
@@ -38,12 +41,24 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     }
 
     private final CRServo sampleIntake;  // Continuous rotation servo
+    private final ColorSensor colorSensor;  // Nullable color sensor
     private SampleIntakeStates currentState;
     private double currentPower;
 
-    // Constructor
-    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoName) {
+    // Constructor with color sensor
+    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoName, final String colorSensorName) {
         sampleIntake = hMap.get(CRServo.class, intakeServoName);
+
+        if (colorSensorName != null && !colorSensorName.isEmpty()) {
+            colorSensor = hMap.get(ColorSensor.class, colorSensorName);
+        } else {
+            colorSensor = null;  // No color sensor configured
+        }
+    }
+
+    // Overloaded constructor without color sensor
+    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoName) {
+        this(hMap, intakeServoName, null);  // Calls the main constructor with no color sensor
     }
 
     // Initialize intake servo
@@ -65,6 +80,29 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         sampleIntake.setPower(currentPower);  // Apply the clipped power
     }
 
+    // Method to read color from the sensor
+    public SampleColor detectSampleColor() {
+        if (colorSensor != null) {
+            int red = colorSensor.red();
+            int green = colorSensor.green();
+            int blue = colorSensor.blue();
+
+            // Use the enum to return the color
+            if (red > blue && red > green) {
+                return SampleColor.RED;
+            } else if (blue > red && blue > green) {
+                return SampleColor.BLUE;
+            } else if (green > red && green > blue) {
+                return SampleColor.YELLOW;
+            } else {
+                return SampleColor.UNKNOWN;
+            }
+        } else {
+            // If no color sensor, return UNKNOWN
+            return SampleColor.UNKNOWN;
+        }
+    }
+
     // Update intake parameters dynamically (called in periodic)
     private void updateParameters() {
         // Update the power for each state dynamically from dashboard changes
@@ -75,7 +113,9 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Update parameters in real time, if adjusted via dashboard
+        // Detect the color of the game piece in every loop
+        SampleColor detectedSampleColor = detectSampleColor();
+        handleSamplePickup(detectedSampleColor);
         updateParameters();
         updateDashboardTelemetry();
     }
@@ -84,11 +124,24 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public void updateDashboardTelemetry() {
         MatchConfig.telemetryPacket.put("Sample Intake/State", currentState.toString());
         MatchConfig.telemetryPacket.put("Sample Intake/Power", currentPower);
+
+        // Add color sensor reading to the telemetry, if sensor is present
+        if (colorSensor != null) {
+            FieldConstants.SampleColor detectedColor = detectSampleColor();
+            MatchConfig.telemetryPacket.put("Sample Intake/Detected Color", detectedColor.toString());
+        } else {
+            MatchConfig.telemetryPacket.put("Sample Intake/Detected Color", "No Sensor");
+        }
     }
 
     // Basic telemetry display with context for the driver station
     public void displayBasicTelemetry(org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
         telemetry.addData("Sample Intake Status", String.format("State: %s", currentState));
+        if (colorSensor != null) {
+            telemetry.addData("Detected Color", detectSampleColor().toString());
+        } else {
+            telemetry.addData("Detected Color", "No Sensor");
+        }
     }
 
     // Getters for telemetry use or other purposes
@@ -96,7 +149,22 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         return currentState;
     }
 
-    public double getCurrentPower() {
-        return currentPower;
+    public void handleSamplePickup(SampleColor sampleColor) {
+        if ((sampleColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED) ||
+                (sampleColor == SampleColor.BLUE && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) ||
+                sampleColor == SampleColor.YELLOW) {
+
+            // Good piece: Retract actuator and process the sample
+            Robot.getInstance().getSampleHandlingStateMachine().onGoodSampleDetected();
+
+        } else if ((sampleColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) ||
+                (sampleColor == SampleColor.BLUE && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED)) {
+
+            // Bad piece: Expel the sample and reset the actuator to Mid
+            Robot.getInstance().getSampleHandlingStateMachine().onBadSampleDetected();
+
+        } else if (sampleColor == SampleColor.UNKNOWN) {
+            System.out.println("Unknown color detected, no action taken.");
+        }
     }
 }

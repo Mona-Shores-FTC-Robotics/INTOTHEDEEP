@@ -13,7 +13,8 @@ import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
 public class FieldConstants {
-    public enum AllianceColor {BLUE, YELLOW, RED}
+    public enum AllianceColor {BLUE, RED}
+    public enum SampleColor {BLUE, YELLOW, RED, UNKNOWN}
     public enum SideOfField {OBSERVATION, NET}
     public enum TeamPropLocation {LEFT, CENTER, RIGHT}
 
