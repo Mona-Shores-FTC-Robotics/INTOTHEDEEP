@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
@@ -12,10 +12,10 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 public class SampleIntakeSubsystem extends SubsystemBase {
 
     public static class IntakeParams {
-        public double INTAKE_ON_POWER = .8;
-        public double INTAKE_REVERSE_POWER = -.8;
+        public double INTAKE_ON_POWER = 0.8;
+        public double INTAKE_REVERSE_POWER = -0.8;
         public double INTAKE_OFF_POWER = 0.0;
-        public double MAX_POWER = 1.0;  // Max allowable power for intake motor
+        public double MAX_POWER = 1.0;  // Max allowable power for intake servo
     }
 
     public static IntakeParams INTAKE_PARAMS = new IntakeParams();
@@ -37,22 +37,18 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         }
     }
 
-    private final DcMotorEx sampleIntake;
+    private final CRServo sampleIntake;  // Continuous rotation servo
     private SampleIntakeStates currentState;
     private double currentPower;
 
     // Constructor
-    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeMotorName) {
-        sampleIntake = hMap.get(DcMotorEx.class, intakeMotorName);
+    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoName) {
+        sampleIntake = hMap.get(CRServo.class, intakeServoName);
     }
 
-    // Initialize intake motor
+    // Initialize intake servo
     public void init() {
         Robot.getInstance().registerSubsystem(Robot.SubsystemType.SAMPLE_INTAKE);  // Register subsystem
-        sampleIntake.setDirection(DcMotorEx.Direction.FORWARD);
-        sampleIntake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        sampleIntake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
         setCurrentState(SampleIntakeStates.INTAKE_OFF);  // Set default state to off
         currentPower = INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
     }
@@ -63,7 +59,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         setPower(state.power);
     }
 
-    // Set motor power, ensuring it's within limits
+    // Set servo power, ensuring it's within limits
     private void setPower(double power) {
         currentPower = Range.clip(power, -INTAKE_PARAMS.MAX_POWER, INTAKE_PARAMS.MAX_POWER);  // Clip power to safe range
         sampleIntake.setPower(currentPower);  // Apply the clipped power

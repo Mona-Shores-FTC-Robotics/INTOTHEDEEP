@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class MatchConfig {
 
     public static AllianceColor finalAllianceColor = AllianceColor.BLUE;
+    public static AllianceColor finalOpponentColor = AllianceColor.RED;
     public static SideOfField finalSideOfField = SideOfField.OBSERVATION;
     public static Robot.RobotType finalRobotType = Robot.RobotType.CHASSIS_19429_B_PINPOINT;  // Default to an initial type
 

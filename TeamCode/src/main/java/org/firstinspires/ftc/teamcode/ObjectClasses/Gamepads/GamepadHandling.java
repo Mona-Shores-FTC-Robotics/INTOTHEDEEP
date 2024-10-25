@@ -70,8 +70,10 @@ public class GamepadHandling {
             telemetry.addLine("Color (DPAD-UP/DOWN)");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 finalAllianceColor = AllianceColor.BLUE;
+                finalOpponentColor = AllianceColor.RED;
             } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 finalAllianceColor = AllianceColor.RED;
+                finalOpponentColor = AllianceColor.BLUE;
             }
 
             // Allow selection of side of field based on alliance color
@@ -154,8 +156,10 @@ public class GamepadHandling {
             telemetry.addLine("Color (DPAD-UP/DOWN) - Side Of Field (DPAD-LEFT/RIGHT)");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 finalAllianceColor = AllianceColor.BLUE;
+                finalOpponentColor = AllianceColor.RED;
             } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 finalAllianceColor = AllianceColor.RED;
+                finalOpponentColor = AllianceColor.BLUE;
             }
 
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
@@ -196,8 +200,10 @@ public class GamepadHandling {
             telemetry.addLine("Color (DPAD-UP/DOWN)");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 finalAllianceColor = AllianceColor.BLUE;
+                finalOpponentColor = AllianceColor.RED;
             } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 finalAllianceColor = AllianceColor.RED;
+                finalOpponentColor = AllianceColor.BLUE;
             }
         }
     }

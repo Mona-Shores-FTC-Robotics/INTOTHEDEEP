@@ -5,14 +5,19 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.GripperSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeIntakePowerAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.MoveLinearActuatorAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
 
 import java.util.Collections;
@@ -31,6 +36,12 @@ public class IntoTheDeepOperatorBindings {
         VisionSubsystem visionSubsystem = Robot.getInstance().getVisionSubsystem();
         GripperSubsystem gripperSubsystem = Robot.getInstance().getEndEffectorSubsystem();
         ClimberSubsystem climberSubsystem = Robot.getInstance().getClimberSubsystem();
+        SampleIntakeSubsystem sampleIntakeSubsystem = Robot.getInstance().getSampleIntakeSubsystem();
+        Set<Subsystem> sampleIntakeRequirements = Collections.singleton(sampleIntakeSubsystem);
+        SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
+        Set<Subsystem>  sampleLiftRequirements = Collections.singleton(sampleLiftSubsystem);
+        SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();
+        Set<Subsystem>  sampleLinearActuatorRequirements = Collections.singleton(sampleLinearActuatorSubsystem);
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -132,19 +143,13 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        // INTAKE ON while held down, off when not
-//        operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
-//                .whenPressed(
-//                        new SequentialCommandGroup(
-//                                new ActuateGripperCommand(gripperSubsystem, GripperSubsystem.GripperStates.OPEN),
-//                                new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_ON, IntakeSubsystem.IntakeStates.INTAKE_SLOW)
-//                        ))
-//                .whenReleased(
-//                        new SequentialCommandGroup(
-//                                new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_OFF, IntakeSubsystem.IntakeStates.INTAKE_OFF),
-//                                new WaitCommand(300),
-//                                new ActuateGripperCommand(gripperSubsystem, GripperSubsystem.GripperStates.CLOSED)
-//                        ));
+        ChangeIntakePowerAction turnOffIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+        ChangeIntakePowerAction turnOnIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
+                    .whenPressed(new ActionCommand(turnOnIntake, sampleIntakeRequirements))
+                    .whenReleased(new ActionCommand(turnOffIntake, sampleIntakeRequirements)
+                            );
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -152,30 +157,61 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        // INTAKE ON while held down, off when not
-//        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
-//                .whenPressed(new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_REVERSE, IntakeSubsystem.IntakeStates.INTAKE_REVERSE))
-//                .whenReleased(new ChangeIntakePowerCommand(intakeSubsystem, IntakeSubsystem.IntakeStates.INTAKE_OFF, IntakeSubsystem.IntakeStates.INTAKE_OFF));
+        ChangeIntakePowerAction reverseIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
+                .whenPressed(new ActionCommand(reverseIntake, sampleIntakeRequirements))
+                .whenReleased(new ActionCommand(turnOffIntake, sampleIntakeRequirements)
+                );
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        //  Y BUTTON - READY TO SCORE PIXELS MID HEIGHT         //
+        //  Y BUTTON - MOVE SAMPLE TO HIGH BASKET THEN HOME     //
         //                                                      //
         //////////////////////////////////////////////////////////
 
-//        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
-//                .whenPressed(new InstantCommand(()-> {
-//                            new MakeOperatorCombinationCommands().ReadyToScorePixelCommand().schedule();
-//                        }));
+        MoveSampleLiftAction sampleLiftHome = new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HOME);
+        MoveSampleLiftAction highBasket = new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET);
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
+                .toggleWhenPressed(
+                        new ActionCommand(highBasket, sampleLiftRequirements),
+                        new ActionCommand(sampleLiftHome, sampleLiftRequirements)
+                        );
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        //  A BUTTON  - RELEASE PIXELS                          //
+        //  A BUTTON  - RETRACTS AND DEPLOYS SAMPLES            //
         //                                                      //
         //////////////////////////////////////////////////////////
 
-//        operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
-//                .whenPressed(new MakeOperatorCombinationCommands().ReleasePixels(), false);
+        MoveLinearActuatorAction actuatorRetract = new MoveLinearActuatorAction(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
+        MoveLinearActuatorAction actuatorDeployFull = new MoveLinearActuatorAction(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
+        MoveLinearActuatorAction actuatorDeployMid = new MoveLinearActuatorAction(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID);
+
+// State counter to track the current position in the cycle (0, 1, 2)
+        final int[] stateCounter = {0};  // Use an array to allow mutation within lambda
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
+                .whenPressed(() -> {
+                    // Increment state counter and wrap it around if necessary
+                    stateCounter[0] = (stateCounter[0] + 1) % 3;
+
+                    switch (stateCounter[0]) {
+                        case 0:
+                            // First press - Deploy Full
+                            new ActionCommand(actuatorDeployMid, sampleLinearActuatorRequirements).schedule();
+                            break;
+                        case 1:
+                            // Second press - Deploy Mid
+                            new ActionCommand(actuatorDeployFull, sampleLinearActuatorRequirements).schedule();
+                            break;
+                        case 2:
+                            // Third press - Retract
+                            new ActionCommand(actuatorRetract, sampleLinearActuatorRequirements).schedule();
+                            break;
+                    }
+                });
+
 
         //////////////////////////////////////////////////////////
         //                                                      //

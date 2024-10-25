@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
@@ -22,7 +24,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         public double TIMEOUT_TIME_SECONDS = 3; // Time after which a move action/command will give up
 
         public double POWER = .4;  // Unified power for both directions
-        public int DEPLOY_POSITION_TICKS = 1000;
+        public int DEPLOY_FULL_POSITION_TICKS = 1000;
+        public int DEPLOY_MID_POSITION_TICKS = 500;
         public int RETRACT_POSITION_TICKS = 0;
         public double VEL_P = .5;
         public double VEL_I = 0;
@@ -33,7 +36,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public static ActuatorParams ACTUATOR_PARAMS = new ActuatorParams();
 
     public enum SampleActuatorStates {
-        DEPLOY(ACTUATOR_PARAMS.DEPLOY_POSITION_TICKS),
+        DEPLOY_FULL(ACTUATOR_PARAMS.DEPLOY_FULL_POSITION_TICKS),
+        DEPLOY_MID(ACTUATOR_PARAMS.DEPLOY_MID_POSITION_TICKS),
         RETRACT(ACTUATOR_PARAMS.RETRACT_POSITION_TICKS),
         MANUAL(0);  // Power will be set dynamically
 
@@ -59,6 +63,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     private int currentTicks;  // Cached current position
     private int targetTicks;   // Cached target position
     private double currentPower;
+    FieldConstants.AllianceColor colorSensor = null;
 
     // Constructor
     public SampleLinearActuatorSubsystem(final HardwareMap hMap, final String actuatorMotorName) {
@@ -94,6 +99,14 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         updateActuatorState();
         updateParameters();
         updateDashboardTelemetry();  // Update telemetry each loop
+        if (colorSensor!=null) {
+            if (colorSensor != MatchConfig.finalOpponentColor) {
+                setTargetState(SampleActuatorStates.RETRACT);
+            } else if (colorSensor == MatchConfig.finalOpponentColor) {
+                Robot.getInstance().getSampleIntakeSubsystem().setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
+            }
+        }
+
     }
 
     // Set the target state of the actuator
@@ -104,7 +117,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     // Set the target ticks, applying limits and setting the target position on the motor
     public void setTargetTicks(int ticks) {
-        targetTicks = Range.clip(ticks, ACTUATOR_PARAMS.RETRACT_POSITION_TICKS, ACTUATOR_PARAMS.DEPLOY_POSITION_TICKS);
+        targetTicks = Range.clip(ticks, ACTUATOR_PARAMS.RETRACT_POSITION_TICKS, ACTUATOR_PARAMS.DEPLOY_FULL_POSITION_TICKS);
         sampleActuator.setTargetPosition(targetTicks);
     }
 
@@ -126,7 +139,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         }
 
         // Update target positions
-        updateActuatorPositionTicks(SampleActuatorStates.DEPLOY, ACTUATOR_PARAMS.DEPLOY_POSITION_TICKS);
+        updateActuatorPositionTicks(SampleActuatorStates.DEPLOY_FULL, ACTUATOR_PARAMS.DEPLOY_FULL_POSITION_TICKS);
         updateActuatorPositionTicks(SampleActuatorStates.RETRACT, ACTUATOR_PARAMS.RETRACT_POSITION_TICKS);
 
         // Update velocity PID coefficients
