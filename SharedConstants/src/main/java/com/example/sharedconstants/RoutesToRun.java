@@ -19,6 +19,7 @@ public enum RoutesToRun {
     // Path to push the third neutral sample
     OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS,
     OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS,
+    OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS,
 
     // Save time by not pushing the third neutral sample
     OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS,
@@ -27,6 +28,7 @@ public enum RoutesToRun {
     // Experiment with double specimen preload
     OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH,
     OBS_PUSH_2_SPIKE_SAMPLES_IN_ONE_PATH,
+
 
     // Experiment with OBS bot doing a sample first
     OBS_SCORE_4_SAMPLEFIRST_PUSH_2_SPIKE_SAMPLES,

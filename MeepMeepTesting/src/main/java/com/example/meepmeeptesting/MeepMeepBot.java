@@ -33,7 +33,7 @@ public class MeepMeepBot {
         bot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(constraints.getMaxVel(), constraints.getMaxAccel(), constraints.getMaxAngVel(), constraints.getMaxAngAccel(), constraints.getTrackWidth())
                 .setColorScheme(colorScheme)
-                .setDimensions(18, 18)
+                .setDimensions(13.5, 16.5)
                 .setStartPose(FieldConstants.getStartPose(sideOfField, allianceColor))
                 .build();
 

@@ -18,6 +18,7 @@ import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_3_Preloa
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_4_Preload_and_3_Samples_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short;
+import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike;
 import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike;
 import com.example.sharedconstants.Routes.OBS.PushAllAtOnce.OBS_Push2SpikeSamplesInOnePath;
 import com.example.sharedconstants.Routes.OBS.PushAllAtOnce.OBS_Push3SpikeSampleInOnePath;
@@ -52,8 +53,8 @@ public class MeepMeepTesting {
     // OBS bot pushes 2 samples and focuses on scoring 4 specimens (Total Auto: 83 - over time)
     // NET bot focuses on scoring 5 samples (only has to grab one from observation since it has a preload)
     // Uncomment the following lines to test this configuration
-    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS;
-    private static final RoutesToRun blueObservationRoute = RoutesToRun.OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS;
+    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
+    private static final RoutesToRun blueObservationRoute = redObservationRoute;
     private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
@@ -220,6 +221,8 @@ public class MeepMeepTesting {
                 return new NET_Score5_SamplePreload(adapter);
             case MOVE_ONLY:
                 return new MoveOnly(adapter);
+            case OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS:
+                return new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
             case DO_NOTHING:
             default:
                 return new DoNothing(adapter);
