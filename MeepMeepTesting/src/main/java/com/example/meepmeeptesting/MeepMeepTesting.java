@@ -54,7 +54,7 @@ public class MeepMeepTesting {
     // Uncomment the following lines to test this configuration
     private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS;
     private static final RoutesToRun blueObservationRoute = RoutesToRun.OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS;
-    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
+    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_1_PRELOAD;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
     // OBS bot pushes spike samples in one path
