@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game;
+package org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;

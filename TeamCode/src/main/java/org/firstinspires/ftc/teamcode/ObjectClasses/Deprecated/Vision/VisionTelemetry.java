@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision;
+package org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;

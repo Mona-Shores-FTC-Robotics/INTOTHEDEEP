@@ -1,118 +1,93 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
+import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
+import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
+import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import com.example.sharedconstants.Routes.Routes;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-@Autonomous(name = "Auto Select Op Mode")
+@Autonomous(name = "Auto Route Selector")
 public class AutoSelectionOpMode extends LinearOpMode {
     private RealRobotAdapter robotDriveAdapter;
     private GamepadHandling gamepadHandling;
-    private List<Class<? extends Routes>> availableRoutes;
-    private List<Class<? extends Routes>> filteredRoutes;
+    private List<Routes> availableRoutes = new ArrayList<>();
     private int selectedIndex = 0;
-    private Routes selectedRoute;
-    private FieldConstants.SideOfField previousSideOfField = null;
 
     @Override
     public void runOpMode() {
-        // Reset the Singleton CommandScheduler
+        // Initialize command scheduler and gamepad handling
         CommandScheduler.getInstance().reset();
-
-        // Initialize the Gamepad Handling
         gamepadHandling = new GamepadHandling(this);
+        robotDriveAdapter = new RealRobotAdapter();
 
-        // Find available routes dynamically using Reflections
-        Reflections reflections = new Reflections("com.example.sharedconstants.Routes", new SubTypesScanner(false));
-        Set<Class<? extends Routes>> routesSet = reflections.getSubTypesOf(Routes.class);
-        availableRoutes = new ArrayList<>(routesSet);
+        // Define available routes
+        availableRoutes.add(new NET_Score_1_Specimen_Preload(robotDriveAdapter));
+        availableRoutes.add(new OBS_Score_1_Specimen_Preload(robotDriveAdapter));
+        // Add additional routes here as needed
 
-        // Sort the routes alphabetically for easier navigation
-        availableRoutes.sort((r1, r2) -> r1.getSimpleName().compareToIgnoreCase(r2.getSimpleName()));
-
+        // Allow cycling through routes in init mode
         while (opModeInInit()) {
-            // Allow driver to override/lock the vision and select settings
-            gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSideAndRobotType(telemetry);
+            // Cycle through routes using DPAD
+            selectedIndex = cycleThroughRoutes(selectedIndex);
 
-            // Update filtered routes if side of field changes
-            updateFilteredRoutesIfSideChanged();
-
-            // Use the gamepadHandling method to cycle through filtered routes
-            if (filteredRoutes != null && !filteredRoutes.isEmpty()) {
-                selectedIndex = gamepadHandling.cycleThroughRoutes(filteredRoutes, selectedIndex);
-
-                // Display the selected route on the driver station
-                telemetry.addData("Selected Auto Route", filteredRoutes.get(selectedIndex).getSimpleName());
-            }
-
+            // Show currently selected route on telemetry
+            telemetry.addData("Selected Route", availableRoutes.get(selectedIndex).getClass().getSimpleName());
             telemetry.update();
-            sleep(50);  // Prevent overloading the loop
+            sleep(100);  // Debounce delay for cycling
         }
 
-        // Lock in the selected route
-        try {
-            robotDriveAdapter = new RealRobotAdapter();
-            selectedRoute = filteredRoutes.get(selectedIndex).getConstructor(RealRobotAdapter.class).newInstance(robotDriveAdapter);
-            selectedRoute.buildRoute();
-        } catch (Exception e) {
-            telemetry.addData("Error", "Failed to instantiate selected route.");
-            telemetry.update();
-            return;
-        }
-
-        // Create and Initialize the robot
+        // Set up robot and selected route for auto mode
         Robot.createInstance(this, MatchConfig.finalRobotType);
-
-        // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
+        Routes selectedRoute = availableRoutes.get(selectedIndex);
+        selectedRoute.buildRoute();
 
-        // Set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField,MatchConfig.finalAllianceColor);
+        // Set starting position based on alliance configuration
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose =
+                FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
 
-        telemetry.clearAll();
+        Action routeAction = selectedRoute.getRouteAction(MatchConfig.finalSideOfField);
+        Actions.runBlocking(routeAction);
 
-        MatchConfig.timestampTimer = new ElapsedTime();
-        MatchConfig.timestampTimer.reset();
-
-        // Run the selected route
-        Actions.runBlocking(selectedRoute.getRouteAction(MatchConfig.finalSideOfField));
-
-        // Update final autonomous data
+        // Log final position and telemetry after route completion
         Robot.getInstance().getDriveSubsystem().updateInternalIMU();
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;
         MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+
+        telemetry.addData("Autonomous", "Execution Complete");
+        telemetry.addData("End Yaw", MatchConfig.endOfAutonomousAbsoluteYawDegrees);
+        telemetry.addData("End Offset", MatchConfig.endOfAutonomousOffset);
+        telemetry.addData("End Pose", MatchConfig.endOfAutonomousPose);
+        telemetry.update();
     }
 
-    private void updateFilteredRoutesIfSideChanged() {
-        if (MatchConfig.finalSideOfField != null && !MatchConfig.finalSideOfField.equals(previousSideOfField)) {
-            // Update the previous side of field
-            previousSideOfField = MatchConfig.finalSideOfField;
-
-            // Filter routes based on the selected side of the field
-            String sidePrefix = MatchConfig.finalSideOfField == FieldConstants.SideOfField.OBSERVATION ? "OBS_" : "NET_";
-            filteredRoutes = new ArrayList<>();
-            for (Class<? extends Routes> route : availableRoutes) {
-                if (route.getSimpleName().startsWith(sidePrefix)) {
-                    filteredRoutes.add(route);
-                }
-            }
-            selectedIndex = 0; // Reset selected index when filtering changes
+    /**
+     * Cycles through available routes based on DPAD inputs.
+     * @param currentIndex Current route index.
+     * @return Updated index after cycling.
+     */
+    private int cycleThroughRoutes(int currentIndex) {
+        if (gamepad1.dpad_left) {
+            currentIndex = (currentIndex - 1 + availableRoutes.size()) % availableRoutes.size();
+            sleep(200);  // Debounce delay
+        } else if (gamepad1.dpad_right) {
+            currentIndex = (currentIndex + 1) % availableRoutes.size();
+            sleep(200);  // Debounce delay
         }
+        return currentIndex;
     }
 }

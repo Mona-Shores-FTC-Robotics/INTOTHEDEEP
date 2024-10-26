@@ -12,10 +12,6 @@ import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.DoNothing;
 import com.example.sharedconstants.Routes.MoveOnly;
-import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_4_Preload_and_3_Samples;
-import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_3_Preload_and_2_Samples;
-import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample;
-import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples;
 import com.example.sharedconstants.Routes.NET.NET_Score5_SamplePreload;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_2_Preload_and_1_Sample_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_3_Preload_and_2_Samples_Short;
@@ -31,15 +27,12 @@ import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_1_Sample_Pre
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
 import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike;
-import com.example.sharedconstants.Routes.NET.NET_Score_1_Preload;
-import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_2_Preload_and_1_Sample;
+import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
-import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
-import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
-import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedLight;
+
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -350,7 +343,7 @@ public class MeepMeepTesting {
             case OBS_SCORE_1_SAMPLE_PRELOAD_PUSH_1_SPIKE_SCORE_1_PREMADE:
                 return new OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade(adapter);
             case NET_SCORE_1_PRELOAD:
-                return new NET_Score_1_Preload(adapter);
+                return new NET_Score_1_Specimen_Preload(adapter);
             case OBS_SCORE_1_PRELOAD:
                 return new OBS_Score_1_Specimen_Preload(adapter);
             case OBS_SCORE_4_SAMPLEFIRST_PUSH_2_SPIKE_SAMPLES:

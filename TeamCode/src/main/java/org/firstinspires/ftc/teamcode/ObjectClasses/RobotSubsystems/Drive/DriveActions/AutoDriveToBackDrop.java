@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import static com.example.sharedconstants.FieldConstants.*;
@@ -12,7 +11,7 @@ import static com.example.sharedconstants.FieldConstants.*;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem;
 public class AutoDriveToBackDrop implements Action {
     public static double P_TERM = .016;
     public static double I_TERM;

@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.ShoulderSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem;
 
 import java.util.EnumSet;
 import java.util.Set;

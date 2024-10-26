@@ -13,8 +13,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,42 +68,7 @@ public class ObservationAutos extends LinearOpMode {
     }
 
     private void buildRoutes() {
-        // Find and build available routes dynamically using Reflections
-        Reflections reflections = new Reflections("com.example.sharedconstants.Routes", new SubTypesScanner(false));
-        Set<Class<? extends Routes>> routesSet = reflections.getSubTypesOf(Routes.class);
-        availableRoutes = new ArrayList<>();
 
-        // Instantiate and build routes for both alliance colors
-        for (Class<? extends Routes> routeClass : routesSet) {
-            if (routeClass.getSimpleName().startsWith("OBS_")) {
-                try {
-                    Routes route = routeClass.getConstructor(RealRobotAdapter.class).newInstance(robotDriveAdapter);
-
-                    // Build route for RED alliance
-                    robotDriveAdapter.setAllianceColor(FieldConstants.AllianceColor.RED);
-                    route.buildRoute();
-                    Action redRouteAction = route.getNetBotRoute();
-
-                    // Build route for BLUE alliance
-                    robotDriveAdapter.setAllianceColor(FieldConstants.AllianceColor.BLUE);
-                    route.buildRoute();
-                    Action blueRouteAction = route.getNetBotRoute();
-
-                    // Store route and corresponding actions
-                    availableRoutes.add(route);
-                    Map<FieldConstants.AllianceColor, Action> actionsMap = new HashMap<>();
-                    actionsMap.put(FieldConstants.AllianceColor.RED, redRouteAction);
-                    actionsMap.put(FieldConstants.AllianceColor.BLUE, blueRouteAction);
-                    routeActionsMap.put(route, actionsMap);
-
-                } catch (Exception e) {
-                    telemetry.addData("Error", "Failed to instantiate route: " + routeClass.getSimpleName());
-                }
-            }
-        }
-
-        // Sort the routes alphabetically for easier navigation
-        availableRoutes.sort((r1, r2) -> r1.getClass().getSimpleName().compareToIgnoreCase(r2.getClass().getSimpleName()));
     }
 
     private void initRouteSelection() {

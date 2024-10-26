@@ -27,8 +27,10 @@ import static com.example.sharedconstants.RobotAdapter.ActionType.SECURE_PRELOAD
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.example.sharedconstants.RobotAdapter;
+import com.example.sharedconstants.Routes.AutoRoute;
 import com.example.sharedconstants.Routes.Routes;
 
+@AutoRoute
 public class NET_Score5_SamplePreload extends Routes {
     public NET_Score5_SamplePreload(RobotAdapter robotAdapter) {
         super(robotAdapter);

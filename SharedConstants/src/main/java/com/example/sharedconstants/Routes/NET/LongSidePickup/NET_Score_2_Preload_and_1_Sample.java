@@ -11,9 +11,9 @@ import static com.example.sharedconstants.RobotAdapter.ActionType.DEPOSIT_SAMPLE
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_INTAKE_ON;
 
 import com.example.sharedconstants.RobotAdapter;
-import com.example.sharedconstants.Routes.NET.NET_Score_1_Preload;
+import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
 
-public class NET_Score_2_Preload_and_1_Sample extends NET_Score_1_Preload {
+public class NET_Score_2_Preload_and_1_Sample extends NET_Score_1_Specimen_Preload {
     public NET_Score_2_Preload_and_1_Sample(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }

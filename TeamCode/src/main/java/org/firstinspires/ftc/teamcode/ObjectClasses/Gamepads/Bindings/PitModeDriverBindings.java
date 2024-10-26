@@ -4,10 +4,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ChangeWinchPowerCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ClimberSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.DroneSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.End_Game.ReleaseDroneCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ChangeWinchPowerCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ClimberSubsystem;
 
 public class PitModeDriverBindings {
 

@@ -4,13 +4,10 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.NET.LongSidePickup.NET_Score_2_Preload_and_1_Sample;
-import com.example.sharedconstants.Routes.NET.NET_Score_1_Preload;
+import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
-import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,7 +15,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
-
 
 @Autonomous(name = "Preload Specimen")
 public class PreloadAuto extends LinearOpMode {
@@ -51,7 +47,7 @@ public class PreloadAuto extends LinearOpMode {
         Routes route;
         //Build route depending on side of field
         if (MatchConfig.finalSideOfField == FieldConstants.SideOfField.NET) {
-            route = new NET_Score_1_Preload(robotDriveAdapter);
+            route = new NET_Score_1_Specimen_Preload(robotDriveAdapter);
         } else{
             route = new OBS_Score_1_Specimen_Preload(robotDriveAdapter);
         }

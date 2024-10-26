@@ -21,7 +21,7 @@
  *
  */
 
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionProcessors;
+package org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionProcessors;
 
 import android.graphics.Canvas;
 

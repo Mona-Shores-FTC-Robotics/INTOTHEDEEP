@@ -1,0 +1,37 @@
+// RoutesToRun.java
+package com.example.sharedconstants;
+
+public enum RoutesToRun {
+    NET_SCORE_1_PRELOAD,
+    OBS_SCORE_1_PRELOAD,
+    MOVE_ONLY,
+
+    // Pickup the samples on their short side
+    NET_SCORE_2_PRELOAD_AND_1_SAMPLE_SHORT,
+    NET_SCORE_3_PRELOAD_AND_2_SAMPLES_SHORT,
+    NET_SCORE_4_PRELOAD_AND_3_SAMPLES_SHORT,
+    NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE_SHORT,
+    NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT,
+
+    // Path to push first and second neutral samples
+    OBS_PUSH_2_SCORE_3_PRELOAD_AND_1_PREMADE_AND_1_SPIKE_SPECIMENS,
+
+    // Path to push the third neutral sample
+    OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS,
+    OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS,
+
+    // Save time by not pushing the third neutral sample
+    OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS,
+    OBS_SCORE_1_SAMPLE_PRELOAD_PUSH_1_SPIKE_SCORE_1_PREMADE,
+
+    // Experiment with double specimen preload
+    OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH,
+    OBS_PUSH_2_SPIKE_SAMPLES_IN_ONE_PATH,
+
+    // Experiment with OBS bot doing a sample first
+    OBS_SCORE_4_SAMPLEFIRST_PUSH_2_SPIKE_SAMPLES,
+    OBS_SCORE_4_SAMPLEFIRST_PUSH_3_SPIKE_SAMPLES,
+
+    DO_NOTHING,
+    NET_SCORE_5_SAMPLE_PRELOAD
+}

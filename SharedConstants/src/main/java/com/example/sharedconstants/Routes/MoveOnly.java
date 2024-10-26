@@ -8,6 +8,7 @@ import static com.example.sharedconstants.FieldConstants.PoseToVector;
 
 import com.example.sharedconstants.RobotAdapter;
 
+@AutoRoute  // Add this annotation
 public class MoveOnly extends Routes {
 
     public MoveOnly(RobotAdapter robotAdapter) {

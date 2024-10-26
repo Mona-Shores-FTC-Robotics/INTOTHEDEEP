@@ -8,19 +8,19 @@ import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 @Autonomous(name = "Net Autos Op Mode")
 public class NetAutos extends LinearOpMode {
@@ -30,7 +30,6 @@ public class NetAutos extends LinearOpMode {
     private List<Routes> availableRoutes;
     private int selectedIndex = 0;
     private Routes selectedRoute;
-
     private Map<Routes, Map<FieldConstants.AllianceColor, Action>> routeActionsMap = new HashMap<>();
 
     @Override
@@ -41,7 +40,9 @@ public class NetAutos extends LinearOpMode {
         MatchConfig.finalSideOfField = FieldConstants.SideOfField.NET;
 
         initializeComponents();
+
         buildRoutes();
+
 
         // Perform route selection during init
         while (opModeInInit()) {
@@ -51,78 +52,48 @@ public class NetAutos extends LinearOpMode {
     }
 
     private void initializeComponents() {
-        // Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
-
-        // Initialize the Gamepad Handling
         gamepadHandling = new GamepadHandling(this);
 
-        // Create and Initialize the robot
         Robot.createInstance(this, MatchConfig.finalRobotType);
-
-        // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
 
-        // Set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose =
+                FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
 
-        // Create the RealRobotAdapter instance
         robotDriveAdapter = new RealRobotAdapter();
     }
 
     private void buildRoutes() {
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Reflections reflections = new Reflections("com.example.sharedconstants.Routes", new SubTypesScanner(false), classLoader);
+        String packageName = "org.firstinspires.ftc.teamcode.OpModes.Autos";
 
-        Set<Class<? extends Routes>> routesSet = reflections.getSubTypesOf(Routes.class);
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .forPackages(packageName)
+                .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes));
 
-        // Log found routes for debugging
-        for (Class<? extends Routes> routeClass : routesSet) {
-            telemetry.addData("Discovered Route Class", routeClass.getSimpleName());
-        }
-        telemetry.update();
+        Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
 
-        availableRoutes = new ArrayList<>();
-
-        // Instantiate and build routes for both alliance colors
-        for (Class<? extends Routes> routeClass : routesSet) {
-            // Filter based on route names that start with "NET_"
-            if (routeClass.getSimpleName().startsWith("NET_")) {
-                try {
-                    // Instantiate the route with the RealRobotAdapter
-                    Routes route = routeClass.getConstructor(RealRobotAdapter.class).newInstance(robotDriveAdapter);
-
-                    // Build and store actions for RED and BLUE alliance
-                    buildAndStoreActionsForRoute(route);
-
-                    // Add the route to the available routes list
-                    availableRoutes.add(route);
-
-                } catch (Exception e) {
-                    telemetry.addData("Error", "Failed to instantiate route: " + routeClass.getSimpleName());
-                }
+        if (classes.isEmpty()) {
+            System.out.println("No classes found in package: " + packageName);
+        } else {
+            for (Class<?> cls : classes) {
+                System.out.println(cls.getName());
             }
         }
 
-        // Sort the routes alphabetically for easier navigation
-        availableRoutes.sort((r1, r2) -> r1.getClass().getSimpleName().compareToIgnoreCase(r2.getClass().getSimpleName()));
     }
-
 
     private void buildAndStoreActionsForRoute(Routes route) {
         try {
-            // Build route for RED alliance
             robotDriveAdapter.setAllianceColor(FieldConstants.AllianceColor.RED);
             route.buildRoute();
             Action redRouteAction = route.getNetBotRoute();
 
-            // Build route for BLUE alliance
             robotDriveAdapter.setAllianceColor(FieldConstants.AllianceColor.BLUE);
             route.buildRoute();
             Action blueRouteAction = route.getNetBotRoute();
 
-            // Store the route and corresponding actions in the map
             Map<FieldConstants.AllianceColor, Action> actionsMap = new HashMap<>();
             actionsMap.put(FieldConstants.AllianceColor.RED, redRouteAction);
             actionsMap.put(FieldConstants.AllianceColor.BLUE, blueRouteAction);
@@ -134,21 +105,18 @@ public class NetAutos extends LinearOpMode {
     }
 
     private void initRouteSelection() {
-        // Use the gamepadHandling method to cycle through available routes without side selection during init
-            gamepadHandling.getDriverGamepad().readButtons();
-            selectedIndex = gamepadHandling.cycleThroughRoutes2(availableRoutes, selectedIndex);
-            gamepadHandling.SelectAndLockColor();
+        gamepadHandling.getDriverGamepad().readButtons();
+        selectedIndex = gamepadHandling.cycleThroughRoutes2(availableRoutes, selectedIndex);
+        gamepadHandling.SelectAndLockColor();
 
-            // Display the selected route on the driver station
-            telemetry.addLine();
-            telemetry.addLine("Use Operator D-PAD LEFT/RIGHT to cycle through NET Auto Routes");
-            telemetry.addData("Selected Net Auto Route: ", availableRoutes.get(selectedIndex).getClass().getSimpleName());
-            telemetry.update();
-            sleep(50);  // Prevent overloading the loop
+        telemetry.addLine();
+        telemetry.addLine("Use Operator D-PAD LEFT/RIGHT to cycle through NET Auto Routes");
+        telemetry.addData("Selected Net Auto Route: ", availableRoutes.get(selectedIndex).getClass().getSimpleName());
+        telemetry.update();
+        sleep(50);
     }
 
     private void runSelectedRoute() {
-        // Lock in the selected route
         selectedRoute = availableRoutes.get(selectedIndex);
         Action selectedRouteAction = routeActionsMap.get(selectedRoute).get(MatchConfig.finalAllianceColor);
 
@@ -157,12 +125,10 @@ public class NetAutos extends LinearOpMode {
         MatchConfig.timestampTimer = new ElapsedTime();
         MatchConfig.timestampTimer.reset();
 
-        // Run the selected route
         if (selectedRouteAction != null) {
             Actions.runBlocking(selectedRouteAction);
         }
 
-        // Update final autonomous data
         Robot.getInstance().getDriveSubsystem().updateInternalIMU();
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;

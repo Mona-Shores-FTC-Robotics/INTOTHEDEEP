@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision;
+package org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision;
 
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_CENTER_TAG;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_LEFT_TAG;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_RIGHT_TAG;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.RED_BACKDROP_CENTER_TAG;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.RED_BACKDROP_LEFT_TAG;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionSubsystem.AprilTagID.RED_BACKDROP_RIGHT_TAG;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_CENTER_TAG;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_LEFT_TAG;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem.AprilTagID.BLUE_BACKDROP_RIGHT_TAG;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem.AprilTagID.RED_BACKDROP_CENTER_TAG;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem.AprilTagID.RED_BACKDROP_LEFT_TAG;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem.AprilTagID.RED_BACKDROP_RIGHT_TAG;
 
 import android.util.Size;
 
@@ -30,7 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Vision.VisionProcessors.InitVisionProcessor;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionProcessors.InitVisionProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;

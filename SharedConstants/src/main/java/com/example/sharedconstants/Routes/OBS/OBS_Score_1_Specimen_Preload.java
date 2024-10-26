@@ -13,9 +13,17 @@ import static com.example.sharedconstants.RobotAdapter.ActionType.SECURE_PRELOAD
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.example.sharedconstants.RobotAdapter;
+import com.example.sharedconstants.RouteRegistry;
 import com.example.sharedconstants.Routes.Routes;
+import com.example.sharedconstants.RoutesToRun;
 
 public class OBS_Score_1_Specimen_Preload extends Routes {
+
+    // Static block for self-registration
+    static {
+        RouteRegistry.registerRoute(RoutesToRun.OBS_SCORE_1_PRELOAD, OBS_Score_1_Specimen_Preload::new);
+    }
+
     public OBS_Score_1_Specimen_Preload(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }

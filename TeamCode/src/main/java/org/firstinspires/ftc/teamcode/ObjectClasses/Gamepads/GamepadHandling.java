@@ -4,6 +4,7 @@ import static com.qualcomm.robotcore.hardware.Gamepad.LED_DURATION_CONTINUOUS;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.example.sharedconstants.RoutesToRun;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -101,8 +102,7 @@ public class GamepadHandling {
             }
         }
     }
-
-    public int cycleThroughRoutes(List<Class<? extends Routes>> availableRoutes, int currentIndex) {
+    public int cycleThroughRoutes(List<RoutesToRun> availableRoutes, int currentIndex) {
         // Use operator gamepad DPAD to cycle through the list of routes
         if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
             currentIndex--;
