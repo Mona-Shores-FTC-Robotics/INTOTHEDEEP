@@ -34,13 +34,10 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-@Autonomous(name = "Auto Selector Build Before Init")
-public class AutoSelector extends LinearOpMode {
+@Autonomous(name = "Auto Selector [Robot Select]")
+public class AutoSelectorRobotSelect extends LinearOpMode {
 
     private RealRobotAdapter adapter;
     private GamepadHandling gamepadHandling;
@@ -52,28 +49,29 @@ public class AutoSelector extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Hardcode the Robot Type and Side of Field
-        MatchConfig.finalRobotType = Robot.RobotType.CHASSIS_19429_B_PINPOINT;
-        MatchConfig.finalSideOfField = FieldConstants.SideOfField.OBSERVATION;
-        MatchConfig.finalAllianceColor = FieldConstants.AllianceColor.BLUE;
-
-        initializeComponents();
-        buildRoutes();
-
-        // Perform route selection during init
-        while (opModeInInit()) {
-            initRouteSelection();
-        }
-        runSelectedRoute();
-    }
-
-    private void initializeComponents() {
         // Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
         // Initialize the Gamepad Handling
         gamepadHandling = new GamepadHandling(this);
 
+        // Create and Initialize a dummy robot since we dont know the real robot type
+        Robot.createInstance(this, MatchConfig.finalRobotType);
+
+        // Create a dummy adapter so we can build the routes
+        adapter = new RealRobotAdapter();
+
+        buildRoutes();
+        // Perform route selection during init
+        while (opModeInInit()) {
+            initRouteSelection();
+        }
+        //re initialize now that robot is set right
+        initializeComponents();
+        runSelectedRoute();
+    }
+
+    private void initializeComponents() {
         // Create and Initialize the robot
         Robot.createInstance(this, MatchConfig.finalRobotType);
 
@@ -172,7 +170,7 @@ public class AutoSelector extends LinearOpMode {
 
     private void initRouteSelection() {
         gamepadHandling.getDriverGamepad().readButtons();
-        gamepadHandling.SelectAndLockColorAndSide();
+        gamepadHandling.SelectAndLockColorAndSideAndRobotType(telemetry);
 
         // Assign routeList based on side of the field, only once per side change
         if (MatchConfig.finalSideOfField == FieldConstants.SideOfField.NET) {
