@@ -105,18 +105,15 @@ public class GamepadHandling {
         }
     }
 
-
-    public int cycleThroughRoutes(HashMap<String, Routes> availableRoutes, int currentIndex) {
-        List<String> routeNames = new ArrayList<>(availableRoutes.keySet());
-
-        if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+    public int cycleThroughRoutes(List<Routes> routes, int currentIndex) {
+        if (driverGamepad.wasJustPressed(GamepadKeys.Button.X)) {
             currentIndex--;
             if (currentIndex < 0) {
-                currentIndex = routeNames.size() - 1;
+                currentIndex = routes.size() - 1;
             }
-        } else if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+        } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.A)) {
             currentIndex++;
-            if (currentIndex >= routeNames.size()) {
+            if (currentIndex >= routes.size()) {
                 currentIndex = 0;
             }
         }

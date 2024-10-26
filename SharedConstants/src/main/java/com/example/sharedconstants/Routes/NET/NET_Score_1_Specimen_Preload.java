@@ -8,7 +8,6 @@ import static com.example.sharedconstants.RobotAdapter.ActionType.SECURE_PRELOAD
 
 import com.acmerobotics.roadrunner.Vector2d;
 import com.example.sharedconstants.RobotAdapter;
-import com.example.sharedconstants.RouteRegistry;
 import com.example.sharedconstants.Routes.AutoRoute;
 import com.example.sharedconstants.Routes.Routes;
 import com.example.sharedconstants.RoutesToRun;
@@ -16,10 +15,6 @@ import com.example.sharedconstants.RoutesToRun;
 
 @AutoRoute
 public class NET_Score_1_Specimen_Preload extends Routes {
-    // Static block for self-registration
-    static {
-        RouteRegistry.registerRoute(RoutesToRun.NET_SCORE_1_PRELOAD, NET_Score_1_Specimen_Preload::new);
-    }
 
     public NET_Score_1_Specimen_Preload(RobotAdapter robotAdapter) {
         super(robotAdapter);

@@ -35,21 +35,20 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@Autonomous(name = "Observation Autos Op Mode")
+@Autonomous(name = "Auto Selector")
 public class AutoSelector extends LinearOpMode {
 
     private RealRobotAdapter adapter;
     private GamepadHandling gamepadHandling;
-    private HashMap<String, Routes> obsRoutesMap;
-    private HashMap<String, Routes> netRoutesMap;
-
+    private List<Routes> netRoutesList = new ArrayList<>();
+    private List<Routes> obsRoutesList = new ArrayList<>();
+    private List<Routes> routeList;  // Holds the current list based on side of field
     private int selectedIndex = 0;
     private Routes selectedRoute;
-
-    private Map<Routes, Map<FieldConstants.AllianceColor, Action>> routeActionsMap = new HashMap<>();
 
     @Override
     public void runOpMode() {
@@ -88,68 +87,132 @@ public class AutoSelector extends LinearOpMode {
     }
 
     private void buildRoutes() {
+        // OBS-specific routes with descriptive names
+        Routes route = new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
 
-// NET-specific routes
-        // HashMap for OBS-specific routes with descriptive names
-        obsRoutesMap = new HashMap<>();
-        obsRoutesMap.put("OBS Push 2 Score 3 Specimens Preload And 1 Premade And 1 Spike", new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(adapter));
-        obsRoutesMap.put("OBS Push 3 Score 4 Specimens Preload And 1 Premade And 2 Spike", new OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter));
-        obsRoutesMap.put("OBS Push 3 Score 5 Specimens Preload And 1 Premade And 3 Spike", new OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike(adapter));
-        obsRoutesMap.put("OBS Push 2 Score 4 Specimens Preload And 1 Premade And 2 Spike", new OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter));
-        obsRoutesMap.put("OBS Score 1 Sample Preload Push 1 Spike Score 1 Premade", new OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade(adapter));
-        obsRoutesMap.put("OBS Score 1 Preload", new OBS_Score_1_Specimen_Preload(adapter));
-        obsRoutesMap.put("OBS Score 4 SampleFirst Push 2 Spike Samples", new OBS_Score_4_SampleFirst_Push_2_Spike_Samples(adapter));
-        obsRoutesMap.put("OBS Score 5 SampleFirst Push 3 Spike Samples", new OBS_Score_5_SampleFirst_Push_3_Spike_Samples(adapter));
-        obsRoutesMap.put("OBS Push 3 Spike Samples in One Path", new OBS_Push3SpikeSampleInOnePath(adapter));
-        obsRoutesMap.put("OBS Push 2 Spike Samples in One Path", new OBS_Push2SpikeSamplesInOnePath(adapter));
-        obsRoutesMap.put("Move Only", new MoveOnly(adapter));    // Shared option
-        obsRoutesMap.put("Do Nothing", new DoNothing(adapter));  // Shared option
+        route = new OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
 
-        netRoutesMap = new HashMap<>();
-        netRoutesMap.put("NET Score 2 Preload and 1 Sample Short", new NET_Score_2_Preload_and_1_Sample_Short(adapter));
-        netRoutesMap.put("NET Score 3 Preload and 2 Samples Short", new NET_Score_3_Preload_and_2_Samples_Short(adapter));
-        netRoutesMap.put("NET Score 4 Preload and 3 Samples Short", new NET_Score_4_Preload_and_3_Samples_Short(adapter));
-        netRoutesMap.put("NET Score 5 Preload and 3 Samples and 1 Human Player Sample Short", new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter));
-        netRoutesMap.put("NET Score 6 Preload and 3 Samples and 2 Human Player Samples Short", new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter));
-        netRoutesMap.put("NET Score 1 Preload", new NET_Score_1_Specimen_Preload(adapter));
-        netRoutesMap.put("NET Score 5 Sample Preload", new NET_Score5_SamplePreload(adapter));
-        netRoutesMap.put("Move Only", new MoveOnly(adapter));    // Shared option
-        netRoutesMap.put("Do Nothing", new DoNothing(adapter));  // Shared option
+        route = new OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
 
+        route = new OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
+
+        route = new OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
+
+        route = new OBS_Score_1_Specimen_Preload(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
+
+        route = new OBS_Score_4_SampleFirst_Push_2_Spike_Samples(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
+
+        route = new OBS_Score_5_SampleFirst_Push_3_Spike_Samples(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
+
+        route = new OBS_Push3SpikeSampleInOnePath(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
+
+        route = new OBS_Push2SpikeSamplesInOnePath(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
+
+        // NET-specific routes
+        route = new NET_Score_2_Preload_and_1_Sample_Short(adapter);
+        route.buildRoute();
+        netRoutesList.add(route);
+
+        route = new NET_Score_3_Preload_and_2_Samples_Short(adapter);
+        route.buildRoute();
+        netRoutesList.add(route);
+
+        route = new NET_Score_4_Preload_and_3_Samples_Short(adapter);
+        route.buildRoute();
+        netRoutesList.add(route);
+
+        route = new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter);
+        route.buildRoute();
+        netRoutesList.add(route);
+
+        route = new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter);
+        route.buildRoute();
+        netRoutesList.add(route);
+
+        route = new NET_Score_1_Specimen_Preload(adapter);
+        route.buildRoute();
+        netRoutesList.add(route);
+
+        route = new NET_Score5_SamplePreload(adapter);
+        route.buildRoute();
+        netRoutesList.add(route);
+
+        // Shared options (without buildRoute if not needed)
+        Routes moveOnly = new MoveOnly(adapter);
+        moveOnly.buildRoute();  // Optional, if needed
+        obsRoutesList.add(moveOnly);
+        netRoutesList.add(moveOnly);
+
+        Routes doNothing = new DoNothing(adapter);
+        doNothing.buildRoute();  // Optional, if needed
+        obsRoutesList.add(doNothing);
+        netRoutesList.add(doNothing);
     }
 
     private void initRouteSelection() {
         gamepadHandling.getDriverGamepad().readButtons();
-        gamepadHandling.SelectAndLockColorAndSideAndRobotType(telemetry);
+        gamepadHandling.SelectAndLockColorAndSide();
 
+        // Assign routeList based on side of the field, only once per side change
         if (MatchConfig.finalSideOfField == FieldConstants.SideOfField.NET) {
-            selectedIndex = gamepadHandling.cycleThroughRoutes(netRoutesMap, selectedIndex);
-            String selectedRouteName = new ArrayList<>(netRoutesMap.keySet()).get(selectedIndex);
-            selectedRoute = netRoutesMap.get(selectedRouteName);
+            if (routeList != netRoutesList) {
+                routeList = netRoutesList;
+                selectedIndex = 0;  // Reset index on side change
+            }
         } else {
-            selectedIndex = gamepadHandling.cycleThroughRoutes(obsRoutesMap, selectedIndex);
-            String selectedRouteName = new ArrayList<>(obsRoutesMap.keySet()).get(selectedIndex);
-            selectedRoute = obsRoutesMap.get(selectedRouteName);
+            if (routeList != obsRoutesList) {
+                routeList = obsRoutesList;
+                selectedIndex = 0;  // Reset index on side change
+            }
         }
 
-        telemetry.addData("Selected Route", selectedRoute);
+        // Cycle through routes using gamepadHandling's method
+        selectedIndex = gamepadHandling.cycleThroughRoutes(routeList, selectedIndex);
+
+        // Update selected route based on current index
+        selectedRoute = routeList.get(selectedIndex);
+
+        // Display selected route on telemetry
+        telemetry.addLine();
+        telemetry.addData("Selected Index", selectedIndex);
+        telemetry.addData("Total Routes", routeList.size());
+        telemetry.addLine("Selected Route:");
+        telemetry.addLine(selectedRoute.getClass().getSimpleName());
+
         telemetry.update();
-        sleep(50);
+        sleep(50);  // Small debounce delay
     }
 
     private void runSelectedRoute() {
-        // Lock in the selected route
-        Action selectedRouteAction = routeActionsMap.get(selectedRoute).get(MatchConfig.finalAllianceColor);
+        //Pick one of the routes built previously based on the final Alliance Color and Side of Field
+        Action selectedRouteAction = selectedRoute.getRouteAction(MatchConfig.finalSideOfField);
 
         telemetry.clearAll();
 
         MatchConfig.timestampTimer = new ElapsedTime();
         MatchConfig.timestampTimer.reset();
 
-        // Run the selected route
-        if (selectedRouteAction != null) {
-            Actions.runBlocking(selectedRouteAction);
-        }
+        Actions.runBlocking(selectedRouteAction);
 
         // Update final autonomous data
         Robot.getInstance().getDriveSubsystem().updateInternalIMU();
