@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import com.example.sharedconstants.Routes.Routes;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GamepadHandling {
@@ -102,37 +104,25 @@ public class GamepadHandling {
             }
         }
     }
-    public int cycleThroughRoutes(List<RoutesToRun> availableRoutes, int currentIndex) {
-        // Use operator gamepad DPAD to cycle through the list of routes
+
+
+    public int cycleThroughRoutes(HashMap<String, Routes> availableRoutes, int currentIndex) {
+        List<String> routeNames = new ArrayList<>(availableRoutes.keySet());
+
         if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
             currentIndex--;
             if (currentIndex < 0) {
-                currentIndex = availableRoutes.size() - 1;
+                currentIndex = routeNames.size() - 1;
             }
         } else if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
             currentIndex++;
-            if (currentIndex >= availableRoutes.size()) {
+            if (currentIndex >= routeNames.size()) {
                 currentIndex = 0;
             }
         }
         return currentIndex;
     }
 
-    public int cycleThroughRoutes2(List<Routes> availableRoutes, int currentIndex) {
-        // Use operator gamepad DPAD to cycle through the list of routes
-        if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            currentIndex--;
-            if (currentIndex < 0) {
-                currentIndex = availableRoutes.size() - 1;
-            }
-        } else if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            currentIndex++;
-            if (currentIndex >= availableRoutes.size()) {
-                currentIndex = 0;
-            }
-        }
-        return currentIndex;
-    }
 
     public void SelectAndLockColorAndSide() {
         Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
