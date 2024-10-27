@@ -58,7 +58,7 @@ public class AutoSelector extends LinearOpMode {
         // We will need to update the robot manually. its just too difficult to select the robot for autos.
         // Select robot is easy for teleop
         MatchConfig.finalRobotType = Robot.RobotType.CHASSIS_19429_B_PINPOINT;
-        MatchConfig.finalSideOfField = FieldConstants.SideOfField.OBSERVATION;
+        MatchConfig.finalSideOfField = FieldConstants.SideOfField.NET;
         MatchConfig.finalAllianceColor = FieldConstants.AllianceColor.BLUE;
 
         initializeComponents();
@@ -84,51 +84,61 @@ public class AutoSelector extends LinearOpMode {
         // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
 
-        // Set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
-
         // Create the RealRobotAdapter instance
         adapter = new RealRobotAdapter();
     }
 
     private void buildRoutes() {
         // OBS-specific routes with descriptive names
+
+        // Stays out of the other side and scores a lot of points / tramples over samples
         Routes route = new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(adapter);
         route.buildRoute();
         obsRoutesList.add(route);
 
+        // It runs into the parts and tramples over them but if adjusted would score a lot / tramples over samples
         route = new OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
         route.buildRoute();
         obsRoutesList.add(route);
 
+        // Gets in the way of the other side also tramples over samples.
         route = new OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
         route.buildRoute();
-        obsRoutesList.add(route);
+        obsRoutesList.add(route); // Tristan + Landon likes
 
+        // Doesn't wait long enough to pick the specimen up.
         route = new OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
         route.buildRoute();
-        obsRoutesList.add(route);
+        obsRoutesList.add(route); // Tristan + Landon likes
 
+        // Doesn't score enough points but could be used if the other team in our alliance is good.
         route = new OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade(adapter);
         route.buildRoute();
         obsRoutesList.add(route);
 
+        // Scores less points.
         route = new OBS_Score_1_Specimen_Preload(adapter);
         route.buildRoute();
         obsRoutesList.add(route);
 
+        // Scored all samples but could possibly get rammed by the other robot.
+        // Scores decent points.
         route = new OBS_Score_4_SampleFirst_Push_2_Spike_Samples(adapter);
         route.buildRoute();
         obsRoutesList.add(route);
 
+        // Scored all samples but could possibly get rammed by the other robot.
+        // Scores high points.
         route = new OBS_Score_5_SampleFirst_Push_3_Spike_Samples(adapter);
         route.buildRoute();
-        obsRoutesList.add(route);
+        obsRoutesList.add(route); // Tristan + Landon likes
 
+        // Doesn't push the samples whatsoever and did not score anything could also ram into the other alliances robots.
         route = new OBS_Push3SpikeSampleInOnePath(adapter);
         route.buildRoute();
         obsRoutesList.add(route);
 
+        // Pushes the samples perfect for when the other teams robot is also trying to score.
         route = new OBS_Push2SpikeSamplesInOnePath(adapter);
         route.buildRoute();
         obsRoutesList.add(route);
@@ -143,33 +153,41 @@ public class AutoSelector extends LinearOpMode {
 
 
         // NET-specific routes
+
+        // Less points but scores perectly fine.
         route = new NET_Score_2_Preload_and_1_Sample_Short(adapter);
         route.buildRoute();
         netRoutesList.add(route);
 
+        // Score more points than last.
         route = new NET_Score_3_Preload_and_2_Samples_Short(adapter);
         route.buildRoute();
         netRoutesList.add(route);
 
+        // Same as the last one but Scores more points.
         route = new NET_Score_4_Preload_and_3_Samples_Short(adapter);
         route.buildRoute();
-        netRoutesList.add(route);
+        netRoutesList.add(route); // Tristan + Landon likes
 
+        // In the risk of getting bumped by the other robot but scores more points.
         route = new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter);
         route.buildRoute();
-        netRoutesList.add(route);
+        netRoutesList.add(route); // Tristan + Landon likes
 
+        // Scores more points but it might get more interfere with the robot because it goes to the observation zone twice.
         route = new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter);
         route.buildRoute();
         netRoutesList.add(route);
 
+        // Scores less points.
         route = new NET_Score_1_Specimen_Preload(adapter);
         route.buildRoute();
         netRoutesList.add(route);
 
+        // It scores a lot of points and it won't inter fear with the robot.
         route = new NET_Score5_SamplePreload(adapter);
         route.buildRoute();
-        netRoutesList.add(route);
+        netRoutesList.add(route); // Tristan + Landon likes
 
         // Shared options (without buildRoute if not needed)
         Routes moveOnly = new MoveOnly(adapter);
@@ -220,6 +238,9 @@ public class AutoSelector extends LinearOpMode {
     private void runSelectedRoute() {
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRouteAction = selectedRoute.getRouteAction(MatchConfig.finalSideOfField);
+
+//         Set the starting location of the robot on the field
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
 
         telemetry.clearAll();
 

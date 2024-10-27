@@ -69,22 +69,25 @@ public class DriverStationTelemetryManager {
 
     // Basic telemetry method
     private void displayBasicTelemetry() {
+        displayTimeTelemetry(telemetry);
+        telemetry.addLine();
         // Check and display DriveSubsystem telemetry if available
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Robot.getInstance().getDriveSubsystem().displayBasicTelemetry(telemetry);
         }
+        telemetry.addLine();
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
             Robot.getInstance().getSampleIntakeSubsystem().displayBasicTelemetry(telemetry);
         }
+        telemetry.addLine();
         // Check and display SampleLiftSubsystem telemetry if available
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
             Robot.getInstance().getSampleLiftSubsystem().displayBasicTelemetry(telemetry);
         }
+        telemetry.addLine();
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
             Robot.getInstance().getSampleLinearActuatorSubsystem().displayBasicTelemetry(telemetry);
         }
-
-        displayTimeTelemetry(telemetry);
     }
 
     // Verbose telemetry method for DriveSubsystem heading

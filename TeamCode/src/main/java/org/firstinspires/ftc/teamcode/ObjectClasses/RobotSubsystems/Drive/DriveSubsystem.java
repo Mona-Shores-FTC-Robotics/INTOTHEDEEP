@@ -15,6 +15,7 @@ import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
+import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.example.sharedconstants.FieldConstants;
@@ -32,7 +33,6 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
-import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 
 @Config
@@ -98,11 +98,11 @@ public class DriveSubsystem extends SubsystemBase {
                 DriveParams.configureChassis19429BDirections(mecanumDrive, this);
                 break;
 
-            case CENTERSTAGE_PINPOINT:
-                DriveParams.configureCenterstagePinpointRRParams();
+            case LIFT_BOT_PINPOINT:
+                DriveParams.configureLiftBotPinpointRRParams();
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
-                DriveParams.configureCenterStageDirections(mecanumDrive, this);
+                DriveParams.configureLiftBotDirections(mecanumDrive, this);
                 break;
 
             case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
@@ -116,23 +116,6 @@ public class DriveSubsystem extends SubsystemBase {
                 TwoDeadWheelLocalizer.PARAMS.parYTicks = -1450.0;
                 TwoDeadWheelLocalizer.PARAMS.perpXTicks =  800.0;
                 break;
-
-            case CENTERSTAGE_HUB_TWO_DEAD_WHEELS:
-                DriveParams.configureCenterstageTwoDeadWheelRRParams();
-                mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                initializeMotorEncoders();
-                DriveParams.configureCenterStageDirections(mecanumDrive, this);
-                mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
-                ((TwoDeadWheelLocalizer) mecanumDrive.localizer).par.setDirection(DcMotorEx.Direction.FORWARD);
-                ((TwoDeadWheelLocalizer) mecanumDrive.localizer).perp.setDirection(DcMotorEx.Direction.FORWARD);
-                TwoDeadWheelLocalizer.PARAMS.parYTicks = -1440.0;
-                TwoDeadWheelLocalizer.PARAMS.perpXTicks =  820.0;
-                break;
-
-            case CENTERSTAGE_OTOS:
-                this.mecanumDrive = new SparkFunOTOSDrive(hardwareMap, new Pose2d(0, 0, 0));
-                // No custom params for OTOS in this case, keep using default
-                break;
         }
         mecanumDrive.lazyImu.get().resetYaw();
         configurePID();
@@ -140,9 +123,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void init()
     {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.DRIVE);
         fieldOrientedControl=true; // Default to field-oriented control
-        CalculateYawOffset();
     }
 
     public void periodic(){
@@ -170,7 +151,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
     }
 
-    private void CalculateYawOffset() {
+    public void CalculateYawOffset() {
         // Calculate yaw offset based on alliance color
         // This offset assumes robot forward direction faces away from driver
         //      -For red start, the audience is on your left
@@ -181,6 +162,8 @@ public class DriveSubsystem extends SubsystemBase {
         } else {
             yawOffsetDegrees = -90;  // -90 degrees for red side
         }
+        MatchConfig.offsetFromStartPoseDegrees = -1*Math.toDegrees(getMecanumDrive().pose.heading.toDouble());
+
     }
 
     public MecanumDrive getMecanumDrive()
@@ -219,7 +202,7 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void fieldOrientedControl(double y, double x) {
         // Get the robot's current heading in radians (directly from the gyro)
-        double botHeading = mecanumDrive.pose.heading.toDouble() + Math.toRadians(yawOffsetDegrees);  //this is in radians
+        double botHeading = mecanumDrive.pose.heading.toDouble() + Math.toRadians(MatchConfig.offsetFromStartPoseDegrees);  //this is in radians
 
         // Rotate the movement direction relative to the robot's adjusted heading
         leftXAdjusted = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -237,7 +220,6 @@ public class DriveSubsystem extends SubsystemBase {
 
         // Display whether field-centric driving is enabled
         telemetry.addData("Field-Centric Driving", fieldOrientedControl ? "Enabled" : "Disabled");
-        telemetry.addLine("");
         double roadrunnerPoseHeadingDegrees = Math.toDegrees(mecanumDrive.pose.heading.log());
         telemetry.addLine(String.format("(X: %.1f, Y: %.1f, Yaw: %.1f°)",
                 mecanumDrive.pose.position.x, mecanumDrive.pose.position.y, roadrunnerPoseHeadingDegrees));
@@ -277,9 +259,14 @@ public class DriveSubsystem extends SubsystemBase {
     @SuppressLint("DefaultLocale")
     public void displayVerboseEncodersTelemetry(Telemetry telemetry) {
         MecanumDrive mecanumDrive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
-        telemetry.addLine();
-        // Motor Encoder Directions Header
-        telemetry.addLine("Motor Encoder Directions");
+
+        PositionVelocityPair leftFrontPosVel = leftFrontEncoder.getPositionAndVelocity();
+        PositionVelocityPair rightFrontPosVel = rightFrontEncoder.getPositionAndVelocity();
+        PositionVelocityPair leftBackPosVel = leftBackEncoder.getPositionAndVelocity();
+        PositionVelocityPair rightBackPosVel = rightBackEncoder.getPositionAndVelocity();
+
+        // Motor Encoder Directions
+        telemetry.addLine("Encoder Directions");
         telemetry.addData("Front Encoders", "LF: %s    RF: %s",
                 leftFrontEncoder.getDirection(),
                 rightFrontEncoder.getDirection());
@@ -288,14 +275,25 @@ public class DriveSubsystem extends SubsystemBase {
                 rightBackEncoder.getDirection());
         telemetry.addLine();
 
+        // Motor Encoder Values
+        telemetry.addLine("Encoder Values Using PosVel Pair");
+        telemetry.addData("Front Encoders", "LF: %s    RF: %s",
+                leftFrontPosVel.position,
+                rightFrontPosVel.position);
+        telemetry.addData("Back Encoders", "LB: %s    RB: %s",
+                leftBackPosVel.position,
+                rightBackPosVel.position);
+        telemetry.addLine();
+
         // Motor Encoder Ticks
-        telemetry.addLine("Motor Encoder Ticks");
-        telemetry.addData("Front Encoder Ticks", "LF: %d    RF: %d",
-                mecanumDrive.leftFront.getCurrentPosition(),
-                mecanumDrive.rightFront.getCurrentPosition());
-        telemetry.addData("Back Encoder Ticks", "LB: %d    RB: %d",
-                mecanumDrive.leftBack.getCurrentPosition(),
-                mecanumDrive.rightBack.getCurrentPosition());
+        // These are raw encoder values I believe, reversing them has no effect
+//        telemetry.addLine("Motor Encoder Ticks");
+//        telemetry.addData("Front Encoder Ticks", "LF: %d    RF: %d",
+//                mecanumDrive.leftFront.getCurrentPosition(),
+//                mecanumDrive.rightFront.getCurrentPosition());
+//        telemetry.addData("Back Encoder Ticks", "LB: %d    RB: %d",
+//                mecanumDrive.leftBack.getCurrentPosition(),
+//                mecanumDrive.rightBack.getCurrentPosition());
 
         telemetry.addLine();
         if (mecanumDrive instanceof PinpointDrive) {
@@ -340,20 +338,14 @@ public class DriveSubsystem extends SubsystemBase {
         // 1. IMU absolute yaw (in degrees)
         double imuYawDegrees = getInternalIMUYawDegrees();  // IMU's yaw from MecanumDrive
 
-        // 2. IMU offset yaw (in degrees)
-        double imuYawDegreesOffset = getInternalIMUYawDegreesWithOffsetApplied();
-
         // 3. RoadRunner pose heading (in degrees)
         double roadrunnerPoseHeadingDegrees = Math.toDegrees(mecanumDrive.pose.heading.log());
 
         // Display telemetry data
         telemetry.addData("IMU (Degrees)", "%.1f", imuYawDegrees);
-        telemetry.addData("IMU w/ Offset (Degrees)", "%.1f", imuYawDegreesOffset);
-        telemetry.addData("RoadRunner Pose Heading (Degrees)", "%.1f", roadrunnerPoseHeadingDegrees);
-
-        // Optionally display any difference between field convention yaw and RoadRunner heading
-        double yawDifference = imuYawDegreesOffset - roadrunnerPoseHeadingDegrees;
-        telemetry.addData("IMU vs RoadRunner Yaw Difference", yawDifference);
+        telemetry.addData("Pose Heading (Degrees)", "%.1f", roadrunnerPoseHeadingDegrees);
+        telemetry.addData("Start Pose Offset based on Pinpoint", "%.1f", MatchConfig.offsetFromStartPoseDegrees);
+        telemetry.addData("Start Pose hardcode", "%.1f", yawOffsetDegrees);
     }
 
     // Helper method to normalize angles to the range of -180 to 180 degrees
@@ -395,7 +387,7 @@ public class DriveSubsystem extends SubsystemBase {
      * Method to get current yaw (heading) in degrees from the IMU.
      */
     public double getInternalIMUYawDegreesWithOffsetApplied() {
-        return normalizeAngle(angles.getYaw(AngleUnit.DEGREES) - yawOffsetDegrees);  // Return yaw in degrees
+        return normalizeAngle(angles.getYaw(AngleUnit.DEGREES) - MatchConfig.offsetFromStartPoseDegrees);  // Return yaw in degrees
     }
 
     public void updateInternalIMU() {

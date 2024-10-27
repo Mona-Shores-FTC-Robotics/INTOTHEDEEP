@@ -53,6 +53,7 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        MatchConfig.finalRobotType = Robot.RobotType.LIFT_BOT_PINPOINT;
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
@@ -79,6 +80,8 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
 
         //set the starting location of the robot on the field
         robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
+        //After we set the start pose, use that to set the offset from the start pose for field centric driving
+        robot.getDriveSubsystem().CalculateYawOffset();
 
         // Setup Button Bindings
         new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());

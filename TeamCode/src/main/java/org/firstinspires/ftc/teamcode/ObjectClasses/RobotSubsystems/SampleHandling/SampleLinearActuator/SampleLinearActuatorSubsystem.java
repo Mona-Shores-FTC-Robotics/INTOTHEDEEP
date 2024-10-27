@@ -86,7 +86,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     // Initialize actuator motor with encoders and PID configuration
     public void init() {
         // Register the subsystem
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR);
         sampleActuator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);  // Reset encoders on init
         sampleActuator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         sampleActuator.setPower(ACTUATOR_PARAMS.POWER);

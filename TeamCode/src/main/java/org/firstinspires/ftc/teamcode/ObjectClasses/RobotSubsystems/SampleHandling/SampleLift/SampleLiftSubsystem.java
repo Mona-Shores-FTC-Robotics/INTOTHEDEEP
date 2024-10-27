@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
@@ -19,18 +20,18 @@ public class SampleLiftSubsystem extends SubsystemBase {
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
 
     public static class SampleLiftParams {
-        public double SCALE_FACTOR_FOR_MANUAL_LIFT = 150;
+        public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
         public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
         public double LIFT_POWER = 0.5;
         public double VEL_P = 5.0, VEL_I = 0.0, VEL_D = 0.0, VEL_F = 38.0;
         public double POS_P = 5.0;
-        public int MAX_DELTA_TICKS = 50;
-        public final int MAX_TARGET_TICKS = 2800;
-        public final int MIN_TARGET_TICKS = 0;
+        public int MAX_DELTA_TICKS = 150;
+        public final int MAX_TARGET_TICKS = 1750;
+        public final int MIN_TARGET_TICKS = 100;
         public double TIMEOUT_TIME_SECONDS = 3;
         public int HOME_HEIGHT_TICKS = 25;
-        public int HIGH_BASKET_TICKS = 2500;
-        public int LOW_BASKET_TICKS = 1500;
+        public int HIGH_BASKET_TICKS = 1700;
+        public int LOW_BASKET_TICKS = 1100;
         public int LIFT_HEIGHT_TICK_THRESHOLD = 45;
     }
 
@@ -68,10 +69,9 @@ public class SampleLiftSubsystem extends SubsystemBase {
     }
 
     public void init() {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.SAMPLE_LIFT);
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lift.setDirection(DcMotorEx.Direction.REVERSE);
+        lift.setDirection(DcMotorEx.Direction.FORWARD);
         lift.setVelocityPIDFCoefficients(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D, SAMPLE_LIFT_PARAMS.VEL_F);
         lift.setPositionPIDFCoefficients(SAMPLE_LIFT_PARAMS.POS_P);
         lift.setPower(SAMPLE_LIFT_PARAMS.LIFT_POWER);
@@ -83,7 +83,7 @@ public class SampleLiftSubsystem extends SubsystemBase {
 
     public void periodic() {
         currentTicks = lift.getCurrentPosition();
-        targetTicks = targetState.getLiftHeightTicks();
+//        targetTicks = targetState.getLiftHeightTicks();
         currentPower = lift.getPower();
         updateLiftState();
         updateParameters();  // This lets us use the dashboard changes for tuning
@@ -148,14 +148,12 @@ public class SampleLiftSubsystem extends SubsystemBase {
 
     // Add a method to handle manual input for the lift
     public void setManualTargetState(double liftInput) {
+        targetState = SampleLiftStates.MANUAL;
         // Calculate the new target ticks based on input
         int deltaTicks = (int) Math.round(liftInput * SAMPLE_LIFT_PARAMS.SCALE_FACTOR_FOR_MANUAL_LIFT);
 
-        // Clip the delta to avoid large movements
-        deltaTicks = Range.clip(deltaTicks, -SAMPLE_LIFT_PARAMS.MAX_DELTA_TICKS, SAMPLE_LIFT_PARAMS.MAX_DELTA_TICKS);
-
         // Calculate the new target ticks based on the current target position
-        int newTargetTicks = targetTicks + deltaTicks;
+        int newTargetTicks = getTargetTicks() + deltaTicks;
 
         setTargetTicks(newTargetTicks);  // Use setTargetTicks to ensure valid bounds
     }

@@ -200,7 +200,6 @@ public final class VisionSubsystem extends SubsystemBase {
     }
 
     public void init() {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.VISION);
         telemetry = Robot.getInstance().getActiveOpMode().telemetry;
         mecanumDrive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
         initVisionProcessor= Robot.getInstance().getVisionSubsystem().getInitVisionProcessor();

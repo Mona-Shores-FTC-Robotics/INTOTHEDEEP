@@ -43,7 +43,6 @@ public class ShoulderSubsystem extends SubsystemBase {
     }
 
     public void init() {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.SPECIMEN_ARM);
         currentState= ShoulderStates.STARTING_POSITION;
         shoulder.setPosition(currentState.position);
     }

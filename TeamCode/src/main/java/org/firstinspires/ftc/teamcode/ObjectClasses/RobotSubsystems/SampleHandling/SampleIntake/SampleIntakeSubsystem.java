@@ -48,7 +48,6 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     // Constructor with color sensor
     public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoName, final String colorSensorName) {
         sampleIntake = hMap.get(CRServo.class, intakeServoName);
-
         if (colorSensorName != null && !colorSensorName.isEmpty()) {
             colorSensor = hMap.get(ColorSensor.class, colorSensorName);
         } else {
@@ -63,7 +62,6 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     // Initialize intake servo
     public void init() {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.SAMPLE_INTAKE);  // Register subsystem
         setCurrentState(SampleIntakeStates.INTAKE_OFF);  // Set default state to off
         currentPower = INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
     }
