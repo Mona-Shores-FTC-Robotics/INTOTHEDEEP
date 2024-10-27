@@ -13,6 +13,8 @@ import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_3_Preloa
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_4_Preload_and_3_Samples_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short;
+import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike;
+import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.OBS.PushAllAtOnce.OBS_Push2SpikeSamplesInOnePath;
 import com.example.sharedconstants.Routes.OBS.PushAllAtOnce.OBS_Push3SpikeSampleInOnePath;
@@ -130,6 +132,15 @@ public class AutoSelector extends LinearOpMode {
         route = new OBS_Push2SpikeSamplesInOnePath(adapter);
         route.buildRoute();
         obsRoutesList.add(route);
+
+        route = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
+
+        route = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
+        route.buildRoute();
+        obsRoutesList.add(route);
+
 
         // NET-specific routes
         route = new NET_Score_2_Preload_and_1_Sample_Short(adapter);
