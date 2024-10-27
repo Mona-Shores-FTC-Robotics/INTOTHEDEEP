@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import static com.example.sharedconstants.FieldConstants.*;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MatchConfig {
@@ -11,6 +12,8 @@ public class MatchConfig {
     public static AllianceColor finalOpponentColor = AllianceColor.RED;
     public static SideOfField finalSideOfField = SideOfField.OBSERVATION;
     public static Robot.RobotType finalRobotType = Robot.RobotType.CHASSIS_19429_B_PINPOINT;  // Default to an initial type
+
+    public static double offsetFromStartPoseDegrees;
 
     public static boolean verboseMode = false;
 

@@ -19,31 +19,50 @@ public class IntoTheDeepDriverBindings {
     public Command cycleDriveModeCommand;
 
     public IntoTheDeepDriverBindings(GamepadEx gamepad) {
-
-        //Make the commands to use for the bindings
-        MakeCommands(gamepad);
+        Robot robot = Robot.getInstance();
 
         //////////////////////////////////////////////////////////
         //                                                      //
         // LEFT STICK / RIGHT STICK - Default Driving           //
         //                                                      //
         //////////////////////////////////////////////////////////
-        CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getDriveSubsystem(), defaultDriveCommand);
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+
+            defaultDriveCommand = new DefaultDriveCommand(Robot.getInstance().getDriveSubsystem(),
+                    gamepad::getLeftY,
+                    gamepad::getLeftX,
+                    gamepad::getRightX);
+
+            CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getDriveSubsystem(), defaultDriveCommand);
+        }
 
         //////////////////////////////////////////////////////////
         //                                                      //
         // RIGHT BUMPER - Slow Mode                             //
         //                                                      //
         //////////////////////////////////////////////////////////
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            slowModeCommand = new SlowModeCommand(Robot.getInstance().getDriveSubsystem(),
+                    gamepad::getLeftY,
+                    gamepad::getLeftX,
+                    gamepad::getRightX
+            );
 
-        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenHeld(slowModeCommand);
+            gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                    .whenHeld(slowModeCommand);
+        }
 
         //////////////////////////////////////////////////////////
         //                                                      //
         // BACK BUTTON - Cycle Telemetry Mode                  //
         //                                                      //
         //////////////////////////////////////////////////////////
+
+        // Command to cycle telemetry modes using DriverStationTelemetryManager
+        cycleTelemetryModeCommand = new InstantCommand(() -> {
+            Robot.getInstance().getDriverStationTelemetryManager().cycleTelemetryMode();
+        });
+
         gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(cycleTelemetryModeCommand);
 
@@ -52,57 +71,43 @@ public class IntoTheDeepDriverBindings {
         // BACK BUTTON - Cycle Drive Mode                       //
         //                                                      //
         //////////////////////////////////////////////////////////
-        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(cycleDriveModeCommand);
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            // Command to cycle through drive modes
+            cycleDriveModeCommand = new InstantCommand(() -> {
+                Robot.getInstance().getDriveSubsystem().cycleDriveMode();
+            });
 
+            gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                    .whenPressed(cycleDriveModeCommand);
+        }
 
         //////////////////////////////////////////////////////////
         //                                                      //
         // BACK BUTTON - Cycle Drive Mode                       //
         //                                                      //
         //////////////////////////////////////////////////////////
-        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new InstantCommand(() -> {
-                    Robot.getInstance().getDriveSubsystem().getMecanumDrive().lazyImu.get().resetYaw();
-                    Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
-                }));
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                    .whenPressed(new InstantCommand(() -> {
+                        Robot.getInstance().getDriveSubsystem().getMecanumDrive().lazyImu.get().resetYaw();
+                        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
+                    }));
+        }
 
         //////////////////////////////////////////////////////////
         //                                                      //
         //  START BUTTON  - FIELD ORIENTED CONTROL              //
         //                                                      //
         //////////////////////////////////////////////////////////
-        gamepad.getGamepadButton(GamepadKeys.Button.START)
-                .toggleWhenPressed(new InstantCommand(() -> {
-                    Robot.getInstance().getDriveSubsystem().fieldOrientedControl = true;
-                }), new InstantCommand(() -> {
-                    Robot.getInstance().getDriveSubsystem().fieldOrientedControl = false;
-                }));
-    }
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
 
-    private void MakeCommands(GamepadEx gamepad) {
-        defaultDriveCommand = new DefaultDriveCommand(Robot.getInstance().getDriveSubsystem(),
-                gamepad::getLeftY,
-                gamepad::getLeftX,
-                gamepad::getRightX
-        );
-
-        slowModeCommand = new SlowModeCommand(Robot.getInstance().getDriveSubsystem(),
-                gamepad::getLeftY,
-                gamepad::getLeftX,
-                gamepad::getRightX
-        );
-
-        // Command to cycle telemetry modes using DriverStationTelemetryManager
-        cycleTelemetryModeCommand = new InstantCommand(() -> {
-            Robot.getInstance().getDriverStationTelemetryManager().cycleTelemetryMode();
-        });
-
-        // Command to cycle telemetry modes using DriverStationTelemetryManager
-        cycleDriveModeCommand = new InstantCommand(() -> {
-            Robot.getInstance().getDriveSubsystem().cycleDriveMode();
-        });
-
+            gamepad.getGamepadButton(GamepadKeys.Button.START)
+                    .toggleWhenPressed(new InstantCommand(() -> {
+                        Robot.getInstance().getDriveSubsystem().fieldOrientedControl = true;
+                    }), new InstantCommand(() -> {
+                        Robot.getInstance().getDriveSubsystem().fieldOrientedControl = false;
+                    }));
+        }
     }
 }
 

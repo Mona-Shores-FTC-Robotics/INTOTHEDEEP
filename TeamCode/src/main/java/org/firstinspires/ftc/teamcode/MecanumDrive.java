@@ -58,19 +58,19 @@ public class MecanumDrive {
         // fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
         public double inPerTick = 1; // SparkFun OTOS Note: you can probably leave this at 1
-        public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 0;
+        public double lateralInPerTick = 0.810201231201328;
+        public double trackWidthTicks = 10.120120108884029;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.0;
-        public double kV = 0.0;
-        public double kA = 0.0;
+        public double kS = 0.8731944849469611;
+        public double kV = 0.1932813914842022;
+        public double kA = 0.0375 ;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 25;
@@ -82,9 +82,9 @@ public class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0;
-        public double lateralGain = 0;
-        public double headingGain = 0; // shared with turn
+        public double axialGain = 3.5;
+        public double lateralGain = 1;
+        public double headingGain = 6; // shared with turn
 
         public double axialVelGain = 0;
         public double lateralVelGain = 0;
@@ -139,7 +139,8 @@ public class MecanumDrive {
             imu = lazyImu.get();
 
             // reverse encoders if needed
-            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//               leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//               rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
         @Override

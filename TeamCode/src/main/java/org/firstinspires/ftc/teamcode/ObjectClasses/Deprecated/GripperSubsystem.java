@@ -33,7 +33,6 @@ public final class GripperSubsystem extends SubsystemBase {
     }
 
     public void init() {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.SPECIMEN_GRIPPER);
         currentState= GRIPPER_STARTING_STATE;
         endEffector.setPosition(currentState.position);
     }

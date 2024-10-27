@@ -69,7 +69,6 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void init() {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.CLIMBER);
         winchMotorInit();
         climberArmInit();
     }

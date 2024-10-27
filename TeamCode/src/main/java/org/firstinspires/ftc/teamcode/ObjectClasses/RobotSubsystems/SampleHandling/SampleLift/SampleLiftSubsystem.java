@@ -68,7 +68,6 @@ public class SampleLiftSubsystem extends SubsystemBase {
     }
 
     public void init() {
-        Robot.getInstance().registerSubsystem(Robot.SubsystemType.SAMPLE_LIFT);
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         lift.setDirection(DcMotorEx.Direction.REVERSE);

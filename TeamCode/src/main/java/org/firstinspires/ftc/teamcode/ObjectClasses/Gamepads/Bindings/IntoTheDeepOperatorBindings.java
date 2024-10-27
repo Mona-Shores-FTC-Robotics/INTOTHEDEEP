@@ -23,16 +23,8 @@ public class IntoTheDeepOperatorBindings {
     public static TriggerReader leftTrigger;
 
     public IntoTheDeepOperatorBindings(GamepadEx operatorGamepad) {
+        Robot robot = Robot.getInstance();
 
-        SampleIntakeSubsystem sampleIntakeSubsystem = Robot.getInstance().getSampleIntakeSubsystem();
-        Set<Subsystem> sampleIntakeRequirements = Collections.singleton(sampleIntakeSubsystem);
-        SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
-        Set<Subsystem>  sampleLiftRequirements = Collections.singleton(sampleLiftSubsystem);
-
-        SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();
-        Set<Subsystem>  sampleLinearActuatorRequirements = Collections.singleton(sampleLinearActuatorSubsystem);
-
-        SampleHandlingStateMachine sampleHandlingStateMachine = Robot.getInstance().getSampleHandlingStateMachine();
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -76,20 +68,25 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-
         //////////////////////////////////////////////////////////
         //                                                      //
         //  X BUTTON - INTAKE                                   //
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        ChangeIntakePowerAction turnOffIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
-        ChangeIntakePowerAction turnOnIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+        // Only bind this button if we actually have the subsystems
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE))
+        {
+            SampleIntakeSubsystem sampleIntakeSubsystem = robot.getSampleIntakeSubsystem();
+            Set<Subsystem> sampleIntakeRequirements = Collections.singleton(sampleIntakeSubsystem);
+            ChangeIntakePowerAction turnOffIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+            ChangeIntakePowerAction turnOnIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
                     .whenPressed(new ActionCommand(turnOnIntake, sampleIntakeRequirements))
                     .whenReleased(new ActionCommand(turnOffIntake, sampleIntakeRequirements)
-                            );
+                    );
+        }
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -97,33 +94,49 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        ChangeIntakePowerAction reverseIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+            SampleIntakeSubsystem sampleIntakeSubsystem = robot.getSampleIntakeSubsystem();
+            Set<Subsystem> sampleIntakeRequirements = Collections.singleton(sampleIntakeSubsystem);
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new ActionCommand(reverseIntake, sampleIntakeRequirements))
-                .whenReleased(new ActionCommand(turnOffIntake, sampleIntakeRequirements)
-                );
+            ChangeIntakePowerAction reverseIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
+            ChangeIntakePowerAction turnOffIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
 
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
+                    .whenPressed(new ActionCommand(reverseIntake, sampleIntakeRequirements))
+                    .whenReleased(new ActionCommand(turnOffIntake, sampleIntakeRequirements)
+                    );
+        }
         //////////////////////////////////////////////////////////
         //                                                      //
         //  Y BUTTON - TOGGLE LIFTING SAMPLE HIGH BASKET/HOME   //
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
-                .toggleWhenPressed(
-                        new InstantCommand(sampleHandlingStateMachine::setLiftToHighBasket),
-                        new InstantCommand(sampleHandlingStateMachine::setLiftToHome)
-                );
+        // this button can only be bound if we actually have all the subsystems we need
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) &&
+                robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT) &&
+                robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+            SampleHandlingStateMachine sampleHandlingStateMachine = Robot.getInstance().getSampleHandlingStateMachine();
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
+                    .toggleWhenPressed(
+                            new InstantCommand(sampleHandlingStateMachine::setLiftToHighBasket),
+                            new InstantCommand(sampleHandlingStateMachine::setLiftToHome)
+                    );
+        }
 
         //////////////////////////////////////////////////////////
         //                                                      //
         //  A BUTTON  - RETRACTS AND DEPLOYS SAMPLES            //
         //                                                      //
         //////////////////////////////////////////////////////////
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) &&
+                robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT) &&
+                robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+            SampleHandlingStateMachine sampleHandlingStateMachine = Robot.getInstance().getSampleHandlingStateMachine();
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(sampleHandlingStateMachine::onIntakeButtonPress));
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
+                    .whenPressed(new InstantCommand(sampleHandlingStateMachine::onIntakeButtonPress));
+        }
 
         //////////////////////////////////////////////////////////
         //                                                      //
