@@ -88,6 +88,7 @@ public class MoveSampleLiftAction implements Action {
     // Method to handle end of the action
     @SuppressLint("DefaultLocale")
     public void end(TelemetryPacket p) {
+        hasNotInit=true;
         if (timeout) {
             p.addLine("SampleLift Move TIMEOUT");
             p.put("Timeout Timer", timeoutTimer.seconds());

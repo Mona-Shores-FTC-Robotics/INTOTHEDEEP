@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings;
 
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -8,9 +10,12 @@ import com.arcrobotics.ftclib.gamepad.TriggerReader;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.DefaultSampleLiftCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 
@@ -32,11 +37,14 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        //////////////////////////////////////////////////////////
-        //                                                      //
-        // RIGHT BUMPER - ROBOT UP WITH WINCH                   //
-        //                                                      //
-        //////////////////////////////////////////////////////////
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
+
+            Command defaultSampleLiftCommand = new DefaultSampleLiftCommand(Robot.getInstance().getSampleLiftSubsystem(),
+                    operatorGamepad::getLeftY);
+
+            CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSampleLiftSubsystem(), defaultSampleLiftCommand);
+        }
+
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -67,6 +75,27 @@ public class IntoTheDeepOperatorBindings {
         // LEFT BUMPER  - CLIMBER ARM TO READY POSITION         //
         //                                                      //
         //////////////////////////////////////////////////////////
+
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
+            SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
+            Set<Subsystem> sampleLiftRequirements = Collections.singleton(sampleLiftSubsystem);
+
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                    .whenPressed(new ActionCommand(new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.LOW_BASKET), sampleLiftRequirements));
+        }
+
+        //////////////////////////////////////////////////////////
+        //                                                      //
+        // RIGHT BUMPER - ROBOT UP WITH WINCH                   //
+        //                                                      //
+        //////////////////////////////////////////////////////////
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
+            SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
+            Set<Subsystem> sampleLiftRequirements = Collections.singleton(sampleLiftSubsystem);
+
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                    .whenPressed(new ActionCommand(new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET), sampleLiftRequirements));
+        }
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -143,6 +172,8 @@ public class IntoTheDeepOperatorBindings {
         //  LEFT TRIGGER                                        //
         //                                                      //
         //////////////////////////////////////////////////////////
+
+
 
         //////////////////////////////////////////////////////////
         //                                                      //

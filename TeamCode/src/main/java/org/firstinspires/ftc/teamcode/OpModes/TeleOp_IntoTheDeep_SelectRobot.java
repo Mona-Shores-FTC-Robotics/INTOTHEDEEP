@@ -53,6 +53,7 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        MatchConfig.finalRobotType = Robot.RobotType.LIFT_BOT_PINPOINT;
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 

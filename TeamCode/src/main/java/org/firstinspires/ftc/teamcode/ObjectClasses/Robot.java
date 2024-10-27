@@ -113,8 +113,8 @@ public class Robot {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
 
-//                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
-//                registerSubsystem(SubsystemType.SAMPLE_LIFT);
+                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
+                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
                 break;
             }
         }
