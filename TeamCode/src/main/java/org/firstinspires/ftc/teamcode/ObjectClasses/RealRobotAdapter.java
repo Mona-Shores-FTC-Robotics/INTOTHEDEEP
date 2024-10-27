@@ -113,7 +113,8 @@ public class RealRobotAdapter implements RobotAdapter {
                 case LIFT_TO_LOW_BASKET:
                 case HOME:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
-                        return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.valueOf(actionType.name()));
+//                        return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.valueOf(actionType.name()));
+                        return new SleepAction(0.1);  // Returning nonce action
                     } else {
                         telemetryManger.displayError("Sample Lift subsystem is not available on this robot.");
                         return new SleepAction(0.1);  // Returning nonce action
@@ -121,7 +122,7 @@ public class RealRobotAdapter implements RobotAdapter {
 
                 default:
                     telemetryManger.displayError("Unknown action type: " + actionType);
-                    return new SleepAction(0.1);  // Returning nonce action for unknown actions
+                    return new SleepAction(.5);  // Returning nonce action for unknown actions
             }
         }
     }

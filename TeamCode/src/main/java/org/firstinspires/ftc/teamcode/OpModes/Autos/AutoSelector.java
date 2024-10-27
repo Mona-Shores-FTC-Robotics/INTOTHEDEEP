@@ -57,8 +57,8 @@ public class AutoSelector extends LinearOpMode {
         // Defaults Robot, Side of Field, and Color
         // We will need to update the robot manually. its just too difficult to select the robot for autos.
         // Select robot is easy for teleop
-        MatchConfig.finalRobotType = Robot.RobotType.CHASSIS_19429_B_PINPOINT;
-        MatchConfig.finalSideOfField = FieldConstants.SideOfField.NET;
+        MatchConfig.finalRobotType = Robot.RobotType.LIFT_BOT_PINPOINT;
+        MatchConfig.finalSideOfField = FieldConstants.SideOfField.OBSERVATION;
         MatchConfig.finalAllianceColor = FieldConstants.AllianceColor.BLUE;
 
         initializeComponents();

@@ -38,12 +38,11 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
 
     public void pickupSpecimenFromWallAndScore() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+                .setTangent(ANGLE_TOWARD_RED)
                 .splineToLinearHeading(OBS_ZONE_PICKUP_FACE_TOWARD_BLUE,ANGLE_TOWARD_RED)
-                .waitSeconds(1)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.PICKUP_SPECIMEN_OFF_WALL))
                 .splineToLinearHeading(CHAMBER_SLOT_FOUR,ANGLE_TOWARD_BLUE)
-                .waitSeconds(1);
-
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER));
 
     }
 
@@ -51,38 +50,30 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_1, ANGLE_TOWARD_BLUE)
-                .waitSeconds(1)
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND))
                 .setReversed(true)
-                .splineToLinearHeading(OBS_ZONE_PICKUP_FACE_TOWARD_BLUE,ANGLE_TOWARD_RED)
-                .waitSeconds(1);
-
-//                .splineToSplineHeading(OBS_BEHIND_SPIKE_THREE, ANGLE_TOWARD_OBSERVATION)
-//                .splineToConstantHeading(PoseToVector(OBS_SPIKE_ONE), ANGLE_TOWARD_RED)
-//                .splineToConstantHeading(PoseToVector(OBS_INTAKE_SPIKE_ONE), ANGLE_TOWARD_BLUE);
+                .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE));
     }
 
     public void intakeSecondTeamSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_2, ANGLE_TOWARD_BLUE)
-                .waitSeconds(1)
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND))
                 .setReversed(true)
-                .splineToLinearHeading(OBS_ZONE_PICKUP_FACE_TOWARD_BLUE,ANGLE_TOWARD_RED)
-                .waitSeconds(1);
-//                .splineToSplineHeading(OBS_BEHIND_SPIKE_THREE, ANGLE_TOWARD_OBSERVATION)
-//                .splineToConstantHeading(PoseToVector(OBS_SPIKE_THREE), ANGLE_TOWARD_RED)
-//                .splineToConstantHeading(PoseToVector(OBS_INTAKE_SPIKE_THREE), ANGLE_TOWARD_RED);
+                .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE));
+
     }
 
 
     public void intakeThirdTeamSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
-                .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_3, ANGLE_TOWARD_OBSERVATION)
-                .waitSeconds(1);
-//                .splineToSplineHeading(OBS_BEHIND_SPIKE_THREE, ANGLE_TOWARD_OBSERVATION)
-//                .splineToConstantHeading(PoseToVector(OBS_SPIKE_THREE), ANGLE_TOWARD_RED)
-//                .splineToConstantHeading(PoseToVector(OBS_INTAKE_SPIKE_THREE), ANGLE_TOWARD_RED);
+                .splineToLinearHeading(OBS_ZONE_DUMP, ANGLE_TOWARD_OBSERVATION)
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND));
+
     }
 }
 

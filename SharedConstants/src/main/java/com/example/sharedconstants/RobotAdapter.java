@@ -22,7 +22,9 @@ public interface RobotAdapter {
         LIFT_TO_LOW_BASKET,
         LEVEL_1_ASCENT,
         LEVEL_2_ASCENT,
-        LEVEL_3_ASCENT
+        LEVEL_3_ASCENT,
+        INTAKE_SAMPLE_FROM_GROUND,
+        DUMP_SAMPLE_IN_OBSERVATION_ZONE
     }
 
     // Generalized method to get an Action based on a provided action type
