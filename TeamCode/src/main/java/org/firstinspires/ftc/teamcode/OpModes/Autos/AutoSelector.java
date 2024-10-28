@@ -151,7 +151,6 @@ public class AutoSelector extends LinearOpMode {
         route.buildRoute();
         obsRoutesList.add(route);
 
-
         // NET-specific routes
 
         // Less points but scores perectly fine.

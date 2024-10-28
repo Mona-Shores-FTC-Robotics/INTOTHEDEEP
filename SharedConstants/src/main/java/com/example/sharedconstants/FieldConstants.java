@@ -41,9 +41,9 @@ public class FieldConstants {
     public static double QUARTER_TILE = TILE/4;
     public static double EIGHTH_TILE = TILE/8;
     public static double THREE_QUARTER_TILE = TILE*.75;
-    public static double ROBOT_LENGTH = 18.0;
+    public static double ROBOT_LENGTH = 16.5;
     public static double HALF_ROBOT_LENGTH = ROBOT_LENGTH/2.0;
-    public static double ROBOT_WIDTH = 18.0;
+    public static double ROBOT_WIDTH = 13.5;
     public static double HALF_ROBOT_WIDTH = ROBOT_LENGTH/2.0;
 
     public static double SAMPLE_WIDTH = 2.25;
@@ -67,7 +67,7 @@ public class FieldConstants {
     public static double ANGLE_340_DEGREES = Math.toRadians(340);
 
     //Chamber Slot Poses
-    public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(HALF_TILE, -TILE-HALF_ROBOT_LENGTH, ANGLE_TOWARD_BLUE);
+    public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,TILE/6), 0));
     public static Pose2d CHAMBER_SLOT_THREE = CHAMBER_SLOT_TWO.plus(new Twist2d(new Vector2d(0, TILE/6), 0));
     public static Pose2d CHAMBER_SLOT_FOUR = CHAMBER_SLOT_THREE.plus(new Twist2d(new Vector2d(0, TILE/6), 0));

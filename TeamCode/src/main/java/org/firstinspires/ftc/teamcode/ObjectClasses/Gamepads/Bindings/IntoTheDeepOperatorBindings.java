@@ -72,7 +72,7 @@ public class IntoTheDeepOperatorBindings {
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // LEFT BUMPER  - CLIMBER ARM TO READY POSITION         //
+        // LEFT BUMPER  - LIFT to LOW BUCKET                    //
         //                                                      //
         //////////////////////////////////////////////////////////
 
@@ -81,12 +81,12 @@ public class IntoTheDeepOperatorBindings {
             Set<Subsystem> sampleLiftRequirements = Collections.singleton(sampleLiftSubsystem);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                    .whenPressed(new ActionCommand(new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.LOW_BASKET), sampleLiftRequirements));
+                    .whenPressed(() -> new ActionCommand(new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.LOW_BASKET), sampleLiftRequirements));
         }
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // RIGHT BUMPER - ROBOT UP WITH WINCH                   //
+        // RIGHT BUMPER - GO TO HIGH BASKET                     //
         //                                                      //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
@@ -94,7 +94,7 @@ public class IntoTheDeepOperatorBindings {
             Set<Subsystem> sampleLiftRequirements = Collections.singleton(sampleLiftSubsystem);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                    .whenPressed(new ActionCommand(new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET), sampleLiftRequirements));
+                    .whenPressed(()-> new ActionCommand(new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET), sampleLiftRequirements));
         }
 
         //////////////////////////////////////////////////////////
@@ -112,8 +112,8 @@ public class IntoTheDeepOperatorBindings {
             ChangeIntakePowerAction turnOnIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
-                    .whenPressed(new ActionCommand(turnOnIntake, sampleIntakeRequirements))
-                    .whenReleased(new ActionCommand(turnOffIntake, sampleIntakeRequirements)
+                    .whenPressed(() -> new ActionCommand(turnOnIntake, sampleIntakeRequirements))
+                    .whenReleased(() -> new ActionCommand(turnOffIntake, sampleIntakeRequirements)
                     );
         }
 

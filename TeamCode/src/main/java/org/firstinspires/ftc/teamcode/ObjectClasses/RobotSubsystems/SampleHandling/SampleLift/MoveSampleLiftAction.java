@@ -12,12 +12,13 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 public class MoveSampleLiftAction implements Action {
     // State tracking variables
     private boolean hasNotInit = true;
+
     // Timeout indicator
     private boolean timeout;
     private SampleLiftSubsystem sampleLiftSubsystem;
     private final SampleLiftSubsystem.SampleLiftStates targetState;
     private final ElapsedTime timeoutTimer = new ElapsedTime();
-    private final double timeoutTimeSeconds;  // Now we have an optional timeout
+    private final double timeoutTimeSeconds;
 
     // Constructor with default timeout (from LIFT_PARAMS)
     public MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates inputState) {
@@ -35,19 +36,12 @@ public class MoveSampleLiftAction implements Action {
         // Reference the SampleLiftSubsystem instance
         sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
 
-        // Set the target state and target ticks in the subsystem
-        sampleLiftSubsystem.setTargetState(targetState);
-
         // Reset the timeout timer and set timeout to false
         timeoutTimer.reset();
         timeout = false;
 
-        // Set motor power and target position
-        sampleLiftSubsystem.lift.setPower(SampleLiftSubsystem.SAMPLE_LIFT_PARAMS.LIFT_POWER);
-        sampleLiftSubsystem.lift.setTargetPosition(sampleLiftSubsystem.getTargetTicks());
-
-        // Set motor mode to RUN_TO_POSITION
-        sampleLiftSubsystem.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Set the target state, which also sets the target ticks, and targetPosition on the actual lift
+        sampleLiftSubsystem.setTargetState(targetState);
     }
 
     @Override

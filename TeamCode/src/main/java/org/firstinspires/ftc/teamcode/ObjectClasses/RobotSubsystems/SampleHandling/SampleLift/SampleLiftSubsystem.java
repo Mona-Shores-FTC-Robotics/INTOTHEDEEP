@@ -4,18 +4,15 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Config
 public class SampleLiftSubsystem extends SubsystemBase {
-
     // Static instance of LIFT_PARAMS
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
 
@@ -25,11 +22,10 @@ public class SampleLiftSubsystem extends SubsystemBase {
         public double LIFT_POWER = 0.5;
         public double VEL_P = 5.0, VEL_I = 0.0, VEL_D = 0.0, VEL_F = 38.0;
         public double POS_P = 5.0;
-        public int MAX_DELTA_TICKS = 150;
         public final int MAX_TARGET_TICKS = 1750;
         public final int MIN_TARGET_TICKS = 100;
         public double TIMEOUT_TIME_SECONDS = 3;
-        public int HOME_HEIGHT_TICKS = 25;
+        public int HOME_HEIGHT_TICKS = 100;
         public int HIGH_BASKET_TICKS = 1700;
         public int LOW_BASKET_TICKS = 1100;
         public int LIFT_HEIGHT_TICK_THRESHOLD = 45;
@@ -37,20 +33,16 @@ public class SampleLiftSubsystem extends SubsystemBase {
 
     public enum SampleLiftStates {
         ZERO, HIGH_BASKET, LOW_BASKET, HOME, MANUAL;
-
         public int ticks;
-
         static {
             ZERO.ticks = 0;
             HIGH_BASKET.ticks = SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS;
             LOW_BASKET.ticks = SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS;
             HOME.ticks = SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS;
         }
-
         public void setLiftHeightTicks(int t) {
             this.ticks = t;
         }
-
         public int getLiftHeightTicks() {
             return this.ticks;
         }
@@ -65,10 +57,6 @@ public class SampleLiftSubsystem extends SubsystemBase {
 
     public SampleLiftSubsystem(final HardwareMap hMap, final String name) {
         lift = hMap.get(DcMotorEx.class, name);
-
-    }
-
-    public void init() {
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         lift.setDirection(DcMotorEx.Direction.FORWARD);
@@ -76,14 +64,17 @@ public class SampleLiftSubsystem extends SubsystemBase {
         lift.setPositionPIDFCoefficients(SAMPLE_LIFT_PARAMS.POS_P);
         lift.setPower(SAMPLE_LIFT_PARAMS.LIFT_POWER);
         currentState = SampleLiftStates.ZERO;
-        targetState = SampleLiftStates.ZERO;
+    }
+
+    public void init() {
+        //TODO do we need to split into initAuto() and initTeleop()?
+        targetState = SampleLiftStates.HOME;
         setTargetTicks(currentState.ticks);  // Use setTargetTicks to initialize
         lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
 
     public void periodic() {
         currentTicks = lift.getCurrentPosition();
-//        targetTicks = targetState.getLiftHeightTicks();
         currentPower = lift.getPower();
         updateLiftState();
         updateParameters();  // This lets us use the dashboard changes for tuning
@@ -95,7 +86,6 @@ public class SampleLiftSubsystem extends SubsystemBase {
         if (SAMPLE_LIFT_PARAMS.LIFT_POWER != currentPower) {
             lift.setPower(SAMPLE_LIFT_PARAMS.LIFT_POWER);
         }
-
         updateLiftHeightTicks(SampleLiftStates.HOME, SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS);
         updateLiftHeightTicks(SampleLiftStates.HIGH_BASKET, SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS);
         updateLiftHeightTicks(SampleLiftStates.LOW_BASKET, SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS);
@@ -157,7 +147,6 @@ public class SampleLiftSubsystem extends SubsystemBase {
 
         setTargetTicks(newTargetTicks);  // Use setTargetTicks to ensure valid bounds
     }
-
 
     private void updateLiftVelocityPIDFCoefficients(double p, double i, double d, double f) {
         PIDFCoefficients currentVelocityCoefficients = lift.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);

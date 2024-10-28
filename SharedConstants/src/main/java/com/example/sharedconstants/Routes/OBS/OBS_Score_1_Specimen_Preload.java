@@ -30,11 +30,11 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
         obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(OBS_START_POSE)
                 .splineToLinearHeading(chamberSlot, CHAMBER_SLOT_ONE.heading.toDouble())
                 .afterDisp(0, robotAdapter.getAction(SECURE_PRELOAD_SPECIMEN))
-                .afterDisp(.1, robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER))
+                .afterDisp(4, robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER))
                 .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
                 .setTangent(Math.toRadians(-45))
                 .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_OBSERVATION)
-                .afterDisp(0, robotAdapter.getAction(HOME));
+                .afterDisp(3, robotAdapter.getAction(HOME));
     }
 
 }
