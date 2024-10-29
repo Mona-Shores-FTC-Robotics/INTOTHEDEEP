@@ -50,7 +50,7 @@ public class DriverStationTelemetryManager {
                 displayVerboseSampleLiftTelemetry();
                 break;
             case VERBOSE_SAMPLE_LINEAR_ACTUATOR:
-                displayVerboseSampleLiftTelemetry();
+                displayVerboseSampleLinearActuatorTelemetry();
                 break;
         }
         telemetry.update();  // Make sure to update telemetry after displaying data

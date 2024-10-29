@@ -35,4 +35,9 @@ public class ActionCommand implements Command {
     public boolean isFinished() {
         return finished;
     }
+    @Override
+    public void end(boolean interrupted) {
+        finished = false; // Reset finished to allow re-initialization on the next press
+    }
+
 }

@@ -17,12 +17,14 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 
 import java.util.Collections;
 import java.util.Set;
 
 public class IntoTheDeepOperatorBindings {
+    public Command cycleTelemetryModeCommand;
 
     public static TriggerReader rightTrigger;
     public static TriggerReader leftTrigger;
@@ -44,6 +46,15 @@ public class IntoTheDeepOperatorBindings {
 
             CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSampleLiftSubsystem(), defaultSampleLiftCommand);
         }
+
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+
+            Command defaultSampleLinearActuatorCommand = new DefaultSampleLinearActuatorCommand(Robot.getInstance().getSampleLinearActuatorSubsystem(),
+                    operatorGamepad::getRightY);
+
+            CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSampleLinearActuatorSubsystem(), defaultSampleLinearActuatorCommand);
+        }
+
 
 
         //////////////////////////////////////////////////////////
@@ -75,14 +86,22 @@ public class IntoTheDeepOperatorBindings {
         // LEFT BUMPER  - LIFT to LOW BUCKET                    //
         //                                                      //
         //////////////////////////////////////////////////////////
+//
+//        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
+//            SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
+//            Set<Subsystem> sampleLiftRequirements = Collections.singleton(sampleLiftSubsystem);
+//
+//            operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                    .whenPressed(() -> new ActionCommand(new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.LOW_BASKET), sampleLiftRequirements));
+//        }
 
-        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
-            SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
-            Set<Subsystem> sampleLiftRequirements = Collections.singleton(sampleLiftSubsystem);
+        // Command to cycle telemetry modes using DriverStationTelemetryManager
+        cycleTelemetryModeCommand = new InstantCommand(() -> {
+            Robot.getInstance().getDriverStationTelemetryManager().cycleTelemetryMode();
+        });
 
-            operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                    .whenPressed(() -> new ActionCommand(new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.LOW_BASKET), sampleLiftRequirements));
-        }
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(cycleTelemetryModeCommand);
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -108,12 +127,13 @@ public class IntoTheDeepOperatorBindings {
         {
             SampleIntakeSubsystem sampleIntakeSubsystem = robot.getSampleIntakeSubsystem();
             Set<Subsystem> sampleIntakeRequirements = Collections.singleton(sampleIntakeSubsystem);
+
             ChangeIntakePowerAction turnOffIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
             ChangeIntakePowerAction turnOnIntake = new ChangeIntakePowerAction(sampleIntakeSubsystem, SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
-                    .whenPressed(() -> new ActionCommand(turnOnIntake, sampleIntakeRequirements))
-                    .whenReleased(() -> new ActionCommand(turnOffIntake, sampleIntakeRequirements)
+                    .whenPressed(new ActionCommand(turnOnIntake, sampleIntakeRequirements))
+                    .whenReleased(new ActionCommand(turnOffIntake, sampleIntakeRequirements)
                     );
         }
 
@@ -158,14 +178,15 @@ public class IntoTheDeepOperatorBindings {
         //  A BUTTON  - RETRACTS AND DEPLOYS SAMPLES            //
         //                                                      //
         //////////////////////////////////////////////////////////
+
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) &&
-                robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT) &&
                 robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
             SampleHandlingStateMachine sampleHandlingStateMachine = Robot.getInstance().getSampleHandlingStateMachine();
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
                     .whenPressed(new InstantCommand(sampleHandlingStateMachine::onIntakeButtonPress));
         }
+
 
         //////////////////////////////////////////////////////////
         //                                                      //

@@ -23,6 +23,14 @@ public class SampleHandlingStateMachine {
         this.liftSubsystem = liftSubsystem;
     }
 
+    public SampleHandlingStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
+                                      SampleIntakeSubsystem intakeSubsystem
+                                      ) {
+        this.actuatorSubsystem = actuatorSubsystem;
+        this.intakeSubsystem = intakeSubsystem;
+        this.liftSubsystem = null;
+    }
+
     // Method to handle button press logic (toggle actuator states)
     public void onIntakeButtonPress() {
         switch (actuatorSubsystem.getCurrentState()) {
@@ -34,9 +42,12 @@ public class SampleHandlingStateMachine {
                 setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
                 break;
             case DEPLOY_FULL:
+            default:
                 setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
                 setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                 break;
+
+
         }
     }
 

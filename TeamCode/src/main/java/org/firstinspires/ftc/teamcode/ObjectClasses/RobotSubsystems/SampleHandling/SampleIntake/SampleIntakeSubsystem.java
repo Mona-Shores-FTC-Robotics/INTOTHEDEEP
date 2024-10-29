@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 public class SampleIntakeSubsystem extends SubsystemBase {
 
     public static class IntakeParams {
-        public double INTAKE_ON_POWER = 0.8;
-        public double INTAKE_REVERSE_POWER = -0.8;
+        public double INTAKE_ON_POWER = -0.8;
+        public double INTAKE_REVERSE_POWER = 0.8;
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
     }
@@ -40,14 +40,18 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         }
     }
 
-    private final CRServo sampleIntake;  // Continuous rotation servo
+    private final CRServo sampleIntakeLeft;  // Continuous rotation servo
+    private final CRServo sampleIntakeRight;  // Continuous rotation servo
+
     private final ColorSensor colorSensor;  // Nullable color sensor
     private SampleIntakeStates currentState;
     private double currentPower;
 
     // Constructor with color sensor
-    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoName, final String colorSensorName) {
-        sampleIntake = hMap.get(CRServo.class, intakeServoName);
+    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoL, final String intakeServoR, final String colorSensorName) {
+        sampleIntakeLeft = hMap.get(CRServo.class, intakeServoL);
+        sampleIntakeRight = hMap.get(CRServo.class, intakeServoR);
+
         if (colorSensorName != null && !colorSensorName.isEmpty()) {
             colorSensor = hMap.get(ColorSensor.class, colorSensorName);
         } else {
@@ -56,8 +60,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     }
 
     // Overloaded constructor without color sensor
-    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoName) {
-        this(hMap, intakeServoName, null);  // Calls the main constructor with no color sensor
+    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoL, final String intakeServoR) {
+        this(hMap, intakeServoL, intakeServoR, null);  // Calls the main constructor with no color sensor
     }
 
     // Initialize intake servo
@@ -75,7 +79,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     // Set servo power, ensuring it's within limits
     private void setPower(double power) {
         currentPower = Range.clip(power, -INTAKE_PARAMS.MAX_POWER, INTAKE_PARAMS.MAX_POWER);  // Clip power to safe range
-        sampleIntake.setPower(currentPower);  // Apply the clipped power
+        sampleIntakeLeft.setPower(currentPower);  // Apply the clipped power
+        sampleIntakeRight.setPower(-currentPower);  // Apply the clipped power
     }
 
     // Method to read color from the sensor
@@ -112,8 +117,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Detect the color of the game piece in every loop
-        SampleColor detectedSampleColor = detectSampleColor();
-        handleSamplePickup(detectedSampleColor);
+        if (colorSensor!=null) {
+            SampleColor detectedSampleColor = detectSampleColor();
+            handleSamplePickup(detectedSampleColor);
+        }
         updateParameters();
         updateDashboardTelemetry();
     }

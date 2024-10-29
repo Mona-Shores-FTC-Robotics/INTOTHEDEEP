@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -13,48 +14,42 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     public static class ActuatorParams {
-        public double SCALE_FACTOR_FOR_MANUAL_ACTUATION = 150;
-        public double DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.05;
-        public double MAX_DELTA_TICKS = 50;
-        public int TICK_THRESHOLD = 50;
+        public double SCALE_FACTOR_FOR_MANUAL_ACTUATION = 33;
+        public double DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.10;
+        public int TICK_THRESHOLD = 45;
         public double TIMEOUT_TIME_SECONDS = 3; // Time after which a move action/command will give up
 
-        public double POWER = .4;  // Unified power for both directions
-        public int DEPLOY_FULL_POSITION_TICKS = 1000;
+        public double POWER = .7;  // Unified power for both directions
+        public int DEPLOY_FULL_POSITION_TICKS = 1350;
         public int DEPLOY_MID_POSITION_TICKS = 500;
         public int RETRACT_POSITION_TICKS = 0;
-        public double VEL_P = .5;
+        public double VEL_P = 11;
         public double VEL_I = 0;
         public double VEL_D = 0;
-        public double VEL_F = 0;
+        public double VEL_F = 1.5;
     }
 
     public static ActuatorParams ACTUATOR_PARAMS = new ActuatorParams();
 
     public enum SampleActuatorStates {
-        DEPLOY_FULL(ACTUATOR_PARAMS.DEPLOY_FULL_POSITION_TICKS),
-        DEPLOY_MID(ACTUATOR_PARAMS.DEPLOY_MID_POSITION_TICKS),
-        RETRACT(ACTUATOR_PARAMS.RETRACT_POSITION_TICKS),
-        MANUAL(0);  // Power will be set dynamically
-
-        public int targetPositionTicks;
-
-        SampleActuatorStates(int positionTicks) {
-            this.targetPositionTicks = positionTicks;
+        DEPLOY_FULL, DEPLOY_MID, RETRACT, MANUAL;
+        public int ticks;
+        static {
+            DEPLOY_FULL.ticks = ACTUATOR_PARAMS.DEPLOY_FULL_POSITION_TICKS;
+            DEPLOY_MID.ticks = ACTUATOR_PARAMS.DEPLOY_MID_POSITION_TICKS;
+            RETRACT.ticks = ACTUATOR_PARAMS.RETRACT_POSITION_TICKS;
         }
-
+        public void setActuatorTicks(int t) {
+            this.ticks = t;
+        }
         public int getTargetPositionTicks() {
-            return targetPositionTicks;
-        }
-
-        // Add this method to set the target position ticks dynamically
-        public void setTargetPositionTicks(int positionTicks) {
-            this.targetPositionTicks = positionTicks;
+            return this.ticks;
         }
     }
 
@@ -71,6 +66,13 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, String actuatorMotorName, String limitSwitchName) {
         sampleActuator = hardwareMap.get(DcMotorEx.class, actuatorMotorName);
 
+        sampleActuator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        sampleActuator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+                sampleActuator.setDirection(DcMotorEx.Direction.FORWARD);
+        sampleActuator.setVelocityPIDFCoefficients(ACTUATOR_PARAMS.VEL_P, ACTUATOR_PARAMS.VEL_I, ACTUATOR_PARAMS.VEL_D, ACTUATOR_PARAMS.VEL_F);
+        sampleActuator.setPower(ACTUATOR_PARAMS.POWER);
+        currentState = SampleActuatorStates.RETRACT;
+
         // Initialize the limit switch if the name is provided
         if (limitSwitchName != null && !limitSwitchName.isEmpty()) {
             retractedLimitSwitch = hardwareMap.get(DigitalChannel.class, limitSwitchName);
@@ -85,14 +87,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     // Initialize actuator motor with encoders and PID configuration
     public void init() {
-        // Register the subsystem
-        sampleActuator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);  // Reset encoders on init
-        sampleActuator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        sampleActuator.setPower(ACTUATOR_PARAMS.POWER);
-        sampleActuator.setDirection(DcMotorEx.Direction.FORWARD);
-        sampleActuator.setVelocityPIDFCoefficients(ACTUATOR_PARAMS.VEL_P, ACTUATOR_PARAMS.VEL_I, ACTUATOR_PARAMS.VEL_D, ACTUATOR_PARAMS.VEL_F);
-        sampleActuator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
         // Initialize the current and target states to retracted
         currentState = SampleActuatorStates.RETRACT;
         targetState = SampleActuatorStates.RETRACT;
@@ -106,7 +100,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public void periodic() {
         // Cache the current actuator position and target ticks
         currentTicks = sampleActuator.getCurrentPosition();
-        targetTicks = targetState.getTargetPositionTicks();
         currentPower = sampleActuator.getPower();
         updateActuatorState();
         updateParameters();
@@ -169,7 +162,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     // Method to update actuator target ticks if they've been changed in ACTUATOR_PARAMS
     private void updateActuatorPositionTicks(SampleActuatorStates actuatorState, int newTicks) {
         if (actuatorState.getTargetPositionTicks() != newTicks) {
-            actuatorState.setTargetPositionTicks(newTicks);
+            actuatorState.setActuatorTicks(newTicks);
         }
     }
 
@@ -182,18 +175,16 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         }
     }
 
+    // Add a method to handle manual input for the lift
     public void setManualTargetState(double actuatorInput) {
         // Set the actuator state to MANUAL
-        setTargetState(SampleActuatorStates.MANUAL);
+        targetState = SampleLinearActuatorSubsystem.SampleActuatorStates.MANUAL;
 
         // Calculate the new target ticks based on input
         int deltaTicks = (int) Math.round(actuatorInput * ACTUATOR_PARAMS.SCALE_FACTOR_FOR_MANUAL_ACTUATION);
 
-        // Clip the delta to avoid large movements
-        deltaTicks = (int) Range.clip(deltaTicks, -ACTUATOR_PARAMS.MAX_DELTA_TICKS, ACTUATOR_PARAMS.MAX_DELTA_TICKS);
-
         // Calculate the new target ticks based on the current target position
-        int newTargetTicks = targetTicks + deltaTicks;
+        int newTargetTicks = getTargetTicks() + deltaTicks;
 
         setTargetTicks(newTargetTicks);  // Use setTargetTicks to ensure valid bounds
     }
@@ -215,7 +206,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
             telemetryData += String.format(" | Target State: %s", targetState);
         }
 
-        telemetry.addData("Linear Actuator Status", telemetryData);
+        telemetry.addData("Linear Actuator:", telemetryData);
     }
 
     // Verbose telemetry display

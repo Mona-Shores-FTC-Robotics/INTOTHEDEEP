@@ -30,7 +30,8 @@ public class Robot {
         CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS,
         INTO_THE_DEEP,
         LIFT_BOT_PINPOINT,
-        INTAKE_TESTER
+        INTAKE_TESTER,
+        LINEAR_ACTUATOR_BOT
     }
     public enum OpModeType {TELEOP, AUTO}
 
@@ -77,8 +78,8 @@ public class Robot {
                 registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
 
 //              sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake", "colorsensor"); // If we have a color sensor
-                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
-                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
+//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
+//                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
                 sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
                 registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
@@ -90,8 +91,8 @@ public class Robot {
             }
 
             case INTAKE_TESTER: {
-                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
-                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
+//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
+//                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
                 sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
                 registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
@@ -99,6 +100,18 @@ public class Robot {
                 sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
                 registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
                 break;
+            }
+
+            case LINEAR_ACTUATOR_BOT: {
+                    mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
+                    registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
+
+                    sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright");
+                    registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
+
+                    sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "intakeactuator");
+                    registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
+                    break;
             }
 
             //Just the drive base
@@ -173,6 +186,13 @@ public class Robot {
                  && hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
              sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftSubsystem);
          }
+
+        if (opModeType == OpModeType.TELEOP
+                && hasSubsystem(SubsystemType.SAMPLE_INTAKE)
+                && hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
+            sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem);
+        }
+
     }
 
     // Common initialization method for all modes

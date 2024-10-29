@@ -17,7 +17,6 @@ public class DefaultSampleLinearActuatorCommand extends CommandBase {
     public DefaultSampleLinearActuatorCommand(SampleLinearActuatorSubsystem subsystem, DoubleSupplier actuatorInput) {
         this.sampleLinearActuatorSubsystem = subsystem;
         this.actuatorSupplier = actuatorInput;
-
         addRequirements(sampleLinearActuatorSubsystem);
     }
 
@@ -27,9 +26,8 @@ public class DefaultSampleLinearActuatorCommand extends CommandBase {
 
         if (Math.abs(actuatorInput) > ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION) {
             // Convert joystick input into movement, adjust target ticks based on manual input
-            sampleLinearActuatorSubsystem.setManualTargetState(actuatorInput);
+            sampleLinearActuatorSubsystem.setManualTargetState(-actuatorInput);
         }
-        // Do nothing if inside the dead zone — the actuator will hold the last position
     }
 
     @Override
