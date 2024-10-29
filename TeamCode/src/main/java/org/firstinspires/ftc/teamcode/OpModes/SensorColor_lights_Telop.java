@@ -259,56 +259,21 @@ public class SensorColor_lights_Telop extends LinearOpMode {
       if (colorSensor instanceof DistanceSensor) {
         telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
       }
-      float distance = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
+      double distance = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM);
       telemetry.update();
 
-//                RED(0),
-////              ORANGE(30),
-//              YELLOW(46),
-//              GREEN(120),
-//              CYAN(180),
-//              BLUE(240),
-//              PURPLE(270),
-//              MAGENTA(300),
-//              BLACK(-1),
-//              WHITE(-2);
+      pattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
 
-      if colorsensor distance <= 5
-              if raw green >= 400 then color = yellow
-              else if raw blue >= 250 then color = blue
-              else color = red
-
-      else if
-        blue = false
-        yellow = false
-        then color = red
-
-
-
-
-
-
-
-
-
-
-
-      if (hsvValues[1] > 0.5) {
-        if (hsvValues[0] < 46) {
-          // DISPLAY RED
-          pattern = RevBlinkinLedDriver.BlinkinPattern. RED ;    //HEARTBEAT_RED
-        } else if ((hsvValues[0] >= 46) && (hsvValues[0] < 180)) {
-          // DISPLAY YELLOW
-          pattern = RevBlinkinLedDriver.BlinkinPattern.  YELLOW;   //CP2_LARSON_SCANNER
+      if (distance <= 3) {
+        if (colorSensor.green() >= 400) {
+          pattern = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE;
+        } else if (colorSensor.blue() >= 250) {
+          pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE;
+        } else if (colorSensor.blue() <= 120 && colorSensor.green() <= 175) {
+          pattern = RevBlinkinLedDriver.BlinkinPattern.FIRE_LARGE;
         }
-        else {
-          // DISPLAY BLUE
-          pattern = RevBlinkinLedDriver.BlinkinPattern. BLUE;   //HEARTBEAT_BLUE
-        }
-      } else {
-        // DISPLAY BLACK
-        pattern = RevBlinkinLedDriver.BlinkinPattern. BLACK;   //RAINBOW_WITH_GLITTER
       }
+
       displayPattern();
       // Change the Robot Controller's background color to match the color detected by the color sensor.
       relativeLayout.post(new Runnable() {
