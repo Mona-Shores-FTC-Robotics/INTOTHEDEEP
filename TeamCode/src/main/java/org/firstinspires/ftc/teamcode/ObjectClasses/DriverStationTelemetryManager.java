@@ -88,7 +88,12 @@ public class DriverStationTelemetryManager {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
             Robot.getInstance().getSampleLinearActuatorSubsystem().displayBasicTelemetry(telemetry);
         }
+        telemetry.addLine();
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+            Robot.getInstance().getSpecimenIntakeSubsystem().displayBasicTelemetry(telemetry);
+        }
     }
+
 
     // Verbose telemetry method for DriveSubsystem heading
     private void displayVerboseHeadingTelemetry() {

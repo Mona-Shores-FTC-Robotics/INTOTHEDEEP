@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveS
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +33,8 @@ public class Robot {
         INTO_THE_DEEP,
         LIFT_BOT_PINPOINT,
         INTAKE_TESTER,
-        LINEAR_ACTUATOR_BOT
+        LINEAR_ACTUATOR_BOT,
+        SPECIMEN_BOT
     }
     public enum OpModeType {TELEOP, AUTO}
 
@@ -44,7 +47,9 @@ public class Robot {
     private static SampleLiftSubsystem sampleLiftSubsystem;
     private static SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem;
 
+
     //Specimen Subsystems
+    private static SpecimenIntakeSubsystem specimenIntakeSubsystem;
     private static ShoulderSubsystem shoulderSubsystem;
     private static GripperSubsystem gripperSubsystem;
 
@@ -54,7 +59,7 @@ public class Robot {
 
 
     public enum SubsystemType {
-        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT, SPECIMEN_GRIPPER, SPECIMEN_ARM, CLIMBER, VISION
+        DRIVE, SAMPLE_INTAKE, SPECIMEN_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT, SPECIMEN_GRIPPER, SPECIMEN_ARM, CLIMBER, VISION
     }
 
     // Use an EnumSet for tracking available subsystems
@@ -112,6 +117,16 @@ public class Robot {
                     sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "intakeactuator");
                     registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
                     break;
+            }
+
+            case SPECIMEN_BOT: {
+                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
+                registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
+
+                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
+                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
+
+                break;
             }
 
             //Just the drive base
@@ -209,7 +224,7 @@ public class Robot {
             }
         }
     }
-
+    public SpecimenIntakeSubsystem getSpecimenIntakeSubsystem() {return specimenIntakeSubsystem;}
     public SampleLiftSubsystem getSampleLiftSubsystem()  {return sampleLiftSubsystem;}
     public SampleIntakeSubsystem getSampleIntakeSubsystem()  {return sampleIntakeSubsystem;}
     public SampleLinearActuatorSubsystem getSampleLinearActuatorSubsystem()  {return sampleLinearActuatorSubsystem;}

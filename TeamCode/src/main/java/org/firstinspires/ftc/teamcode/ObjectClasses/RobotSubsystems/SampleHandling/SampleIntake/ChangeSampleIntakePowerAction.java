@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake;
 
-import android.annotation.SuppressLint;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 
-public class ChangeIntakePowerAction implements Action {
+public class ChangeSampleIntakePowerAction implements Action {
 
     // The subsystem the action runs on
     private final SampleIntakeSubsystem sampleIntakeSubsystem;
@@ -19,7 +17,7 @@ public class ChangeIntakePowerAction implements Action {
     private boolean hasNotInit = true;  // To track initialization
 
     // Constructor to initialize the action with the subsystem and target state
-    public ChangeIntakePowerAction(SampleIntakeSubsystem subsystem, SampleIntakeSubsystem.SampleIntakeStates inputState) {
+    public ChangeSampleIntakePowerAction(SampleIntakeSubsystem subsystem, SampleIntakeSubsystem.SampleIntakeStates inputState) {
         sampleIntakeSubsystem = subsystem;
         targetState = inputState;
     }
