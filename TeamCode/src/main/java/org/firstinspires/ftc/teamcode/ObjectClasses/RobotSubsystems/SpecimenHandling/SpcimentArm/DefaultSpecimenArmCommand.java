@@ -2,30 +2,28 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHan
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
-
 import java.util.function.DoubleSupplier;
 
 public class DefaultSpecimenArmCommand extends CommandBase {
 
-    private final SampleLiftSubsystem sampleLiftSubsystem;
-    private final DoubleSupplier liftSupplier;
+    private final SpecimenArmSubsystem specimenArmSubsystem;
+    private final DoubleSupplier armSupplier;
 
-    public DefaultSpecimenArmCommand(SampleLiftSubsystem subsystem, DoubleSupplier liftStick) {
-        sampleLiftSubsystem = subsystem;
-        liftSupplier = liftStick;
+    public DefaultSpecimenArmCommand(SpecimenArmSubsystem subsystem, DoubleSupplier armStick) {
+        specimenArmSubsystem = subsystem;
+        armSupplier = armStick;
 
         // Add the subsystem to the requirements
-        addRequirements(sampleLiftSubsystem);
+        addRequirements(specimenArmSubsystem);
     }
 
     @Override
     public void execute() {
-        double liftInput = liftSupplier.getAsDouble();
+        double armInput = armSupplier.getAsDouble();
 
-        if (Math.abs(liftInput) > SampleLiftSubsystem.SAMPLE_LIFT_PARAMS.LIFT_DEAD_ZONE_FOR_MANUAL_LIFT) {
+        if (Math.abs(armInput) > SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.DEAD_ZONE){
             // Adjust the target position based on manual control method in subsystem
-            sampleLiftSubsystem.setManualTargetState(liftInput); // this argument will be a value between 1 and -1
+            specimenArmSubsystem.setManualTargetState(armInput); // this argument will be a value between 1 and -1
         }
     }
 

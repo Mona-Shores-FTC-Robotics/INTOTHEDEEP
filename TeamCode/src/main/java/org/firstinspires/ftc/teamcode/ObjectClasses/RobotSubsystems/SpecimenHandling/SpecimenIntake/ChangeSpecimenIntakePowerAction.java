@@ -6,10 +6,12 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+
 public class ChangeSpecimenIntakePowerAction implements Action {
 
     // The subsystem the action runs on
-    private final SpecimenIntakeSubsystem specimenIntakeSubsystem;
+    private SpecimenIntakeSubsystem specimenIntakeSubsystem;
 
     // Target state for the intake motor
     private final SpecimenIntakeSubsystem.SpecimenIntakeStates targetState;
@@ -17,13 +19,13 @@ public class ChangeSpecimenIntakePowerAction implements Action {
     private boolean hasNotInit = true;  // To track initialization
 
     // Constructor to initialize the action with the subsystem and target state
-    public ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem subsystem, SpecimenIntakeSubsystem.SpecimenIntakeStates inputState) {
-        specimenIntakeSubsystem = subsystem;
+    public ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates inputState) {
         targetState = inputState;
     }
 
     // Initialization method
     public void init() {
+        specimenIntakeSubsystem = Robot.getInstance().getSpecimenIntakeSubsystem();
         // Set the intake motor power based on the target state
         specimenIntakeSubsystem.setCurrentState(targetState);
     }

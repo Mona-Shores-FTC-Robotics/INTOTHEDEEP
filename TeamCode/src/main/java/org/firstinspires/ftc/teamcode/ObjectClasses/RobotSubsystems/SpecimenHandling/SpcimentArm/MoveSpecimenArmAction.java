@@ -18,18 +18,18 @@ public class MoveSpecimenArmAction implements Action {
 
     // Timeout indicator
     private boolean timeout;
-    private SampleLiftSubsystem sampleLiftSubsystem;
-    private final SampleLiftSubsystem.SampleLiftStates targetState;
+    private SpecimenArmSubsystem specimenArmSubsystem;
+    private final SpecimenArmSubsystem.SpecimenArmStates targetState;
     private final ElapsedTime timeoutTimer = new ElapsedTime();
     private final double timeoutTimeSeconds;
 
-    // Constructor with default timeout (from LIFT_PARAMS)
-    public MoveSpecimenArmAction(SampleLiftSubsystem.SampleLiftStates inputState) {
+    // Constructor with default timeout
+    public MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates inputState) {
         this(inputState, SampleLiftSubsystem.SAMPLE_LIFT_PARAMS.TIMEOUT_TIME_SECONDS);  // Default to the one in LIFT_PARAMS
     }
 
     // Constructor with custom timeout
-    public MoveSpecimenArmAction(SampleLiftSubsystem.SampleLiftStates inputState, double timeoutTimeSeconds) {
+    public MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates inputState, double timeoutTimeSeconds) {
         targetState = inputState;
         this.timeoutTimeSeconds = timeoutTimeSeconds;  // Use provided timeout
     }
@@ -37,14 +37,14 @@ public class MoveSpecimenArmAction implements Action {
     // Initialization method
     public void init() {
         // Reference the SampleLiftSubsystem instance
-        sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
+        specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
 
         // Reset the timeout timer and set timeout to false
         timeoutTimer.reset();
         timeout = false;
 
         // Set the target state, which also sets the target ticks, and targetPosition on the actual lift
-        sampleLiftSubsystem.setTargetState(targetState);
+        specimenArmSubsystem.setTargetState(targetState);
     }
 
     @Override
@@ -67,15 +67,15 @@ public class MoveSpecimenArmAction implements Action {
 
     // Method to check if the action is finished
     public boolean isFinished() {
-        // Check if the subsystem reports that the lift has finished its move
-        boolean finished = sampleLiftSubsystem.getCurrentState() == targetState;
+        // Check if the subsystem reports that the arm has finished its move
+        boolean finished = specimenArmSubsystem.getCurrentState() == targetState;
 
         // Check for timeout using the specified timeout time (can be default or custom)
         boolean timedOut = timeoutTimer.seconds() > timeoutTimeSeconds;
 
         // If finished, update the state immediately
         if (finished) {
-            sampleLiftSubsystem.setCurrentState(targetState);
+            specimenArmSubsystem.setCurrentState(targetState);
         }
 
         // Return true if either the target position is reached or the timeout occurs
@@ -87,14 +87,14 @@ public class MoveSpecimenArmAction implements Action {
     public void end(TelemetryPacket p) {
         hasNotInit=true;
         if (timeout) {
-            p.addLine("SampleLift Move TIMEOUT");
+            p.addLine("Specimen Arm Move TIMEOUT");
             p.put("Timeout Timer", timeoutTimer.seconds());
-            p.put("Target Position", sampleLiftSubsystem.getTargetTicks());
-            p.put("Current Position at Timeout", sampleLiftSubsystem.getCurrentTicks());
+            p.put("Target Position", specimenArmSubsystem.getTargetTicks());
+            p.put("Current Position at Timeout", specimenArmSubsystem.getCurrentTicks());
         } else {
             // Report successful completion (state already set in isFinished)
-            p.addLine(String.format("SampleLift Move COMPLETE: State: %s -> %s, Time: %.2f seconds",
-                    sampleLiftSubsystem.getCurrentState(), targetState, timeoutTimer.seconds()));
+            p.addLine(String.format("Specimen Arm Move COMPLETE: State: %s -> %s, Time: %.2f seconds",
+                    specimenArmSubsystem.getCurrentState(), targetState, timeoutTimer.seconds()));
         }
 
         // Send the telemetry packet

@@ -27,29 +27,29 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public final int MIN_TARGET_TICKS = 100;
         public double TIMEOUT_TIME_SECONDS = 3;
         public int HOME_HEIGHT_TICKS = 100;
-        public int SPECIMEN_PICKUP = 750;
-        public int SPECIMEN_DELIVERY = 300;
+        public int SPECIMEN_PICKUP = 100;
+        public int SPECIMEN_DELIVERY = 500;
+        public int SPECIMEN_STAGING = 800;
         public int THRESHOLD = 45;
     }
-//todo FIX THIS
     public enum SpecimenArmStates {
-        ZERO, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, HOME, MANUAL;
+        ZERO, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, MANUAL, SPECIMEN_STAGING;
         public int ticks;
         static {
             ZERO.ticks = 0;
             SPECIMEN_PICKUP.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP;
+            SPECIMEN_STAGING.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING;
             SPECIMEN_DELIVERY.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY;
-            HOME.ticks = SPECIMEN_ARM_PARAMS.HOME_HEIGHT_TICKS;
         }
-        public void setLiftHeightTicks(int t) {
+        public void setArmTicks(int t) {
             this.ticks = t;
         }
-        public int getLiftHeightTicks() {
+        public int getArmTicks() {
             return this.ticks;
         }
     }
 
-    public DcMotorEx lift;
+    public DcMotorEx arm;
     private SpecimenArmStates currentState;
     private SpecimenArmStates targetState;
     private int currentTicks;
@@ -57,38 +57,38 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     private double currentPower;
 
     public SpecimenArmSubsystem(final HardwareMap hMap, final String name) {
-        lift = hMap.get(DcMotorEx.class, name);
-        lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        lift.setDirection(DcMotorEx.Direction.FORWARD);
-        lift.setVelocityPIDFCoefficients(SPECIMEN_ARM_PARAMS.VEL_P, SPECIMEN_ARM_PARAMS.VEL_I, SPECIMEN_ARM_PARAMS.VEL_D, SPECIMEN_ARM_PARAMS.VEL_F);
-        lift.setPositionPIDFCoefficients(SPECIMEN_ARM_PARAMS.POS_P);
-        lift.setPower(SPECIMEN_ARM_PARAMS.POWER);
+        arm = hMap.get(DcMotorEx.class, name);
+        arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        arm.setDirection(DcMotorEx.Direction.FORWARD);
+        arm.setVelocityPIDFCoefficients(SPECIMEN_ARM_PARAMS.VEL_P, SPECIMEN_ARM_PARAMS.VEL_I, SPECIMEN_ARM_PARAMS.VEL_D, SPECIMEN_ARM_PARAMS.VEL_F);
+        arm.setPositionPIDFCoefficients(SPECIMEN_ARM_PARAMS.POS_P);
+        arm.setPower(SPECIMEN_ARM_PARAMS.POWER);
         currentState = SpecimenArmStates.ZERO;
     }
 
     public void init() {
         //TODO do we need to split into initAuto() and initTeleop()?
-        targetState = SpecimenArmStates.HOME;
+        targetState = SpecimenArmStates.ZERO;
         setTargetTicks(currentState.ticks);  // Use setTargetTicks to initialize
-        lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        arm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
 
     public void periodic() {
-        currentTicks = lift.getCurrentPosition();
-        currentPower = lift.getPower();
-        updateLiftState();
-        updateParameters();  // This lets us use the dashboard changes for tuning
+        currentTicks = arm.getCurrentPosition();
+        currentPower = arm.getPower();
+        updateArmState();
+        updateParameters();
         updateDashboardTelemetry();
     }
 
     // **updateLiftPIDs() Method**
     public void updateParameters() {
         if (SPECIMEN_ARM_PARAMS.POWER != currentPower) {
-            lift.setPower(SPECIMEN_ARM_PARAMS.POWER);
+            arm.setPower(SPECIMEN_ARM_PARAMS.POWER);
         }
-        updateLiftHeightTicks(SpecimenArmStates.HOME, SPECIMEN_ARM_PARAMS.HOME_HEIGHT_TICKS);
         updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_PICKUP, SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP);
+        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_STAGING, SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING);
         updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_DELIVERY, SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY);
         updateLiftVelocityPIDFCoefficients(SPECIMEN_ARM_PARAMS.VEL_P, SPECIMEN_ARM_PARAMS.VEL_I, SPECIMEN_ARM_PARAMS.VEL_D, SPECIMEN_ARM_PARAMS.VEL_F);
         updateLiftPositionPIDFCoefficients(SPECIMEN_ARM_PARAMS.POS_P);
@@ -99,22 +99,22 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         targetTicks = Range.clip(ticks, SPECIMEN_ARM_PARAMS.MIN_TARGET_TICKS, SPECIMEN_ARM_PARAMS.MAX_TARGET_TICKS);
 
         // Set the motor's target position
-        lift.setTargetPosition(targetTicks);
+        arm.setTargetPosition(targetTicks);
     }
 
-    public boolean isLiftAtTarget() {
+    public boolean isArmAtTarget() {
         return Math.abs(currentTicks - targetTicks) < SPECIMEN_ARM_PARAMS.THRESHOLD;
     }
 
-    public void updateLiftState() {
-        if (isLiftAtTarget()) {
+    public void updateArmState() {
+        if (isArmAtTarget()) {
             setCurrentState(targetState);
         }
     }
 
     public void setTargetState(SpecimenArmStates state) {
         targetState = state;
-        setTargetTicks(state.getLiftHeightTicks());
+        setTargetTicks(state.getArmTicks());
     }
 
     public SpecimenArmStates getCurrentState() {
@@ -150,23 +150,23 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     }
 
     private void updateLiftVelocityPIDFCoefficients(double p, double i, double d, double f) {
-        PIDFCoefficients currentVelocityCoefficients = lift.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        PIDFCoefficients currentVelocityCoefficients = arm.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
         if (currentVelocityCoefficients.p != p || currentVelocityCoefficients.i != i ||
                 currentVelocityCoefficients.d != d || currentVelocityCoefficients.f != f) {
-            lift.setVelocityPIDFCoefficients(p, i, d, f);
+            arm.setVelocityPIDFCoefficients(p, i, d, f);
         }
     }
 
     private void updateLiftPositionPIDFCoefficients(double p) {
-        double currentPositionCoefficient = lift.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION).p;
+        double currentPositionCoefficient = arm.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION).p;
         if (currentPositionCoefficient != p) {
-            lift.setPositionPIDFCoefficients(p);
+            arm.setPositionPIDFCoefficients(p);
         }
     }
 
     private void updateLiftHeightTicks(SpecimenArmStates liftState, int newHeightTicks) {
-        if (liftState.getLiftHeightTicks() != newHeightTicks) {
-            liftState.setLiftHeightTicks(newHeightTicks);
+        if (liftState.getArmTicks() != newHeightTicks) {
+            liftState.setArmTicks(newHeightTicks);
         }
     }
 
@@ -187,16 +187,16 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         telemetry.addData("sampleLift/Target State", targetState);
         telemetry.addData("sampleLift/Current Position Ticks", currentTicks);
         telemetry.addData("sampleLift/Target Position Ticks", targetTicks);
-        telemetry.addData("sampleLift/Motor Power", lift.getPower());
+        telemetry.addData("sampleLift/Motor Power", arm.getPower());
     }
 
     public void updateDashboardTelemetry() {
-        MatchConfig.telemetryPacket.put("sampleLift/Current State", currentState.toString());
-        MatchConfig.telemetryPacket.put("sampleLift/Target State", targetState.toString());
-        MatchConfig.telemetryPacket.put("sampleLift/Current Position Ticks", currentTicks);
-        MatchConfig.telemetryPacket.put("sampleLift/Target Position Ticks", targetTicks);
+        MatchConfig.telemetryPacket.put("specimenArm/Current State", currentState.toString());
+        MatchConfig.telemetryPacket.put("specimenArm/Target State", targetState.toString());
+        MatchConfig.telemetryPacket.put("specimenArm/Current Position Ticks", currentTicks);
+        MatchConfig.telemetryPacket.put("specimenArm/Target Position Ticks", targetTicks);
         @SuppressLint("DefaultLocale") String statusOverview = String.format("State: %s, Target: %s, Position: %d, Target: %d",
                 currentState.toString(), targetState.toString(), currentTicks, targetTicks);
-        MatchConfig.telemetryPacket.put("sampleLift/Status Overview", statusOverview);
+        MatchConfig.telemetryPacket.put("specimenArm/Status Overview", statusOverview);
     }
 }

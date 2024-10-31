@@ -4,7 +4,6 @@ import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWO;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_WALL;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_THREE;
@@ -19,8 +18,8 @@ import static com.example.sharedconstants.FieldConstants.OBS_START_POSE_WITH_SAM
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static com.example.sharedconstants.FieldConstants.RIGHT_OF_CHAMBER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DEPOSIT_SAMPLE;
-import static com.example.sharedconstants.RobotAdapter.ActionType.HOME;
-import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HIGH_BASKET;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HIGH_BASKET;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
 
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.Routes;
@@ -43,14 +42,14 @@ public class OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade extends Rou
         obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(OBS_START_POSE_WITH_SAMPLE_PRELOAD)
                 .waitSeconds(1)
                 .strafeTo(PoseToVector(NET_BASKET_WALL))
-                .afterDisp(3, robotAdapter.getAction(LIFT_TO_HIGH_BASKET))
+                .afterDisp(3, robotAdapter.getAction(SAMPLE_LIFT_TO_HIGH_BASKET))
                 .stopAndAdd(robotAdapter.getAction((DEPOSIT_SAMPLE)));
     }
 
     private void returnToStart() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .strafeTo(PoseToVector(OBS_START_POSE_WITH_SAMPLE_PRELOAD))
-                .afterDisp(1, robotAdapter.getAction(HOME));
+                .afterDisp(1, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME));
     }
 
 

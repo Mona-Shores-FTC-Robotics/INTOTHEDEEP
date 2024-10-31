@@ -3,15 +3,15 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.GripperSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.ShoulderSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 import java.util.EnumSet;
@@ -49,17 +49,18 @@ public class Robot {
 
 
     //Specimen Subsystems
+    private static SpecimenArmSubsystem specimenArmSubsystem;
     private static SpecimenIntakeSubsystem specimenIntakeSubsystem;
-    private static ShoulderSubsystem shoulderSubsystem;
-    private static GripperSubsystem gripperSubsystem;
 
     private static ClimberSubsystem climberSubsystem;
     private static VisionSubsystem visionSubsystem;
     private static SampleHandlingStateMachine sampleHandlingStateMachine;
+    private static SpecimenHandlingStateMachine specimenHandlingStateMachine;
+
 
 
     public enum SubsystemType {
-        DRIVE, SAMPLE_INTAKE, SPECIMEN_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT, SPECIMEN_GRIPPER, SPECIMEN_ARM, CLIMBER, VISION
+        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION
     }
 
     // Use an EnumSet for tracking available subsystems
@@ -193,21 +194,21 @@ public class Robot {
 
         initRegisteredSubsystems();
 
-        // If specific TeleOp or Auto differences arise later, you can re-separate here.
-        // For example, if you add vision later, you could add something like:
-         if (opModeType == OpModeType.TELEOP
-                 && hasSubsystem(SubsystemType.SAMPLE_INTAKE)
+        //Is it okay that two instances are created of these?
+        //Should there be an init?
+         if (hasSubsystem(SubsystemType.SAMPLE_INTAKE)
                  && hasSubsystem(SubsystemType.SAMPLE_LIFT)
                  && hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
              sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftSubsystem);
-         }
-
-        if (opModeType == OpModeType.TELEOP
-                && hasSubsystem(SubsystemType.SAMPLE_INTAKE)
+         } else if (hasSubsystem(SubsystemType.SAMPLE_INTAKE)
                 && hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem);
         }
 
+        if (    hasSubsystem(SubsystemType.SPECIMEN_ARM)
+                && hasSubsystem(SubsystemType.SPECIMEN_INTAKE)) {
+            specimenHandlingStateMachine = new SpecimenHandlingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
+        }
     }
 
     // Common initialization method for all modes
@@ -224,19 +225,22 @@ public class Robot {
             }
         }
     }
+
+    public LinearOpMode getActiveOpMode()  {return activeOpMode;}
+    public DriverStationTelemetryManager getDriverStationTelemetryManager() {return driverStationTelemetryManager;}
+    public DriveSubsystem getDriveSubsystem()  {return mecanumDriveSubsystem;}
+
+    public SpecimenArmSubsystem getSpecimenArmSubsystem() {return specimenArmSubsystem;}
     public SpecimenIntakeSubsystem getSpecimenIntakeSubsystem() {return specimenIntakeSubsystem;}
+
     public SampleLiftSubsystem getSampleLiftSubsystem()  {return sampleLiftSubsystem;}
     public SampleIntakeSubsystem getSampleIntakeSubsystem()  {return sampleIntakeSubsystem;}
     public SampleLinearActuatorSubsystem getSampleLinearActuatorSubsystem()  {return sampleLinearActuatorSubsystem;}
 
-    public DriveSubsystem getDriveSubsystem()  {return mecanumDriveSubsystem;}
-    public LinearOpMode getActiveOpMode()  {return activeOpMode;}
-    public DriverStationTelemetryManager getDriverStationTelemetryManager() {return driverStationTelemetryManager;}
-
     public VisionSubsystem getVisionSubsystem()  {return visionSubsystem;}
-    public GripperSubsystem getEndEffectorSubsystem()  {return gripperSubsystem;}
-    public ShoulderSubsystem getShoulderSubsystem()  {return shoulderSubsystem;}
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;}
+
+    public SpecimenHandlingStateMachine getSpecimenHandlingStateMachine(){return specimenHandlingStateMachine;}
     public SampleHandlingStateMachine getSampleHandlingStateMachine(){return sampleHandlingStateMachine;}
 
     public static RobotType getPreviousRobotType(RobotType currentType) {

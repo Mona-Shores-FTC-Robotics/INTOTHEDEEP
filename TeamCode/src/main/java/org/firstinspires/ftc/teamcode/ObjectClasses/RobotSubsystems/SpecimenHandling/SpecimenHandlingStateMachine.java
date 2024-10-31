@@ -1,136 +1,106 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling;
 
-import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 public class SpecimenHandlingStateMachine {
 
-    private final SampleLinearActuatorSubsystem actuatorSubsystem;
-    private final SampleIntakeSubsystem intakeSubsystem;
-    private final SampleLiftSubsystem liftSubsystem;
+    private final SpecimenIntakeSubsystem intakeSubsystem;
+    private final SpecimenArmSubsystem armSubsystem;
 
     // Constructor
-    public SpecimenHandlingStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
-                                        SampleIntakeSubsystem intakeSubsystem,
-                                        SampleLiftSubsystem liftSubsystem) {
-        this.actuatorSubsystem = actuatorSubsystem;
+    public SpecimenHandlingStateMachine(SpecimenIntakeSubsystem intakeSubsystem,
+                                        SpecimenArmSubsystem armSubsystem) {
         this.intakeSubsystem = intakeSubsystem;
-        this.liftSubsystem = liftSubsystem;
-    }
-
-    public SpecimenHandlingStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
-                                        SampleIntakeSubsystem intakeSubsystem
-                                      ) {
-        this.actuatorSubsystem = actuatorSubsystem;
-        this.intakeSubsystem = intakeSubsystem;
-        this.liftSubsystem = null;
+        this.armSubsystem = armSubsystem;
     }
 
     // Method to handle button press logic (toggle actuator states)
-    public void onIntakeButtonPress() {
-        switch (actuatorSubsystem.getCurrentState()) {
-            case RETRACT:
-                setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID);
-                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+    // This button should let us control the pickup and delivery process
+    public void onSpecimenHandleButtonPress() {
+        switch (armSubsystem.getCurrentState()) {
+            //If the arm is in delivery position and operator pushes button, it should move to pickup and turn on the intake
+            case SPECIMEN_DELIVERY:
+                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
+                setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
                 break;
-            case DEPLOY_MID:
-                setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
+                //If the arm is in pickup position and operator pushes button, it should move to staging and turn off the intake
+            case SPECIMEN_PICKUP:
+                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_STAGING);
+                setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
-            case DEPLOY_FULL:
+            case SPECIMEN_STAGING:
+                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
+                setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
+                break;
             default:
-                setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
-                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+                //Could consider some extra states for MOVING_TO_STAGING, MOVING_TO_STAGING, MOVING_TO_PICKUP that would give this button different functionality
+                //for example maybe we want to revert to the last known state if we push the button while its moving toward that state?
                 break;
-
-
         }
     }
 
-    // Method to handle piece pickup and expel sequence
-    public void onGoodSampleDetected() {
-        SequentialCommandGroup retractAndExpelSequence = new SequentialCommandGroup(
-                new InstantCommand(() -> setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT)),
-                new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                new InstantCommand(this::setIntakeReverse),
-                                new WaitCommand(500),
-                                new InstantCommand(this::setIntakeOff),
-                                new InstantCommand(this::setLiftToLowBasket)
-                        ),
-                        new WaitCommand(100),
-                        this::isActuatorRetracted
-                )
+    // If we detect a good specimen, shut off the intake and move the arm to staging position
+    public void onGoodSpecimenDetected() {
+        ParallelCommandGroup retractAndExpelSequence = new ParallelCommandGroup(
+                new InstantCommand(this::setIntakeOff),
+                new InstantCommand(this::setArmTargetStateToStaging)
         );
         retractAndExpelSequence.schedule();
     }
 
-    public void onBadSampleDetected() {
+    //TODO is this really a good idea for onBadSpecimenDetection?
+    // What if somehow we detect a yellow Specimen or non-our color specimen
+    public void onBadSpecimenDetected() {
         SequentialCommandGroup expelPieceSequence = new SequentialCommandGroup(
-                new InstantCommand(() -> setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE)),  // Reverse intake
+                new InstantCommand(this::setArmTargetStateToStaging),
                 new WaitCommand(500),  // Wait for the piece to be expelled
-                new InstantCommand(() -> setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON)),  // Resume intaking
-                new InstantCommand(() -> setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID))  // Set actuator back to mid position
+                new InstantCommand(this::setIntakeReverse)  // Expel the specimen
         );
         expelPieceSequence.schedule();
     }
 
-
-    private boolean isActuatorRetracted() {
-        return actuatorSubsystem.isActuatorAtTarget();
+    private boolean isArmAtTarget() {
+        return armSubsystem.isArmAtTarget();
     }
 
-    private void setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates newState) {
-        actuatorSubsystem.setTargetState(newState);
-    }
-
-    private void setIntakeState(SampleIntakeSubsystem.SampleIntakeStates newState) {
+    private void setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates newState) {
         intakeSubsystem.setCurrentState(newState);
     }
 
     // Method to turn the intake on
     public void setIntakeOn() {
-        setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+        setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
     }
 
     // Method to turn the intake off
     public void setIntakeOff() {
-        setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+        setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
     }
 
     // Method to reverse the intake
     public void setIntakeReverse() {
-        setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
+        setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_REVERSE);
     }
 
-    private void setLiftState(SampleLiftSubsystem.SampleLiftStates newState) {
-        liftSubsystem.setTargetState(newState);
+    private void setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates newState) {
+        armSubsystem.setTargetState(newState);
     }
 
-    public void setLiftToHighBasket() {
-        // Check if the actuator is fully retracted before moving the lift
-        if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-            setLiftState(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET);
-        } else {
-            System.out.println("Cannot raise lift: Actuator is not fully retracted.");
-        }
+    public void setArmTargetStateToPickup() {
+        setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
     }
 
-    public void setLiftToLowBasket() {
-        // Check if the actuator is fully retracted before moving the lift
-        if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-            setLiftState(SampleLiftSubsystem.SampleLiftStates.LOW_BASKET);
-        } else {
-            System.out.println("Cannot raise lift: Actuator is not fully retracted.");
-        }
+    public void setArmTargetStateToDelivery() {
+        setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
     }
 
-    public void setLiftToHome() {
-        setLiftState(SampleLiftSubsystem.SampleLiftStates.HOME);
+    public void setArmTargetStateToStaging() {
+        setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_STAGING);
     }
 }

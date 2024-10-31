@@ -9,22 +9,31 @@ public interface RobotAdapter {
 
     // Enum for actions that both RealRobot and MeepMeep should handle
     enum ActionType {
+        SAMPLE_INTAKE_ON,
+        SAMPLE_INTAKE_OFF,
+        SAMPLE_INTAKE_REVERSE,
+
+        SPECIMEN_INTAKE_ON,
+        SPECIMEN_INTAKE_OFF,
+        SPECIMEN_INTAKE_REVERSE,
+
         SECURE_PRELOAD_SPECIMEN,
         PICKUP_SPECIMEN_OFF_WALL,
+
+        SPECIMEN_ARM_TO_HIGH_CHAMBER,
         HANG_SPECIMEN_ON_HIGH_CHAMBER,
-        HANG_SPECIMEN_ON_LOW_CHAMBER,
-        SAMPLE_INTAKE_ON,
+
+        INTAKE_SAMPLE_FROM_GROUND,
+        SAMPLE_LIFT_TO_HOME,
+        SAMPLE_LIFT_TO_HIGH_BASKET,
+        SAMPLE_LIFT_TO_LOW_BASKET,
         DEPOSIT_SAMPLE,
-        LIFT_TO_HIGH_CHAMBER,
-        LIFT_TO_LOW_CHAMBER,
-        HOME,
-        LIFT_TO_HIGH_BASKET,
-        LIFT_TO_LOW_BASKET,
+
+        DUMP_SAMPLE_IN_OBSERVATION_ZONE,
+
         LEVEL_1_ASCENT,
         LEVEL_2_ASCENT,
-        LEVEL_3_ASCENT,
-        INTAKE_SAMPLE_FROM_GROUND,
-        DUMP_SAMPLE_IN_OBSERVATION_ZONE
+        LEVEL_3_ASCENT
     }
 
     // Generalized method to get an Action based on a provided action type

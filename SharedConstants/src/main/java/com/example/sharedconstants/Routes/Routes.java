@@ -4,9 +4,8 @@ import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
 import static com.example.sharedconstants.FieldConstants.*;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
-import static com.example.sharedconstants.RobotAdapter.ActionType.HOME;
-import static com.example.sharedconstants.RobotAdapter.ActionType.LIFT_TO_HIGH_CHAMBER;
-import static com.example.sharedconstants.RobotAdapter.ActionType.SECURE_PRELOAD_SPECIMEN;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SPECIMEN_ARM_TO_HIGH_CHAMBER;
 
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
@@ -126,11 +125,11 @@ public abstract class Routes {
                 .splineToSplineHeading(CHAMBER_STAGING_FOR_SCORING, ANGLE_TOWARD_NET)
                 .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_NET)
                 .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE)
-                .afterDisp(.1, robotAdapter.getAction(LIFT_TO_HIGH_CHAMBER))
+                .afterDisp(.1, robotAdapter.getAction(SPECIMEN_ARM_TO_HIGH_CHAMBER))
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER))
                 .setTangent(ANGLE_315_DEGREES)
                 .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_OBSERVATION)
-                .afterDisp(0, robotAdapter.getAction(HOME));
+                .afterDisp(0, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME));
     }
 
 
