@@ -18,28 +18,35 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     public static SpecimenArmParams SPECIMEN_ARM_PARAMS = new SpecimenArmParams();
 
     public static class SpecimenArmParams {
-        public double SCALE_FACTOR = 50;
+        public double SCALE_FACTOR = 1;
         public double DEAD_ZONE = 0.05;
-        public double POWER = 0.5;
-        public double VEL_P = 1.0, VEL_I = 0.0, VEL_D = 0.0, VEL_F = 0.0;
-        public double POS_P = 0.0;
-        public final int MAX_TARGET_TICKS = 800;
-        public final int MIN_TARGET_TICKS = 100;
+        public double POWER = .8;
+        public double VEL_P = 0.0, VEL_I = 0.0, VEL_D = 0.0, VEL_F = 45.0;
+        public double POS_P = 22.0;
+        public final int MAX_TARGET_TICKS = 130;
+        public final int MIN_TARGET_TICKS = 10;
         public double TIMEOUT_TIME_SECONDS = 3;
         public int HOME_HEIGHT_TICKS = 100;
-        public int SPECIMEN_PICKUP = 100;
-        public int SPECIMEN_DELIVERY = 500;
-        public int SPECIMEN_STAGING = 800;
-        public int THRESHOLD = 45;
+        public int SPECIMEN_PICKUP_TICKS = 10;
+        public int SPECIMEN_DELIVERY_TICKS = 50;
+        public int SPECIMEN_STAGING_TICKS = 130;
+        public int THRESHOLD = 5;
+
+        // Angle offsets
+        public double STARTING_ANGLE_OFFSET_DEGREES = 21.25; // Angle at STARTING_ENCODER_TICKS
+
+        // Calculated ticks per degree based on motor specs
+        public double TICKS_PER_DEGREE = 0.8; // 288 ticks/rev for 360 degrees
+
     }
     public enum SpecimenArmStates {
         ZERO, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, MANUAL, SPECIMEN_STAGING;
         public int ticks;
         static {
             ZERO.ticks = 0;
-            SPECIMEN_PICKUP.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP;
-            SPECIMEN_STAGING.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING;
-            SPECIMEN_DELIVERY.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY;
+            SPECIMEN_PICKUP.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_TICKS;
+            SPECIMEN_STAGING.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING_TICKS;
+            SPECIMEN_DELIVERY.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY_TICKS;
         }
         public void setArmTicks(int t) {
             this.ticks = t;
@@ -60,7 +67,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         arm = hMap.get(DcMotorEx.class, name);
         arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        arm.setDirection(DcMotorEx.Direction.FORWARD);
+        arm.setDirection(DcMotorEx.Direction.REVERSE);
         arm.setVelocityPIDFCoefficients(SPECIMEN_ARM_PARAMS.VEL_P, SPECIMEN_ARM_PARAMS.VEL_I, SPECIMEN_ARM_PARAMS.VEL_D, SPECIMEN_ARM_PARAMS.VEL_F);
         arm.setPositionPIDFCoefficients(SPECIMEN_ARM_PARAMS.POS_P);
         arm.setPower(SPECIMEN_ARM_PARAMS.POWER);
@@ -80,6 +87,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         updateArmState();
         updateParameters();
         updateDashboardTelemetry();
+        double angleRadians = Math.toRadians(getArmAngle());
     }
 
     // **updateLiftPIDs() Method**
@@ -87,9 +95,9 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         if (SPECIMEN_ARM_PARAMS.POWER != currentPower) {
             arm.setPower(SPECIMEN_ARM_PARAMS.POWER);
         }
-        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_PICKUP, SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP);
-        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_STAGING, SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING);
-        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_DELIVERY, SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY);
+        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_PICKUP, SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_TICKS);
+        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_STAGING, SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING_TICKS);
+        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_DELIVERY, SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY_TICKS);
         updateLiftVelocityPIDFCoefficients(SPECIMEN_ARM_PARAMS.VEL_P, SPECIMEN_ARM_PARAMS.VEL_I, SPECIMEN_ARM_PARAMS.VEL_D, SPECIMEN_ARM_PARAMS.VEL_F);
         updateLiftPositionPIDFCoefficients(SPECIMEN_ARM_PARAMS.POS_P);
     }
@@ -179,18 +187,19 @@ public class SpecimenArmSubsystem extends SubsystemBase {
             telemetryData += String.format(" | Target State: %s", targetState);
         }
 
-        telemetry.addData("Sample Lift Status", telemetryData);
+        telemetry.addData("Specimen Arm Status", telemetryData);
     }
 
     public void displayVerboseTelemetry(Telemetry telemetry) {
-        telemetry.addData("sampleLift/Current State", currentState);
-        telemetry.addData("sampleLift/Target State", targetState);
-        telemetry.addData("sampleLift/Current Position Ticks", currentTicks);
-        telemetry.addData("sampleLift/Target Position Ticks", targetTicks);
-        telemetry.addData("sampleLift/Motor Power", arm.getPower());
+        telemetry.addData("specimenArm/Current State", currentState);
+        telemetry.addData("specimenArm/Target State", targetState);
+        telemetry.addData("specimenArm/Current Position Ticks", currentTicks);
+        telemetry.addData("specimenArm/Target Position Ticks", targetTicks);
+        telemetry.addData("specimenArm/Motor Power", arm.getPower());
     }
 
     public void updateDashboardTelemetry() {
+        MatchConfig.telemetryPacket.put("specimenArm/Current Arm Angle", getArmAngle());
         MatchConfig.telemetryPacket.put("specimenArm/Current State", currentState.toString());
         MatchConfig.telemetryPacket.put("specimenArm/Target State", targetState.toString());
         MatchConfig.telemetryPacket.put("specimenArm/Current Position Ticks", currentTicks);
@@ -199,4 +208,16 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                 currentState.toString(), targetState.toString(), currentTicks, targetTicks);
         MatchConfig.telemetryPacket.put("specimenArm/Status Overview", statusOverview);
     }
+
+    private double getArmAngle() {
+        // Calculate the angle directly from current ticks using ticks per degree
+        double angle = currentTicks / SPECIMEN_ARM_PARAMS.TICKS_PER_DEGREE;
+
+        // Adjust by the starting angle offset, if necessary
+        angle += SPECIMEN_ARM_PARAMS.STARTING_ANGLE_OFFSET_DEGREES;
+
+        // Ensure angle is within the physical limits of 0 to 210 degrees
+        return Range.clip(angle, 0, 210);
+    }
+
 }

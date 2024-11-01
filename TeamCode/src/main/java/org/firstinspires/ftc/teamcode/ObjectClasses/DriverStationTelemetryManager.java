@@ -11,7 +11,7 @@ public class DriverStationTelemetryManager {
         VERBOSE_ENCODERS,
         VERBOSE_HEADING,
         VERBOSE_SAMPLE_LIFT,
-        VERBOSE_SAMPLE_LINEAR_ACTUATOR // Updated telemetry mode name for sample lift
+        VERBOSE_SPECIMEN_ARM, VERBOSE_SAMPLE_LINEAR_ACTUATOR // Updated telemetry mode name for sample lift
         // You can add more modes later, like VERBOSE_OTHER_SUBSYSTEM, etc.
     }
 
@@ -51,6 +51,9 @@ public class DriverStationTelemetryManager {
                 break;
             case VERBOSE_SAMPLE_LINEAR_ACTUATOR:
                 displayVerboseSampleLinearActuatorTelemetry();
+                break;
+            case VERBOSE_SPECIMEN_ARM:
+                displayVerboseSpecimenArmTelemetry();
                 break;
         }
         telemetry.update();  // Make sure to update telemetry after displaying data
@@ -92,6 +95,10 @@ public class DriverStationTelemetryManager {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
             Robot.getInstance().getSpecimenIntakeSubsystem().displayBasicTelemetry(telemetry);
         }
+        telemetry.addLine();
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+            Robot.getInstance().getSpecimenArmSubsystem().displayBasicTelemetry(telemetry);
+        }
     }
 
 
@@ -127,6 +134,12 @@ public class DriverStationTelemetryManager {
     private void displayVerboseSampleLinearActuatorTelemetry() {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
             Robot.getInstance().getSampleLinearActuatorSubsystem().displayVerboseTelemetry(telemetry);
+        }
+    }
+
+    private void displayVerboseSpecimenArmTelemetry() {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+            Robot.getInstance().getSpecimenArmSubsystem().displayVerboseTelemetry(telemetry);
         }
     }
 

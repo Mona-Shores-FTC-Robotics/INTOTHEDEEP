@@ -32,7 +32,7 @@ public class Robot {
         CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS,
         INTO_THE_DEEP,
         LIFT_BOT_PINPOINT,
-        INTAKE_TESTER,
+        TEST_BOT,
         LINEAR_ACTUATOR_BOT,
         SPECIMEN_BOT
     }
@@ -94,15 +94,22 @@ public class Robot {
                 break;
             }
 
-            case INTAKE_TESTER: {
+            case TEST_BOT: {
 //                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
 //                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
-                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
-                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
+//                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
+//                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
 
-                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
-                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
+//                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
+//                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
+
+                specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, "specimenarm");
+                registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
+
+//                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
+//                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
+
                 break;
             }
 
