@@ -57,8 +57,6 @@ public class Robot {
     private static SampleHandlingStateMachine sampleHandlingStateMachine;
     private static SpecimenHandlingStateMachine specimenHandlingStateMachine;
 
-
-
     public enum SubsystemType {
         DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION
     }
@@ -196,17 +194,20 @@ public class Robot {
 
         //Is it okay that two instances are created of these?
         //Should there be an init?
-         if (hasSubsystem(SubsystemType.SAMPLE_INTAKE)
-                 && hasSubsystem(SubsystemType.SAMPLE_LIFT)
-                 && hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
+         if (  opModeType == OpModeType.TELEOP &&
+                 hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
+                 hasSubsystem(SubsystemType.SAMPLE_LIFT) &&
+                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
              sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftSubsystem);
-         } else if (hasSubsystem(SubsystemType.SAMPLE_INTAKE)
-                && hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
+         } else if (opModeType == OpModeType.TELEOP &&
+                 hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
+                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem);
         }
 
-        if (    hasSubsystem(SubsystemType.SPECIMEN_ARM)
-                && hasSubsystem(SubsystemType.SPECIMEN_INTAKE)) {
+        if (    opModeType == OpModeType.TELEOP &&
+                hasSubsystem(SubsystemType.SPECIMEN_ARM) &&
+                hasSubsystem(SubsystemType.SPECIMEN_INTAKE)) {
             specimenHandlingStateMachine = new SpecimenHandlingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
         }
     }

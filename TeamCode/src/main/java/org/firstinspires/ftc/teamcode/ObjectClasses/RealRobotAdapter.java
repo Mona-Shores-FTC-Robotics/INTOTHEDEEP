@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -15,6 +13,8 @@ import com.example.sharedconstants.RobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArmAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
@@ -74,8 +74,6 @@ public class RealRobotAdapter implements RobotAdapter {
         public Action createAction(ActionType actionType) {
             Robot robot = Robot.getInstance();
             DriverStationTelemetryManager telemetryManger = robot.getDriverStationTelemetryManager();
-            SampleHandlingStateMachine sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
-            SpecimenHandlingStateMachine specimenHandlingStateMachine = robot.getSpecimenHandlingStateMachine();
 
             switch (actionType) {
                 case SAMPLE_INTAKE_ON:
@@ -138,52 +136,46 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new ConditionalAction(stopSpecimenIntakeAndStageSpecimen, continueSpecimenIntakeAction, specimenDetected);
                     } else return problem();
 
+                    //should there be a difference between these?
+                case SPECIMEN_ARM_TO_HIGH_CHAMBER:
                 case HANG_SPECIMEN_ON_HIGH_CHAMBER:
-//                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_GRIPPER)) {
-//                        return new SequentialAction(
-////                                new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HANG_HIGH_CHAMBER),
-//                                new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN));
-//                    } else {
-//                        telemetryManger.displayError("Lift or Gripper subsystem is not available on this robot.");
-//                        return new SleepAction(0.1);  // Returning nonce action
-//                    }
-
-//                case HANG_SPECIMEN_ON_LOW_CHAMBER:
-//                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_GRIPPER)) {
-//                        return new SequentialAction(
-////                                new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HANG_LOW_CHAMBER),
-//                                new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN));
-//                    } else {
-//                        telemetryManger.displayError("Lift or Gripper subsystem is not available on this robot.");
-//                        return new SleepAction(0.1);  // Returning nonce action
-//                    }
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+                        return new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
+                    } else return problem();
 
                 case DEPOSIT_SAMPLE:
-//                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
-//                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
-//                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-//                        //todo FIXME
-//                        return new ActuateEndEffectorAction(GripperSubsystem.GripperStates.OPEN);
-//                    } else {
-//                        telemetryManger.displayError("Sample subsystems are not available on this robot.");
-//                        return new SleepAction(0.1);  // Returning nonce action
-//                    }
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+                        //todo FIXME
+                        //I'm not quite sure what this should be doing...
+                        return new NullAction();
+                    } else return problem();
 
-                case SPECIMEN_ARM_TO_HIGH_CHAMBER:
                 case SAMPLE_LIFT_TO_HIGH_BASKET:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+                        return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET);
+                    } else return problem();
+
                 case SAMPLE_LIFT_TO_LOW_BASKET:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+                        return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.LOW_BASKET);
+                    } else return problem();
+
                 case SAMPLE_LIFT_TO_HOME:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
-//                        return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.valueOf(actionType.name()));
-                        return new SleepAction(0.1);  // Returning nonce action
-                    } else {
-                        telemetryManger.displayError("Sample Lift subsystem is not available on this robot.");
-                        return new SleepAction(0.1);  // Returning nonce action
-                    }
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+                        return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HOME);
+                    } else return problem();
 
                 default:
                     telemetryManger.displayError("Unknown action type: " + actionType);
-                    return new SleepAction(.5);  // Returning nonce action for unknown actions
+                    return new NullAction();
             }
         }
 

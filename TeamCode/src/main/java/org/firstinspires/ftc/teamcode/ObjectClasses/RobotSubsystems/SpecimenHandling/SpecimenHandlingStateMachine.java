@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
+//Right now these are just for Teleop... should they be?
 public class SpecimenHandlingStateMachine {
 
     private final SpecimenIntakeSubsystem intakeSubsystem;
