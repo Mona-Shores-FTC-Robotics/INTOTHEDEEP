@@ -46,6 +46,15 @@ public class SpecimenHandlingStateMachine {
     }
 
     // If we detect a good specimen, shut off the intake and move the arm to staging position
+    public void onGoodSpecimenDetectedCommand() {
+        ParallelCommandGroup retractAndExpelSequence = new ParallelCommandGroup(
+                new InstantCommand(this::setIntakeOff),
+                new InstantCommand(this::setArmTargetStateToStaging)
+        );
+        retractAndExpelSequence.schedule();
+    }
+
+    // If we detect a good specimen, shut off the intake and move the arm to staging position
     public void onGoodSpecimenDetected() {
         ParallelCommandGroup retractAndExpelSequence = new ParallelCommandGroup(
                 new InstantCommand(this::setIntakeOff),

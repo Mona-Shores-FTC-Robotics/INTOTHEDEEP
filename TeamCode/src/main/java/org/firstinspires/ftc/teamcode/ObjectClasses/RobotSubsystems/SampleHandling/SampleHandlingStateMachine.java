@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.WaitCommand;
+
+import org.firstinspires.ftc.teamcode.ContinuousConditionalCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
@@ -52,10 +54,11 @@ public class SampleHandlingStateMachine {
     }
 
     // Method to handle piece pickup and expel sequence
+    //TODO this probably does not work because conditionalcommand only checks one time.
     public void onGoodSampleDetected() {
         SequentialCommandGroup retractAndExpelSequence = new SequentialCommandGroup(
                 new InstantCommand(() -> setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT)),
-                new ConditionalCommand(
+                new ContinuousConditionalCommand(
                         new SequentialCommandGroup(
                                 new InstantCommand(this::setIntakeReverse),
                                 new WaitCommand(500),

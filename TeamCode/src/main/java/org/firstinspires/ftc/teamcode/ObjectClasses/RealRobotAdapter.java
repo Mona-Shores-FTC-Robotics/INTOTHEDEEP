@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.NullAction;
@@ -18,6 +20,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
+
+import java.util.function.Supplier;
 
 public class RealRobotAdapter implements RobotAdapter {
     private final ActionFactory actionFactory;
@@ -77,60 +81,62 @@ public class RealRobotAdapter implements RobotAdapter {
                 case SAMPLE_INTAKE_ON:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-                    } else {
-                        return new NullAction();  // Returning nonce action
-                    }
+                    } else return problem();
+
                 case SAMPLE_INTAKE_OFF:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
-                    } else {
-                        return new NullAction();  // Returning nonce action
-                    }
+                    } else return problem();
+
                 case SAMPLE_INTAKE_REVERSE:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
-                    } else {
-                        return new NullAction();  // Returning nonce action
-                    }
+                    } else return problem();
 
                 case SPECIMEN_INTAKE_ON:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
                         return new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
-                    } else {
-                        return new NullAction();  // Returning nonce action
-                    }
+                    } else return problem();
+
                 case SPECIMEN_INTAKE_OFF:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
                         return new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
-                    } else {
-                        return new NullAction();  // Returning nonce action
-                    }
+                    } else return problem();
+
                 case SPECIMEN_INTAKE_REVERSE:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
                         return new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_REVERSE);
-                    } else {
-                        return new NullAction();  // Returning nonce action
-                    }
+                    } else return problem();
 
                 // Intake the preload for a moment to ensure its secured
                 case SECURE_PRELOAD_SPECIMEN:
-                    return new SequentialAction(
-                            new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON),
-                            new SleepAction(0.3),
-                            new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF)
-                    );
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+                        return new SequentialAction(
+                                new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON),
+                                new SleepAction(0.3),
+                                new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF)
+                        );
+                    } else return problem();
 
                 case PICKUP_SPECIMEN_OFF_WALL:
-//                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) &&
-//                            robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-//                        return new SequentialAction(new InstantAction(specimenHandlingStateMachine::setArmTargetStateToStaging
-//                                specimenIntakeSubsystem.setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON)),)
-//                        MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
-//                    } else {
-//                        telemetryManger.displayError("Sample Intake is not available on this robot.");
-//                        return new SleepAction(0.1);  // Returning nonce action
-//                    }
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
 
+                        Supplier<Boolean> specimenDetected = () -> Robot.getInstance().getSpecimenIntakeSubsystem().goodSpecimenDetected();
+                        // Define the action if the specimen is detected
+                        Action stopSpecimenIntakeAndStageSpecimen = new SequentialAction(
+                                new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF),
+                                new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_STAGING)
+                        );
+
+                        // Define the action if the specimen is NOT detected (keep intaking for 200 milliseconds)
+                        Action continueSpecimenIntakeAction = new SequentialAction(
+                                new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON),
+                                new SleepAction(.2)
+                        );
+
+                        // Create the ConditionalAction
+                        return new ConditionalAction(stopSpecimenIntakeAndStageSpecimen, continueSpecimenIntakeAction, specimenDetected);
+                    } else return problem();
 
                 case HANG_SPECIMEN_ON_HIGH_CHAMBER:
 //                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_GRIPPER)) {
@@ -179,6 +185,11 @@ public class RealRobotAdapter implements RobotAdapter {
                     telemetryManger.displayError("Unknown action type: " + actionType);
                     return new SleepAction(.5);  // Returning nonce action for unknown actions
             }
+        }
+
+        private Action problem() {
+            Robot.getInstance().getDriverStationTelemetryManager().displayError("Subsystem Not Available");
+            return new NullAction();
         }
     }
 }

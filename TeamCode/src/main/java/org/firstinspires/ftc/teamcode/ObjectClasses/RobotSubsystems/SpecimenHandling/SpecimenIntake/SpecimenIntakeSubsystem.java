@@ -167,6 +167,12 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         }
     }
 
+    public boolean goodSpecimenDetected(){
+        SampleColor detectedSpecimenColor = detectSpecimenColor();
+        return (detectedSpecimenColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED) ||
+                (detectedSpecimenColor == SampleColor.BLUE && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE);
+    }
+
     // Update intake parameters dynamically (called in periodic)
     private void updateParameters() {
         // Update the power for each state dynamically from dashboard changes
