@@ -18,6 +18,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.DefaultSpecimenArmCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArmAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
 
 import java.util.Collections;
@@ -66,12 +68,20 @@ public class IntoTheDeepOperatorBindings {
         // DPAD-UP -                                            //
         //                                                      //
         //////////////////////////////////////////////////////////
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+            SpecimenArmSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
+            Set<Subsystem> specimenArmRequirements = Collections.singleton(specimenArmSubsystem);
 
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                    .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY), specimenArmRequirements));
+        }
         //////////////////////////////////////////////////////////
         //                                                      //
         // DPAD-RIGHT -                                         //
         //                                                      //
         //////////////////////////////////////////////////////////
+
+
 
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -79,12 +89,26 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+            SpecimenArmSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
+            Set<Subsystem> specimenArmRequirements = Collections.singleton(specimenArmSubsystem);
+
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                    .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_STAGING), specimenArmRequirements));
+        }
+
         //////////////////////////////////////////////////////////
         //                                                      //
         // DPAD-DOWN -                                          //
         //                                                      //
         //////////////////////////////////////////////////////////
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+            SpecimenArmSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
+            Set<Subsystem> specimenArmRequirements = Collections.singleton(specimenArmSubsystem);
 
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                    .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP), specimenArmRequirements));
+        }
         //////////////////////////////////////////////////////////
         //                                                      //
         // LEFT BUMPER                                          //

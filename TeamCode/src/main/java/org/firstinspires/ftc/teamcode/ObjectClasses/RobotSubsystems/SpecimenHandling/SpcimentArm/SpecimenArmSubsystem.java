@@ -3,115 +3,157 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHan
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
+import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.util.Range;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.TrapezoidalPIDController;
 
 @Config
 public class SpecimenArmSubsystem extends SubsystemBase {
-    // Static instance of LIFT_PARAMS
-    public static SpecimenArmParams SPECIMEN_ARM_PARAMS = new SpecimenArmParams();
 
     public static class SpecimenArmParams {
-        public double SCALE_FACTOR = 1;
+        public double SCALE_FACTOR = 1.0;
         public double DEAD_ZONE = 0.05;
-        public double POWER = .8;
-        public double VEL_P = 0.0, VEL_I = 0.0, VEL_D = 0.0, VEL_F = 45.0;
-        public double POS_P = 22.0;
-        public final int MAX_TARGET_TICKS = 130;
-        public final int MIN_TARGET_TICKS = 10;
+        public double MAX_POWER = .7;
+        public double P = 0.0085, I = 0.0, D = 0.0;
+        public double kS = 0.11, kCos = 0.38, kV = 0.0, kA = 0.0; // Feedforward coefficients
+
+        public double TICKS_PER_DEGREE = 0.8;
+        public double STARTING_ANGLE_OFFSET_DEGREES = 245.0;
+        public double HORIZONTAL_ANGLE = 180.0;
+
+        public double MIN_ANGLE = 70.0;
+        public double MAX_ANGLE = STARTING_ANGLE_OFFSET_DEGREES;
+
         public double TIMEOUT_TIME_SECONDS = 3;
-        public int HOME_HEIGHT_TICKS = 100;
-        public int SPECIMEN_PICKUP_TICKS = 10;
-        public int SPECIMEN_DELIVERY_TICKS = 50;
-        public int SPECIMEN_STAGING_TICKS = 130;
-        public int THRESHOLD = 5;
-
-        // Angle offsets
-        public double STARTING_ANGLE_OFFSET_DEGREES = 21.25; // Angle at STARTING_ENCODER_TICKS
-
-        // Calculated ticks per degree based on motor specs
-        public double TICKS_PER_DEGREE = 0.8; // 288 ticks/rev for 360 degrees
-
+        public double SPECIMEN_PICKUP_ANGLE = 190.0;
+        public double SPECIMEN_DELIVERY_ANGLE = 80;
+        public double SPECIMEN_STAGING_ANGLE = 115;
+        public double THRESHOLD = 1.0;
     }
+
     public enum SpecimenArmStates {
-        ZERO, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, MANUAL, SPECIMEN_STAGING;
-        public int ticks;
+        HOME, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, MANUAL, SPECIMEN_STAGING, HORIZONTAL;
+        public double angle;
         static {
-            ZERO.ticks = 0;
-            SPECIMEN_PICKUP.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_TICKS;
-            SPECIMEN_STAGING.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING_TICKS;
-            SPECIMEN_DELIVERY.ticks = SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY_TICKS;
+            HOME.angle = SPECIMEN_ARM_PARAMS.STARTING_ANGLE_OFFSET_DEGREES;
+            SPECIMEN_PICKUP.angle = SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE;
+            SPECIMEN_STAGING.angle = SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING_ANGLE;
+            SPECIMEN_DELIVERY.angle = SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY_ANGLE;
+            HORIZONTAL.angle = SPECIMEN_ARM_PARAMS.HORIZONTAL_ANGLE;
         }
-        public void setArmTicks(int t) {
-            this.ticks = t;
+        public void setArmAngle(double t) {
+            this.angle = t;
         }
-        public int getArmTicks() {
-            return this.ticks;
+        public double getArmAngle() {
+            return this.angle;
         }
     }
+    public static SpecimenArmParams SPECIMEN_ARM_PARAMS = new SpecimenArmParams();
 
     public DcMotorEx arm;
     private SpecimenArmStates currentState;
     private SpecimenArmStates targetState;
-    private int currentTicks;
-    private int targetTicks;
-    private double currentPower;
+    private double currentTicks;
+    private double currentVelocity;
+    private double currentAngleDegrees;
+    private double targetAngleDegrees;
+    private ArmFeedforward armFeedforward;
+    private double feedforwardPower;
+    private double clippedPower;
+    private Encoder armEncoder;
+
+    //    private TrapezoidalPIDController trapezoidalPIDController;
+    private PIDController pidController;
+    private double pidPower;
+    private double totalPower;
+
+    // Variables for telemetry
+
+    private TrapezoidalPIDController.MovementDirection movementDirection;
+    private double newManualTargetAngle;
 
     public SpecimenArmSubsystem(final HardwareMap hMap, final String name) {
         arm = hMap.get(DcMotorEx.class, name);
         arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        arm.setDirection(DcMotorEx.Direction.REVERSE);
-        arm.setVelocityPIDFCoefficients(SPECIMEN_ARM_PARAMS.VEL_P, SPECIMEN_ARM_PARAMS.VEL_I, SPECIMEN_ARM_PARAMS.VEL_D, SPECIMEN_ARM_PARAMS.VEL_F);
-        arm.setPositionPIDFCoefficients(SPECIMEN_ARM_PARAMS.POS_P);
-        arm.setPower(SPECIMEN_ARM_PARAMS.POWER);
-        currentState = SpecimenArmStates.ZERO;
+        arm.setDirection(DcMotorEx.Direction.FORWARD);
+        currentState = SpecimenArmStates.HOME;
+        armEncoder =  new OverflowEncoder(new RawEncoder(arm));
+        armEncoder.setDirection(DcMotorEx.Direction.FORWARD);
     }
 
     public void init() {
-        //TODO do we need to split into initAuto() and initTeleop()?
-        targetState = SpecimenArmStates.ZERO;
-        setTargetTicks(currentState.ticks);  // Use setTargetTicks to initialize
-        arm.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pidController = new PIDController(SPECIMEN_ARM_PARAMS.P, SPECIMEN_ARM_PARAMS.I, SPECIMEN_ARM_PARAMS.D);
+        pidController.setTolerance(SPECIMEN_ARM_PARAMS.THRESHOLD);
+
+        armFeedforward = new ArmFeedforward(
+                SPECIMEN_ARM_PARAMS.kS,
+                SPECIMEN_ARM_PARAMS.kCos,
+                SPECIMEN_ARM_PARAMS.kV,
+                SPECIMEN_ARM_PARAMS.kA
+        );
+        targetState = SpecimenArmStates.HOME;
+        setManualTargetState(targetState.getArmAngle());
+        arm.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        initToHorizontal(); // Initialize to a test state
     }
 
     public void periodic() {
-        currentTicks = arm.getCurrentPosition();
-        currentPower = arm.getPower();
+        currentTicks = armEncoder.getPositionAndVelocity().position;
+        currentVelocity = armEncoder.getPositionAndVelocity().velocity;
+
+        // Step 1: Calculate feedforward power based on angle (for gravity compensation)
+        currentAngleDegrees = getCurrentArmAngleInDegrees();
+        double currentAngleRadians = Math.toRadians(currentAngleDegrees);
+        feedforwardPower = armFeedforward.calculate(currentAngleRadians, 0, 0);
+
+        // Step 2: Calculate pid Power
+        pidPower = pidController.calculate(currentAngleDegrees);
+
+        totalPower = feedforwardPower + pidPower;
+
+        // Clip the total power to the allowable range
+        clippedPower = Range.clip(totalPower, -SPECIMEN_ARM_PARAMS.MAX_POWER, SPECIMEN_ARM_PARAMS.MAX_POWER);
+
+        // Set the motor power to move the arm
+        arm.setPower(clippedPower);
+
         updateArmState();
         updateParameters();
         updateDashboardTelemetry();
-        double angleRadians = Math.toRadians(getArmAngle());
     }
 
-    // **updateLiftPIDs() Method**
+
     public void updateParameters() {
-        if (SPECIMEN_ARM_PARAMS.POWER != currentPower) {
-            arm.setPower(SPECIMEN_ARM_PARAMS.POWER);
-        }
-        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_PICKUP, SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_TICKS);
-        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_STAGING, SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING_TICKS);
-        updateLiftHeightTicks(SpecimenArmStates.SPECIMEN_DELIVERY, SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY_TICKS);
-        updateLiftVelocityPIDFCoefficients(SPECIMEN_ARM_PARAMS.VEL_P, SPECIMEN_ARM_PARAMS.VEL_I, SPECIMEN_ARM_PARAMS.VEL_D, SPECIMEN_ARM_PARAMS.VEL_F);
-        updateLiftPositionPIDFCoefficients(SPECIMEN_ARM_PARAMS.POS_P);
+        updateArmAngles(SpecimenArmStates.HOME, SPECIMEN_ARM_PARAMS.STARTING_ANGLE_OFFSET_DEGREES);
+        updateArmAngles(SpecimenArmStates.SPECIMEN_PICKUP, SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE);
+        updateArmAngles(SpecimenArmStates.SPECIMEN_STAGING, SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING_ANGLE);
+        updateArmAngles(SpecimenArmStates.SPECIMEN_DELIVERY, SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY_ANGLE);
+        updatePIDCoefficients();
     }
 
-    public void setTargetTicks(int ticks) {
-        // Clip the ticks to ensure they're within valid limits
-        targetTicks = Range.clip(ticks, SPECIMEN_ARM_PARAMS.MIN_TARGET_TICKS, SPECIMEN_ARM_PARAMS.MAX_TARGET_TICKS);
+    public void setTargetAngle(double inputAngle) {
+        // Normalize and clip the input angle
+        double normalizedAngle = normalizeAngle(inputAngle);
+        targetAngleDegrees = Range.clip(normalizedAngle, SPECIMEN_ARM_PARAMS.MIN_ANGLE, SPECIMEN_ARM_PARAMS.MAX_ANGLE);
 
-        // Set the motor's target position
-        arm.setTargetPosition(targetTicks);
+        // Set the movement direction and setpoint in the PID controller
+        pidController.setSetPoint(targetAngleDegrees);
+        pidController.reset();
     }
 
     public boolean isArmAtTarget() {
-        return Math.abs(currentTicks - targetTicks) < SPECIMEN_ARM_PARAMS.THRESHOLD;
+        return pidController.atSetPoint();
     }
 
     public void updateArmState() {
@@ -122,7 +164,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
     public void setTargetState(SpecimenArmStates state) {
         targetState = state;
-        setTargetTicks(state.getArmTicks());
+        setTargetAngle(state.getArmAngle());
     }
 
     public SpecimenArmStates getCurrentState() {
@@ -133,55 +175,63 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         currentState = state;
     }
 
-    public int getTargetTicks() {
-        return targetTicks;
-    }
-
     public SpecimenArmStates getTargetState() {
         return targetState;
     }
 
-    public int getCurrentTicks() {
+    public double getCurrentTicks() {
         return currentTicks;
     }
 
-    // Add a method to handle manual input for the lift
-    public void setManualTargetState(double liftInput) {
-        targetState = SpecimenArmStates.MANUAL;
-        // Calculate the new target ticks based on input
-        int deltaTicks = (int) Math.round(liftInput * SPECIMEN_ARM_PARAMS.SCALE_FACTOR);
+    public void setManualTargetState(double armInput) {
+        // Calculate the change in angle based on input and scale factor
+        double deltaAngle = armInput * SPECIMEN_ARM_PARAMS.SCALE_FACTOR;
 
-        // Calculate the new target ticks based on the current target position
-        int newTargetTicks = getTargetTicks() + deltaTicks;
+        // Calculate the new target angle based on the current angle
+        newManualTargetAngle = targetAngleDegrees + deltaAngle;
 
-        setTargetTicks(newTargetTicks);  // Use setTargetTicks to ensure valid bounds
+        newManualTargetAngle = Range.clip(newManualTargetAngle, SPECIMEN_ARM_PARAMS.MIN_ANGLE, SPECIMEN_ARM_PARAMS.MAX_ANGLE);
+
+        // Update the MANUAL state with the new angle
+        SpecimenArmStates.MANUAL.setArmAngle(newManualTargetAngle);
+
+        // Set the target state to MANUAL
+        setTargetState(SpecimenArmStates.MANUAL);
     }
 
-    private void updateLiftVelocityPIDFCoefficients(double p, double i, double d, double f) {
-        PIDFCoefficients currentVelocityCoefficients = arm.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        if (currentVelocityCoefficients.p != p || currentVelocityCoefficients.i != i ||
-                currentVelocityCoefficients.d != d || currentVelocityCoefficients.f != f) {
-            arm.setVelocityPIDFCoefficients(p, i, d, f);
+    private void updatePIDCoefficients() {
+        // Get the latest PIDF values from parameters
+        double p = SPECIMEN_ARM_PARAMS.P;
+        double i = SPECIMEN_ARM_PARAMS.I;
+        double d = SPECIMEN_ARM_PARAMS.D;
+
+        // Only update the PIDF controller if there's a change
+//        if (trapezoidalPIDController.getP() != p || trapezoidalPIDController.getI() != i ||
+//                trapezoidalPIDController.getD() != d) {
+//            // Set the new PIDF values to the controller
+//            trapezoidalPIDController.setP(p);
+//            trapezoidalPIDController.setI(i);
+//            trapezoidalPIDController.setD(d);
+//        }
+        if (pidController.getP() != p || pidController.getI() != i ||
+                pidController.getD() != d) {
+            // Set the new PIDF values to the controller
+            pidController.setP(p);
+            pidController.setI(i);
+            pidController.setD(d);
         }
     }
 
-    private void updateLiftPositionPIDFCoefficients(double p) {
-        double currentPositionCoefficient = arm.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION).p;
-        if (currentPositionCoefficient != p) {
-            arm.setPositionPIDFCoefficients(p);
-        }
-    }
-
-    private void updateLiftHeightTicks(SpecimenArmStates liftState, int newHeightTicks) {
-        if (liftState.getArmTicks() != newHeightTicks) {
-            liftState.setArmTicks(newHeightTicks);
+    private void updateArmAngles(SpecimenArmStates armState, double newArmAngle) {
+        if (armState.getArmAngle() != newArmAngle) {
+            armState.setArmAngle(newArmAngle);
         }
     }
 
     // Basic telemetry display in a single line with a descriptive label
     public void displayBasicTelemetry(Telemetry telemetry) {
         @SuppressLint("DefaultLocale")
-        String telemetryData = String.format("State: %s | Position: %d", currentState, currentTicks);
+        String telemetryData = String.format("State: %s | Angle: %.2f", currentState, currentAngleDegrees);
 
         if (currentState != targetState) {
             telemetryData += String.format(" | Target State: %s", targetState);
@@ -193,31 +243,52 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     public void displayVerboseTelemetry(Telemetry telemetry) {
         telemetry.addData("specimenArm/Current State", currentState);
         telemetry.addData("specimenArm/Target State", targetState);
-        telemetry.addData("specimenArm/Current Position Ticks", currentTicks);
-        telemetry.addData("specimenArm/Target Position Ticks", targetTicks);
         telemetry.addData("specimenArm/Motor Power", arm.getPower());
     }
 
+    @SuppressLint("DefaultLocale")
     public void updateDashboardTelemetry() {
-        MatchConfig.telemetryPacket.put("specimenArm/Current Arm Angle", getArmAngle());
-        MatchConfig.telemetryPacket.put("specimenArm/Current State", currentState.toString());
-        MatchConfig.telemetryPacket.put("specimenArm/Target State", targetState.toString());
-        MatchConfig.telemetryPacket.put("specimenArm/Current Position Ticks", currentTicks);
-        MatchConfig.telemetryPacket.put("specimenArm/Target Position Ticks", targetTicks);
-        @SuppressLint("DefaultLocale") String statusOverview = String.format("State: %s, Target: %s, Position: %d, Target: %d",
-                currentState.toString(), targetState.toString(), currentTicks, targetTicks);
+        // Display an overview of the current and target states and positions
+        String statusOverview = String.format("State: %s | Target: %s | Position: %.2f | Target Position: %.2f",
+                currentState.toString(), targetState.toString(), currentAngleDegrees, pidController.getSetPoint());
         MatchConfig.telemetryPacket.put("specimenArm/Status Overview", statusOverview);
+
+        // Detailed telemetry for real-time analysis
+        MatchConfig.telemetryPacket.put("specimenArm/angles/Current Arm Angle", String.format("%.2f", currentAngleDegrees));
+        MatchConfig.telemetryPacket.put("specimenArm/angles/Target Arm Angle", String.format("%.2f", targetAngleDegrees));
+        MatchConfig.telemetryPacket.put("specimenArm/Current Arm Velocity", String.format("%.2f", currentVelocity));
+
+        // Add combined power overview
+        String powerSummary = String.format(
+                "PID: %.2f | FF: %.2f | Clipped: %.2f",
+                pidPower,
+                feedforwardPower,
+                clippedPower
+        );
+        MatchConfig.telemetryPacket.put("specimenArm/Power Overview", powerSummary);
     }
 
-    private double getArmAngle() {
-        // Calculate the angle directly from current ticks using ticks per degree
+    private double getCurrentArmAngleInDegrees() {
+        // Calculate the base angle from encoder ticks
         double angle = currentTicks / SPECIMEN_ARM_PARAMS.TICKS_PER_DEGREE;
 
-        // Adjust by the starting angle offset, if necessary
         angle += SPECIMEN_ARM_PARAMS.STARTING_ANGLE_OFFSET_DEGREES;
 
-        // Ensure angle is within the physical limits of 0 to 210 degrees
-        return Range.clip(angle, 0, 210);
+        // Normalize the angle to 0–360
+        angle = (angle % 360 + 360) % 360;
+
+        return angle;
     }
 
+    public void initToHorizontal() {
+        setTargetState(SpecimenArmStates.HORIZONTAL);
+    }
+
+    public static double normalizeAngle(double angle) {
+        return (angle % 360 + 360) % 360; // Normalize to stay within 0–360 degrees
+    }
+
+    public double getTargetAngleDegrees() {
+        return targetAngleDegrees;
+    }
 }

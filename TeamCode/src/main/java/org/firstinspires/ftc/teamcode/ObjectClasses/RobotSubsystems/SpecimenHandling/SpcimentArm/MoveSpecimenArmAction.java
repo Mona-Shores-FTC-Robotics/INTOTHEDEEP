@@ -25,7 +25,7 @@ public class MoveSpecimenArmAction implements Action {
 
     // Constructor with default timeout
     public MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates inputState) {
-        this(inputState, SampleLiftSubsystem.SAMPLE_LIFT_PARAMS.TIMEOUT_TIME_SECONDS);  // Default to the one in LIFT_PARAMS
+        this(inputState, SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.TIMEOUT_TIME_SECONDS);
     }
 
     // Constructor with custom timeout
@@ -36,14 +36,11 @@ public class MoveSpecimenArmAction implements Action {
 
     // Initialization method
     public void init() {
-        // Reference the SampleLiftSubsystem instance
         specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
 
         // Reset the timeout timer and set timeout to false
         timeoutTimer.reset();
         timeout = false;
-
-        // Set the target state, which also sets the target ticks, and targetPosition on the actual lift
         specimenArmSubsystem.setTargetState(targetState);
     }
 
@@ -89,7 +86,7 @@ public class MoveSpecimenArmAction implements Action {
         if (timeout) {
             p.addLine("Specimen Arm Move TIMEOUT");
             p.put("Timeout Timer", timeoutTimer.seconds());
-            p.put("Target Position", specimenArmSubsystem.getTargetTicks());
+            p.put("Target Angle", specimenArmSubsystem.getTargetAngleDegrees());
             p.put("Current Position at Timeout", specimenArmSubsystem.getCurrentTicks());
         } else {
             // Report successful completion (state already set in isFinished)
