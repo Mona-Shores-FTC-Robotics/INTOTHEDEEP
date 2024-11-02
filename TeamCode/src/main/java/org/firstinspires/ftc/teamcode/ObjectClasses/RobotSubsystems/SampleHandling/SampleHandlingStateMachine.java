@@ -38,7 +38,7 @@ public class SampleHandlingStateMachine {
         switch (actuatorSubsystem.getCurrentState()) {
             case RETRACT:
                 setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID);
-                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+//                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
                 break;
             case DEPLOY_MID:
                 setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
@@ -46,7 +46,7 @@ public class SampleHandlingStateMachine {
             case DEPLOY_FULL:
             default:
                 setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
-                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+//                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                 break;
 
 

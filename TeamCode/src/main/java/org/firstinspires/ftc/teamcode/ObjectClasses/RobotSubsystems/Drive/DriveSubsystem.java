@@ -112,6 +112,13 @@ public class DriveSubsystem extends SubsystemBase {
                 DriveParams.configureLinearActuatorBotDirections(mecanumDrive, this);
                 break;
 
+            case TEST_BOT:
+                DriveParams.configureLinearActuatorBotPinpointRRParams();
+                mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+                initializeMotorEncoders();
+                DriveParams.configureLinearActuatorBotDirections(mecanumDrive, this);
+                break;
+
             case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
                 DriveParams.configureChassis19429BTwoDeadWheelRRParams();
                 mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));

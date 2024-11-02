@@ -21,6 +21,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArmAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 import java.util.Collections;
 import java.util.Set;
@@ -165,6 +167,19 @@ public class IntoTheDeepOperatorBindings {
                     );
         }
 
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE))
+        {
+            SpecimenIntakeSubsystem specimenIntakeSubsystem = robot.getSpecimenIntakeSubsystem();
+            Set<Subsystem> specimenIntakeRequirements = Collections.singleton(specimenIntakeSubsystem);
+
+            ChangeSpecimenIntakePowerAction turnOffIntake = new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
+            ChangeSpecimenIntakePowerAction turnOnIntake = new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
+
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
+                    .whenPressed(new ActionCommand(turnOnIntake, specimenIntakeRequirements))
+                    .whenReleased(new ActionCommand(turnOffIntake, specimenIntakeRequirements)
+                    );
+        }
         //////////////////////////////////////////////////////////
         //                                                      //
         //  B BUTTON - SAMPLE REVERSE INTAKE                    //
@@ -182,6 +197,19 @@ public class IntoTheDeepOperatorBindings {
                     .whenReleased(new ActionCommand(turnOffIntake, sampleIntakeRequirements)
                     );
         }
+
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+            Set<Subsystem> specimenIntakeRequirements = Collections.singleton(Robot.getInstance().getSpecimenIntakeSubsystem());
+
+            ChangeSpecimenIntakePowerAction reverseIntake = new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_REVERSE);
+            ChangeSpecimenIntakePowerAction turnOffIntake = new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
+
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
+                    .whenPressed(new ActionCommand(reverseIntake, specimenIntakeRequirements))
+                    .whenReleased(new ActionCommand(turnOffIntake, specimenIntakeRequirements)
+                    );
+        }
+
         //////////////////////////////////////////////////////////
         //                                                      //
         //  Y BUTTON                                            //

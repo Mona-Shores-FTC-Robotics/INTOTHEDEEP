@@ -24,14 +24,14 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double SCALE_FACTOR = 1.0;
         public double DEAD_ZONE = 0.05;
         public double MAX_POWER = .7;
-        public double P = 0.0085, I = 0.0, D = 0.0;
-        public double kS = 0.11, kCos = 0.38, kV = 0.0, kA = 0.0; // Feedforward coefficients
+        public double P = 0.0085, I = 0.0, D = 0.0; //0.0085
+        public double kS = 0.11, kCos = 0.37, kV = 0.0, kA = 0.0; // Feedforward coefficients
 
         public double TICKS_PER_DEGREE = 0.8;
         public double STARTING_ANGLE_OFFSET_DEGREES = 245.0;
         public double HORIZONTAL_ANGLE = 180.0;
 
-        public double MIN_ANGLE = 70.0;
+        public double MIN_ANGLE = 50.0;
         public double MAX_ANGLE = STARTING_ANGLE_OFFSET_DEGREES;
 
         public double TIMEOUT_TIME_SECONDS = 3;

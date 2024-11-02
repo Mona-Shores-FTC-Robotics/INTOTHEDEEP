@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.example.sharedconstants.FieldConstants;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -93,7 +94,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         setTargetTicks(currentState.getTargetPositionTicks());
 
         // Set the mode to RUN_TO_POSITION for precise control
-        sampleActuator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        sampleActuator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        sampleActuator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override

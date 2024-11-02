@@ -25,11 +25,7 @@ public class SpecimenHandlingStateMachine {
     // This button should let us control the pickup and delivery process
     public void onSpecimenHandleButtonPress() {
         switch (armSubsystem.getCurrentState()) {
-            //If the arm is in delivery position and operator pushes button, it should move to pickup and turn on the intake
-            case SPECIMEN_DELIVERY:
-                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
-                setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
-                break;
+
                 //If the arm is in pickup position and operator pushes button, it should move to staging and turn off the intake
             case SPECIMEN_PICKUP:
                 setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_STAGING);
@@ -39,9 +35,12 @@ public class SpecimenHandlingStateMachine {
                 setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
+            //If the arm is in delivery position and operator pushes button, it should move to pickup and turn on the intake
+
             default:
-                //Could consider some extra states for MOVING_TO_STAGING, MOVING_TO_STAGING, MOVING_TO_PICKUP that would give this button different functionality
-                //for example maybe we want to revert to the last known state if we push the button while its moving toward that state?
+            case SPECIMEN_DELIVERY:
+                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
+                setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
                 break;
         }
     }

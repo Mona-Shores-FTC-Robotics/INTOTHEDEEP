@@ -95,7 +95,9 @@ public class Robot {
             }
 
             case TEST_BOT: {
-//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
+                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
+                registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
+//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright");
 //                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
 //                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
@@ -107,8 +109,8 @@ public class Robot {
                 specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, "specimenarm");
                 registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
 
-//                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
-//                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
+                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
+                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
 
                 break;
             }
@@ -117,7 +119,7 @@ public class Robot {
                     mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                     registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
 
-                    sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright");
+                    sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
                     registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
                     sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "intakeactuator");
