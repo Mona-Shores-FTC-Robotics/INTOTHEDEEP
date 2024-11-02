@@ -91,45 +91,20 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType) {
         // Initialize appropriate drive system based on robot type
         switch (robotType) {
-            case CHASSIS_19429_B_PINPOINT:
-                DriveParams.configureChassis19429BPinpointRRParams();
+            case INTO_THE_DEEP_19429:
+                DriveParams.configureIntoTheDeep19429RRParams();
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 initializeMotorEncoders();
-                DriveParams.configureChassis19429BDirections(mecanumDrive, this);
+                DriveParams.configureIntoTheDeep19429Directions(mecanumDrive, this);
                 break;
 
-            case LIFT_BOT_PINPOINT:
-                DriveParams.configureLiftBotPinpointRRParams();
-                mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-                initializeMotorEncoders();
-                DriveParams.configureLiftBotDirections(mecanumDrive, this);
-                break;
+//            case INTO_THE_DEEP_20245:
+//                DriveParams.configureChassis19429BPinpointRRParams();
+//                mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+//                initializeMotorEncoders();
+//                DriveParams.configureChassis19429BDirections(mecanumDrive, this);
+//                break;
 
-            case LINEAR_ACTUATOR_BOT:
-                DriveParams.configureLinearActuatorBotPinpointRRParams();
-                mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-                initializeMotorEncoders();
-                DriveParams.configureLinearActuatorBotDirections(mecanumDrive, this);
-                break;
-
-            case TEST_BOT:
-                DriveParams.configureLinearActuatorBotPinpointRRParams();
-                mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-                initializeMotorEncoders();
-                DriveParams.configureLinearActuatorBotDirections(mecanumDrive, this);
-                break;
-
-            case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
-                DriveParams.configureChassis19429BTwoDeadWheelRRParams();
-                mecanumDrive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                initializeMotorEncoders();
-                DriveParams.configureChassis19429BDirections(mecanumDrive, this);
-                mecanumDrive.localizer = new TwoDeadWheelLocalizer(hardwareMap, mecanumDrive.lazyImu.get(), MecanumDrive.PARAMS.inPerTick);
-                ((TwoDeadWheelLocalizer) mecanumDrive.localizer).par.setDirection(DcMotorEx.Direction.REVERSE);
-                ((TwoDeadWheelLocalizer) mecanumDrive.localizer).perp.setDirection(DcMotorEx.Direction.REVERSE);
-                TwoDeadWheelLocalizer.PARAMS.parYTicks = -1450.0;
-                TwoDeadWheelLocalizer.PARAMS.perpXTicks =  800.0;
-                break;
         }
         mecanumDrive.lazyImu.get().resetYaw();
         configurePID();

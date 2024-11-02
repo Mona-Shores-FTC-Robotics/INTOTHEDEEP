@@ -14,7 +14,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 public class FieldConstants {
     public enum AllianceColor {BLUE, RED}
-    public enum SampleColor {BLUE, YELLOW, RED, UNKNOWN}
+    public enum SampleColor {BLUE, YELLOW, RED, UNKNOWN, NO_SAMPLE}
     public enum SideOfField {OBSERVATION, NET}
     public enum TeamPropLocation {LEFT, CENTER, RIGHT}
 

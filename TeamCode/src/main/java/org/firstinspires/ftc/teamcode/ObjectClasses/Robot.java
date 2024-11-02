@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
@@ -27,14 +28,12 @@ public class Robot {
 
     public RobotType robotType;
     public OpModeType opModeType;
+
+
+
     public enum RobotType {
-        CHASSIS_19429_B_PINPOINT,
-        CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS,
-        INTO_THE_DEEP,
-        LIFT_BOT_PINPOINT,
-        TEST_BOT,
-        LINEAR_ACTUATOR_BOT,
-        SPECIMEN_BOT
+        INTO_THE_DEEP_19429,
+        INTO_THE_DEEP_20245,
     }
     public enum OpModeType {TELEOP, AUTO}
 
@@ -47,7 +46,6 @@ public class Robot {
     private static SampleLiftSubsystem sampleLiftSubsystem;
     private static SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem;
 
-
     //Specimen Subsystems
     private static SpecimenArmSubsystem specimenArmSubsystem;
     private static SpecimenIntakeSubsystem specimenIntakeSubsystem;
@@ -56,15 +54,15 @@ public class Robot {
     private static VisionSubsystem visionSubsystem;
     private static SampleHandlingStateMachine sampleHandlingStateMachine;
     private static SpecimenHandlingStateMachine specimenHandlingStateMachine;
+    private static LightingSubsystem lightingSubsystem;
 
     public enum SubsystemType {
-        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION
+        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION, LIGHTING
     }
 
     // Use an EnumSet for tracking available subsystems
     private final Set<SubsystemType> availableSubsystems = EnumSet.noneOf(SubsystemType.class);
     private final Map<SubsystemType, Object> subsystemMap = new HashMap<>();
-
 
     /* Constructor */
     private Robot(LinearOpMode opMode, RobotType rType) {
@@ -75,29 +73,33 @@ public class Robot {
     }
 
     private void CreateSubsystems(HardwareMap hardwareMap) {
-
         switch (robotType) {
-            case INTO_THE_DEEP: {
+            case INTO_THE_DEEP_19429: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
 
-//              sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake", "colorsensor"); // If we have a color sensor
-//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintake");
-//                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
+                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
+                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
-                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
-                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
+//                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
+//                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
 
-                // sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator", "actuatorlimitSwitch");
                 sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
                 registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
+
+//                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
+//                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
+
+                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinLeft", "blinkinRight");
+                registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
+
                 break;
             }
-
-            case TEST_BOT: {
+            case INTO_THE_DEEP_20245: {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
-//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright");
+
+//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
 //                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
 //                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
@@ -106,52 +108,10 @@ public class Robot {
 //                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
 //                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
 
-                specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, "specimenarm");
-                registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
-
-                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
-                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
-
+//                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
+//                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
                 break;
-            }
 
-            case LINEAR_ACTUATOR_BOT: {
-                    mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
-                    registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
-
-                    sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
-                    registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
-
-                    sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "intakeactuator");
-                    registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
-                    break;
-            }
-
-            case SPECIMEN_BOT: {
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
-                registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
-
-                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
-                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
-
-                break;
-            }
-
-            //Just the drive base
-            case CHASSIS_19429_B_HUB_TWO_DEAD_WHEELS:
-            case CHASSIS_19429_B_PINPOINT: {
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
-                registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
-                break;
-            }
-
-            case LIFT_BOT_PINPOINT: {
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
-                registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
-
-                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
-                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
-                break;
             }
         }
     }
@@ -253,6 +213,8 @@ public class Robot {
 
     public SpecimenHandlingStateMachine getSpecimenHandlingStateMachine(){return specimenHandlingStateMachine;}
     public SampleHandlingStateMachine getSampleHandlingStateMachine(){return sampleHandlingStateMachine;}
+
+    public LightingSubsystem getLightingSubsystem() {return lightingSubsystem;}
 
     public static RobotType getPreviousRobotType(RobotType currentType) {
         RobotType[] types = RobotType.values();

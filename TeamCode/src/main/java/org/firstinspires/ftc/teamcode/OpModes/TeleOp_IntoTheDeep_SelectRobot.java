@@ -53,7 +53,7 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        MatchConfig.finalRobotType = Robot.RobotType.TEST_BOT;
+        MatchConfig.finalRobotType = Robot.RobotType.INTO_THE_DEEP_19429;
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 

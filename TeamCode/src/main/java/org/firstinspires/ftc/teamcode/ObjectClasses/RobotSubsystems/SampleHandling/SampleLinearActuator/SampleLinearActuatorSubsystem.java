@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -15,12 +14,14 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     public static class ActuatorParams {
+
+        public double WITHOUT_ENCODER_POWER = 0.7;  // Default power for both directions
+
         public double SCALE_FACTOR_FOR_MANUAL_ACTUATION = 33;
         public double DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.10;
         public int TICK_THRESHOLD = 45;
@@ -39,7 +40,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public static ActuatorParams ACTUATOR_PARAMS = new ActuatorParams();
 
     public enum SampleActuatorStates {
-        DEPLOY_FULL, DEPLOY_MID, RETRACT, MANUAL;
+        DEPLOY_FULL, DEPLOY_MID, RETRACT, WITHOUT_ENCODER, MANUAL;
         public int ticks;
         static {
             DEPLOY_FULL.ticks = ACTUATOR_PARAMS.DEPLOY_FULL_POSITION_TICKS;
@@ -69,9 +70,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
         sampleActuator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         sampleActuator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-                sampleActuator.setDirection(DcMotorEx.Direction.FORWARD);
+        sampleActuator.setDirection(DcMotorEx.Direction.FORWARD);
         sampleActuator.setVelocityPIDFCoefficients(ACTUATOR_PARAMS.VEL_P, ACTUATOR_PARAMS.VEL_I, ACTUATOR_PARAMS.VEL_D, ACTUATOR_PARAMS.VEL_F);
-        sampleActuator.setPower(ACTUATOR_PARAMS.POWER);
         currentState = SampleActuatorStates.RETRACT;
 
         // Initialize the limit switch if the name is provided
@@ -92,10 +92,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         currentState = SampleActuatorStates.RETRACT;
         targetState = SampleActuatorStates.RETRACT;
         setTargetTicks(currentState.getTargetPositionTicks());
-
-        // Set the mode to RUN_TO_POSITION for precise control
-//        sampleActuator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        sampleActuator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        sampleActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sampleActuator.setPower(ACTUATOR_PARAMS.POWER);
     }
 
     @Override
@@ -125,6 +123,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public void setTargetTicks(int ticks) {
         targetTicks = Range.clip(ticks, ACTUATOR_PARAMS.RETRACT_POSITION_TICKS, ACTUATOR_PARAMS.DEPLOY_FULL_POSITION_TICKS);
         sampleActuator.setTargetPosition(targetTicks);
+        enableRunToPositionMode();
     }
 
     // Check if the actuator has reached its target
@@ -143,16 +142,11 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     // Update the actuator state based on whether it has reached its target
     public void updateActuatorState() {
-        if (isActuatorAtTarget()) {
+        if (isActuatorAtTarget() && currentState != SampleActuatorStates.WITHOUT_ENCODER) {
             currentState = targetState;
         }
     }
     public void updateParameters() {
-        // Update power
-        if (ACTUATOR_PARAMS.POWER != currentPower) {
-            sampleActuator.setPower(ACTUATOR_PARAMS.POWER);
-        }
-
         // Update target positions
         updateActuatorPositionTicks(SampleActuatorStates.DEPLOY_FULL, ACTUATOR_PARAMS.DEPLOY_FULL_POSITION_TICKS);
         updateActuatorPositionTicks(SampleActuatorStates.RETRACT, ACTUATOR_PARAMS.RETRACT_POSITION_TICKS);
@@ -179,6 +173,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     // Add a method to handle manual input for the lift
     public void setManualTargetState(double actuatorInput) {
+
         // Set the actuator state to MANUAL
         targetState = SampleLinearActuatorSubsystem.SampleActuatorStates.MANUAL;
 
@@ -230,6 +225,40 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     public SampleActuatorStates getCurrentState() {
         return currentState;
+    }
+
+    // Method to power the motor on in one direction without encoders
+    public void runWithoutEncodersForward() {
+        currentState= SampleActuatorStates.WITHOUT_ENCODER;
+        sampleActuator.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        moveActuator(ACTUATOR_PARAMS.WITHOUT_ENCODER_POWER);
+    }
+
+    // Method to power the motor on in reverse without encoders
+    public void runWithoutEncodersReverse() {
+        currentState= SampleActuatorStates.WITHOUT_ENCODER;
+        sampleActuator.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        moveActuator(-ACTUATOR_PARAMS.WITHOUT_ENCODER_POWER);
+    }
+
+    // Method to stop the motor
+    public void stopActuator() {
+        currentPower = 0;
+        sampleActuator.setPower(0);
+    }
+
+    // Apply power to move the actuator in (positive power) or out (negative power)
+    private void moveActuator(double power) {
+        currentPower = Range.clip(power, -1.0, 1.0);  // Ensure power is within valid range
+        sampleActuator.setPower(currentPower);
+    }
+
+    // Switch to RUN_TO_POSITION mode for precise movement
+    public void enableRunToPositionMode() {
+        if (sampleActuator.getMode() != DcMotorEx.RunMode.RUN_TO_POSITION) {
+            sampleActuator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            sampleActuator.setPower(ACTUATOR_PARAMS.POWER);
+        }
     }
 
 }

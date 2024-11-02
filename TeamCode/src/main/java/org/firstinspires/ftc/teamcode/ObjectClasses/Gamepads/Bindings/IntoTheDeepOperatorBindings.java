@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings;
 
+import com.acmerobotics.roadrunner.InstantAction;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.DefaultSpecimenArmCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArmAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
@@ -76,6 +78,14 @@ public class IntoTheDeepOperatorBindings {
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                     .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY), specimenArmRequirements));
+        } else
+        {
+            if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+                SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();
+                operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                        .whenPressed(new InstantCommand(sampleLinearActuatorSubsystem::runWithoutEncodersForward))
+                        .whenReleased(new InstantCommand(sampleLinearActuatorSubsystem::stopActuator));
+            }
         }
         //////////////////////////////////////////////////////////
         //                                                      //
@@ -110,6 +120,14 @@ public class IntoTheDeepOperatorBindings {
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                     .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP), specimenArmRequirements));
+        }else
+        {
+            if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+                SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();
+                operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                        .whenPressed(new InstantCommand(sampleLinearActuatorSubsystem::runWithoutEncodersReverse))
+                        .whenReleased(new InstantCommand(sampleLinearActuatorSubsystem::stopActuator));
+            }
         }
         //////////////////////////////////////////////////////////
         //                                                      //

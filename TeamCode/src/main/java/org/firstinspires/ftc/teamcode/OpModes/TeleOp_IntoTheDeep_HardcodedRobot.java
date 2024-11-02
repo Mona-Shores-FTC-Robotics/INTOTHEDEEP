@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@TeleOp(name="TeleOp_IntoTheDeep [Chassis_19429-B_Pinpoint]")
+@TeleOp(name="TeleOp_IntoTheDeep [INTO_THE_DEEP_19429]")
 public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
 {
     @Override
@@ -57,7 +57,7 @@ public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
         // Create the robot
-        Robot.createInstance(this, Robot.RobotType.CHASSIS_19429_B_PINPOINT);
+        Robot.createInstance(this, Robot.RobotType.INTO_THE_DEEP_19429);
 
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);

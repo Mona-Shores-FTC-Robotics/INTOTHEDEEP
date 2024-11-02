@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
-import com.arcrobotics.ftclib.command.ConditionalCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.ContinuousConditionalCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
@@ -36,16 +37,24 @@ public class SampleHandlingStateMachine {
     // Method to handle button press logic (toggle actuator states)
     public void onIntakeButtonPress() {
         switch (actuatorSubsystem.getCurrentState()) {
+
+            case WITHOUT_ENCODER:
+                actuatorSubsystem.enableRunToPositionMode();
+                setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
+                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+                break;
+
             case RETRACT:
-                setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID);
+                setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID);
                 setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
                 break;
             case DEPLOY_MID:
-                setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
+                setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
                 break;
             case DEPLOY_FULL:
+            case MANUAL:
             default:
-                setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
+                setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
                 setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                 break;
 
@@ -54,32 +63,52 @@ public class SampleHandlingStateMachine {
     }
 
     // Method to handle piece pickup and expel sequence
-    //TODO this probably does not work because conditionalcommand only checks one time.
     public void onGoodSampleDetected() {
-//        SequentialCommandGroup retractAndExpelSequence = new SequentialCommandGroup(
-//                new InstantCommand(() -> setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT)),
+        SequentialCommandGroup retractAndExpelSequence = new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new InstantCommand(this::setIntakeOff),
+                        new InstantCommand(actuatorSubsystem::runWithoutEncodersReverse)
+                        ),
+
+                new WaitCommand(350),
+                new InstantCommand(actuatorSubsystem::stopActuator),
+                new InstantCommand(this::setIntakeReverse),
+                new WaitCommand(300),
+                new InstantCommand(this::setIntakeOff));
+
 //                new ContinuousConditionalCommand(
 //                        new SequentialCommandGroup(
 //                                new InstantCommand(this::setIntakeReverse),
 //                                new WaitCommand(500),
 //                                new InstantCommand(this::setIntakeOff)
-////                                new InstantCommand(this::setLiftToLowBasket)
+////                              new InstantCommand(this::setLiftToLowBasket)
 //                        ),
 //                        new WaitCommand(100),
 //                        this::isActuatorRetracted
 //                )
-//        );
-//        retractAndExpelSequence.schedule();
+        retractAndExpelSequence.schedule();
     }
 
     public void onBadSampleDetected() {
         SequentialCommandGroup expelPieceSequence = new SequentialCommandGroup(
-                new InstantCommand(() -> setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE)),  // Reverse intake
-                new WaitCommand(500),  // Wait for the piece to be expelled
-                new InstantCommand(() -> setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON)),  // Resume intaking
-                new InstantCommand(() -> setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID))  // Set actuator back to mid position
+                new InstantCommand(this::setIntakeReverse),  // Reverse intake
+                new WaitCommand(250),  // Wait for the piece to be expelled
+                new InstantCommand(actuatorSubsystem::runWithoutEncodersReverse), // move the actuator back a little bit
+                new WaitCommand(250),
+                new ParallelCommandGroup(
+                    new InstantCommand(this::setIntakeOn), // Resume intaking
+                    new InstantCommand(actuatorSubsystem::stopActuator)// move the actuator back a little bit
+                )
         );
         expelPieceSequence.schedule();
+
+//        SequentialCommandGroup expelPieceSequence = new SequentialCommandGroup(
+//                new InstantCommand(() -> setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE)),  // Reverse intake
+//                new WaitCommand(500),  // Wait for the piece to be expelled
+//                new InstantCommand(() -> setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON)),  // Resume intaking
+//                new InstantCommand(() -> setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID))  // Set actuator back to mid position
+//        );
+//        expelPieceSequence.schedule();
     }
 
 
@@ -87,7 +116,7 @@ public class SampleHandlingStateMachine {
         return actuatorSubsystem.isActuatorAtTarget();
     }
 
-    private void setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates newState) {
+    private void setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates newState) {
         actuatorSubsystem.setTargetState(newState);
     }
 

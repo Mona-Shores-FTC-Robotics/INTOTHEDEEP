@@ -73,6 +73,8 @@ public class DriverStationTelemetryManager {
     // Basic telemetry method
     private void displayBasicTelemetry() {
         displayTimeTelemetry(telemetry);
+        telemetry.addData("Alliance Color", MatchConfig.finalAllianceColor);
+
         telemetry.addLine();
         // Check and display DriveSubsystem telemetry if available
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
