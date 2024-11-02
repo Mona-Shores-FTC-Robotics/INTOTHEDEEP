@@ -203,12 +203,13 @@ public class Robot {
 
         //Is it okay that two instances are created of these?
         //Should there be an init?
-         if (  opModeType == OpModeType.TELEOP &&
-                 hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
-                 hasSubsystem(SubsystemType.SAMPLE_LIFT) &&
-                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
-             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftSubsystem);
-         } else if (opModeType == OpModeType.TELEOP &&
+//         if (  opModeType == OpModeType.TELEOP &&
+//                 hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
+//                 hasSubsystem(SubsystemType.SAMPLE_LIFT) &&
+//                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
+//             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftSubsystem);
+//         } else
+             if (opModeType == OpModeType.TELEOP &&
                  hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
                  hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem);

@@ -74,9 +74,9 @@ import java.util.concurrent.TimeUnit;
 @TeleOp(name = "SensorColor_lights_Telop", group = "Sensor")
 
 public class SensorColor_lights_Telop extends LinearOpMode {
-
+  RevColorSensorV3
   /** The colorSensor field will contain a reference to our color sensor hardware object */
-  RevColorSensorV3 colorSensor;
+   colorSensor;
 
   /** The relativeLayout field is used to aid in providing interesting visual feedback
    * in this sample application; you probably *don't* need this when you use a color sensor on your

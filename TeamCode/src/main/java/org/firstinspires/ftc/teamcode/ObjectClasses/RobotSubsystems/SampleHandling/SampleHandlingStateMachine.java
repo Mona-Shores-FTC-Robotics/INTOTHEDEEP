@@ -38,7 +38,7 @@ public class SampleHandlingStateMachine {
         switch (actuatorSubsystem.getCurrentState()) {
             case RETRACT:
                 setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID);
-//                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
                 break;
             case DEPLOY_MID:
                 setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
@@ -46,7 +46,7 @@ public class SampleHandlingStateMachine {
             case DEPLOY_FULL:
             default:
                 setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
-//                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                 break;
 
 
@@ -56,20 +56,20 @@ public class SampleHandlingStateMachine {
     // Method to handle piece pickup and expel sequence
     //TODO this probably does not work because conditionalcommand only checks one time.
     public void onGoodSampleDetected() {
-        SequentialCommandGroup retractAndExpelSequence = new SequentialCommandGroup(
-                new InstantCommand(() -> setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT)),
-                new ContinuousConditionalCommand(
-                        new SequentialCommandGroup(
-                                new InstantCommand(this::setIntakeReverse),
-                                new WaitCommand(500),
-                                new InstantCommand(this::setIntakeOff),
-                                new InstantCommand(this::setLiftToLowBasket)
-                        ),
-                        new WaitCommand(100),
-                        this::isActuatorRetracted
-                )
-        );
-        retractAndExpelSequence.schedule();
+//        SequentialCommandGroup retractAndExpelSequence = new SequentialCommandGroup(
+//                new InstantCommand(() -> setActuatorState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT)),
+//                new ContinuousConditionalCommand(
+//                        new SequentialCommandGroup(
+//                                new InstantCommand(this::setIntakeReverse),
+//                                new WaitCommand(500),
+//                                new InstantCommand(this::setIntakeOff)
+////                                new InstantCommand(this::setLiftToLowBasket)
+//                        ),
+//                        new WaitCommand(100),
+//                        this::isActuatorRetracted
+//                )
+//        );
+//        retractAndExpelSequence.schedule();
     }
 
     public void onBadSampleDetected() {

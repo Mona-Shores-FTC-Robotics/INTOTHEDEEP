@@ -4,8 +4,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import static com.example.sharedconstants.FieldConstants.SampleColor;
 import com.example.sharedconstants.FieldConstants;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
@@ -43,7 +45,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     private final CRServo sampleIntakeLeft;  // Continuous rotation servo
     private final CRServo sampleIntakeRight;  // Continuous rotation servo
 
-    private final ColorSensor colorSensor;  // Nullable color sensor
+    private final RevColorSensorV3 colorSensor;  // Nullable color sensor
     private SampleIntakeStates currentState;
     private double currentPower;
 
@@ -53,7 +55,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         sampleIntakeRight = hMap.get(CRServo.class, intakeServoR);
 
         if (colorSensorName != null && !colorSensorName.isEmpty()) {
-            colorSensor = hMap.get(ColorSensor.class, colorSensorName);
+            colorSensor = hMap.get(RevColorSensorV3.class, colorSensorName);
+            if (colorSensor instanceof SwitchableLight) {
+                ((SwitchableLight)colorSensor).enableLight(false);
+            }
         } else {
             colorSensor = null;  // No color sensor configured
         }
