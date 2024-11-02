@@ -27,21 +27,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.OpModes;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
+
+import java.util.concurrent.TimeUnit;
 
 /*
  * This OpMode shows how to use a color sensor in a generic
@@ -66,20 +71,43 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "Sensor: Color", group = "Sensor")
-@Disabled
-public class SensorColor extends LinearOpMode {
+@TeleOp(name = "SensorColor_lights_Telop", group = "Sensor")
+
+public class SensorColor_lights_Telop extends LinearOpMode {
 
   /** The colorSensor field will contain a reference to our color sensor hardware object */
-  //NormalizedColorSensor colorSensor;
   RevColorSensorV3 colorSensor;
-
-
 
   /** The relativeLayout field is used to aid in providing interesting visual feedback
    * in this sample application; you probably *don't* need this when you use a color sensor on your
    * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
   View relativeLayout;
+
+
+  /*
+   * Change the pattern every 10 seconds in AUTO mode.
+   */
+  private final static int LED_PERIOD = 10;
+
+  /*
+   * Rate limit gamepad button presses to every 500ms.
+   */
+  private final static int GAMEPAD_LOCKOUT = 500;
+
+  RevBlinkinLedDriver blinkinLedDriver;
+  RevBlinkinLedDriver.BlinkinPattern pattern;
+
+  Telemetry.Item patternName;
+  Telemetry.Item display;
+  SampleRevBlinkinLedDriver.DisplayKind displayKind;
+  Deadline ledCycleDeadline;
+  Deadline gamepadRateLimit;
+
+  protected enum DisplayKind {
+    MANUAL,
+    AUTO
+  }
+
 
   /*
    * The runOpMode() method is the root of this OpMode, as it is in all LinearOpModes.
@@ -91,7 +119,20 @@ public class SensorColor extends LinearOpMode {
    * block around the main, core logic, and an easy way to make that all clear was to separate
    * the former from the latter in separate methods.
    */
+
   @Override public void runOpMode() {
+
+    displayKind = SampleRevBlinkinLedDriver.DisplayKind.AUTO;
+
+    blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+    pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+    blinkinLedDriver.setPattern(pattern);
+
+    display = telemetry.addData("Display Kind: ", displayKind.toString());
+    patternName = telemetry.addData("Pattern: ", pattern.toString());
+
+    ledCycleDeadline = new Deadline(LED_PERIOD, TimeUnit.SECONDS);
+    gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
 
     // Get a reference to the RelativeLayout so we can later change the background
     // color of the Robot Controller app to match the hue detected by the RGB sensor.
@@ -138,12 +179,12 @@ public class SensorColor extends LinearOpMode {
     // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
     // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
     // the values you get from ColorSensor are dependent on the specific sensor you're using.
-    colorSensor = hardwareMap.get(RevColorSensorV3.class, "sensor_color");
+    colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
 
     // If possible, turn the light on in the beginning (it might already be on anyway,
     // we just make sure it is if we can).
     if (colorSensor instanceof SwitchableLight) {
-      ((SwitchableLight)colorSensor).enableLight(true);
+      ((SwitchableLight)colorSensor).enableLight(false);
     }
 
     // Wait for the start button to be pressed.
@@ -188,6 +229,7 @@ public class SensorColor extends LinearOpMode {
       // Get the normalized colors from the sensor
       NormalizedRGBA colors = colorSensor.getNormalizedColors();
 
+
       /* Use telemetry to display feedback on the driver station. We show the red, green, and blue
        * normalized values from the sensor (in the range of 0 to 1), as well as the equivalent
        * HSV (hue, saturation and value) values. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
@@ -205,6 +247,11 @@ public class SensorColor extends LinearOpMode {
               .addData("Saturation", "%.3f", hsvValues[1])
               .addData("Value", "%.3f", hsvValues[2]);
       telemetry.addData("Alpha", "%.3f", colors.alpha);
+      telemetry.addLine()
+              .addData("Raw Red", "%d", colorSensor.red())
+              .addData("Raw Green", "%d", colorSensor.green())
+              .addData("Raw Blue", "%d", colorSensor.blue());
+
 
       /* If this color sensor also has a distance sensor, display the measured distance.
        * Note that the reported distance is only useful at very close range, and is impacted by
@@ -212,9 +259,22 @@ public class SensorColor extends LinearOpMode {
       if (colorSensor instanceof DistanceSensor) {
         telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
       }
-
+      double distance = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM);
       telemetry.update();
 
+      pattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+
+      if (distance <= 3) {
+        if (colorSensor.green() >= 400) {
+          pattern = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE;
+        } else if (colorSensor.blue() >= 250) {
+          pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE;
+        } else if (colorSensor.blue() <= 120 && colorSensor.green() <= 175) {
+          pattern = RevBlinkinLedDriver.BlinkinPattern.FIRE_LARGE;
+        }
+      }
+
+      displayPattern();
       // Change the Robot Controller's background color to match the color detected by the color sensor.
       relativeLayout.post(new Runnable() {
         public void run() {
@@ -222,5 +282,11 @@ public class SensorColor extends LinearOpMode {
         }
       });
     }
+  }
+
+  protected void displayPattern()
+  {
+    blinkinLedDriver.setPattern(pattern);
+    patternName.setValue(pattern.toString());
   }
 }
