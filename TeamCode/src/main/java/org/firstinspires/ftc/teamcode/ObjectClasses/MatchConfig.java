@@ -6,6 +6,8 @@ import static com.example.sharedconstants.FieldConstants.*;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAction;
+
 public class MatchConfig {
 
     public static AllianceColor finalAllianceColor = AllianceColor.BLUE;
@@ -26,6 +28,8 @@ public class MatchConfig {
     public static ElapsedTime timestampTimer;
 
     public static TelemetryPacket telemetryPacket;
+
+    public static DriveForwardAction currentDriveForwardAction;
 
     // Sliding window average variables
     private static final int WINDOW_SIZE = 100;

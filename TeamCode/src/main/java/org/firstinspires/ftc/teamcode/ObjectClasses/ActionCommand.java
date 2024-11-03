@@ -6,6 +6,8 @@ import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.Subsystem;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAction;
+
 import java.util.Set;
 
 public class ActionCommand implements Command {
@@ -25,18 +27,20 @@ public class ActionCommand implements Command {
 
     @Override
     public void execute() {
-        TelemetryPacket packet = new TelemetryPacket();
-        action.preview(packet.fieldOverlay());
-        finished = !action.run(packet);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        action.preview(MatchConfig.telemetryPacket.fieldOverlay());
+        finished = !action.run(MatchConfig.telemetryPacket);
     }
 
     @Override
     public boolean isFinished() {
         return finished;
     }
+
     @Override
     public void end(boolean interrupted) {
+        if (interrupted && action instanceof DriveForwardAction) {
+            ((DriveForwardAction) action).cancelAbruptly();
+        }
         finished = false; // Reset finished to allow re-initialization on the next press
     }
 

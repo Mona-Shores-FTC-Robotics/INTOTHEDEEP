@@ -21,6 +21,7 @@ public class IntoTheDeepDriverBindings {
     public Command slowModeCommand;
     public Command cycleTelemetryModeCommand;
     public Command cycleDriveModeCommand;
+    public DriveForwardAction currentDriveForwardAction;
 
     public IntoTheDeepDriverBindings(GamepadEx gamepad) {
         Robot robot = Robot.getInstance();
@@ -119,12 +120,20 @@ public class IntoTheDeepDriverBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            DriveForwardAction driveForwardAction = new DriveForwardAction();
             gamepad.getGamepadButton(GamepadKeys.Button.X)
-                    .whenPressed(new ActionCommand(driveForwardAction, Collections.singleton(robot.getDriveSubsystem())))
-                    .whenReleased(driveForwardAction::cancelAbruptly);
+                    .whenPressed(() -> {
+                        DriveForwardAction driveForwardAction = new DriveForwardAction();
+                        ActionCommand driveActionCommand = new ActionCommand(driveForwardAction, Collections.singleton(robot.getDriveSubsystem()));
+                        driveActionCommand.schedule();
+                        currentDriveForwardAction = driveForwardAction; // Replace `MatchConfig` with wherever you're storing state if needed
+                    })
+                    .whenReleased(() -> {
+                        if (currentDriveForwardAction != null) { // Check if the action is still active
+                            currentDriveForwardAction.cancelAbruptly(); // Cancel the action to stop it gracefully
+                            currentDriveForwardAction = null; // Clear the reference to avoid issues
+                        }
+                    });
         }
-
     }
 }
 
