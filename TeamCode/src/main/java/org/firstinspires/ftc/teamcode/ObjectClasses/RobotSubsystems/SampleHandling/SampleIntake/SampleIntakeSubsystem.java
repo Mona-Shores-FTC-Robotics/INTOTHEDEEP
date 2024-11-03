@@ -89,6 +89,16 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         lightingSubsystem = Robot.getInstance().getLightingSubsystem();
     }
 
+    @Override
+    public void periodic() {
+        // Detect the color of the game piece in every loop
+        if (colorSensor!=null) {
+            SampleColor detectedSampleColor = detectSampleColor();
+            handleSamplePickup(detectedSampleColor);
+        }
+        updateParameters();
+        updateDashboardTelemetry();
+    }
     // Set the current intake state and update power
     public void setCurrentState(SampleIntakeStates state) {
         currentState = state;
@@ -101,34 +111,6 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         sampleIntakeLeft.setPower(currentPower);  // Apply the clipped power
         sampleIntakeRight.setPower(-currentPower);  // Apply the clipped power
     }
-
-    // Method to read color from the sensor
-//    public SampleColor detectSampleColor() {
-//        if (colorSensor != null) {
-//            // Get the proximity/distance reading from the color sensor
-//            proximity = colorSensor.getDistance(DistanceUnit.INCH);
-//
-//            if (proximity < INTAKE_PARAMS.PROXIMITY_THRESHOLD) {
-//                int red = colorSensor.red();
-//                int green = colorSensor.green();
-//                int blue = colorSensor.blue();
-//
-//                // Use the enum to return the color
-//                if (red > blue && red > green) {
-//                    return SampleColor.RED;
-//                } else if (blue > red && blue > green) {
-//                    return SampleColor.BLUE;
-//                } else if (green > red && green > blue) {
-//                    return SampleColor.YELLOW;
-//                } else {
-//                    return SampleColor.UNKNOWN;
-//                }
-//            } else return SampleColor.NO_SAMPLE;
-//        } else {
-//            // If no color sensor, return UNKNOWN
-//            return SampleColor.UNKNOWN;
-//        }
-//    }
 
     // Integrated student sample data using chatGPT
     public SampleColor detectSampleColor() {
@@ -193,16 +175,6 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         SampleIntakeStates.INTAKE_OFF.updateIntakePower(INTAKE_PARAMS.INTAKE_OFF_POWER);
     }
 
-    @Override
-    public void periodic() {
-        // Detect the color of the game piece in every loop
-        if (colorSensor!=null) {
-            SampleColor detectedSampleColor = detectSampleColor();
-            handleSamplePickup(detectedSampleColor);
-        }
-        updateParameters();
-        updateDashboardTelemetry();
-    }
 
     // Telemetry display for the dashboard
     @SuppressLint("DefaultLocale")

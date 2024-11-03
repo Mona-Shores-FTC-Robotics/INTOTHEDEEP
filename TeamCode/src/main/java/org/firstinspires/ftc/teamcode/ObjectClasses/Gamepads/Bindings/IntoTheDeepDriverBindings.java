@@ -7,10 +7,14 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.example.sharedconstants.FieldConstants;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeCommand;
+
+import java.util.Collections;
 
 public class IntoTheDeepDriverBindings {
     public Command defaultDriveCommand;
@@ -54,7 +58,7 @@ public class IntoTheDeepDriverBindings {
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // BACK BUTTON - Cycle Telemetry Mode                  //
+        //LEFT BUMPER - Cycle Telemetry Modes                   //
         //                                                      //
         //////////////////////////////////////////////////////////
 
@@ -68,7 +72,7 @@ public class IntoTheDeepDriverBindings {
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // BACK BUTTON - Cycle Drive Mode                       //
+        // DPAD_UP - Cycle Drive Modes                         //
         //                                                      //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
@@ -83,7 +87,7 @@ public class IntoTheDeepDriverBindings {
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // BACK BUTTON - Cycle Drive Mode                       //
+        //  DPAD_DOWN - Reset Yaw                               //
         //                                                      //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
@@ -108,6 +112,19 @@ public class IntoTheDeepDriverBindings {
                         Robot.getInstance().getDriveSubsystem().fieldOrientedControl = false;
                     }));
         }
+
+        //////////////////////////////////////////////////////////
+        //                                                      //
+        //  X BUTTON DRIVE FORWARD 6 INCHES                     //
+        //                                                      //
+        //////////////////////////////////////////////////////////
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            DriveForwardAction driveForwardAction = new DriveForwardAction();
+            gamepad.getGamepadButton(GamepadKeys.Button.X)
+                    .whenPressed(new ActionCommand(driveForwardAction, Collections.singleton(robot.getDriveSubsystem())))
+                    .whenReleased(driveForwardAction::cancelAbruptly);
+        }
+
     }
 }
 

@@ -26,7 +26,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
+import java.lang.reflect.Array;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public class IntoTheDeepOperatorBindings {
@@ -93,7 +95,19 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE))
+        {
+            SampleIntakeSubsystem sampleIntakeSubsystem = robot.getSampleIntakeSubsystem();
+            Set<Subsystem> sampleIntakeRequirements = Collections.singleton(sampleIntakeSubsystem);
 
+            ChangeSampleIntakePowerAction turnOffIntake = new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+            ChangeSampleIntakePowerAction turnOnIntake = new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+
+            operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
+                    .whenPressed(new ActionCommand(turnOnIntake, sampleIntakeRequirements))
+                    .whenReleased(new ActionCommand(turnOffIntake, sampleIntakeRequirements)
+                    );
+        }
 
         //////////////////////////////////////////////////////////
         //                                                      //
