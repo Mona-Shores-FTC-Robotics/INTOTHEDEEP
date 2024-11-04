@@ -91,6 +91,7 @@ public class DriveSubsystem extends SubsystemBase {
         // Initialize appropriate drive system based on robot type
         switch (robotType) {
             case INTO_THE_DEEP_19429:
+                //todo can we edit this config live in the dashboard? How can we make that happen?
                 DriveParams.configureIntoTheDeep19429RRParams();
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 DriveParams.configureIntoTheDeep19429Directions(mecanumDrive, this);
@@ -147,7 +148,7 @@ public class DriveSubsystem extends SubsystemBase {
         } else {
             yawOffsetDegrees = -90;  // -90 degrees for red side
         }
-        //todo does this make sense? I think we can actually get rid of the hard coded offset above becuase this is being handled automatically by the line below
+        //todo does this make sense? I think we can actually get rid of the hard coded offset above because this is being handled automatically by the line below
         MatchConfig.offsetFromStartPoseDegrees = -1 * Math.toDegrees(getMecanumDrive().pose.heading.toDouble());
 
     }

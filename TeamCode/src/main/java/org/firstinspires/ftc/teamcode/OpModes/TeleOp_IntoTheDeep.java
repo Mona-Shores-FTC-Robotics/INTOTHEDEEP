@@ -71,7 +71,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             sleep(10);
         }
 
-            //todo can we make this contingent on an auto being run or not?
+            //todo can we make this contingent on an auto being run or not? Anything else we should think about based on if an auto was run?
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
             //set the starting location of the robot on the field
             Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);

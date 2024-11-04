@@ -45,8 +45,6 @@ public class DriveForwardAction implements Action {
             //  I think this works in auto because we just feed it the same Red start values regardless of whether we are blue or red?
 
             // todo camera/apriltag?
-            // todo fix telemetry to make it better!
-
 
             if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
                 currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log()+PI);

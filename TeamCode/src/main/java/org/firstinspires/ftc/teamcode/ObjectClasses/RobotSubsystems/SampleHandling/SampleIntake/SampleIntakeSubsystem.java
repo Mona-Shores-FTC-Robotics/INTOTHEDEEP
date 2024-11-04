@@ -142,7 +142,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
             MatchConfig.telemetryPacket.put("Sample Intake/color/Green", green);
             MatchConfig.telemetryPacket.put("Sample Intake/color/Blue", blue);
 
-            //TODO detect same color five times in a row?
+            //TODO detect same color five times in a row? Implement some sort of filtering/smoothing method
 
             // Red detection (using updated sample data)
             if (    (hue >= 10 && hue <= 35) ||
