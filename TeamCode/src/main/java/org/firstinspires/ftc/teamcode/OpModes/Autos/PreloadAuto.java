@@ -19,39 +19,51 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 @Autonomous(name = "Preload Specimen")
 public class PreloadAuto extends LinearOpMode {
 
+    Routes blueObsRoute;
+    Routes blueNetRoute;
+    Routes redObsRoute;
+    Routes redNetRoute;
+
     @Override
     public void runOpMode() {
-        //Reset the Singleton CommandScheduler and Robot
-        CommandScheduler.getInstance().reset();
-
-        //Initialize the Game-pads
-        GamepadHandling gamepadHandling = new GamepadHandling(this);
-
-        while (opModeInInit()) {
-            // Allow driver to override/lock the vision
-            gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSideAndRobotType(telemetry);
-            telemetry.update();
-            sleep(10);
-        }
-
-        // Create and Initialize the robot
-        Robot.createInstance(this, MatchConfig.finalRobotType);
+        // Create the robot
+        Robot.createInstance(this);
 
         // Initialize Gamepad and Robot - Order Important
         Robot.getInstance().init(Robot.OpModeType.AUTO);
 
-        //Instantiate the robotDriveAdapter so we can use MeepMeep seamlessly
-        RealRobotAdapter robotDriveAdapter = new RealRobotAdapter();
+        //Initialize the Game-pads
+        GamepadHandling gamepadHandling = new GamepadHandling(this);
 
-        Routes route;
-        //Build route depending on side of field
-        if (MatchConfig.finalSideOfField == FieldConstants.SideOfField.NET) {
-            route = new NET_Score_1_Specimen_Preload(robotDriveAdapter);
-        } else{
-            route = new OBS_Score_1_Specimen_Preload(robotDriveAdapter);
+        //Instantiate the robotAdapter so we can use MeepMeep seamlessly
+        RealRobotAdapter robotAdapter = new RealRobotAdapter();
+
+        //Make the blue routes
+        robotAdapter.setAllianceColor(FieldConstants.AllianceColor.BLUE);
+        blueObsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
+        blueObsRoute.buildRoute();
+        blueNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
+        blueNetRoute.buildRoute();
+
+        //Make the red routes
+        robotAdapter.setAllianceColor(FieldConstants.AllianceColor.RED);
+        redObsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
+        redObsRoute.buildRoute();
+        redNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
+        redNetRoute.buildRoute();
+
+        while (opModeInInit()) {
+            // Allow driver to override/lock the vision
+            gamepadHandling.getDriverGamepad().readButtons();
+            gamepadHandling.SelectAndLockColorAndSide();
+            telemetry.update();
+            sleep(10);
         }
-        route.buildRoute();
+        //set the color of our adapter to the final alliance color - this technically shouldn't matter
+        robotAdapter.setAllianceColor(MatchConfig.finalAllianceColor);
+
+        //Select route depending on side of field
+        Routes route = selectRoute();
 
         //Pick one of the routes built previously based on the final Alliance Color and Side of Field
         Action selectedRoute = route.getRouteAction(MatchConfig.finalSideOfField);
@@ -70,6 +82,31 @@ public class PreloadAuto extends LinearOpMode {
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;
         MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+    }
+
+    public Routes selectRoute() {
+        // Select route depending on side of field and alliance color
+        Routes route;
+
+        if (MatchConfig.finalSideOfField == FieldConstants.SideOfField.NET) {
+            if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+                // Case 1: Blue alliance on the NET side
+                route = blueNetRoute;
+            } else {
+                // Case 2: Red alliance on the NET side
+                route = redNetRoute;
+            }
+        } else {
+            if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+                // Case 3: Blue alliance on the OBS side
+                route = blueObsRoute;
+            } else {
+                // Case 4: Red alliance on the OBS side
+                route = redObsRoute;
+            }
+        }
+
+        return route;
     }
 }
 

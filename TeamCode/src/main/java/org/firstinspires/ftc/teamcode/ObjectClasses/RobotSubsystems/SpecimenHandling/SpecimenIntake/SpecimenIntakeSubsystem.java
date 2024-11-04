@@ -97,12 +97,11 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     // Basic telemetry display with context for the driver station
     public void displayBasicTelemetry(org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
-        telemetry.addData("Specimen Intake Status", String.format("State: %s", currentState));
-        if (colorSensor != null) {
-            telemetry.addData("Detected Color", detectSpecimenColor().toString());
-        } else {
-            telemetry.addData("Detected Color", "No Sensor");
-        }
+        // Display the current state and detected color on the same line
+        String intakeState = (currentState != null) ? currentState.toString() : "Unknown";
+        String colorStatus = (colorSensor != null) ? detectSpecimenColor().toString() : "No Color Sensor";
+        telemetry.addLine(String.format("%s | Color: %s", intakeState, colorStatus));
+
     }
 
     // Getters for telemetry use or other purposes

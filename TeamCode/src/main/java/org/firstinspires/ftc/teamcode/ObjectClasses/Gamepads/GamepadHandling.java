@@ -123,24 +123,30 @@ public class GamepadHandling {
 
     public void SelectAndLockColorAndSide() {
         Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
-        telemetry.addLine("");
-
         if (LockedSettingsFlag) {
-            telemetry.addLine("Alliance Color and Side of Field Locked");
-            telemetry.addLine(finalAllianceColor + " " + finalSideOfField);
-            telemetry.addLine("Press B to unlock Alliance Color and Side of Field");
+            telemetry.addLine("Settings Locked");
+            telemetry.addLine("Alliance: " + finalAllianceColor);
+            telemetry.addLine("Side: " + finalSideOfField);
+            telemetry.addLine("Robot Type: " + finalRobotType);
+            telemetry.addLine("Press B to unlock settings");
+
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-                LockedSettingsFlag = false;
+                LockedSettingsFlag = false;  // Unlock settings if B is pressed again
             }
         } else {
-            telemetry.addLine("Lock Alliance Color and Side of Field with B");
-            telemetry.addLine(finalAllianceColor + " " + finalSideOfField);
+            telemetry.addLine("Lock settings with B");
+            telemetry.addLine("");
+            telemetry.addLine("Alliance: " + finalAllianceColor);
+            telemetry.addLine("Side: " + finalSideOfField);
+            telemetry.addLine("Robot Type: " + finalRobotType);
+            telemetry.addLine("");
 
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
                 LockedSettingsFlag = true;
             }
 
-            telemetry.addLine("Color (DPAD-UP/DOWN) - Side Of Field (DPAD-LEFT/RIGHT)");
+            // Allow selection of alliance color
+            telemetry.addLine("Color (DPAD-UP/DOWN)");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 finalAllianceColor = AllianceColor.BLUE;
                 finalOpponentColor = AllianceColor.RED;
@@ -149,6 +155,8 @@ public class GamepadHandling {
                 finalOpponentColor = AllianceColor.BLUE;
             }
 
+            // Allow selection of side of field based on alliance color
+            telemetry.addLine("Side Of Field (DPAD-LEFT/RIGHT)");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 if (finalAllianceColor == AllianceColor.BLUE) {
                     finalSideOfField = SideOfField.NET;
@@ -164,7 +172,6 @@ public class GamepadHandling {
             }
         }
     }
-
 
     public void SelectAndLockColor() {
         Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;

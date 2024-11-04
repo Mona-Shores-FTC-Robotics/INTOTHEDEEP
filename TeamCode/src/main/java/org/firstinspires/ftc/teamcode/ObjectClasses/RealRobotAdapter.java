@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.NullAction;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.MoveLinearActuatorAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArmAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
@@ -172,7 +175,21 @@ public class RealRobotAdapter implements RobotAdapter {
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HOME);
                     } else return problem();
-
+                case INTAKE_SAMPLE_FROM_GROUND:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
+                    {
+                        return new ParallelAction(
+                                new MoveLinearActuatorAction(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID),
+                                new SequentialAction(
+                                        new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON),
+                                        new SleepAction(500),
+                                        new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF)
+                                    )
+                                );
+                    } else return problem();
+                case DUMP_SAMPLE_IN_OBSERVATION_ZONE:
+                    //todo WHAT SHOULD THIS DO?
+                    return problem();
                 default:
                     telemetryManger.displayError("Unknown action type: " + actionType);
                     return new NullAction();
@@ -180,7 +197,7 @@ public class RealRobotAdapter implements RobotAdapter {
         }
 
         private Action problem() {
-            Robot.getInstance().getDriverStationTelemetryManager().displayError("Subsystem Not Available");
+//            Robot.getInstance().getDriverStationTelemetryManager().displayError("Subsystem Not Available");
             return new NullAction();
         }
     }

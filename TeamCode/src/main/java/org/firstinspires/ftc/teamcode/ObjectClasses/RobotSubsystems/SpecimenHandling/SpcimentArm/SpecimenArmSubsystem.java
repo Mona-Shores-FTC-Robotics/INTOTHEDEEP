@@ -42,10 +42,10 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     }
 
     public enum SpecimenArmStates {
-        HOME, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, MANUAL, SPECIMEN_STAGING, HORIZONTAL;
+        ARM_HOME, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, ARM_MANUAL, SPECIMEN_STAGING, HORIZONTAL;
         public double angle;
         static {
-            HOME.angle = SPECIMEN_ARM_PARAMS.STARTING_ANGLE_OFFSET_DEGREES;
+            ARM_HOME.angle = SPECIMEN_ARM_PARAMS.STARTING_ANGLE_OFFSET_DEGREES;
             SPECIMEN_PICKUP.angle = SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE;
             SPECIMEN_STAGING.angle = SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING_ANGLE;
             SPECIMEN_DELIVERY.angle = SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY_ANGLE;
@@ -87,7 +87,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         arm.setDirection(DcMotorEx.Direction.FORWARD);
-        currentState = SpecimenArmStates.HOME;
+        currentState = SpecimenArmStates.ARM_HOME;
         armEncoder =  new OverflowEncoder(new RawEncoder(arm));
         armEncoder.setDirection(DcMotorEx.Direction.FORWARD);
     }
@@ -102,10 +102,9 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                 SPECIMEN_ARM_PARAMS.kV,
                 SPECIMEN_ARM_PARAMS.kA
         );
-        targetState = SpecimenArmStates.HOME;
+        targetState = SpecimenArmStates.ARM_HOME;
         setManualTargetState(targetState.getArmAngle());
         arm.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        initToHorizontal(); // Initialize to a test state
     }
 
     public void periodic() {
@@ -135,7 +134,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
 
     public void updateParameters() {
-        updateArmAngles(SpecimenArmStates.HOME, SPECIMEN_ARM_PARAMS.STARTING_ANGLE_OFFSET_DEGREES);
+        updateArmAngles(SpecimenArmStates.ARM_HOME, SPECIMEN_ARM_PARAMS.STARTING_ANGLE_OFFSET_DEGREES);
         updateArmAngles(SpecimenArmStates.SPECIMEN_PICKUP, SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE);
         updateArmAngles(SpecimenArmStates.SPECIMEN_STAGING, SPECIMEN_ARM_PARAMS.SPECIMEN_STAGING_ANGLE);
         updateArmAngles(SpecimenArmStates.SPECIMEN_DELIVERY, SPECIMEN_ARM_PARAMS.SPECIMEN_DELIVERY_ANGLE);
@@ -193,10 +192,10 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         newManualTargetAngle = Range.clip(newManualTargetAngle, SPECIMEN_ARM_PARAMS.MIN_ANGLE, SPECIMEN_ARM_PARAMS.MAX_ANGLE);
 
         // Update the MANUAL state with the new angle
-        SpecimenArmStates.MANUAL.setArmAngle(newManualTargetAngle);
+        SpecimenArmStates.ARM_MANUAL.setArmAngle(newManualTargetAngle);
 
         // Set the target state to MANUAL
-        setTargetState(SpecimenArmStates.MANUAL);
+        setTargetState(SpecimenArmStates.ARM_MANUAL);
     }
 
     private void updatePIDCoefficients() {
@@ -231,13 +230,13 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     // Basic telemetry display in a single line with a descriptive label
     public void displayBasicTelemetry(Telemetry telemetry) {
         @SuppressLint("DefaultLocale")
-        String telemetryData = String.format("State: %s | Angle: %.2f", currentState, currentAngleDegrees);
+        String telemetryData = String.format("%s | Angle: %.2f", currentState, currentAngleDegrees);
 
         if (currentState != targetState) {
             telemetryData += String.format(" | Target State: %s", targetState);
         }
 
-        telemetry.addData("Specimen Arm Status", telemetryData);
+        telemetry.addLine(telemetryData);
     }
 
     public void displayVerboseTelemetry(Telemetry telemetry) {

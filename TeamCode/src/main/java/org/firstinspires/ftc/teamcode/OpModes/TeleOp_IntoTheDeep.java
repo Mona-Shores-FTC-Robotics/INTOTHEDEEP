@@ -37,47 +37,51 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ObjectClasses.ControlHubIdentifierUtil;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.IntoTheDeepDriverBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.IntoTheDeepOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-@TeleOp(name="TeleOp_IntoTheDeep [INTO_THE_DEEP_19429]")
-public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
+@TeleOp(name="TeleOp_IntoTheDeep")
+public class TeleOp_IntoTheDeep extends LinearOpMode
 {
     @Override
     public void runOpMode()
     {
+        // Create the robot
+        Robot.createInstance(this);
+
+        // Initialize the robot
+        Robot.getInstance().init(Robot.OpModeType.TELEOP);
+
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
         //Initialize the Game-pads
         GamepadHandling gamepadHandling = new GamepadHandling(this);
 
-        // Create the robot
-        Robot.createInstance(this, Robot.RobotType.INTO_THE_DEEP_19429);
-
-        // Initialize the robot
-        Robot.getInstance().init(Robot.OpModeType.TELEOP);
-
-        // Setup Button Bindings
-        new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
-        new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad());
-
         telemetry.clearAll();
 
         while (opModeInInit()) {
             gamepadHandling.getDriverGamepad().readButtons();
             gamepadHandling.SelectAndLockColorAndSide();
-
             telemetry.update();
             sleep(10);
         }
 
-        //set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
+            //todo can we make this contingent on an auto being run or not?
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            //set the starting location of the robot on the field
+            Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
+            //After we set the start pose, use that to set the offset from the start pose for field centric driving
+            Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
+        }
+
+        // Setup Button Bindings
+        new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
+        new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad());
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
@@ -90,15 +94,15 @@ public class TeleOp_IntoTheDeep_HardcodedRobot extends LinearOpMode
         while (opModeIsActive())
         {
             // Add the loop time to the sliding window average
-            MatchConfig.addLoopTime(MatchConfig.loopTimer.milliseconds());
+            MatchConfig.addLoopTime( MatchConfig.loopTimer.milliseconds());
 
-            //Reset the timer for the loop timer
+            // Reset the loop timer
             MatchConfig.loopTimer.reset();
 
-            //Run the Scheduler
+            // Run the scheduler
             CommandScheduler.getInstance().run();
 
-            //Read all buttons
+            // Read buttons
             gamepadHandling.getDriverGamepad().readButtons();
 
             // Display Telemetry through the Robot's Telemetry Manager

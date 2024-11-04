@@ -58,7 +58,13 @@ public class PitMode extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        MatchConfig.finalRobotType = Robot.RobotType.INTO_THE_DEEP_19429;
+        // Create the robot
+        Robot.createInstance(this);
+
+        Robot robot = Robot.getInstance();
+
+        // Initialize the robot
+        robot.init(Robot.OpModeType.PIT_MODE);
 
         //Initialize the Game-pads
         gamepadHandling = new GamepadHandling(this);
@@ -67,23 +73,14 @@ public class PitMode extends LinearOpMode
 
         while (opModeInInit()) {
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSideAndRobotType(telemetry);
+            gamepadHandling.SelectAndLockColorAndSide();
 
             telemetry.update();
             sleep(10);
         }
 
-        // Create the robot
-        Robot.createInstance(this, MatchConfig.finalRobotType);
-
-        Robot robot = Robot.getInstance();
-
-        // Initialize the robot
-        robot.init(Robot.OpModeType.PIT_MODE);
-
         robot.getDriverStationTelemetryManager().setPitModeTelemetry();
 
-        //todo can we make this contingent on an auto being run or not?
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             //set the starting location of the robot on the field
             robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);

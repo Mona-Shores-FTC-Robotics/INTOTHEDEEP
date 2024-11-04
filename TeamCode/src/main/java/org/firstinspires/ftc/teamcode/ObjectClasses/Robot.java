@@ -1,7 +1,17 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
+
+import com.qualcomm.hardware.lynx.LynxUsbDevice;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.SerialNumber;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
@@ -64,10 +74,11 @@ public class Robot {
     private final Map<SubsystemType, Object> subsystemMap = new HashMap<>();
 
     /* Constructor */
-    private Robot(LinearOpMode opMode, RobotType rType) {
+    private Robot(LinearOpMode opMode) {
         activeOpMode = opMode;
-        robotType = rType;
         HardwareMap hMap = opMode.hardwareMap;
+        robotType = ControlHubIdentifierUtil.getRobotType(hMap);
+        MatchConfig.finalRobotType = robotType;
         CreateSubsystems(hMap);
     }
 
@@ -86,8 +97,11 @@ public class Robot {
                 sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
                 registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
 
-//                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
-//                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
+                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
+                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
+
+                specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, "specimenarm");
+                registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
 
                 lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinLeft", "blinkinRight");
                 registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
@@ -116,11 +130,11 @@ public class Robot {
     }
 
     //Ensures only one robot object is ever created
-    public static void createInstance(LinearOpMode opMode, RobotType robotType) {
+    public static void createInstance(LinearOpMode opMode) {
         //there should only ever be one instance of robot - when we run a new opMode it should delete any previously existing robot object and make a new one
         //MatchConfig can house any data we need between opModes.
         robot = null;
-        robot = new Robot(opMode, robotType);
+        robot = new Robot(opMode);
     }
 
     public synchronized void reset() {
@@ -147,7 +161,8 @@ public class Robot {
     // Check if the subsystem exists
     public boolean hasSubsystem(SubsystemType subsystem) {
         if (!availableSubsystems.contains(subsystem)) {
-            activeOpMode.telemetry.addLine(subsystem + " not available");
+
+//            activeOpMode.telemetry.addLine(subsystem + " not available");
             return false;
         }
         return true;
@@ -157,9 +172,6 @@ public class Robot {
     public void init(OpModeType oType) {
         activeOpMode.telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         driverStationTelemetryManager = new DriverStationTelemetryManager(activeOpMode.telemetry);
-
-
-
         opModeType = oType;
 
         initRegisteredSubsystems();

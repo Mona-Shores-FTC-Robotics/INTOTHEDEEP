@@ -13,7 +13,7 @@ public class MatchConfig {
     public static AllianceColor finalAllianceColor = AllianceColor.BLUE;
     public static AllianceColor finalOpponentColor = AllianceColor.RED;
     public static SideOfField finalSideOfField = SideOfField.OBSERVATION;
-    public static Robot.RobotType finalRobotType = Robot.RobotType.INTO_THE_DEEP_19429;  // Default to an initial type
+    public static Robot.RobotType finalRobotType = Robot.RobotType.INTO_THE_DEEP_20245;  // This should be set when the robot is created
 
     public static double offsetFromStartPoseDegrees;
 
