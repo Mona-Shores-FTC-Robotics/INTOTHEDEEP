@@ -150,7 +150,8 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        //todo FIXME
+                        //
+                        // todo FIXME
                         //I'm not quite sure what this should be doing...
                         return new NullAction();
                     } else return problem();
