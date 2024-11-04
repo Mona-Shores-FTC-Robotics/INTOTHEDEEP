@@ -32,23 +32,18 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepDriverBindings;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings.IntoTheDeepOperatorBindings;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.IntoTheDeepDriverBindings;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.IntoTheDeepOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,13 +52,12 @@ import java.util.List;
 public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
 {
     GamepadHandling gamepadHandling;
-    private FtcDashboard dash = FtcDashboard.getInstance();
-    private List<Action> runningActions = new ArrayList<>();
 
     @Override
     public void runOpMode()
     {
         MatchConfig.finalRobotType = Robot.RobotType.INTO_THE_DEEP_19429;
+
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
@@ -88,6 +82,7 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
         // Initialize the robot
         robot.init(Robot.OpModeType.TELEOP);
 
+        //todo can we make this contingent on an auto being run or not?
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             //set the starting location of the robot on the field
             robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
@@ -131,9 +126,4 @@ public class TeleOp_IntoTheDeep_SelectRobot extends LinearOpMode
             MatchConfig.telemetryPacket = new TelemetryPacket();
         }
     }
-
-    public List<Action> getRunningActions() {
-        return runningActions;
-    }
-
 }

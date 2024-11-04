@@ -194,16 +194,17 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         MatchConfig.telemetryPacket.put("Sample Actuator/Target Position Ticks", targetTicks);
     }
 
-    // Basic telemetry display in a single line with a descriptive label
+    // Compact telemetry display for the driver station
     public void displayBasicTelemetry(org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
         @SuppressLint("DefaultLocale")
-        String telemetryData = String.format("State: %s | Position: %d", currentState, currentTicks);
+        String telemetryData = String.format("%s | Pos: %d", currentState != null ? currentState : "Unknown", currentTicks);
 
+        // Add target state only if it differs from the current state
         if (currentState != targetState) {
-            telemetryData += String.format(" | Target State: %s", targetState);
+            telemetryData += String.format(" | Target: %s", targetState != null ? targetState : "Unknown");
         }
 
-        telemetry.addData("Linear Actuator:", telemetryData);
+        telemetry.addLine(telemetryData);
     }
 
     // Verbose telemetry display

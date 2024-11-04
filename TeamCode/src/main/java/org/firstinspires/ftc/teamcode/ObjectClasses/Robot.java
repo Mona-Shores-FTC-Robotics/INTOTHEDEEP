@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
@@ -29,13 +30,11 @@ public class Robot {
     public RobotType robotType;
     public OpModeType opModeType;
 
-
-
     public enum RobotType {
         INTO_THE_DEEP_19429,
         INTO_THE_DEEP_20245,
     }
-    public enum OpModeType {TELEOP, AUTO}
+    public enum OpModeType {TELEOP, PIT_MODE, AUTO}
 
     private static LinearOpMode activeOpMode;
 
@@ -156,20 +155,16 @@ public class Robot {
 
     // Initialize shared subsystems for both TeleOp and Autonomous
     public void init(OpModeType oType) {
+        activeOpMode.telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         driverStationTelemetryManager = new DriverStationTelemetryManager(activeOpMode.telemetry);
+
+
+
         opModeType = oType;
 
         initRegisteredSubsystems();
 
-        //Is it okay that two instances are created of these?
-        //Should there be an init?
-//         if (  opModeType == OpModeType.TELEOP &&
-//                 hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
-//                 hasSubsystem(SubsystemType.SAMPLE_LIFT) &&
-//                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
-//             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftSubsystem);
-//         } else
-             if (opModeType == OpModeType.TELEOP &&
+        if (opModeType == OpModeType.TELEOP &&
                  hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
                  hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem);

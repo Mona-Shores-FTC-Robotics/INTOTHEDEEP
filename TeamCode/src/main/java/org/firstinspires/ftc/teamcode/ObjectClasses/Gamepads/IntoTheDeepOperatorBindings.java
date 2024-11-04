@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings;
+package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
-import com.acmerobotics.roadrunner.InstantAction;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -26,9 +25,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
-import java.lang.reflect.Array;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 public class IntoTheDeepOperatorBindings {
@@ -42,30 +39,30 @@ public class IntoTheDeepOperatorBindings {
 
         //////////////////////////////////////////////////////////
         //                                                      //
-        // LEFT STICK / RIGHT STICK                             //
+        // LEFT STICK                                           //
         //                                                      //
         //////////////////////////////////////////////////////////
 
-//        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
-//
-//            Command defaultSampleLiftCommand = new DefaultSampleLiftCommand(Robot.getInstance().getSampleLiftSubsystem(),
-//                    operatorGamepad::getLeftY);
-//
-//            CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSampleLiftSubsystem(), defaultSampleLiftCommand);
-//        }
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
+            Command defaultSampleLiftCommand = new DefaultSampleLiftCommand(Robot.getInstance().getSampleLiftSubsystem(),
+                    operatorGamepad::getLeftY);
 
-        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+            CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSampleLiftSubsystem(), defaultSampleLiftCommand);
+        } else if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
             Command defaultSpecimenArmCommand = new DefaultSpecimenArmCommand(Robot.getInstance().getSpecimenArmSubsystem(),
                     operatorGamepad::getLeftY);
 
             CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSpecimenArmSubsystem(), defaultSpecimenArmCommand);
         }
 
+        //////////////////////////////////////////////////////////
+        //                                                      //
+        // RIGHT STICK                                          //
+        //                                                      //
+        //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
-
             Command defaultSampleLinearActuatorCommand = new DefaultSampleLinearActuatorCommand(Robot.getInstance().getSampleLinearActuatorSubsystem(),
                     operatorGamepad::getRightY);
-
             CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSampleLinearActuatorSubsystem(), defaultSampleLinearActuatorCommand);
         }
 
@@ -80,18 +77,16 @@ public class IntoTheDeepOperatorBindings {
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                     .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY), specimenArmRequirements));
-        } else
-        {
-            if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+        } else if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
                 SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();
                 operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                         .whenPressed(new InstantCommand(sampleLinearActuatorSubsystem::runWithoutEncodersForward))
                         .whenReleased(new InstantCommand(sampleLinearActuatorSubsystem::stopActuator));
-            }
         }
+
         //////////////////////////////////////////////////////////
         //                                                      //
-        // DPAD-RIGHT -                                         //
+        // DPAD-RIGHT                                           //
         //                                                      //
         //////////////////////////////////////////////////////////
 

@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Light;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
@@ -192,17 +193,24 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         }
     }
 
-    // Basic telemetry display with context for the driver station
-    public void displayBasicTelemetry(org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
+    // Improved basic telemetry display for the driver station
+    public void displayBasicTelemetry(Telemetry telemetry) {
+        // Display the current state and detected color on the same line
+        String intakeState = (currentState != null) ? currentState.toString() : "Unknown";
+        String colorStatus = (colorSensor != null) ? detectSampleColor().toString() : "No Color Sensor";
+        telemetry.addLine(String.format("%s | Color: %s", intakeState, colorStatus));
+    }
+
+    public void displayVerboseTelemetry(Telemetry telemetry) {
         telemetry.addData("Sample Intake Status", String.format("State: %s", currentState));
         if (colorSensor != null) {
             telemetry.addData("Detected Color", detectSampleColor().toString());
             telemetry.addData("Sample Intake/Proximity", proximity);
-
         } else {
             telemetry.addData("Detected Color", "No Sensor");
         }
     }
+
 
     // Getters for telemetry use or other purposes
     public SampleIntakeStates getCurrentState() {

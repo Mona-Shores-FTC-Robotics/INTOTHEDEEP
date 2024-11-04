@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.Bindings;
+package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;

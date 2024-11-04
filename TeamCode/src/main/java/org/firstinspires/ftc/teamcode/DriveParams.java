@@ -58,10 +58,13 @@ public class DriveParams {
         mecanumDrive.rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
         //Set motor encoder directions
-        driveSubsystem.leftFrontEncoder.setDirection(DcMotorEx.Direction.FORWARD);
-        driveSubsystem.leftBackEncoder.setDirection(DcMotorEx.Direction.REVERSE);
-        driveSubsystem.rightFrontEncoder.setDirection(DcMotorEx.Direction.FORWARD);
-        driveSubsystem.rightBackEncoder.setDirection(DcMotorEx.Direction.REVERSE);
+        if (mecanumDrive.localizer instanceof MecanumDrive.DriveLocalizer) {
+            MecanumDrive.DriveLocalizer localizer = (MecanumDrive.DriveLocalizer) mecanumDrive.localizer;
+            localizer.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+            localizer.leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+            localizer.rightFront.setDirection(DcMotorEx.Direction.FORWARD);
+            localizer.rightBack.setDirection(DcMotorEx.Direction.FORWARD);
+        }
     }
 }
 

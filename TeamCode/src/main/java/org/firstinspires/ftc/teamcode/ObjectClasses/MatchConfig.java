@@ -17,8 +17,6 @@ public class MatchConfig {
 
     public static double offsetFromStartPoseDegrees;
 
-    public static boolean verboseMode = false;
-
     public static Pose2d endOfAutonomousPose = null;
     public static double endOfAutonomousOffset;
     public static double endOfAutonomousAbsoluteYawDegrees;
