@@ -25,29 +25,33 @@ public class IntoTheDeepDriverBindings {
 
     public IntoTheDeepDriverBindings(GamepadEx gamepad) {
         Robot robot = Robot.getInstance();
+        ButtonBindingManager bindingManager = ButtonBindingManager.getInstance();
 
         //////////////////////////////////////////////////////////
-        //                                                      //
         // LEFT STICK / RIGHT STICK - Default Driving           //
-        //                                                      //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-
-            defaultDriveCommand = new DefaultDriveCommand(Robot.getInstance().getDriveSubsystem(),
+            defaultDriveCommand = new DefaultDriveCommand(robot.getDriveSubsystem(),
                     gamepad::getLeftY,
                     gamepad::getLeftX,
                     gamepad::getRightX);
 
-            CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getDriveSubsystem(), defaultDriveCommand);
+            CommandScheduler.getInstance().setDefaultCommand(robot.getDriveSubsystem(), defaultDriveCommand);
+
+            // Register the default drive command (no specific button)
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER, // Assuming DRIVER gamepad
+                    null, // No specific button
+                    defaultDriveCommand,
+                    "Default driving with left and right sticks."
+            ));
         }
 
         //////////////////////////////////////////////////////////
-        //                                                      //
         // RIGHT BUMPER - Slow Mode                             //
-        //                                                      //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            slowModeCommand = new SlowModeCommand(Robot.getInstance().getDriveSubsystem(),
+            slowModeCommand = new SlowModeCommand(robot.getDriveSubsystem(),
                     gamepad::getLeftY,
                     gamepad::getLeftX,
                     gamepad::getRightX
@@ -55,15 +59,20 @@ public class IntoTheDeepDriverBindings {
 
             gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                     .whenHeld(slowModeCommand);
+
+            // Register the slow mode binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    GamepadKeys.Button.RIGHT_BUMPER,
+                    slowModeCommand,
+                    "Hold to activate slow driving mode."
+            ));
         }
 
         //////////////////////////////////////////////////////////
-        //                                                      //
-        //LEFT BUMPER - Cycle Telemetry Modes                   //
-        //                                                      //
+        // LEFT BUMPER - Cycle Telemetry Modes                   //
         //////////////////////////////////////////////////////////
 
-        // Command to cycle telemetry modes using DriverStationTelemetryManager
         cycleTelemetryModeCommand = new InstantCommand(() -> {
             Robot.getInstance().getDriverStationTelemetryManager().cycleTelemetryMode();
         });
@@ -71,69 +80,108 @@ public class IntoTheDeepDriverBindings {
         gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(cycleTelemetryModeCommand);
 
+        // Register the telemetry mode cycling
+        bindingManager.registerBinding(new ButtonBinding(
+                GamepadType.DRIVER,
+                GamepadKeys.Button.LEFT_BUMPER,
+                cycleTelemetryModeCommand,
+                "Cycle through telemetry display modes."
+        ));
+
         //////////////////////////////////////////////////////////
-        //                                                      //
         // DPAD_UP - Cycle Drive Modes                         //
-        //                                                      //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            // Command to cycle through drive modes
             cycleDriveModeCommand = new InstantCommand(() -> {
-                Robot.getInstance().getDriveSubsystem().cycleDriveMode();
+                robot.getDriveSubsystem().cycleDriveMode();
             });
 
             gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                     .whenPressed(cycleDriveModeCommand);
+
+            // Register the drive mode cycling
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    GamepadKeys.Button.DPAD_UP,
+                    cycleDriveModeCommand,
+                    "Cycle through drive modes."
+            ));
         }
 
         //////////////////////////////////////////////////////////
-        //                                                      //
-        //  DPAD_DOWN - Reset Yaw                               //
-        //                                                      //
+        // DPAD_DOWN - Reset Yaw                               //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            Command resetYawCommand = new InstantCommand(() -> {
+                robot.getDriveSubsystem().getMecanumDrive().lazyImu.get().resetYaw();
+                robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
+            });
+
             gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                    .whenPressed(new InstantCommand(() -> {
-                        Robot.getInstance().getDriveSubsystem().getMecanumDrive().lazyImu.get().resetYaw();
-                        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
-                    }));
+                    .whenPressed(resetYawCommand);
+
+            // Register the yaw reset
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    GamepadKeys.Button.DPAD_DOWN,
+                    resetYawCommand,
+                    "Reset the robot's yaw orientation."
+            ));
         }
 
         //////////////////////////////////////////////////////////
-        //                                                      //
-        //  START BUTTON  - FIELD ORIENTED CONTROL              //
-        //                                                      //
+        // START BUTTON  - FIELD ORIENTED CONTROL              //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            Command enableFieldOriented = new InstantCommand(() -> {
+                robot.getDriveSubsystem().fieldOrientedControl = true;
+            });
+
+            Command disableFieldOriented = new InstantCommand(() -> {
+                robot.getDriveSubsystem().fieldOrientedControl = false;
+            });
 
             gamepad.getGamepadButton(GamepadKeys.Button.START)
-                    .toggleWhenPressed(new InstantCommand(() -> {
-                        Robot.getInstance().getDriveSubsystem().fieldOrientedControl = true;
-                    }), new InstantCommand(() -> {
-                        Robot.getInstance().getDriveSubsystem().fieldOrientedControl = false;
-                    }));
+                    .toggleWhenPressed(enableFieldOriented, disableFieldOriented);
+
+            // Register the field-oriented toggle
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    GamepadKeys.Button.START,
+                    null, // It's a toggle, not a single command
+                    "Toggle field-oriented control."
+            ));
         }
 
         //////////////////////////////////////////////////////////
-        //                                                      //
-        //  X BUTTON DRIVE FORWARD 6 INCHES                     //
-        //                                                      //
+        // X BUTTON DRIVE FORWARD 6 INCHES                     //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            Command driveForwardCommand = new InstantCommand(() -> {
+                DriveForwardAction driveForwardAction = new DriveForwardAction();
+                ActionCommand driveActionCommand = new ActionCommand(driveForwardAction, Collections.singleton(robot.getDriveSubsystem()));
+                driveActionCommand.schedule();
+                currentDriveForwardAction = driveForwardAction;
+            });
+
+            Command stopDriveForwardCommand = new InstantCommand(() -> {
+                if (currentDriveForwardAction != null) {
+                    currentDriveForwardAction.cancelAbruptly();
+                    currentDriveForwardAction = null;
+                }
+            });
+
             gamepad.getGamepadButton(GamepadKeys.Button.X)
-                    .whenPressed(() -> {
-                        DriveForwardAction driveForwardAction = new DriveForwardAction();
-                        ActionCommand driveActionCommand = new ActionCommand(driveForwardAction, Collections.singleton(robot.getDriveSubsystem()));
-                        driveActionCommand.schedule();
-                        currentDriveForwardAction = driveForwardAction; // Replace `MatchConfig` with wherever you're storing state if needed
-                    })
-                    .whenReleased(() -> {
-                        if (currentDriveForwardAction != null) { // Check if the action is still active
-                            currentDriveForwardAction.cancelAbruptly(); // Cancel the action to stop it gracefully
-                            currentDriveForwardAction = null; // Clear the reference to avoid issues
-                        }
-                    });
+                    .whenPressed(driveForwardCommand)
+                    .whenReleased(stopDriveForwardCommand);
+
+            // Register the drive forward binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    GamepadKeys.Button.X,
+                    driveForwardCommand, // Could also consider a composite if needed
+                    "Drive forward 6 inches."
+            ));
         }
     }
 }
-

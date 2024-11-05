@@ -236,6 +236,8 @@ public class Robot {
         return opModeType == OpModeType.TELEOP;
     }
 
+    public OpModeType getOpModeType() {return opModeType;}
+
 }
 
 

@@ -5,9 +5,15 @@ import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.ButtonBinding;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.ButtonBindingManager;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 public class DriverStationTelemetryManager {
 
     // Enum to define telemetry modes
@@ -17,7 +23,8 @@ public class DriverStationTelemetryManager {
         VERBOSE_DRIVE,
         VERBOSE_SAMPLE_LIFT,
         VERBOSE_SPECIMEN_ARM,
-        VERBOSE_SAMPLE_LINEAR_ACTUATOR // Updated telemetry mode name for sample lift
+        VERBOSE_SAMPLE_LINEAR_ACTUATOR,
+        BUTTON_BINDINGS // New telemetry mode for button bindings
         // You can add more modes later, like VERBOSE_OTHER_SUBSYSTEM, etc.
     }
 
@@ -31,7 +38,8 @@ public class DriverStationTelemetryManager {
 
     // Method to cycle between telemetry modes
     public void cycleTelemetryMode() {
-        currentMode = TelemetryMode.values()[(currentMode.ordinal() + 1) % TelemetryMode.values().length];
+        TelemetryMode[] modes = TelemetryMode.values();
+        currentMode = modes[(currentMode.ordinal() + 1) % modes.length];
     }
 
     // Method to display telemetry based on the current mode
@@ -43,6 +51,9 @@ public class DriverStationTelemetryManager {
             switch (currentMode) {
                 case BASIC:
                     displayBasicTelemetry();
+                    break;
+                case BUTTON_BINDINGS:
+                    displayButtonBindings(); // Call the button bindings display
                     break;
                 case VERBOSE_DRIVE:
                     displayVerboseDriveTelemetry();
@@ -57,7 +68,7 @@ public class DriverStationTelemetryManager {
                     displayVerboseSpecimenArmTelemetry();
                     break;
                 default:
-                    //if its not listed skip it
+                    // If it's not listed, skip it
                     cycleTelemetryMode();
                     break;
             }
@@ -65,6 +76,9 @@ public class DriverStationTelemetryManager {
             switch (currentMode) {
                 case PIT_MODE:
                     displayPitModeTelemetry();
+                    break;
+                case BUTTON_BINDINGS:
+                    displayButtonBindings(); // Call the button bindings display
                     break;
                 case BASIC:
                     displayBasicTelemetry();
@@ -83,7 +97,7 @@ public class DriverStationTelemetryManager {
                     break;
             }
         }
-        telemetry.update();  // Make sure to update telemetry after displaying data
+        telemetry.update(); // Update telemetry after displaying data
     }
 
     @SuppressLint("DefaultLocale")
@@ -123,10 +137,10 @@ public class DriverStationTelemetryManager {
     public void displayError(String message) {
         if (Robot.getInstance().isAutoMode()) {
             telemetry.addLine("Error: " + message);
-            telemetry.update();  // Immediate update in Auto mode because there is no loop/telemetry manager
+            telemetry.update(); // Immediate update in Auto mode because there is no loop/telemetry manager
         } else {
             // In TeleOp, display the error as part of the regular telemetry loop
-            telemetry.addLine("Error: " + message);  // The regular telemetry loop will handle the update
+            telemetry.addLine("Error: " + message); // The regular telemetry loop will handle the update
         }
     }
 
@@ -152,7 +166,7 @@ public class DriverStationTelemetryManager {
         }
 
         telemetry.addLine();
-        // Add a header line to distinguish sample system telemetry
+        // Add a header line to distinguish specimen system telemetry
         telemetry.addLine("=== Specimen Telemetry ===");
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
             Robot.getInstance().getSpecimenIntakeSubsystem().displayBasicTelemetry(telemetry);
@@ -173,20 +187,21 @@ public class DriverStationTelemetryManager {
     private void displayVerboseSampleLiftTelemetry() {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
             Robot.getInstance().getSampleLiftBucketSubsystem().displayVerboseTelemetry(telemetry);
-        }else cycleTelemetryMode();
+        } else cycleTelemetryMode();
     }
 
-    // Verbose telemetry method for SampleLiftSubsystem
+    // Verbose telemetry method for SampleLinearActuatorSubsystem
     private void displayVerboseSampleLinearActuatorTelemetry() {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
             Robot.getInstance().getSampleLinearActuatorSubsystem().displayVerboseTelemetry(telemetry);
-        }else cycleTelemetryMode();
+        } else cycleTelemetryMode();
     }
 
+    // Verbose telemetry method for SpecimenArmSubsystem
     private void displayVerboseSpecimenArmTelemetry() {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
             Robot.getInstance().getSpecimenArmSubsystem().displayVerboseTelemetry(telemetry);
-        }else cycleTelemetryMode();
+        } else cycleTelemetryMode();
     }
 
     @SuppressLint("DefaultLocale")
@@ -203,4 +218,44 @@ public class DriverStationTelemetryManager {
     public void setPitModeTelemetry() {
         currentMode = TelemetryMode.PIT_MODE;
     }
+
+    public void displayButtonBindings() {
+        ButtonBindingManager bindingManager = ButtonBindingManager.getInstance();
+        telemetry.addLine("=== Button Bindings ===");
+
+        // Determine the active OpMode type
+        Robot.OpModeType currentOpMode = Robot.getInstance().getOpModeType();
+
+        // Define which GamepadTypes are relevant for each OpMode
+        List<GamepadType> relevantGamepadTypes = new ArrayList<>();
+        switch (currentOpMode) {
+            case TELEOP:
+                relevantGamepadTypes.add(GamepadType.DRIVER);
+                relevantGamepadTypes.add(GamepadType.OPERATOR);
+                break;
+            case PIT_MODE:
+                relevantGamepadTypes.add(GamepadType.PIT);
+                break;
+            case AUTO:
+            default:
+                //no bindings for auto
+                break;
+        }
+
+        for (GamepadType gamepadType : relevantGamepadTypes) {
+            telemetry.addLine(String.format("<b>%s Gamepad</b>", gamepadType));
+            for (ButtonBinding binding : bindingManager.getBindings()) {
+                if (binding.getGamepadType() == gamepadType) {
+                    String button = binding.getButton() != null ? binding.getButton().toString() : "Default/Toggle";
+                    String description = binding.getDescription();
+                    telemetry.addLine(String.format("<font face=\"monospace\">%s: %s</font>", button, description));
+                }
+            }
+            telemetry.addLine(""); // Add a blank line for spacing
+        }
+
+        telemetry.addLine("========================");
+        // Removed telemetry.update(); to prevent premature updates
+    }
+
 }
