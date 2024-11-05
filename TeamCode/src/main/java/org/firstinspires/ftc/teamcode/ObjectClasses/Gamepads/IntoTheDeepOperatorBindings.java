@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.DefaultSpecimenArmCommand;
@@ -43,11 +43,11 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
 
-        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
-            Command defaultSampleLiftCommand = new DefaultSampleLiftCommand(Robot.getInstance().getSampleLiftSubsystem(),
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            Command defaultSampleLiftCommand = new DefaultSampleLiftCommand(Robot.getInstance().getSampleLiftBucketSubsystem(),
                     operatorGamepad::getLeftY);
 
-            CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSampleLiftSubsystem(), defaultSampleLiftCommand);
+            CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSampleLiftBucketSubsystem(), defaultSampleLiftCommand);
         } else if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
             Command defaultSpecimenArmCommand = new DefaultSpecimenArmCommand(Robot.getInstance().getSpecimenArmSubsystem(),
                     operatorGamepad::getLeftY);
@@ -165,12 +165,12 @@ public class IntoTheDeepOperatorBindings {
         // RIGHT BUMPER - GO TO HIGH BASKET                     //
         //                                                      //
         //////////////////////////////////////////////////////////
-        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
-            SampleLiftSubsystem sampleLiftSubsystem = Robot.getInstance().getSampleLiftSubsystem();
-            Set<Subsystem> sampleLiftRequirements = Collections.singleton(sampleLiftSubsystem);
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            SampleLiftBucketSubsystem sampleLiftBucketSubsystem = Robot.getInstance().getSampleLiftBucketSubsystem();
+            Set<Subsystem> sampleLiftRequirements = Collections.singleton(sampleLiftBucketSubsystem);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                    .whenPressed(()-> new ActionCommand(new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET), sampleLiftRequirements));
+                    .whenPressed(()-> new ActionCommand(new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET), sampleLiftRequirements));
         }
 
         //////////////////////////////////////////////////////////

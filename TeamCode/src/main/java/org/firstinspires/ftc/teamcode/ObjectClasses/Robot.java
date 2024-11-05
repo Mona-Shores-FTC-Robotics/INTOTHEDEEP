@@ -1,23 +1,13 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
-import android.annotation.SuppressLint;
-import android.os.Build;
-
-import com.qualcomm.hardware.lynx.LynxUsbDevice;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.SerialNumber;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
@@ -52,7 +42,7 @@ public class Robot {
 
     //Sample Subsystems
     private static SampleIntakeSubsystem sampleIntakeSubsystem;
-    private static SampleLiftSubsystem sampleLiftSubsystem;
+    private static SampleLiftBucketSubsystem sampleLiftBucketSubsystem;
     private static SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem;
 
     //Specimen Subsystems
@@ -66,7 +56,7 @@ public class Robot {
     private static LightingSubsystem lightingSubsystem;
 
     public enum SubsystemType {
-        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION, LIGHTING
+        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT_BUCKET, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION, LIGHTING
     }
 
     // Use an EnumSet for tracking available subsystems
@@ -211,7 +201,7 @@ public class Robot {
     public SpecimenArmSubsystem getSpecimenArmSubsystem() {return specimenArmSubsystem;}
     public SpecimenIntakeSubsystem getSpecimenIntakeSubsystem() {return specimenIntakeSubsystem;}
 
-    public SampleLiftSubsystem getSampleLiftSubsystem()  {return sampleLiftSubsystem;}
+    public SampleLiftBucketSubsystem getSampleLiftBucketSubsystem()  {return sampleLiftBucketSubsystem;}
     public SampleIntakeSubsystem getSampleIntakeSubsystem()  {return sampleIntakeSubsystem;}
     public SampleLinearActuatorSubsystem getSampleLinearActuatorSubsystem()  {return sampleLinearActuatorSubsystem;}
 

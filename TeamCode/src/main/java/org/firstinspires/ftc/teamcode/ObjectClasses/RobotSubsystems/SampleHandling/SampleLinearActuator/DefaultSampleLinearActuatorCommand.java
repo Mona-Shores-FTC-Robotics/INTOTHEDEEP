@@ -3,9 +3,6 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem.ACTUATOR_PARAMS;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
 
 import java.util.function.DoubleSupplier;
 

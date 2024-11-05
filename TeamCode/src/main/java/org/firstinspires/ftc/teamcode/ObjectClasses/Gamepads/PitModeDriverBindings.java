@@ -2,11 +2,18 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.ChangeSampleBucketPositionAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftBucketSubsystem;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class PitModeDriverBindings {
 
@@ -81,5 +88,19 @@ public class PitModeDriverBindings {
                 .whenReleased(new InstantCommand(() -> {
                     leftBack.setPower(0);
                 }));
+
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            SampleLiftBucketSubsystem sampleLiftBucketSubsystem = robot.getSampleLiftBucketSubsystem();
+            Set<Subsystem> sampleLiftBucketRequirements = Collections.singleton(sampleLiftBucketSubsystem);
+
+            ChangeSampleBucketPositionAction goToRestPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_REST_POS);
+            ChangeSampleBucketPositionAction goToHighBucketPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_HIGH_POS);
+
+            gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                    .whenPressed(new ActionCommand(goToHighBucketPosition, sampleLiftBucketRequirements))
+                    .whenReleased(new ActionCommand(goToRestPosition, sampleLiftBucketRequirements)
+                    );
+        }
     }
 }
+

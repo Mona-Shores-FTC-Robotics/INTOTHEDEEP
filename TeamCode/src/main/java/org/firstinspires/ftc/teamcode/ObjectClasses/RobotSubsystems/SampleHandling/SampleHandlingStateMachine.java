@@ -6,19 +6,19 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 
 public class SampleHandlingStateMachine {
 
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
-    private final SampleLiftSubsystem liftSubsystem;
+    private final SampleLiftBucketSubsystem liftSubsystem;
 
     // Constructor
     public SampleHandlingStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
                                       SampleIntakeSubsystem intakeSubsystem,
-                                      SampleLiftSubsystem liftSubsystem) {
+                                      SampleLiftBucketSubsystem liftSubsystem) {
         this.actuatorSubsystem = actuatorSubsystem;
         this.intakeSubsystem = intakeSubsystem;
         this.liftSubsystem = liftSubsystem;
@@ -137,14 +137,14 @@ public class SampleHandlingStateMachine {
         setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
     }
 
-    private void setLiftState(SampleLiftSubsystem.SampleLiftStates newState) {
-        liftSubsystem.setTargetState(newState);
+    private void setLiftState(SampleLiftBucketSubsystem.SampleLiftStates newState) {
+        liftSubsystem.setTargetLiftState(newState);
     }
 
     public void setLiftToHighBasket() {
         // Check if the actuator is fully retracted before moving the lift
         if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-            setLiftState(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET);
+            setLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
         } else {
             System.out.println("Cannot raise lift: Actuator is not fully retracted.");
         }
@@ -153,13 +153,13 @@ public class SampleHandlingStateMachine {
     public void setLiftToLowBasket() {
         // Check if the actuator is fully retracted before moving the lift
         if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-            setLiftState(SampleLiftSubsystem.SampleLiftStates.LOW_BASKET);
+            setLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET);
         } else {
             System.out.println("Cannot raise lift: Actuator is not fully retracted.");
         }
     }
 
     public void setLiftToHome() {
-        setLiftState(SampleLiftSubsystem.SampleLiftStates.HOME);
+        setLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HOME);
     }
 }

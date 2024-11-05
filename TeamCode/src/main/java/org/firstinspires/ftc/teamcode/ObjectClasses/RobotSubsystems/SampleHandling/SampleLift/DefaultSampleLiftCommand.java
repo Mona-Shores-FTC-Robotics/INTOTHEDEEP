@@ -6,24 +6,24 @@ import java.util.function.DoubleSupplier;
 
 public class DefaultSampleLiftCommand extends CommandBase {
 
-    private final SampleLiftSubsystem sampleLiftSubsystem;
+    private final SampleLiftBucketSubsystem sampleLiftBucketSubsystem;
     private final DoubleSupplier liftSupplier;
 
-    public DefaultSampleLiftCommand(SampleLiftSubsystem subsystem, DoubleSupplier liftStick) {
-        sampleLiftSubsystem = subsystem;
+    public DefaultSampleLiftCommand(SampleLiftBucketSubsystem subsystem, DoubleSupplier liftStick) {
+        sampleLiftBucketSubsystem = subsystem;
         liftSupplier = liftStick;
 
         // Add the subsystem to the requirements
-        addRequirements(sampleLiftSubsystem);
+        addRequirements(sampleLiftBucketSubsystem);
     }
 
     @Override
     public void execute() {
         double liftInput = liftSupplier.getAsDouble();
 
-        if (Math.abs(liftInput) > SampleLiftSubsystem.SAMPLE_LIFT_PARAMS.LIFT_DEAD_ZONE_FOR_MANUAL_LIFT) {
+        if (Math.abs(liftInput) > SampleLiftBucketSubsystem.SAMPLE_LIFT_PARAMS.LIFT_DEAD_ZONE_FOR_MANUAL_LIFT) {
             // Adjust the target position based on manual control method in subsystem
-            sampleLiftSubsystem.setManualTargetState(liftInput); // this argument will be a value between 1 and -1
+            sampleLiftBucketSubsystem.setManualTargetState(liftInput); // this argument will be a value between 1 and -1
         }
     }
 

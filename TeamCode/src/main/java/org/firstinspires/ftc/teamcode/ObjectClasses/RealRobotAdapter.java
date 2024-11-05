@@ -16,12 +16,11 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.MoveSampleLiftAction;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.MoveLinearActuatorAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArmAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
@@ -149,7 +148,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     } else return problem();
 
                 case DEPOSIT_SAMPLE:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         //
@@ -159,24 +158,24 @@ public class RealRobotAdapter implements RobotAdapter {
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_HIGH_BASKET:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HIGH_BASKET);
+                        return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_LOW_BASKET:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.LOW_BASKET);
+                        return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET);
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_HOME:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        return new MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates.HOME);
+                        return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.HOME);
                     } else return problem();
                 case INTAKE_SAMPLE_FROM_GROUND:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))

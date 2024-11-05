@@ -147,8 +147,8 @@ public class DriverStationTelemetryManager {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
             Robot.getInstance().getSampleLinearActuatorSubsystem().displayBasicTelemetry(telemetry);
         }
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
-            Robot.getInstance().getSampleLiftSubsystem().displayBasicTelemetry(telemetry);
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            Robot.getInstance().getSampleLiftBucketSubsystem().displayBasicTelemetry(telemetry);
         }
 
         telemetry.addLine();
@@ -171,8 +171,8 @@ public class DriverStationTelemetryManager {
 
     // Verbose telemetry method for SampleLiftSubsystem
     private void displayVerboseSampleLiftTelemetry() {
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT)) {
-            Robot.getInstance().getSampleLiftSubsystem().displayVerboseTelemetry(telemetry);
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            Robot.getInstance().getSampleLiftBucketSubsystem().displayVerboseTelemetry(telemetry);
         }else cycleTelemetryMode();
     }
 
