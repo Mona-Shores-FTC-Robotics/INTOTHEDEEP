@@ -22,8 +22,10 @@ public class MoveSampleLiftAction implements Action {
 
     // Constructor with default timeout (from LIFT_PARAMS)
     public MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates inputState) {
-        this(inputState, SampleLiftSubsystem.SAMPLE_LIFT_PARAMS.TIMEOUT_TIME_SECONDS);  // Default to the one in LIFT_PARAMS
+        this(inputState, SampleLiftSubsystem.SAMPLE_LIFT_PARAMS.TIMEOUT_TIME_SECONDS);// Default to the one in LIFT_PARAMS
     }
+
+
 
     // Constructor with custom timeout
     public MoveSampleLiftAction(SampleLiftSubsystem.SampleLiftStates inputState, double timeoutTimeSeconds) {

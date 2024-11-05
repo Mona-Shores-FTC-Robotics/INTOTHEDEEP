@@ -30,6 +30,12 @@ public class DriveForwardAction implements Action {
         this.cancelled = false; // Initialize the cancellation flag
     }
 
+    public DriveForwardAction(double inches) {
+        this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
+        this.started = false;
+        this.cancelled = false; // Initialize the cancellation flag
+    }
+
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
         if (cancelled) {

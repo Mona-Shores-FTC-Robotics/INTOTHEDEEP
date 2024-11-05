@@ -148,7 +148,7 @@ public class DriveSubsystem extends SubsystemBase {
         } else {
             yawOffsetDegrees = -90;  // -90 degrees for red side
         }
-        //todo does this make sense? I think we can actually get rid of the hard coded offset above because this is being handled automatically by the line below
+        //todo does this make sense? I think we can actually get rid of the hard coded offset above because this is being handled automatically by the line below (Makes sense to Brady and Landon)
         MatchConfig.offsetFromStartPoseDegrees = -1 * Math.toDegrees(getMecanumDrive().pose.heading.toDouble());
 
     }

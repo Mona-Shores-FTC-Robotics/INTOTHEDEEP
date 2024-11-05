@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
@@ -24,6 +25,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
+import java.util.Timer;
 import java.util.function.Supplier;
 
 public class RealRobotAdapter implements RobotAdapter {
@@ -151,9 +153,9 @@ public class RealRobotAdapter implements RobotAdapter {
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         //
-                        // todo FIXME
+                        // todo Fix me
                         //I'm not quite sure what this should be doing...
-                        return new NullAction();
+                        return new DriveForwardAction(3);
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_HIGH_BASKET:
@@ -189,6 +191,8 @@ public class RealRobotAdapter implements RobotAdapter {
                                 );
                     } else return problem();
                 case DUMP_SAMPLE_IN_OBSERVATION_ZONE:
+
+
                     //todo WHAT SHOULD THIS DO?
                     return problem();
                 default:
