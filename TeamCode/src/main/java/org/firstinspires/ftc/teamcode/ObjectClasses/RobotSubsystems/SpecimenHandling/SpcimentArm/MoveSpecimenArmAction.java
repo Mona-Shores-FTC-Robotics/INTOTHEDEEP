@@ -86,7 +86,7 @@ public class MoveSpecimenArmAction implements Action {
             p.addLine("Specimen Arm Move TIMEOUT");
             p.put("Timeout Timer", timeoutTimer.seconds());
             p.put("Target Angle", specimenArmSubsystem.getTargetAngleDegrees());
-            p.put("Current Position at Timeout", specimenArmSubsystem.getCurrentTicks());
+            p.put("Current Angle at Timeout", specimenArmSubsystem.getCurrentAngleDegrees());
         } else {
             // Report successful completion (state already set in isFinished)
             p.addLine(String.format("Specimen Arm Move COMPLETE: State: %s -> %s, Time: %.2f seconds",
