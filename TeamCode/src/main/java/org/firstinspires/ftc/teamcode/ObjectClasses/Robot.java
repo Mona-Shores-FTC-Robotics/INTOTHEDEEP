@@ -7,12 +7,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLift.SampleLiftBucketSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmWithMotionProfileSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
@@ -46,7 +46,7 @@ public class Robot {
     private static SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem;
 
     //Specimen Subsystems
-    private static SpecimenArmSubsystem specimenArmSubsystem;
+    private static SpecimenArmWithMotionProfileSubsystem specimenArmSubsystem;
     private static SpecimenIntakeSubsystem specimenIntakeSubsystem;
 
     private static ClimberSubsystem climberSubsystem;
@@ -90,7 +90,7 @@ public class Robot {
                 specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
                 registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
 
-                specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, "specimenarm");
+                specimenArmSubsystem = new SpecimenArmWithMotionProfileSubsystem(hardwareMap, "specimenarm");
                 registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
 
                 lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinLeft", "blinkinRight");
@@ -198,7 +198,7 @@ public class Robot {
     public DriverStationTelemetryManager getDriverStationTelemetryManager() {return driverStationTelemetryManager;}
     public DriveSubsystem getDriveSubsystem()  {return mecanumDriveSubsystem;}
 
-    public SpecimenArmSubsystem getSpecimenArmSubsystem() {return specimenArmSubsystem;}
+    public SpecimenArmWithMotionProfileSubsystem getSpecimenArmSubsystem() {return specimenArmSubsystem;}
     public SpecimenIntakeSubsystem getSpecimenIntakeSubsystem() {return specimenIntakeSubsystem;}
 
     public SampleLiftBucketSubsystem getSampleLiftBucketSubsystem()  {return sampleLiftBucketSubsystem;}

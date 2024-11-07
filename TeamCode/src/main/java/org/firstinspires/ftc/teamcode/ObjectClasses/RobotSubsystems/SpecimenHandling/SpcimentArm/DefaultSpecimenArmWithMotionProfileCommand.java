@@ -4,12 +4,12 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import java.util.function.DoubleSupplier;
 
-public class DefaultSpecimenArmCommand extends CommandBase {
+public class DefaultSpecimenArmWithMotionProfileCommand extends CommandBase {
 
-    private final SpecimenArmSubsystem specimenArmSubsystem;
+    private final SpecimenArmWithMotionProfileSubsystem specimenArmSubsystem;
     private final DoubleSupplier armSupplier;
 
-    public DefaultSpecimenArmCommand(SpecimenArmSubsystem subsystem, DoubleSupplier armStick) {
+    public DefaultSpecimenArmWithMotionProfileCommand(SpecimenArmWithMotionProfileSubsystem subsystem, DoubleSupplier armStick) {
         specimenArmSubsystem = subsystem;
         armSupplier = armStick;
 
@@ -20,7 +20,7 @@ public class DefaultSpecimenArmCommand extends CommandBase {
     @Override
     public void execute() {
         double armInput = armSupplier.getAsDouble();
-        if (Math.abs(armInput) > SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.DEAD_ZONE){
+        if (Math.abs(armInput) > SpecimenArmWithMotionProfileSubsystem.SPECIMEN_ARM_PARAMS.DEAD_ZONE){
             // Adjust the target position based on manual control method in subsystem
             specimenArmSubsystem.setManualTargetState(-armInput); // this argument will be a value between 1 and -1
         }
