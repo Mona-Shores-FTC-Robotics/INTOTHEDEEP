@@ -40,7 +40,7 @@ public class MoveSpecimenArmWithMotionProfileAction implements Action {
         // Reset the timeout timer and set timeout to false
         timeoutTimer.reset();
         timeout = false;
-        specimenArmSubsystem.setTargetState(targetState);
+        specimenArmSubsystem.setTargetStateWithMotionProfile(targetState);
     }
 
     @Override

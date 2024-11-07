@@ -100,7 +100,7 @@ public class SpecimenHandlingStateMachine {
     }
 
     private void setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates newState) {
-        armSubsystem.setTargetState(newState);
+        armSubsystem.setTargetStateWithMotionProfile(newState);
     }
 
     public void setArmTargetStateToPickup() {

@@ -3,17 +3,16 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHan
 public class TrapezoidalMotionProfile {
     private final double maxAcceleration; // Acceleration in degrees per millisecond^2
     private final double maxVelocity; // Velocity in degrees per millisecond
-    private final double distance;
+    private final double distanceInDegrees;
 
-    private double accelerationTime;
-    private double cruiseTime;
-    private double totalTime;
+    private double accelerationTimeMilliseconds;
+    private double cruiseTimeMilliseconds;
+    private double totalTimeMilliseconds;
 
     public TrapezoidalMotionProfile(double maxAcceleration, double maxVelocity, double distance) {
-        this.maxAcceleration = maxAcceleration / 1000; // Keep in degrees per millisecond^2
-        this.maxVelocity = maxVelocity / 1000; // Keep in degrees per millisecond
-        this.distance = distance;
-
+        this.maxAcceleration = maxAcceleration / 1000; // Convert to degrees per millisecond^2
+        this.maxVelocity = maxVelocity / 1000; // Convert to degrees per millisecond
+        this.distanceInDegrees = distance; // Convert to degrees
         calculateProfile();
     }
 
@@ -21,96 +20,73 @@ public class TrapezoidalMotionProfile {
         double accelTime = maxVelocity / maxAcceleration;
         double accelDistance = 0.5 * maxAcceleration * Math.pow(accelTime, 2);
 
-        if (accelDistance * 2 > distance) {
+        if (accelDistance * 2 > distanceInDegrees) {
             // Triangular profile
-            accelerationTime = Math.sqrt(distance / maxAcceleration);
-            cruiseTime = 0;
-            totalTime = 2 * accelerationTime;
+            accelerationTimeMilliseconds = Math.sqrt(distanceInDegrees / maxAcceleration);
+            cruiseTimeMilliseconds = 0;
+            totalTimeMilliseconds = 2 * accelerationTimeMilliseconds;
         } else {
             // Trapezoidal profile
-            accelerationTime = accelTime;
-            double cruiseDistance = distance - 2 * accelDistance;
-            cruiseTime = cruiseDistance / maxVelocity;
-            totalTime = 2 * accelerationTime + cruiseTime;
+            accelerationTimeMilliseconds = accelTime;
+            double cruiseDistance = distanceInDegrees - 2 * accelDistance;
+            cruiseTimeMilliseconds = cruiseDistance / maxVelocity;
+            totalTimeMilliseconds = 2 * accelerationTimeMilliseconds + cruiseTimeMilliseconds;
         }
     }
 
-    /**
-     * Returns the total time for the motion profile in milliseconds.
-     *
-     * @return The total time in milliseconds.
-     */
-    public double getTotalTime() {
-        return totalTime;
+    public double getTotalTimeMilliseconds() {
+        return totalTimeMilliseconds;
     }
 
-    /**
-     * Returns the position at the given time in milliseconds.
-     *
-     * @param currentTime The elapsed time since the start of the motion profile in milliseconds.
-     * @return The position in degrees.
-     */
-    public double getPosition(double currentTime) {
-        if (currentTime >= totalTime) {
-            return distance;
+    public double getMotionProfileAngleInDegrees(double currentTimeMilliseconds) {
+        if (currentTimeMilliseconds >= totalTimeMilliseconds) {
+            return distanceInDegrees;
         }
 
-        if (currentTime < accelerationTime) {
+        if (currentTimeMilliseconds < accelerationTimeMilliseconds) {
             // Acceleration phase
-            return 0.5 * maxAcceleration * Math.pow(currentTime, 2);
-        } else if (currentTime < (accelerationTime + cruiseTime)) {
+            return 0.5 * maxAcceleration * Math.pow(currentTimeMilliseconds, 2);
+        } else if (currentTimeMilliseconds < (accelerationTimeMilliseconds + cruiseTimeMilliseconds)) {
             // Cruise phase
-            double accelDistance = 0.5 * maxAcceleration * Math.pow(accelerationTime, 2);
-            double cruiseTimeElapsed = currentTime - accelerationTime;
+            double accelDistance = 0.5 * maxAcceleration * Math.pow(accelerationTimeMilliseconds, 2);
+            double cruiseTimeElapsed = currentTimeMilliseconds - accelerationTimeMilliseconds;
             return accelDistance + maxVelocity * cruiseTimeElapsed;
         } else {
             // Deceleration phase
-            double accelDistance = 0.5 * maxAcceleration * Math.pow(accelerationTime, 2);
-            double cruiseDistance = maxVelocity * cruiseTime;
-            double decelTimeElapsed = currentTime - accelerationTime - cruiseTime;
+            double accelDistance = 0.5 * maxAcceleration * Math.pow(accelerationTimeMilliseconds, 2);
+            double cruiseDistance = maxVelocity * cruiseTimeMilliseconds;
+            double decelTimeElapsed = currentTimeMilliseconds - accelerationTimeMilliseconds - cruiseTimeMilliseconds;
             return accelDistance + cruiseDistance + maxVelocity * decelTimeElapsed - 0.5 * maxAcceleration * Math.pow(decelTimeElapsed, 2);
         }
     }
 
-    /**
-     * Returns the velocity at the given time in milliseconds.
-     *
-     * @param currentTime The elapsed time since the start of the motion profile in milliseconds.
-     * @return The velocity in degrees per millisecond.
-     */
     public double getVelocity(double currentTime) {
-        if (currentTime >= totalTime) {
+        if (currentTime >= totalTimeMilliseconds) {
             return 0;
         }
 
-        if (currentTime < accelerationTime) {
+        if (currentTime < accelerationTimeMilliseconds) {
             // Acceleration phase
             return maxAcceleration * currentTime;
-        } else if (currentTime < (accelerationTime + cruiseTime)) {
+        } else if (currentTime < (accelerationTimeMilliseconds + cruiseTimeMilliseconds)) {
             // Cruise phase
             return maxVelocity;
         } else {
             // Deceleration phase
-            double decelTimeElapsed = currentTime - accelerationTime - cruiseTime;
+            double decelTimeElapsed = currentTime - accelerationTimeMilliseconds - cruiseTimeMilliseconds;
             return maxVelocity - maxAcceleration * decelTimeElapsed;
         }
     }
 
-    /**
-     * Returns the acceleration at the given time in milliseconds.
-     *
-     * @param currentTime The elapsed time since the start of the motion profile in milliseconds.
-     * @return The acceleration in degrees per millisecond squared.
-     */
     public double getAcceleration(double currentTime) {
-        if (currentTime >= totalTime) {
+        if (currentTime >= totalTimeMilliseconds) {
             return 0; // No acceleration after the profile ends
         }
 
-        if (currentTime < accelerationTime) {
+        if (currentTime < accelerationTimeMilliseconds) {
             // Acceleration phase
             return maxAcceleration;
-        } else if (currentTime < (accelerationTime + cruiseTime)) {
+        } else if (currentTime < (accelerationTimeMilliseconds + cruiseTimeMilliseconds)) {
             // Cruise phase
             return 0;
         } else {
@@ -119,13 +95,7 @@ public class TrapezoidalMotionProfile {
         }
     }
 
-    /**
-     * Checks if the motion profile has finished.
-     *
-     * @param currentTime The elapsed time since the start of the motion profile in milliseconds.
-     * @return True if the profile is finished, false otherwise.
-     */
     public boolean isFinished(double currentTime) {
-        return currentTime >= totalTime;
+        return currentTime >= totalTimeMilliseconds;
     }
 }
