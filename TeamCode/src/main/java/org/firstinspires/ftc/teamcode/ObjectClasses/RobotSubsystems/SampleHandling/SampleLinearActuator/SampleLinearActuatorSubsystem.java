@@ -18,6 +18,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
+
+
     public static class ActuatorParams {
 
         public double WITHOUT_ENCODER_POWER = 0.7;  // Default power for both directions
@@ -40,7 +42,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public static ActuatorParams ACTUATOR_PARAMS = new ActuatorParams();
 
     public enum SampleActuatorStates {
-        DEPLOY_FULL, DEPLOY_MID, RETRACT, WITHOUT_ENCODER, MANUAL;
+        DEPLOY_FULL, DEPLOY_MID, RETRACT, MANUAL;
         public int ticks;
         static {
             DEPLOY_FULL.ticks = ACTUATOR_PARAMS.DEPLOY_FULL_POSITION_TICKS;
@@ -118,6 +120,10 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         targetState = state;
         setTargetTicks(state.getTargetPositionTicks());
     }
+    public void setCurrentState(SampleActuatorStates state) {
+        currentState = state;
+    }
+
 
     // Set the target ticks, applying limits and setting the target position on the motor
     public void setTargetTicks(int ticks) {
@@ -142,7 +148,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     // Update the actuator state based on whether it has reached its target
     public void updateActuatorState() {
-        if (isActuatorAtTarget() && currentState != SampleActuatorStates.WITHOUT_ENCODER) {
+        if (isActuatorAtTarget()) {
             currentState = targetState;
         }
     }
@@ -230,14 +236,12 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     // Method to power the motor on in one direction without encoders
     public void runWithoutEncodersForward() {
-        currentState= SampleActuatorStates.WITHOUT_ENCODER;
         sampleActuator.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         moveActuator(ACTUATOR_PARAMS.WITHOUT_ENCODER_POWER);
     }
 
     // Method to power the motor on in reverse without encoders
     public void runWithoutEncodersReverse() {
-        currentState= SampleActuatorStates.WITHOUT_ENCODER;
         sampleActuator.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         moveActuator(-ACTUATOR_PARAMS.WITHOUT_ENCODER_POWER);
     }

@@ -56,7 +56,7 @@ public class Robot {
     private static LightingSubsystem lightingSubsystem;
 
     public enum SubsystemType {
-        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR, SAMPLE_LIFT_BUCKET, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION, LIGHTING
+        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR_WITH_ENCODER, SAMPLE_LIFT_BUCKET, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION, SAMPLE_ACTUATOR_WITHOUT_ENCODER, LIGHTING
     }
 
     // Use an EnumSet for tracking available subsystems
@@ -84,8 +84,12 @@ public class Robot {
 //                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
 //                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
 
+
+//                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
+//                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER, sampleLinearActuatorSubsystem);
+
                 sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
-                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
+                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER, sampleLinearActuatorSubsystem);
 
                 specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
                 registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
@@ -150,9 +154,13 @@ public class Robot {
 
     // Check if the subsystem exists
     public boolean hasSubsystem(SubsystemType subsystem) {
-        if (!availableSubsystems.contains(subsystem)) {
+        return availableSubsystems.contains(subsystem);
+    }
 
-//            activeOpMode.telemetry.addLine(subsystem + " not available");
+    // Check if the subsystem exists
+    public boolean hasSubsystemWithErrorTelemetry(SubsystemType subsystem) {
+        if (!availableSubsystems.contains(subsystem)) {
+            activeOpMode.telemetry.addLine(subsystem + " not available");
             return false;
         }
         return true;
@@ -168,7 +176,7 @@ public class Robot {
 
         if (opModeType == OpModeType.TELEOP &&
                  hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
-                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
+                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) || hasSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)) {
             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem);
         }
 
@@ -230,10 +238,6 @@ public class Robot {
 
     public boolean isAutoMode() {
         return opModeType == OpModeType.AUTO;
-    }
-
-    public boolean isTeleOpMode() {
-        return opModeType == OpModeType.TELEOP;
     }
 
     public OpModeType getOpModeType() {return opModeType;}

@@ -6,10 +6,8 @@ import static java.lang.Math.PI;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.example.sharedconstants.FieldConstants;
 
@@ -18,19 +16,19 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 
-public class DriveForwardAction implements Action {
+public class DriveToObservationZone implements Action {
     private final DriveSubsystem driveSubsystem;
     private boolean started;
     private boolean cancelled;
     private Action action;// Flag to indicate if the action has been cancelled
 
-    public DriveForwardAction() {
+    public DriveToObservationZone() {
         this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
         this.started = false;
         this.cancelled = false; // Initialize the cancellation flag
     }
 
-    public DriveForwardAction(double inches) {
+    public DriveToObservationZone(double inches) {
         this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
         this.started = false;
         this.cancelled = false; // Initialize the cancellation flag

@@ -5,9 +5,11 @@ import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.ButtonBinding;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.ButtonBindingManager;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadType;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.AnalogBinding;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.ButtonBinding;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBinding;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 
 import java.util.ArrayList;
@@ -149,29 +151,30 @@ public class DriverStationTelemetryManager {
         telemetry.addLine();
         displayBaseTelemetry(telemetry);
         telemetry.addLine();
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE)) {
+        if (Robot.getInstance().hasSubsystemWithErrorTelemetry(Robot.SubsystemType.DRIVE)) {
             DriveSubsystem.TelemetryHelper.displayBasicTelemetry(telemetry);
         }
         telemetry.addLine();
         // Add a header line to distinguish sample system telemetry
         telemetry.addLine("=== Sample Telemetry ===");
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+        if (Robot.getInstance().hasSubsystemWithErrorTelemetry(Robot.SubsystemType.SAMPLE_INTAKE)) {
             Robot.getInstance().getSampleIntakeSubsystem().displayBasicTelemetry(telemetry);
         }
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) ||
+                Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)) {
             Robot.getInstance().getSampleLinearActuatorSubsystem().displayBasicTelemetry(telemetry);
         }
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+        if (Robot.getInstance().hasSubsystemWithErrorTelemetry(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
             Robot.getInstance().getSampleLiftBucketSubsystem().displayBasicTelemetry(telemetry);
         }
 
         telemetry.addLine();
         // Add a header line to distinguish specimen system telemetry
         telemetry.addLine("=== Specimen Telemetry ===");
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+        if (Robot.getInstance().hasSubsystemWithErrorTelemetry(Robot.SubsystemType.SPECIMEN_INTAKE)) {
             Robot.getInstance().getSpecimenIntakeSubsystem().displayBasicTelemetry(telemetry);
         }
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+        if (Robot.getInstance().hasSubsystemWithErrorTelemetry(Robot.SubsystemType.SPECIMEN_ARM)) {
             Robot.getInstance().getSpecimenArmSubsystem().displayBasicTelemetry(telemetry);
         }
     }
@@ -192,7 +195,8 @@ public class DriverStationTelemetryManager {
 
     // Verbose telemetry method for SampleLinearActuatorSubsystem
     private void displayVerboseSampleLinearActuatorTelemetry() {
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) ||
+                Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)) {
             Robot.getInstance().getSampleLinearActuatorSubsystem().displayVerboseTelemetry(telemetry);
         } else cycleTelemetryMode();
     }
@@ -220,8 +224,7 @@ public class DriverStationTelemetryManager {
     }
 
     public void displayButtonBindings() {
-        ButtonBindingManager bindingManager = ButtonBindingManager.getInstance();
-        telemetry.addLine("=== Button Bindings ===");
+        GamePadBindingManager bindingManager = GamePadBindingManager.getInstance();
 
         // Determine the active OpMode type
         Robot.OpModeType currentOpMode = Robot.getInstance().getOpModeType();
@@ -241,16 +244,23 @@ public class DriverStationTelemetryManager {
                 //no bindings for auto
                 break;
         }
-
         for (GamepadType gamepadType : relevantGamepadTypes) {
             telemetry.addLine(String.format("<b>%s Gamepad</b>", gamepadType));
-            for (ButtonBinding binding : bindingManager.getBindings()) {
-                if (binding.getGamepadType() == gamepadType) {
-                    String button = binding.getButton() != null ? binding.getButton().toString() : "Default/Toggle";
-                    String description = binding.getDescription();
-                    telemetry.addLine(String.format("<font face=\"monospace\">%s: %s</font>", button, description));
+
+            for (GamePadBinding binding : bindingManager.getBindings()) {
+                if (binding instanceof ButtonBinding && ((ButtonBinding) binding).getGamepadType() == gamepadType) {
+                    ButtonBinding buttonBinding = (ButtonBinding) binding;
+                    String buttonName = buttonBinding.getButtonName();
+                    String description = buttonBinding.getDescription();
+                    telemetry.addLine(String.format("<font face=\"monospace\">%s: %s</font>", buttonName, description));
+                } else if (binding instanceof AnalogBinding && ((AnalogBinding) binding).getGamepadType() == gamepadType) {
+                    AnalogBinding analogBinding = (AnalogBinding) binding;
+                    String analogInputName = analogBinding.getAnalogInputName(); // Customize this as needed for specific control names
+                    String description = analogBinding.getDescription();
+                    telemetry.addLine(String.format("<font face=\"monospace\">%s: %s</font>", analogInputName, description));
                 }
             }
+
             telemetry.addLine(""); // Add a blank line for spacing
         }
 

@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.Subsystem;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
 
 import java.util.Set;
 
@@ -38,8 +36,8 @@ public class ActionCommand implements Command {
 
     @Override
     public void end(boolean interrupted) {
-        if (interrupted && action instanceof DriveForwardAction) {
-            ((DriveForwardAction) action).cancelAbruptly();
+        if (interrupted && action instanceof DriveToObservationZone) {
+            ((DriveToObservationZone) action).cancelAbruptly();
         }
         finished = false; // Reset finished to allow re-initialization on the next press
     }

@@ -8,6 +8,9 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.ButtonBinding;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.ChangeSampleBucketPositionAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
@@ -16,11 +19,15 @@ import java.util.Collections;
 import java.util.Set;
 
 public class PitModeDriverBindings {
+    Robot robot;
+    GamePadBindingManager bindingManager;
+    GamepadEx driverGamePad;
 
     public PitModeDriverBindings(GamepadEx gamepad) {
         // Reference to the robot's drive subsystem
-        Robot robot = Robot.getInstance();
-        ButtonBindingManager bindingManager = ButtonBindingManager.getInstance();
+        robot = Robot.getInstance();
+        bindingManager = GamePadBindingManager.getInstance();
+        driverGamePad = gamepad;
 
         DcMotorEx leftFront = robot.getDriveSubsystem().getMecanumDrive().leftFront;
         DcMotorEx leftBack = robot.getDriveSubsystem().getMecanumDrive().leftBack;
@@ -28,24 +35,9 @@ public class PitModeDriverBindings {
         DcMotorEx rightFront = robot.getDriveSubsystem().getMecanumDrive().rightFront;
 
         //////////////////////////////////////////////////////////
-        // LEFT BUMPER - Cycle Telemetry Modes                  //
+        // LEFT BUMPER - Cycle Telemetry                        //
         //////////////////////////////////////////////////////////
-
-        // Command to cycle telemetry modes using DriverStationTelemetryManager
-        Command cycleTelemetryModeCommand = new InstantCommand(() -> {
-            robot.getDriverStationTelemetryManager().cycleTelemetryMode();
-        });
-
-        gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(cycleTelemetryModeCommand);
-
-        // Register LEFT BUMPER binding
-        bindingManager.registerBinding(new ButtonBinding(
-                GamepadType.PIT,
-                GamepadKeys.Button.LEFT_BUMPER,
-                cycleTelemetryModeCommand,
-                "Cycle through telemetry display modes."
-        ));
+        cycleTelemetry(GamepadKeys.Button.LEFT_BUMPER);
 
         //////////////////////////////////////////////////////////
         // Button Bindings to Move Each Motor                   //
@@ -127,31 +119,22 @@ public class PitModeDriverBindings {
                 "Run Back Left Motor at 50% power (Hold A)."
         ));
 
-        //////////////////////////////////////////////////////////
-        // RIGHT BUMPER - Move Sample Lift to High Position       //
-        //////////////////////////////////////////////////////////
 
-        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
-            SampleLiftBucketSubsystem sampleLiftBucketSubsystem = robot.getSampleLiftBucketSubsystem();
-            Set<Subsystem> sampleLiftBucketRequirements = Collections.singleton(sampleLiftBucketSubsystem);
+    }
 
-            ChangeSampleBucketPositionAction goToRestPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_REST_POS);
-            ChangeSampleBucketPositionAction goToHighBucketPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_HIGH_POS);
+    private void cycleTelemetry(GamepadKeys.Button button) {
+        // Command to cycle telemetry modes using DriverStationTelemetryManager
+        Command cycleTelemetryModeCommand = new InstantCommand(() -> robot.getDriverStationTelemetryManager().cycleTelemetryMode());
 
-            Command moveToHighBucketCommand = new ActionCommand(goToHighBucketPosition, sampleLiftBucketRequirements);
-            Command moveToRestPositionCommand = new ActionCommand(goToRestPosition, sampleLiftBucketRequirements);
+        driverGamePad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(cycleTelemetryModeCommand);
 
-            gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                    .whenPressed(moveToHighBucketCommand)
-                    .whenReleased(moveToRestPositionCommand);
-
-            // Register RIGHT BUMPER binding
-            bindingManager.registerBinding(new ButtonBinding(
-                    GamepadType.PIT,
-                    GamepadKeys.Button.RIGHT_BUMPER,
-                    moveToHighBucketCommand,
-                    "Move Sample Lift to High Basket Position (Press Right Bumper)."
-            ));
-        }
+        // Register LEFT BUMPER binding
+        bindingManager.registerBinding(new ButtonBinding(
+                GamepadType.PIT,
+                button,
+                cycleTelemetryModeCommand,
+                "Cycle through telemetry display modes."
+        ));
     }
 }

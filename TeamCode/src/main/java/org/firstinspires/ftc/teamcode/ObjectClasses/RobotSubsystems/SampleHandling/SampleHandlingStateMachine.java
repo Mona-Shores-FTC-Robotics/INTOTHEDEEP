@@ -1,15 +1,29 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.WaitCommand;
-
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 
+import java.util.Objects;
+
+@Config
 public class SampleHandlingStateMachine {
+
+  public static class SampleHandlingParams {
+        public long DELAY_RETRACT_TO_MID_POSITION_IN_MS = 400;
+        public long DELAY_MID_TO_FULL_POSITION_IN_MS = 400;
+        public long DELAY_FULL_TO_RETRACT_POSITION_IN_MS = 800;
+
+    }
+
+    public static SampleHandlingParams SAMPLE_HANDLING_PARAMS = new SampleHandlingParams();
 
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
@@ -34,28 +48,99 @@ public class SampleHandlingStateMachine {
 
     // Method to handle button press logic (toggle actuator states)
     public void onIntakeButtonPress() {
-        switch (actuatorSubsystem.getCurrentState()) {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)) {
+            switch (actuatorSubsystem.getCurrentState()) {
+                case RETRACT:
+                    Command sampleIntakeMidDeployCommand = new SequentialCommandGroup(
+                            new InstantCommand(this::setIntakeOn),
+                            new InstantCommand(this::deployActuatorMid)
+                    );
+                    sampleIntakeMidDeployCommand.schedule();
+                    break;
+                case DEPLOY_MID:
+                    Command sampleIntakeFullDeployCommand = new SequentialCommandGroup(
+                            new InstantCommand(this::setIntakeOn),
+                            new InstantCommand(this::deployActuatorFull)
+                    );
+                    sampleIntakeFullDeployCommand.schedule();
+                    break;
+                case DEPLOY_FULL:
+                case MANUAL:
+                default:
+                    Command sampleIntakeRetractCommand = new SequentialCommandGroup(
+                            new InstantCommand(this::setIntakeOff),
+                            new InstantCommand(this::retractActuator)
+                    );
+                    sampleIntakeRetractCommand.schedule();
+                    break;
+            }
+        } else {
+            switch (actuatorSubsystem.getCurrentState()) {
+                case RETRACT:
+                    Command sampleIntakeMidDeployCommand = new SequentialCommandGroup(
+                            new InstantCommand(this::setIntakeOn),
+                            new InstantCommand(actuatorSubsystem::runWithoutEncodersForward),
+                            new WaitCommand(SAMPLE_HANDLING_PARAMS.DELAY_RETRACT_TO_MID_POSITION_IN_MS),
+                            new InstantCommand(actuatorSubsystem::stopActuator),
+                            new InstantCommand(this::setActuatorStateDeployedMid)
+                    );
+                    sampleIntakeMidDeployCommand.schedule();
+                    break;
+                case DEPLOY_MID:
+                    Command sampleIntakeFullDeployCommand = new SequentialCommandGroup(
+                            new InstantCommand(this::setIntakeOn),
+                            new InstantCommand(actuatorSubsystem::runWithoutEncodersForward),
+                            new WaitCommand(SAMPLE_HANDLING_PARAMS.DELAY_MID_TO_FULL_POSITION_IN_MS),
+                            new InstantCommand(actuatorSubsystem::stopActuator),
+                            new InstantCommand(this::setActuatorStateFullyDeployed)
 
-            case WITHOUT_ENCODER:
-                actuatorSubsystem.enableRunToPositionMode();
-                setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
-                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
-                break;
+                    );
+                    sampleIntakeFullDeployCommand.schedule();
+                    break;
+                case DEPLOY_FULL:
+                case MANUAL:
+                default:
+                    Command sampleIntakeRetractCommand = new SequentialCommandGroup(
+                            new InstantCommand(this::setIntakeOff),
+                            new InstantCommand(actuatorSubsystem::runWithoutEncodersReverse),
+                            new WaitCommand(SAMPLE_HANDLING_PARAMS.DELAY_FULL_TO_RETRACT_POSITION_IN_MS),
+                            new InstantCommand(actuatorSubsystem::stopActuator),
+                            new InstantCommand(this::setActuatorStateRetracted)
+                    );
+                    sampleIntakeRetractCommand.schedule();
+                    break;
+            }
+        }
+    }
 
-            case RETRACT:
-                setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID);
-                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+    private void setActuatorStateDeployedMid() {
+        actuatorSubsystem.setCurrentState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID);
+    }
+
+    private void setActuatorStateRetracted() {
+        actuatorSubsystem.setCurrentState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
+    }
+
+    private void setActuatorStateFullyDeployed() {
+        actuatorSubsystem.setCurrentState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
+    }
+
+    public void onScoreButtonPress() {
+        switch (Objects.requireNonNull(liftSubsystem).getCurrentLiftState()) {
+            case HOME:
+                Command liftToLowBasket = new InstantCommand(this::setLiftToLowBasket);
+                liftToLowBasket.schedule();
                 break;
-            case DEPLOY_MID:
-                setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
+            case LOW_BASKET:
+                Command liftToHighBasket = new InstantCommand(this::setLiftToHighBasket);
+                liftToHighBasket.schedule();
                 break;
-            case DEPLOY_FULL:
             case MANUAL:
+            case HIGH_BASKET:
             default:
-                setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
-                setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+                Command liftToHome = new InstantCommand(this::setLiftToHome);
+                liftToHome.schedule();
                 break;
-
 
         }
     }
@@ -73,7 +158,9 @@ public class SampleHandlingStateMachine {
                 new InstantCommand(this::setIntakeReverse),
                 new WaitCommand(300),
                 new InstantCommand(this::setIntakeOff));
-
+                //Todo Once we have a limit switch, maybe we can handle this better
+        // Intothedeepera24!
+        // ?
 //                new ContinuousConditionalCommand(
 //                        new SequentialCommandGroup(
 //                                new InstantCommand(this::setIntakeReverse),
@@ -109,42 +196,35 @@ public class SampleHandlingStateMachine {
 //        expelPieceSequence.schedule();
     }
 
-
-    private boolean isActuatorRetracted() {
-        return actuatorSubsystem.isActuatorAtTarget();
+    private void retractActuator() {
+        actuatorSubsystem.setTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.RETRACT);
     }
-
-    private void setActuatorTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates newState) {
-        actuatorSubsystem.setTargetState(newState);
+    private void deployActuatorMid() {
+        actuatorSubsystem.setTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID);
     }
-
-    private void setIntakeState(SampleIntakeSubsystem.SampleIntakeStates newState) {
-        intakeSubsystem.setCurrentState(newState);
+    private void deployActuatorFull() {
+        actuatorSubsystem.setTargetState(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_FULL);
     }
 
     // Method to turn the intake on
     public void setIntakeOn() {
-        setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+        intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
     }
 
     // Method to turn the intake off
     public void setIntakeOff() {
-        setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+        intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
     }
 
     // Method to reverse the intake
     public void setIntakeReverse() {
-        setIntakeState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
-    }
-
-    private void setLiftState(SampleLiftBucketSubsystem.SampleLiftStates newState) {
-        liftSubsystem.setTargetLiftState(newState);
+        intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
     }
 
     public void setLiftToHighBasket() {
         // Check if the actuator is fully retracted before moving the lift
         if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-            setLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
+            liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
         } else {
             System.out.println("Cannot raise lift: Actuator is not fully retracted.");
         }
@@ -153,13 +233,13 @@ public class SampleHandlingStateMachine {
     public void setLiftToLowBasket() {
         // Check if the actuator is fully retracted before moving the lift
         if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-            setLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET);
+            liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET);
         } else {
             System.out.println("Cannot raise lift: Actuator is not fully retracted.");
         }
     }
 
     public void setLiftToHome() {
-        setLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HOME);
+         liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HOME);
     }
 }

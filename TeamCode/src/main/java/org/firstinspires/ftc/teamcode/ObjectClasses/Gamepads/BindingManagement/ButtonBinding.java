@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
+package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
-public class ButtonBinding {
+public class ButtonBinding implements GamePadBinding {
     private final GamepadType gamepadType;
     private final GamepadKeys.Button button;
     private final Command command;
@@ -14,6 +14,10 @@ public class ButtonBinding {
         this.button = button;
         this.command = command;
         this.description = description;
+    }
+
+    public ButtonBinding(GamepadType gamepadType, GamepadKeys.Button button, String description) {
+        this(gamepadType, button, null, description);
     }
 
     public GamepadType getGamepadType() {
@@ -28,6 +32,11 @@ public class ButtonBinding {
         return command;
     }
 
+    public String getButtonName() {
+        return button.toString();
+    }
+
+    @Override
     public String getDescription() {
         return description;
     }

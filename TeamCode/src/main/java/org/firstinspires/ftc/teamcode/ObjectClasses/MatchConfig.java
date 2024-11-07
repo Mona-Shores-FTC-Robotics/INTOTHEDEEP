@@ -6,7 +6,7 @@ import static com.example.sharedconstants.FieldConstants.*;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
 
 public class MatchConfig {
 
@@ -27,7 +27,7 @@ public class MatchConfig {
 
     public static TelemetryPacket telemetryPacket;
 
-    public static DriveForwardAction currentDriveForwardAction;
+    public static DriveToObservationZone currentDriveForwardAction;
 
     // Sliding window average variables
     private static final int WINDOW_SIZE = 100;

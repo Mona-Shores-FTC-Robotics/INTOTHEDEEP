@@ -11,7 +11,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.MoveSampleLiftAction;
@@ -147,36 +147,36 @@ public class RealRobotAdapter implements RobotAdapter {
 
                 case DEPOSIT_SAMPLE:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         //
                         // todo Fix me
                         //I'm not quite sure what this should be doing...
-                        return new DriveForwardAction(3);
+                        return new DriveToObservationZone(3);
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_HIGH_BASKET:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_LOW_BASKET:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET);
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_HOME:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.HOME);
                     } else return problem();
                 case INTAKE_SAMPLE_FROM_GROUND:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER))
                     {
                         return new ParallelAction(
                                 new MoveLinearActuatorAction(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID),
