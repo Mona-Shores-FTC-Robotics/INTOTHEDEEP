@@ -24,7 +24,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
 
     public static class SpecimenArmParams {
         //Gamepad parameters
-        public double GAMEPAD_SCALE_FACTOR = 1.0;
+        public double GAMEPAD_STICK_SCALE_FACTOR = 1.0;
         public double DEAD_ZONE = 0.05;
 
         //PID parameters
@@ -178,7 +178,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         currentState = SpecimenArmStates.ARM_MANUAL;
 
         // Calculate the change in angle based on input and scale factor
-        double deltaAngle = armInput * SPECIMEN_ARM_PARAMS.GAMEPAD_SCALE_FACTOR;
+        double deltaAngle = armInput * SPECIMEN_ARM_PARAMS.GAMEPAD_STICK_SCALE_FACTOR;
 
         // Calculate the new target angle based on the target angle
         targetAngleDegrees += deltaAngle;
