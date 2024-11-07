@@ -125,7 +125,7 @@ public class RealRobotAdapter implements RobotAdapter {
                         // Define the action if the specimen is detected
                         Action stopSpecimenIntakeAndStageSpecimen = new SequentialAction(
                                 new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF),
-                                new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_STAGING)
+                                new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME)
                         );
 
                         // Define the action if the specimen is NOT detected (keep intaking for 200 milliseconds)

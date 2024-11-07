@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
@@ -77,7 +79,10 @@ public class IntoTheDeepOperatorBindings {
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                     .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY), specimenArmRequirements));
-        } else if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+        }
+
+
+        else if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
                 SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();
                 operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                         .whenPressed(new InstantCommand(sampleLinearActuatorSubsystem::runWithoutEncodersForward))
@@ -115,7 +120,7 @@ public class IntoTheDeepOperatorBindings {
             Set<Subsystem> specimenArmRequirements = Collections.singleton(specimenArmSubsystem);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                    .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_STAGING), specimenArmRequirements));
+                    .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME), specimenArmRequirements));
         }
 
         //////////////////////////////////////////////////////////
@@ -128,8 +133,13 @@ public class IntoTheDeepOperatorBindings {
             Set<Subsystem> specimenArmRequirements = Collections.singleton(specimenArmSubsystem);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                    .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP), specimenArmRequirements));
-        }else
+                    .whenPressed(new SequentialCommandGroup(
+                            new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME), specimenArmRequirements),
+                            new WaitCommand(800),
+                            new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP), specimenArmRequirements)
+                    ));        }
+
+        else
         {
             if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
                 SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();

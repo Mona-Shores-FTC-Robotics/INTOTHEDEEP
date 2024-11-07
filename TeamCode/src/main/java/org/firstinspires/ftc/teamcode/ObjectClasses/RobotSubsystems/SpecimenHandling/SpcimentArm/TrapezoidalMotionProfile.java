@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm;
 
 public class TrapezoidalMotionProfile {
-    private final double maxAcceleration;
-    private final double maxVelocity;
+    private final double maxAcceleration; // Acceleration in degrees per millisecond^2
+    private final double maxVelocity; // Velocity in degrees per millisecond
     private final double distance;
 
     private double accelerationTime;
@@ -10,8 +10,8 @@ public class TrapezoidalMotionProfile {
     private double totalTime;
 
     public TrapezoidalMotionProfile(double maxAcceleration, double maxVelocity, double distance) {
-        this.maxAcceleration = maxAcceleration;
-        this.maxVelocity = maxVelocity;
+        this.maxAcceleration = maxAcceleration / 1000; // Keep in degrees per millisecond^2
+        this.maxVelocity = maxVelocity / 1000; // Keep in degrees per millisecond
         this.distance = distance;
 
         calculateProfile();
@@ -36,9 +36,18 @@ public class TrapezoidalMotionProfile {
     }
 
     /**
-     * Returns the position at the given time.
+     * Returns the total time for the motion profile in milliseconds.
      *
-     * @param currentTime The elapsed time since the start of the motion profile.
+     * @return The total time in milliseconds.
+     */
+    public double getTotalTime() {
+        return totalTime;
+    }
+
+    /**
+     * Returns the position at the given time in milliseconds.
+     *
+     * @param currentTime The elapsed time since the start of the motion profile in milliseconds.
      * @return The position in degrees.
      */
     public double getPosition(double currentTime) {
@@ -64,10 +73,10 @@ public class TrapezoidalMotionProfile {
     }
 
     /**
-     * Returns the velocity at the given time.
+     * Returns the velocity at the given time in milliseconds.
      *
-     * @param currentTime The elapsed time since the start of the motion profile.
-     * @return The velocity in degrees per second.
+     * @param currentTime The elapsed time since the start of the motion profile in milliseconds.
+     * @return The velocity in degrees per millisecond.
      */
     public double getVelocity(double currentTime) {
         if (currentTime >= totalTime) {
@@ -88,9 +97,32 @@ public class TrapezoidalMotionProfile {
     }
 
     /**
+     * Returns the acceleration at the given time in milliseconds.
+     *
+     * @param currentTime The elapsed time since the start of the motion profile in milliseconds.
+     * @return The acceleration in degrees per millisecond squared.
+     */
+    public double getAcceleration(double currentTime) {
+        if (currentTime >= totalTime) {
+            return 0; // No acceleration after the profile ends
+        }
+
+        if (currentTime < accelerationTime) {
+            // Acceleration phase
+            return maxAcceleration;
+        } else if (currentTime < (accelerationTime + cruiseTime)) {
+            // Cruise phase
+            return 0;
+        } else {
+            // Deceleration phase
+            return -maxAcceleration;
+        }
+    }
+
+    /**
      * Checks if the motion profile has finished.
      *
-     * @param currentTime The elapsed time since the start of the motion profile.
+     * @param currentTime The elapsed time since the start of the motion profile in milliseconds.
      * @return True if the profile is finished, false otherwise.
      */
     public boolean isFinished(double currentTime) {
