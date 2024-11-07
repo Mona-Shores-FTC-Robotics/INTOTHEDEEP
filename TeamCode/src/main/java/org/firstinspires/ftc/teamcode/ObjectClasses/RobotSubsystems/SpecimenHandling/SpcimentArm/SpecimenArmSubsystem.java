@@ -24,7 +24,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double SCALE_FACTOR = 1.0;
         public double DEAD_ZONE = 0.05;
 
-        public double P = 0.007, I = 0.0, D = 0.0; // PID coefficients
+        public double P = 0.0085, I = 0.0, D = 0.0; // PID coefficients
 
         //Arm Feedforward parameters
         public double kS = 0.075, kCos = 0.222, kV = .08, kA = .05; // Feedforward coefficients
@@ -453,6 +453,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         if (currentAngleDegrees > SPECIMEN_ARM_PARAMS.STRAIGHT_UP_ANGLE) {
             feedforwardPower = armFeedforwardCCW.calculate(currentAngleRadians, 0, 0);
             feedforwardPowerCCW=feedforwardPower;
+
         } else {
             feedforwardPower = armFeedforwardCW.calculate(currentAngleRadians, 0, 0);
             feedforwardPowerCW=feedforwardPower;
