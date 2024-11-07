@@ -17,10 +17,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 
 @Config
-public class SpecimenArmSubsystem extends SubsystemBase {
+public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
 
     public static class SpecimenArmParams {
-        public double CHAIN_SLOP_OFFSET_DEGREES = -17;
+        public double CHAIN_SLOP_OFFSET_DEGREES = -5;
         //gamepad parameters
         public double SCALE_FACTOR = 1.0;
         public double DEAD_ZONE = 0.05;
@@ -113,7 +113,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     }
     private ControlMode controlMode = ControlMode.AUTOMATED;
 
-    public SpecimenArmSubsystem(final HardwareMap hMap, final String name) {
+    public SpecimenArmWithMotionProfileSubsystem(final HardwareMap hMap, final String name) {
         arm = hMap.get(DcMotorEx.class, name);
         arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

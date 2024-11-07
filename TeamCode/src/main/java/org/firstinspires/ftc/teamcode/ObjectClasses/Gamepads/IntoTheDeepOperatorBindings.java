@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.DefaultSpecimenArmCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArmAction;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.DefaultSpecimenArmWithMotionProfileCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArmWithMotionProfileAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmWithMotionProfileSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
@@ -51,7 +51,7 @@ public class IntoTheDeepOperatorBindings {
 
             CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSampleLiftBucketSubsystem(), defaultSampleLiftCommand);
         } else if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-            Command defaultSpecimenArmCommand = new DefaultSpecimenArmCommand(Robot.getInstance().getSpecimenArmSubsystem(),
+            Command defaultSpecimenArmCommand = new DefaultSpecimenArmWithMotionProfileCommand(Robot.getInstance().getSpecimenArmSubsystem(),
                     operatorGamepad::getLeftY);
 
             CommandScheduler.getInstance().setDefaultCommand(Robot.getInstance().getSpecimenArmSubsystem(), defaultSpecimenArmCommand);
@@ -74,11 +74,11 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-            SpecimenArmSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
+            SpecimenArmWithMotionProfileSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
             Set<Subsystem> specimenArmRequirements = Collections.singleton(specimenArmSubsystem);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                    .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY), specimenArmRequirements));
+                    .whenPressed(new ActionCommand(new MoveSpecimenArmWithMotionProfileAction(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY), specimenArmRequirements));
         }
 
 
@@ -116,11 +116,11 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
 
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-            SpecimenArmSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
+            SpecimenArmWithMotionProfileSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
             Set<Subsystem> specimenArmRequirements = Collections.singleton(specimenArmSubsystem);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                    .whenPressed(new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME), specimenArmRequirements));
+                    .whenPressed(new ActionCommand(new MoveSpecimenArmWithMotionProfileAction(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME), specimenArmRequirements));
         }
 
         //////////////////////////////////////////////////////////
@@ -129,14 +129,14 @@ public class IntoTheDeepOperatorBindings {
         //                                                      //
         //////////////////////////////////////////////////////////
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-            SpecimenArmSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
+            SpecimenArmWithMotionProfileSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
             Set<Subsystem> specimenArmRequirements = Collections.singleton(specimenArmSubsystem);
 
             operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                     .whenPressed(new SequentialCommandGroup(
-                            new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME), specimenArmRequirements),
+                            new ActionCommand(new MoveSpecimenArmWithMotionProfileAction(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CCW_ARM_HOME), specimenArmRequirements),
                             new WaitCommand(800),
-                            new ActionCommand(new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP), specimenArmRequirements)
+                            new ActionCommand(new MoveSpecimenArmWithMotionProfileAction(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_PICKUP), specimenArmRequirements)
                     ));        }
 
         else

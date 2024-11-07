@@ -5,18 +5,18 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmWithMotionProfileSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 //Right now these are just for Teleop... should they be?
 public class SpecimenHandlingStateMachine {
 
     private final SpecimenIntakeSubsystem intakeSubsystem;
-    private final SpecimenArmSubsystem armSubsystem;
+    private final SpecimenArmWithMotionProfileSubsystem armSubsystem;
 
     // Constructor
     public SpecimenHandlingStateMachine(SpecimenIntakeSubsystem intakeSubsystem,
-                                        SpecimenArmSubsystem armSubsystem) {
+                                        SpecimenArmWithMotionProfileSubsystem armSubsystem) {
         this.intakeSubsystem = intakeSubsystem;
         this.armSubsystem = armSubsystem;
     }
@@ -28,19 +28,21 @@ public class SpecimenHandlingStateMachine {
 
                 //If the arm is in pickup position and operator pushes button, it should move to staging and turn off the intake
             case SPECIMEN_PICKUP:
-                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME);
+                setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME);
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
             case CW_ARM_HOME:
-                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
+                setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
-            //If the arm is in delivery position and operator pushes button, it should move to pickup and turn on the intake
-
+            case CCW_ARM_HOME:
+                setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
+                setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
+                break;
             default:
             case SPECIMEN_DELIVERY:
-                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
-                setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
+                setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CCW_ARM_HOME);
+                setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
         }
     }
@@ -97,19 +99,19 @@ public class SpecimenHandlingStateMachine {
         setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_REVERSE);
     }
 
-    private void setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates newState) {
+    private void setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates newState) {
         armSubsystem.setTargetState(newState);
     }
 
     public void setArmTargetStateToPickup() {
-        setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
+        setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
     }
 
     public void setArmTargetStateToDelivery() {
-        setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
+        setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
     }
 
     public void setArmTargetStateToStaging() {
-        setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME);
+        setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME);
     }
 }
