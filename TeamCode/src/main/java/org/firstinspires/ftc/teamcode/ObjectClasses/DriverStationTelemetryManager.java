@@ -22,12 +22,11 @@ public class DriverStationTelemetryManager {
     private enum TelemetryMode {
         PIT_MODE,
         BASIC,
+        BUTTON_BINDINGS,
         VERBOSE_DRIVE,
         VERBOSE_SAMPLE_LIFT,
         VERBOSE_SPECIMEN_ARM,
         VERBOSE_SAMPLE_LINEAR_ACTUATOR,
-        BUTTON_BINDINGS // New telemetry mode for button bindings
-        // You can add more modes later, like VERBOSE_OTHER_SUBSYSTEM, etc.
     }
 
     private final Telemetry telemetry;

@@ -129,7 +129,7 @@ public class IntoTheDeepDriverBindings {
                     GamepadType.DRIVER,
                     button,
                     resetYawCommand,
-                    "Reset Gryo"
+                    "Reset Localization to Start Pose"
             ));
         }
     }

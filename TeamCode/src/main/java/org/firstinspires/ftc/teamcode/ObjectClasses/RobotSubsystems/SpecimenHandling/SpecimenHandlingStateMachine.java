@@ -28,6 +28,7 @@ public class SpecimenHandlingStateMachine {
 
                 //If the arm is in pickup position and operator pushes button, it should move to staging and turn off the intake
             case SPECIMEN_PICKUP:
+
                 setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME);
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
@@ -40,6 +41,8 @@ public class SpecimenHandlingStateMachine {
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
                 break;
             default:
+            case ARM_MANUAL:
+                armSubsystem.setCurrentState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CCW_ARM_HOME);
             case SPECIMEN_DELIVERY:
                 setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CCW_ARM_HOME);
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);

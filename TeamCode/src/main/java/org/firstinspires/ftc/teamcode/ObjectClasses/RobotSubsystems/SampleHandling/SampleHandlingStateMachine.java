@@ -17,10 +17,9 @@ import java.util.Objects;
 public class SampleHandlingStateMachine {
 
   public static class SampleHandlingParams {
-        public long DELAY_RETRACT_TO_MID_POSITION_IN_MS = 400;
-        public long DELAY_MID_TO_FULL_POSITION_IN_MS = 400;
-        public long DELAY_FULL_TO_RETRACT_POSITION_IN_MS = 800;
-
+        public long DELAY_RETRACT_TO_MID_POSITION_IN_MS = 250;
+        public long DELAY_MID_TO_FULL_POSITION_IN_MS = 200;
+        public long DELAY_FULL_TO_RETRACT_POSITION_IN_MS = 450;
     }
 
     public static SampleHandlingParams SAMPLE_HANDLING_PARAMS = new SampleHandlingParams();
