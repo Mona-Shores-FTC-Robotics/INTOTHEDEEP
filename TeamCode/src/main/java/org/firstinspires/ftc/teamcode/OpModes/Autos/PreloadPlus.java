@@ -74,6 +74,9 @@ public class PreloadPlus extends LinearOpMode {
         //set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose= FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
 
+        //Calculate the Yaw offset based on the starting pose and save it in MatchConfig to use during teleop field oriented control
+        Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
+
         telemetry.clearAll();
 
         MatchConfig.timestampTimer = new ElapsedTime();

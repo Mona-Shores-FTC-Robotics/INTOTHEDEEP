@@ -247,6 +247,9 @@ public class AutoSelector extends LinearOpMode {
         //Set the starting location of the robot on the field
         Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
 
+        //Calculate the Yaw offset based on the starting pose and save it in MatchConfig
+        Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
+
         telemetry.clearAll();
 
         MatchConfig.timestampTimer = new ElapsedTime();
@@ -257,8 +260,6 @@ public class AutoSelector extends LinearOpMode {
         // Update final autonomous data
 
         //TODO can we set a flag so we know that auto was run when we get to teleop and then we can handle things differently.
-        Robot.getInstance().getDriveSubsystem().updateInternalIMU();
-        MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
         MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;
         MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
     }

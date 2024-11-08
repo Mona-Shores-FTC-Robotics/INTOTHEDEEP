@@ -138,19 +138,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void CalculateYawOffset() {
-        // Calculate yaw offset based on alliance color
-        // This offset assumes robot forward direction faces away from driver
-        //      -For red start, the audience is on your left
-        //      -For blue start, the audience is on your right
-        //  See this: https://ftc-docs.firstinspires.org/en/latest/game_specific_resources/field_coordinate_system/field-coordinate-system.html
-        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
-            yawOffsetDegrees = 90;  // 90 degrees for blue side
-        } else {
-            yawOffsetDegrees = -90;  // -90 degrees for red side
-        }
-        //todo does this make sense? I think we can actually get rid of the hard coded offset above because this is being handled automatically by the line below (Makes sense to Brady and Landon)
+        // This is the offset to get to 0 degrees from the robot's current heading
         MatchConfig.offsetFromStartPoseDegrees = -1 * Math.toDegrees(getMecanumDrive().pose.heading.toDouble());
-
     }
 
     public MecanumDrive getMecanumDrive() {
