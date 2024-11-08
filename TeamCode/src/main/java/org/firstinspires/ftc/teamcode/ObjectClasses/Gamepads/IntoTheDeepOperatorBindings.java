@@ -67,6 +67,7 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // X BUTTON                                             //
         //////////////////////////////////////////////////////////
+        bindConstantVelocity(GamepadKeys.Button.X);
 
         //////////////////////////////////////////////////////////
         // RIGHT BUMPER                                         //
@@ -75,7 +76,7 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // DPAD-UP                                              //
         //////////////////////////////////////////////////////////
-
+        bindConstantPower(GamepadKeys.Button.DPAD_UP);
         //////////////////////////////////////////////////////////
         // DPAD-LEFT                                            //
         //////////////////////////////////////////////////////////
@@ -103,6 +104,43 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // LEFT TRIGGER                                         //
         //////////////////////////////////////////////////////////
+    }
+
+    private void bindConstantVelocity(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+            SpecimenHandlingStateMachine specimenHandlingStateMachine = robot.getSpecimenHandlingStateMachine();
+            Command specimenConstantVelocity = new InstantCommand(specimenHandlingStateMachine::onConstantVelocityButton);
+            Command turnOffConstantVelocity = new InstantCommand(specimenHandlingStateMachine::turnOffConstantVelocity);
+
+            operatorGamePad.getGamepadButton(button)
+                    .toggleWhenPressed(specimenConstantVelocity, turnOffConstantVelocity);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Toggle Constant Velocity"
+            ));
+        }
+    }
+
+    private void bindConstantPower(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+            SpecimenHandlingStateMachine specimenHandlingStateMachine = robot.getSpecimenHandlingStateMachine();
+            Robot.getInstance().getActiveOpMode().telemetry.addLine("hi im here");
+            Command specimenConstantPower = new InstantCommand(specimenHandlingStateMachine::onConstantPowerButton);
+            Command turnOffConstantPower = new InstantCommand(specimenHandlingStateMachine::turnOffConstantPower);
+
+            operatorGamePad.getGamepadButton(button)
+                    .toggleWhenPressed(specimenConstantPower, turnOffConstantPower);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Toggle Constant Power"
+            ));
+        }
     }
 
     private void cycleTelemetry(GamepadKeys.Button button) {
