@@ -43,13 +43,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         INTAKE_ON(INTAKE_PARAMS.INTAKE_ON_POWER),
         INTAKE_REVERSE(INTAKE_PARAMS.INTAKE_REVERSE_POWER),
         INTAKE_OFF(INTAKE_PARAMS.INTAKE_OFF_POWER);
-
         public double power;
-
         SampleIntakeStates(double power) {
             this.power = power;
         }
-
         // Dynamically update the intake power if parameters change
         public void updateIntakePower(double newPower) {
             this.power = newPower;
