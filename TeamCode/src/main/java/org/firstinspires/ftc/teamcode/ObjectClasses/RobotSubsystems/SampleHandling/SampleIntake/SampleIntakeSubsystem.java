@@ -21,6 +21,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 @Config
 public class SampleIntakeSubsystem extends SubsystemBase {
 
@@ -30,9 +33,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
         // Set a minimum proximity threshold to consider an object as "near"
-        public double PROXIMITY_THRESHOLD = 3.0;
-
-
+        public double PROXIMITY_THRESHOLD = .8;
+        public int COLOR_HISTORY_SIZE = 5;
     }
 
     public static IntakeParams INTAKE_PARAMS = new IntakeParams();
@@ -62,6 +64,12 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     private LightingSubsystem lightingSubsystem;
     private double currentPower;
     private double proximity;
+
+
+    private final Deque<SampleColor> colorHistory = new ArrayDeque<>(INTAKE_PARAMS.COLOR_HISTORY_SIZE);
+    // Variables to store the latest colors
+    private SampleColor lastRawColor = SampleColor.UNKNOWN;
+    private SampleColor lastFilteredColor = SampleColor.UNKNOWN;
 
     // Constructor with color sensor
     public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoL, final String intakeServoR, final String colorSensorName) {
@@ -94,8 +102,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public void periodic() {
         // Detect the color of the game piece in every loop
         if (colorSensor!=null) {
-            SampleColor detectedSampleColor = detectSampleColor();
-            handleSamplePickup(detectedSampleColor);
+            lastFilteredColor = detectSampleColor();
+            handleSamplePickup(lastFilteredColor);
         }
         updateParameters();
         updateDashboardTelemetry();
@@ -105,7 +113,6 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         currentState = state;
         setPower(state.power);
     }
-
     // Set servo power, ensuring it's within limits
     private void setPower(double power) {
         currentPower = Range.clip(power, -INTAKE_PARAMS.MAX_POWER, INTAKE_PARAMS.MAX_POWER);  // Clip power to safe range
@@ -113,59 +120,86 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         sampleIntakeRight.setPower(-currentPower);  // Apply the clipped power
     }
 
+
     // Integrated student sample data using chatGPT
     public SampleColor detectSampleColor() {
         // Use the global proximity variable and update telemetry
         proximity = colorSensor.getDistance(DistanceUnit.INCH);
 
-        // Distance check to ignore readings when nothing is nearby
-        double distanceThreshold = .8; // Adjust based on environment and testing
-
-        if (proximity < distanceThreshold) {  // Object detected within the range
-            // Get HSV values and raw RGB values
-            float[] hsvValues = new float[3];
-            Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues);
-
-            int hue = Math.round(hsvValues[0]);
-            float saturation = hsvValues[1];
-            float value = hsvValues[2];
-
-            int red = colorSensor.red();
-            int green = colorSensor.green();
-            int blue = colorSensor.blue();
-
-            // Update telemetry for debugging
-            MatchConfig.telemetryPacket.put("Sample Intake/HSV/Hue", hue);
-            MatchConfig.telemetryPacket.put("Sample Intake/HSV/Saturation", saturation);
-            MatchConfig.telemetryPacket.put("Sample Intake/HSV/Value", value);
-            MatchConfig.telemetryPacket.put("Sample Intake/color/Red", red);
-            MatchConfig.telemetryPacket.put("Sample Intake/color/Green", green);
-            MatchConfig.telemetryPacket.put("Sample Intake/color/Blue", blue);
-
-            //TODO detect same color five times in a row? Implement some sort of filtering/smoothing method
-
-            // Red detection (using updated sample data)
-            if (    (hue >= 10 && hue <= 35) ||
-                    (red > 500 && green < 700 && blue < 600)) {
-                return SampleColor.RED;
-            }
-            // Blue detection
-            else if (   (hue >= 190 && hue <= 250) ||
-                        (red < 400 && green > 580 && blue > 1200)) {
-                return SampleColor.BLUE;
-            }
-            // Yellow detection
-            else if (   (hue >= 70 && hue <= 120) ||
-                        (red > 1000 && green > 1600 && blue < 750)) {
-                return SampleColor.YELLOW;
-            }
-            // "Unknown" detection if no match
-            else {
-                return SampleColor.UNKNOWN;
-            }
+        if (proximity < INTAKE_PARAMS.PROXIMITY_THRESHOLD) {  // Object detected within the range
+            SampleColor rawColor = getRawDetectedColor();
+            lastRawColor = rawColor; // Store raw color
+            addColorToHistory(rawColor);
+            lastFilteredColor = getConsensusColor(); // Store filtered color
+            return lastFilteredColor;
         } else {
+            colorHistory.clear();
+            lastRawColor = SampleColor.NO_SAMPLE;
+            lastFilteredColor = SampleColor.NO_SAMPLE;
             return SampleColor.NO_SAMPLE;
         }
+    }
+
+    private SampleColor getRawDetectedColor() {
+        // Get HSV values and raw RGB values
+        float[] hsvValues = new float[3];
+        Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues);
+
+        int hue = Math.round(hsvValues[0]);
+        float saturation = hsvValues[1];
+        float value = hsvValues[2];
+
+        int red = colorSensor.red();
+        int green = colorSensor.green();
+        int blue = colorSensor.blue();
+
+        // Update telemetry for debugging
+        MatchConfig.telemetryPacket.put("Sample Intake/HSV/Hue", hue);
+        MatchConfig.telemetryPacket.put("Sample Intake/HSV/Saturation", saturation);
+        MatchConfig.telemetryPacket.put("Sample Intake/HSV/Value", value);
+        MatchConfig.telemetryPacket.put("Sample Intake/color/Red", red);
+        MatchConfig.telemetryPacket.put("Sample Intake/color/Green", green);
+        MatchConfig.telemetryPacket.put("Sample Intake/color/Blue", blue);
+
+        // Red detection (using updated sample data)
+        if (    (hue >= 10 && hue <= 35) ||
+                (red > 500 && green < 700 && blue < 600)) {
+            return SampleColor.RED;
+        }
+        // Blue detection
+        else if (   (hue >= 190 && hue <= 250) ||
+                (red < 400 && green > 580 && blue > 1200)) {
+            return SampleColor.BLUE;
+        }
+        // Yellow detection
+        else if (   (hue >= 70 && hue <= 120) ||
+                (red > 1000 && green > 1600 && blue < 750)) {
+            return SampleColor.YELLOW;
+        }
+        // "Unknown" detection if no match
+        else {
+            return SampleColor.UNKNOWN;
+        }
+    }
+
+    private void addColorToHistory(SampleColor color) {
+        if (colorHistory.size() == INTAKE_PARAMS.COLOR_HISTORY_SIZE) {
+            colorHistory.removeFirst();
+        }
+        colorHistory.addLast(color);
+    }
+
+    private SampleColor getConsensusColor() {
+        if (colorHistory.size() < INTAKE_PARAMS.COLOR_HISTORY_SIZE) {
+            return SampleColor.UNKNOWN;
+        }
+        SampleColor firstColor = colorHistory.peekFirst();
+        for (SampleColor color : colorHistory) {
+            if (color != firstColor) {
+                return SampleColor.UNKNOWN;
+            }
+        }
+        return firstColor;
     }
 
     // Update intake parameters dynamically (called in periodic)
@@ -182,10 +216,9 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         MatchConfig.telemetryPacket.put("Sample Intake/State", currentState.toString());
         MatchConfig.telemetryPacket.put("Sample Intake/Power", currentPower);
 
-        // Add color sensor reading to the telemetry, if sensor is present
         if (colorSensor != null) {
-            FieldConstants.SampleColor detectedColor = detectSampleColor();
-            MatchConfig.telemetryPacket.put("Sample Intake/Detected Color", detectedColor.toString());
+            MatchConfig.telemetryPacket.put("Sample Intake/Raw Color", lastRawColor.toString());
+            MatchConfig.telemetryPacket.put("Sample Intake/Filtered Color", lastFilteredColor.toString());
             MatchConfig.telemetryPacket.put("Sample Intake/Proximity", String.format("%.2f", proximity));
         } else {
             MatchConfig.telemetryPacket.put("Sample Intake/Detected Color", "No Sensor");
