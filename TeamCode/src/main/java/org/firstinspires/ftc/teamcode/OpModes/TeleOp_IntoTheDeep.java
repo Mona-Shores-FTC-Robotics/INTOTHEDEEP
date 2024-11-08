@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.ControlHubIdentifierUtil;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.IntoTheDeepDriverBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.IntoTheDeepOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
@@ -80,8 +81,9 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         }
 
         // Setup Button Bindings
-        new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad());
-        new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad());
+        // Example for avoiding duplicate bindings
+        new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad(), gamepadHandling.getBindingManager());
+        new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad(), gamepadHandling.getBindingManager());
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();

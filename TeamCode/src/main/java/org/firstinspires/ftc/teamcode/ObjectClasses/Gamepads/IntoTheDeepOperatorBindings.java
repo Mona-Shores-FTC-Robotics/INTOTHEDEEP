@@ -22,10 +22,10 @@ public class IntoTheDeepOperatorBindings {
     Robot robot;
     GamePadBindingManager bindingManager;
 
-    public IntoTheDeepOperatorBindings(GamepadEx gamepad) {
+    public IntoTheDeepOperatorBindings(GamepadEx gamepad, GamePadBindingManager gamePadBindingManager) {
         robot = Robot.getInstance();
         operatorGamePad = gamepad;
-        bindingManager = GamePadBindingManager.getInstance();
+        bindingManager = gamePadBindingManager;
 
         //////////////////////////////////////////////////////////
         // LEFT STICK - Y axis - Manually Move SpecimenArm      //

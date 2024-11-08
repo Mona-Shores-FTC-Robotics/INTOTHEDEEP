@@ -176,7 +176,6 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         SampleIntakeStates.INTAKE_OFF.updateIntakePower(INTAKE_PARAMS.INTAKE_OFF_POWER);
     }
 
-
     // Telemetry display for the dashboard
     @SuppressLint("DefaultLocale")
     public void updateDashboardTelemetry() {

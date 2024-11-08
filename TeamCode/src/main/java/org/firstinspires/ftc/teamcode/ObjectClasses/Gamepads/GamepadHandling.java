@@ -13,6 +13,8 @@ import static com.example.sharedconstants.FieldConstants.*;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.*;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.getNextRobotType;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.getPreviousRobotType;
+
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import com.example.sharedconstants.Routes.Routes;
@@ -24,10 +26,13 @@ import java.util.List;
 public class GamepadHandling {
     private final GamepadEx driverGamepad;
     private final GamepadEx operatorGamepad;
+    private final GamePadBindingManager bindingManager;
+
 
     public boolean LockedSettingsFlag = false;
 
     public GamepadHandling(LinearOpMode opMode) {
+        bindingManager = new GamePadBindingManager();
         driverGamepad = new GamepadEx(opMode.gamepad1);
         operatorGamepad = new GamepadEx(opMode.gamepad2);
 
@@ -41,9 +46,11 @@ public class GamepadHandling {
     public GamepadEx getDriverGamepad() {
         return driverGamepad;
     }
-
     public GamepadEx getOperatorGamepad() {
         return operatorGamepad;
+    }
+    public GamePadBindingManager getBindingManager() {
+        return bindingManager;
     }
 
     public void SelectAndLockColorAndSideAndRobotType(Telemetry telemetry) {

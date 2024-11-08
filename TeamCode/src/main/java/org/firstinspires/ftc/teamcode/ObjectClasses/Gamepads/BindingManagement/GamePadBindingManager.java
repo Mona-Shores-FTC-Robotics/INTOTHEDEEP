@@ -5,18 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class GamePadBindingManager {
-    private static GamePadBindingManager instance;
     private final List<GamePadBinding> bindings;
 
-    private GamePadBindingManager() {
+    public GamePadBindingManager() {
         bindings = new ArrayList<>();
-    }
-
-    public static GamePadBindingManager getInstance() {
-        if (instance == null) {
-            instance = new GamePadBindingManager();
-        }
-        return instance;
     }
 
     // Method to register button bindings
@@ -33,4 +25,13 @@ public class GamePadBindingManager {
         return Collections.unmodifiableList(bindings);
     }
 
+    // Method to clear bindings if needed
+    public void clearBindings() {
+        bindings.clear();
+    }
+
+    // Method to check if bindings exist
+    public boolean hasBindings() {
+        return !bindings.isEmpty();
+    }
 }

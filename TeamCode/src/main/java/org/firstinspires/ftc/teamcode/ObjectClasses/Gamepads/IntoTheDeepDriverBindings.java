@@ -27,10 +27,10 @@ public class IntoTheDeepDriverBindings {
     GamePadBindingManager bindingManager;
     DriveToObservationZone driveToObservationZoneAction;
 
-    public IntoTheDeepDriverBindings(GamepadEx gamePad) {
+    public IntoTheDeepDriverBindings(GamepadEx gamePad, GamePadBindingManager gamePadBindingManager) {
         robot = Robot.getInstance();
-        bindingManager = GamePadBindingManager.getInstance();
         driverGamePad = gamePad;
+        bindingManager = gamePadBindingManager;
 
         //////////////////////////////////////////////////////////
         // LEFT STICK / RIGHT STICK - Default Driving           //
