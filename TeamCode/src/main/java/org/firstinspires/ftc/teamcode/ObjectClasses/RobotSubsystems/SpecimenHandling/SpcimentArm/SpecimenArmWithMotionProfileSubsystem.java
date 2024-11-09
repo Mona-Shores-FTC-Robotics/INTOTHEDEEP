@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -37,8 +36,6 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         //Arm Feedforward parameters
         public double kS = 0.075, kCos = 0.222, kV = .08, kA = .05; // Feedforward coefficients
 
-        public double INTERNAL_P;
-        public double INTERNAL_F;
         //Maximum Power for clipping motor output
         public double MAX_POWER = 0.7;
 
@@ -49,7 +46,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
 
         //Preset Angles
         public double CCW_HOME = 244.0;
-        public double SPECIMEN_PICKUP_ANGLE = 190.0;
+        public double SPECIMEN_PICKUP_ANGLE = 210.0;
         public double SPECIMEN_DELIVERY_ANGLE = 105;
         public double SLOP_SWITCH_ANGLE = 110.0;
         public double CW_HOME = 35.23;
@@ -63,7 +60,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         public double TIMEOUT_TIME_SECONDS = 5;
 
         public double CONSTANT_VELOCITY=0;
-        public double CONSTANT_POWER=0;
+        public double CONSTANT_POWER=0.9;
     }
     public enum SpecimenArmStates {
         CCW_ARM_HOME, CW_ARM_HOME, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, ARM_MANUAL, CONSTANT_VELOCITY, CONSTANT_POWER, OFF;
@@ -110,7 +107,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
     VoltageSensor voltageSensor;
 
     // PID Controller
-    private PIDController pidController;
+    public PIDController pidController;
     private double pidPower;
     private double totalPower;
 
@@ -142,8 +139,6 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
     }
 
     public void init() {
-        arm.setVelocityPIDFCoefficients(SPECIMEN_ARM_PARAMS.INTERNAL_P,0,0,SPECIMEN_ARM_PARAMS.INTERNAL_F);
-
         voltageSensor = Robot.getInstance().getActiveOpMode().hardwareMap.voltageSensor.iterator().next();
         double batteryVoltage = voltageSensor.getVoltage();
         double voltageScale = NOMINAL_VOLTAGE / batteryVoltage;
@@ -175,17 +170,18 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
 
          if (currentState==SpecimenArmStates.ARM_MANUAL) {
              handleManualControl();
-         } else if (currentState==SpecimenArmStates.CONSTANT_POWER || currentState==SpecimenArmStates.CONSTANT_VELOCITY ||
-                currentState==SpecimenArmStates.OFF)
+         } else if (currentState==SpecimenArmStates.CONSTANT_POWER ||
+                    currentState==SpecimenArmStates.CONSTANT_VELOCITY ||
+                    currentState==SpecimenArmStates.OFF)
          {
-             //DO NOTHING
+             //do nothing?
          } else if (motionProfile != null) {
              handleMotionProfile();
         } else {
             maintainPosition();
         }
-        updateParameters();
-        updateDashboardTelemetry();
+         updateParameters();
+         updateDashboardTelemetry();
     }
 
     public void setManualTargetState(double armInput) {
@@ -233,6 +229,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         // Set the motor power to move the arm
         arm.setPower(clippedPower);
     }
+
     public void setTargetStateWithMotionProfile(SpecimenArmStates state) {
         targetState = state;
         profileStartPosition=currentAngleDegrees;
@@ -367,9 +364,6 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         double i = SPECIMEN_ARM_PARAMS.I;
         double d = SPECIMEN_ARM_PARAMS.D;
 
-        double internalP = SPECIMEN_ARM_PARAMS.INTERNAL_P;
-        double internalF = SPECIMEN_ARM_PARAMS.INTERNAL_F;
-
         // Only update the PID controller if there's a change
         if (pidController.getP() != p || pidController.getI() != i || pidController.getD() != d) {
             pidController.setP(p);
@@ -377,10 +371,6 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
             pidController.setD(d);
         }
 
-        if (arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p != internalP
-                || arm.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).p != internalF)  {
-            arm.setVelocityPIDFCoefficients(internalP, 0,0, internalF);
-        }
     }
     public void displayBasicTelemetry(Telemetry telemetry) {
         @SuppressLint("DefaultLocale")
@@ -404,6 +394,10 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         String stateOverview = String.format("State: %s | Target State: %s", currentState, targetState);
         MatchConfig.telemetryPacket.addLine(stateOverview);
 
+        MatchConfig.telemetryPacket.put("specimenArm/state/current", String.format("%s", currentState));
+        MatchConfig.telemetryPacket.put("specimenArm/state/target", String.format("%s", targetState));
+
+
         // Display current and target positions on a separate line
         String positionOverview;
         if (Double.isNaN(fudgedCurrentAngleDegrees)){
@@ -417,6 +411,11 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         // Add power overview on its own line
         String powerSummary = String.format("PID: %.2f | FF: %.2f | Clipped: %.2f", pidPower, feedforwardPower, clippedPower);
         MatchConfig.telemetryPacket.addLine(powerSummary);
+        MatchConfig.telemetryPacket.put("specimenArm/power/PID Power", String.format("%.2f", pidPower));
+        MatchConfig.telemetryPacket.put("specimenArm/power/FF Power", String.format("%.2f", feedforwardPower));
+        MatchConfig.telemetryPacket.put("specimenArm/power/Clipped Power", String.format("%.2f", clippedPower));
+
+
 
         MatchConfig.telemetryPacket.put("specimenArm/constant/Power", String.format("%.2f", arm.getPower()));
         MatchConfig.telemetryPacket.put("specimenArm/constant/Velocity", String.format("%.2f", arm.getVelocity(AngleUnit.DEGREES)));

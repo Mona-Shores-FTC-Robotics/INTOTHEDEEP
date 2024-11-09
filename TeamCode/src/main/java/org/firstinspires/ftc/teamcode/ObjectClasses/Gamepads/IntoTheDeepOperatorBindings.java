@@ -128,7 +128,7 @@ public class IntoTheDeepOperatorBindings {
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
             SpecimenHandlingStateMachine specimenHandlingStateMachine = robot.getSpecimenHandlingStateMachine();
             Robot.getInstance().getActiveOpMode().telemetry.addLine("hi im here");
-            Command specimenConstantPower = new InstantCommand(specimenHandlingStateMachine::onConstantPowerButton);
+            Command specimenConstantPower = new InstantCommand(specimenHandlingStateMachine::onConstantPowerButtonCommand);
             Command turnOffConstantPower = new InstantCommand(specimenHandlingStateMachine::turnOffConstantPower);
 
             operatorGamePad.getGamepadButton(button)

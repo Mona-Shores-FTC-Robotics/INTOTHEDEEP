@@ -48,7 +48,8 @@ public class DriverStationTelemetryManager {
         // Always display the current telemetry mode at the top
         telemetry.addLine("Current Telemetry Mode: " + currentMode);
 
-        if (Robot.getInstance().opModeType == Robot.OpModeType.TELEOP) {
+        if (Robot.getInstance().opModeType == Robot.OpModeType.TELEOP ||
+                Robot.getInstance().opModeType == Robot.OpModeType.AUTO ) {
             switch (currentMode) {
                 case BASIC:
                     displayBasicTelemetry();
@@ -210,9 +211,12 @@ public class DriverStationTelemetryManager {
     @SuppressLint("DefaultLocale")
     private void displayBaseTelemetry(Telemetry telemetry) {
         telemetry.addLine()
-                .addData("Loop Time (ms)", String.format("%.0f", MatchConfig.getAverageLoopTime()))
-                .addData("Teleop Time (s)", String.format("%d", MatchConfig.teleOpTimer.time(TimeUnit.SECONDS)));
+                .addData("Loop Time (ms)", String.format("%.0f", MatchConfig.getAverageLoopTime()));
 
+        if (Robot.getInstance().getOpModeType()== Robot.OpModeType.TELEOP) {
+            telemetry.addLine()
+                    .addData("Teleop Time (s)", String.format("%d", MatchConfig.teleOpTimer.time(TimeUnit.SECONDS)));
+        }
         telemetry.addLine()
                 .addData("Alliance Color", MatchConfig.finalAllianceColor)
                 .addData("Side of Field", MatchConfig.finalSideOfField);

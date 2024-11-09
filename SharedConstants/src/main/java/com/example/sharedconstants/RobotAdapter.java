@@ -33,7 +33,7 @@ public interface RobotAdapter {
 
         LEVEL_1_ASCENT,
         LEVEL_2_ASCENT,
-        LEVEL_3_ASCENT
+        MOVE_PRELOAD_SPECIMEN_TO_CW_HOME, PICKUP_SPECIMEN_OFF_WALL_SENSOR, SPECIMEN_INTAKE_FROM_WALL, LEVEL_3_ASCENT
     }
 
     // Generalized method to get an Action based on a provided action type

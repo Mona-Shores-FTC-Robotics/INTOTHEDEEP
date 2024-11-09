@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.MoveLinearActuatorAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArmWithMotionProfileAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArm;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmWithMotionProfileSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
@@ -118,14 +119,14 @@ public class RealRobotAdapter implements RobotAdapter {
                         );
                     } else return problem();
 
-                case PICKUP_SPECIMEN_OFF_WALL:
+                case PICKUP_SPECIMEN_OFF_WALL_SENSOR:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
 
                         Supplier<Boolean> specimenDetected = () -> Robot.getInstance().getSpecimenIntakeSubsystem().goodSpecimenDetected();
                         // Define the action if the specimen is detected
                         Action stopSpecimenIntakeAndStageSpecimen = new SequentialAction(
                                 new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF),
-                                new MoveSpecimenArmWithMotionProfileAction(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME)
+                                new MoveSpecimenArm(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME)
                         );
 
                         // Define the action if the specimen is NOT detected (keep intaking for 200 milliseconds)
@@ -137,12 +138,37 @@ public class RealRobotAdapter implements RobotAdapter {
                         // Create the ConditionalAction
                         return new ConditionalAction(stopSpecimenIntakeAndStageSpecimen, continueSpecimenIntakeAction, specimenDetected);
                     } else return problem();
+                case PICKUP_SPECIMEN_OFF_WALL:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+
+                        Supplier<Boolean> specimenDetected = () -> Robot.getInstance().getSpecimenIntakeSubsystem().goodSpecimenDetected();
+                        // Define the action if the specimen is detected
+                        return new SequentialAction(
+                                new SleepAction(.5),
+                                new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF),
+                                new MoveSpecimenArm(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME)
+                        );
+                    } else return problem();
+
+                case SPECIMEN_INTAKE_FROM_WALL:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+
+                        return new SequentialAction(
+                                new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON),
+                                new MoveSpecimenArm(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_PICKUP)
+                        );
+                    } else return problem();
+
+                case MOVE_PRELOAD_SPECIMEN_TO_CW_HOME:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+                        return robot.getSpecimenHandlingStateMachine().flipCWFastAction();
+                    } else return problem();
 
                     //should there be a difference between these?
                 case SPECIMEN_ARM_TO_HIGH_CHAMBER:
                 case HANG_SPECIMEN_ON_HIGH_CHAMBER:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
-                        return new MoveSpecimenArmWithMotionProfileAction(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
+                        return robot.getSpecimenHandlingStateMachine().flipCCWFastAction();
                     } else return problem();
 
                 case DEPOSIT_SAMPLE:
