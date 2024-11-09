@@ -40,6 +40,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setTangent(ANGLE_TOWARD_RED)
                 .splineToLinearHeading(OBS_ZONE_PICKUP_FACE_TOWARD_BLUE,ANGLE_TOWARD_RED)
+                .waitSeconds(.1)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.PICKUP_SPECIMEN_OFF_WALL))
                 .splineToLinearHeading(CHAMBER_SLOT_FOUR,ANGLE_TOWARD_BLUE)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER));

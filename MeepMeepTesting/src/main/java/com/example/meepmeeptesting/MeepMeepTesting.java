@@ -46,18 +46,18 @@ import javax.imageio.ImageIO;
 public class MeepMeepTesting {
 
     //If you make the routes null, then it will let you select with numbers
-//    private static final RoutesToRun redObservationRoute = null;
-//    private static final RoutesToRun blueObservationRoute = null;
-//    private static final RoutesToRun redNetRoute = null;
-//    private static final RoutesToRun blueNetRoute = null;
+    private static final RoutesToRun redObservationRoute = null;
+    private static final RoutesToRun blueObservationRoute = null;
+    private static final RoutesToRun redNetRoute = null;
+    private static final RoutesToRun blueNetRoute = null;
 
     // OBS bot pushes 2 samples and focuses on scoring 4 specimens (Total Auto: 83 - over time)
     // NET bot focuses on scoring 5 samples (only has to grab one from observation since it has a preload)
     // Uncomment the following lines to test this configuration
-    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
-    private static final RoutesToRun blueObservationRoute = redObservationRoute;
-    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_1_PRELOAD;
-    private static final RoutesToRun blueNetRoute = redNetRoute;
+//    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
+//    private static final RoutesToRun blueObservationRoute = redObservationRoute;
+//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_1_PRELOAD;
+//    private static final RoutesToRun blueNetRoute = redNetRoute;
 
     // OBS bot pushes spike samples in one path
     // NET bot does its thing and tacks on two samples from human player at end (Total Auto: 90 - close)

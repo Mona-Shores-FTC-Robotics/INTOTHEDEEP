@@ -13,6 +13,7 @@ import static com.example.sharedconstants.FieldConstants.OBS_INTAKE_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_INTAKE_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_THREE;
+import static com.example.sharedconstants.FieldConstants.OBS_ZONE_BEFORE_PICKUP;
 import static com.example.sharedconstants.FieldConstants.OBS_ZONE_DUMP;
 import static com.example.sharedconstants.FieldConstants.OBS_ZONE_PICKUP;
 import static com.example.sharedconstants.FieldConstants.OBS_ZONE_PICKUP_FACE_TOWARD_BLUE;
@@ -50,7 +51,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike ex
     public void pickupSpecimenFromWallAndScore(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.SPECIMEN_INTAKE_FROM_WALL))
+                .splineToLinearHeading(OBS_ZONE_BEFORE_PICKUP,ANGLE_TOWARD_RED)
                 .splineToLinearHeading(OBS_ZONE_PICKUP_FACE_TOWARD_BLUE,ANGLE_TOWARD_RED)
                 .waitSeconds(.2)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.PICKUP_SPECIMEN_OFF_WALL))
