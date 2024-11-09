@@ -196,16 +196,16 @@ public class MeepMeepTesting {
                 return new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter);
             case NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT:
                 return new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter);
-            case OBS_PUSH_2_SCORE_3_PRELOAD_AND_1_PREMADE_AND_1_SPIKE_SPECIMENS:
-                return new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(adapter);
-            case OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS:
-                return new OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
-            case OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS:
-                return new OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
-            case OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS:
-                return new OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
-            case OBS_SCORE_1_SAMPLE_PRELOAD_PUSH_1_SPIKE_SCORE_1_PREMADE:
-                return new OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade(adapter);
+//            case OBS_PUSH_2_SCORE_3_PRELOAD_AND_1_PREMADE_AND_1_SPIKE_SPECIMENS:
+//                return new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(adapter);
+//            case OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS:
+//                return new OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
+//            case OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS:
+//                return new OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
+//            case OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS:
+//                return new OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
+//            case OBS_SCORE_1_SAMPLE_PRELOAD_PUSH_1_SPIKE_SCORE_1_PREMADE:
+//                return new OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade(adapter);
             case NET_SCORE_1_PRELOAD:
                 return new NET_Score_1_Specimen_Preload(adapter);
             case OBS_SCORE_1_PRELOAD:
@@ -214,10 +214,10 @@ public class MeepMeepTesting {
                 return new OBS_Score_4_SampleFirst_Push_2_Spike_Samples(adapter);
             case OBS_SCORE_4_SAMPLEFIRST_PUSH_3_SPIKE_SAMPLES:
                 return new OBS_Score_5_SampleFirst_Push_3_Spike_Samples(adapter);
-            case OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH:
-                return new OBS_Push3SpikeSampleInOnePath(adapter);
-            case OBS_PUSH_2_SPIKE_SAMPLES_IN_ONE_PATH:
-                return new OBS_Push2SpikeSamplesInOnePath(adapter);
+//            case OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH:
+//                return new OBS_Push3SpikeSampleInOnePath(adapter);
+//            case OBS_PUSH_2_SPIKE_SAMPLES_IN_ONE_PATH:
+//                return new OBS_Push2SpikeSamplesInOnePath(adapter);
             case NET_SCORE_5_SAMPLE_PRELOAD:
                 return new NET_Score5_SamplePreload(adapter);
             case MOVE_ONLY:
