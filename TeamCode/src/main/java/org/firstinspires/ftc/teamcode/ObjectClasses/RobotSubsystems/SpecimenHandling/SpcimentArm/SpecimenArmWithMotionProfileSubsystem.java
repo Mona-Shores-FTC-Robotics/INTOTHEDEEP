@@ -135,7 +135,6 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         armEncoder = new OverflowEncoder(new RawEncoder(arm));
         armEncoder.setDirection(DcMotorEx.Direction.FORWARD);
         timer = new ElapsedTime();
-
     }
 
     public void init() {

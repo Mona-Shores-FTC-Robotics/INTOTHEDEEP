@@ -44,13 +44,8 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike ex
         pickupSpecimenFromWallAndScore(CHAMBER_SLOT_FOUR);
         pickupSpecimenFromWallAndScore(CHAMBER_SLOT_THREE);
         pickupSpecimenFromWallAndScore(CHAMBER_SLOT_TWO);
-//        intakeThirdTeamSpecimen();
-//        pickupSpecimenFromWall();
-//        scoreOnHighChamber(CHAMBER_SLOT_FOUR);
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
-
-
 
     public void pickupSpecimenFromWallAndScore(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
@@ -71,11 +66,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike ex
                 .setReversed(true)
                 .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
                 .waitSeconds(1);
-
-//                .splineToSplineHeading(OBS_BEHIND_SPIKE_THREE, ANGLE_TOWARD_OBSERVATION)
-//                .splineToConstantHeading(PoseToVector(OBS_SPIKE_ONE), ANGLE_TOWARD_RED)
-//                .splineToConstantHeading(PoseToVector(OBS_INTAKE_SPIKE_ONE), ANGLE_TOWARD_BLUE);
-    }
+   }
 
     public void intakeSecondTeamSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
@@ -84,21 +75,11 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike ex
                 .setReversed(true)
                 .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
                 .waitSeconds(1);
-//                .splineToSplineHeading(OBS_BEHIND_SPIKE_THREE, ANGLE_TOWARD_OBSERVATION)
-//                .splineToConstantHeading(PoseToVector(OBS_SPIKE_THREE), ANGLE_TOWARD_RED)
-//                .splineToConstantHeading(PoseToVector(OBS_INTAKE_SPIKE_THREE), ANGLE_TOWARD_RED);
     }
-
 
     public void intakeThirdTeamSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_3, ANGLE_TOWARD_OBSERVATION)
                 .waitSeconds(1);
-//                .splineToSplineHeading(OBS_BEHIND_SPIKE_THREE, ANGLE_TOWARD_OBSERVATION)
-//                .splineToConstantHeading(PoseToVector(OBS_SPIKE_THREE), ANGLE_TOWARD_RED)
-//                .splineToConstantHeading(PoseToVector(OBS_INTAKE_SPIKE_THREE), ANGLE_TOWARD_RED);
     }
 }
-
-
-

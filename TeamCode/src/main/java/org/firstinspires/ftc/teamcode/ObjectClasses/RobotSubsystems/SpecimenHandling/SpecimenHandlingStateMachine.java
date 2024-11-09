@@ -31,7 +31,6 @@ public class SpecimenHandlingStateMachine {
     // This button should let us control the pickup and delivery process
     public void onSpecimenHandleButtonPress() {
         switch (armSubsystem.getCurrentState()) {
-
                 //If the arm is in pickup position and operator pushes button, it should move to staging and turn off the intake
             case SPECIMEN_PICKUP:
                 setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME);

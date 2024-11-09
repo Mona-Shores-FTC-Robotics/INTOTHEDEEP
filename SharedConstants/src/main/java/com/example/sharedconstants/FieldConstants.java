@@ -67,7 +67,7 @@ public class FieldConstants {
     public static double ANGLE_340_DEGREES = Math.toRadians(340);
 
     //Chamber Slot Poses
-    public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH+3, ANGLE_TOWARD_BLUE);
+    public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH+1, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,TILE/6), 0));
     public static Pose2d CHAMBER_SLOT_THREE = CHAMBER_SLOT_TWO.plus(new Twist2d(new Vector2d(0, TILE/6), 0));
     public static Pose2d CHAMBER_SLOT_FOUR = CHAMBER_SLOT_THREE.plus(new Twist2d(new Vector2d(0, TILE/6), 0));
