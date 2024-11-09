@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
 
     public static class SpecimenArmParams {
+        public long DELAY_UNTIL_POWER_ZERO_MILLISECONDS = 400;
         //Gamepad parameters
         public double GAMEPAD_STICK_SCALE_FACTOR = 1.0;
         public double DEAD_ZONE = 0.05;
@@ -44,7 +46,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
 
         //Preset Angles
         public double CCW_HOME = 244.0;
-        public double SPECIMEN_PICKUP_ANGLE = 190.0;
+        public double SPECIMEN_PICKUP_ANGLE = 210.0;
         public double SPECIMEN_DELIVERY_ANGLE = 105;
         public double SLOP_SWITCH_ANGLE = 110.0;
         public double CW_HOME = 35.23;
@@ -56,9 +58,12 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         public double MAX_PROFILE_ACCELERATION = 135; // degrees per second² (Adjust as needed)
         public double MAX_PROFILE_VELOCITY = 90;     // degrees per second (Adjust as needed)
         public double TIMEOUT_TIME_SECONDS = 5;
+
+        public double CONSTANT_VELOCITY=0;
+        public double CONSTANT_POWER=0.9;
     }
     public enum SpecimenArmStates {
-        CCW_ARM_HOME, CW_ARM_HOME, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, ARM_MANUAL;
+        CCW_ARM_HOME, CW_ARM_HOME, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, ARM_MANUAL, CONSTANT_VELOCITY, CONSTANT_POWER, OFF;
         private double angle;
 
         static {
@@ -102,7 +107,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
     VoltageSensor voltageSensor;
 
     // PID Controller
-    private PIDController pidController;
+    public PIDController pidController;
     private double pidPower;
     private double totalPower;
 
@@ -130,6 +135,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         armEncoder = new OverflowEncoder(new RawEncoder(arm));
         armEncoder.setDirection(DcMotorEx.Direction.FORWARD);
         timer = new ElapsedTime();
+
     }
 
     public void init() {
@@ -164,15 +170,20 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
 
          if (currentState==SpecimenArmStates.ARM_MANUAL) {
              handleManualControl();
+         } else if (currentState==SpecimenArmStates.CONSTANT_POWER ||
+                    currentState==SpecimenArmStates.CONSTANT_VELOCITY ||
+                    currentState==SpecimenArmStates.OFF)
+         {
+             //do nothing?
          } else if (motionProfile != null) {
              handleMotionProfile();
         } else {
             maintainPosition();
         }
-
-        updateParameters();
-        updateDashboardTelemetry();
+         updateParameters();
+         updateDashboardTelemetry();
     }
+
     public void setManualTargetState(double armInput) {
         targetState = SpecimenArmStates.ARM_MANUAL;
         currentState = SpecimenArmStates.ARM_MANUAL;
@@ -218,6 +229,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         // Set the motor power to move the arm
         arm.setPower(clippedPower);
     }
+
     public void setTargetStateWithMotionProfile(SpecimenArmStates state) {
         targetState = state;
         profileStartPosition=currentAngleDegrees;
@@ -358,6 +370,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
             pidController.setI(i);
             pidController.setD(d);
         }
+
     }
     public void displayBasicTelemetry(Telemetry telemetry) {
         @SuppressLint("DefaultLocale")
@@ -373,12 +386,17 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         telemetry.addData("specimenArm/Current State", currentState);
         telemetry.addData("specimenArm/Target State", targetState);
         telemetry.addData("specimenArm/Motor Power", arm.getPower());
+        telemetry.addData("specimenArm/Motor Velocity", arm.getVelocity());
     }
     @SuppressLint("DefaultLocale")
     public void updateDashboardTelemetry() {
         // Display state and target state information on one line
         String stateOverview = String.format("State: %s | Target State: %s", currentState, targetState);
         MatchConfig.telemetryPacket.addLine(stateOverview);
+
+        MatchConfig.telemetryPacket.put("specimenArm/state/current", String.format("%s", currentState));
+        MatchConfig.telemetryPacket.put("specimenArm/state/target", String.format("%s", targetState));
+
 
         // Display current and target positions on a separate line
         String positionOverview;
@@ -393,6 +411,14 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         // Add power overview on its own line
         String powerSummary = String.format("PID: %.2f | FF: %.2f | Clipped: %.2f", pidPower, feedforwardPower, clippedPower);
         MatchConfig.telemetryPacket.addLine(powerSummary);
+        MatchConfig.telemetryPacket.put("specimenArm/power/PID Power", String.format("%.2f", pidPower));
+        MatchConfig.telemetryPacket.put("specimenArm/power/FF Power", String.format("%.2f", feedforwardPower));
+        MatchConfig.telemetryPacket.put("specimenArm/power/Clipped Power", String.format("%.2f", clippedPower));
+
+
+
+        MatchConfig.telemetryPacket.put("specimenArm/constant/Power", String.format("%.2f", arm.getPower()));
+        MatchConfig.telemetryPacket.put("specimenArm/constant/Velocity", String.format("%.2f", arm.getVelocity(AngleUnit.DEGREES)));
 
         // Detailed telemetry for real-time analysis
         MatchConfig.telemetryPacket.put("specimenArm/velocity/Target Arm Velocity", String.format("%.2f", targetVelocity));

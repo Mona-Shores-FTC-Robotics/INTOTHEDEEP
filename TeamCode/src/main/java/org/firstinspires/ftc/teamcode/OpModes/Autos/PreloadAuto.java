@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
+import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -15,6 +19,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.UpdateArmPeriodicAction;
 
 @Autonomous(name = "Preload Specimen")
 public class PreloadAuto extends LinearOpMode {
@@ -40,9 +45,9 @@ public class PreloadAuto extends LinearOpMode {
 
         //Make the blue routes
         robotAdapter.setAllianceColor(FieldConstants.AllianceColor.BLUE);
-        blueObsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
+        blueObsRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike(robotAdapter);
         blueObsRoute.buildRoute();
-        blueNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
+        blueNetRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike(robotAdapter);
         blueNetRoute.buildRoute();
 
         //Make the red routes
@@ -75,11 +80,19 @@ public class PreloadAuto extends LinearOpMode {
         Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
 
         telemetry.clearAll();
-
+        telemetry.addLine("howdy");
         MatchConfig.timestampTimer = new ElapsedTime();
         MatchConfig.timestampTimer.reset();
 
-        Actions.runBlocking(selectedRoute);
+        UpdateArmPeriodicAction updateArmPeriodicAction = new UpdateArmPeriodicAction(Robot.getInstance().getSpecimenArmSubsystem());
+        MatchConfig.telemetryPacket = new TelemetryPacket();
+        ParallelAction parallelAction = new ParallelAction(
+                selectedRoute,
+                updateArmPeriodicAction
+        );
+        MatchConfig.loopTimer = new ElapsedTime();
+        MatchConfig.loopTimer.reset();
+        Actions.runBlocking(parallelAction);
 
         Robot.getInstance().getDriveSubsystem().updateInternalIMU();
         MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();

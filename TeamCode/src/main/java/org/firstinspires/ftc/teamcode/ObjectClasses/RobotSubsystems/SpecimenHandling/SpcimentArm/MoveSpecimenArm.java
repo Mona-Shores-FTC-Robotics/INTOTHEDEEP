@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-public class MoveSpecimenArmWithMotionProfileAction implements Action {
+public class MoveSpecimenArm implements Action {
     // State tracking variables
     private boolean hasNotInit = true;
 
@@ -23,12 +23,12 @@ public class MoveSpecimenArmWithMotionProfileAction implements Action {
     private final double timeoutTimeSeconds;
 
     // Constructor with default timeout
-    public MoveSpecimenArmWithMotionProfileAction(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates inputState) {
+    public MoveSpecimenArm(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates inputState) {
         this(inputState, SpecimenArmWithMotionProfileSubsystem.SPECIMEN_ARM_PARAMS.TIMEOUT_TIME_SECONDS);
     }
 
     // Constructor with custom timeout
-    public MoveSpecimenArmWithMotionProfileAction(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates inputState, double timeoutTimeSeconds) {
+    public MoveSpecimenArm(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates inputState, double timeoutTimeSeconds) {
         targetState = inputState;
         this.timeoutTimeSeconds = timeoutTimeSeconds;  // Use provided timeout
     }

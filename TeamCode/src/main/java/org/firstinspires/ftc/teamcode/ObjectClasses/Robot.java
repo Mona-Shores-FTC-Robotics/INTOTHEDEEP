@@ -78,8 +78,8 @@ public class Robot {
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
 
-                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
-                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
+//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
+//                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
 //                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
 //                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
@@ -88,8 +88,8 @@ public class Robot {
 //                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
 //                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER, sampleLinearActuatorSubsystem);
 
-                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
-                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER, sampleLinearActuatorSubsystem);
+//                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
+//                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER, sampleLinearActuatorSubsystem);
 
                 specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
                 registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
@@ -174,13 +174,13 @@ public class Robot {
 
         initRegisteredSubsystems();
 
-        if (opModeType == OpModeType.TELEOP &&
+        if (
                  hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
                  hasSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) || hasSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)) {
             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem);
         }
 
-        if (    opModeType == OpModeType.TELEOP &&
+        if (
                 hasSubsystem(SubsystemType.SPECIMEN_ARM) &&
                 hasSubsystem(SubsystemType.SPECIMEN_INTAKE)) {
             specimenHandlingStateMachine = new SpecimenHandlingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
