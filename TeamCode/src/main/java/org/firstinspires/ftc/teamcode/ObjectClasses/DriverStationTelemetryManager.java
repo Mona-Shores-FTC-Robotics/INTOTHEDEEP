@@ -43,8 +43,11 @@ public class DriverStationTelemetryManager {
         currentMode = modes[(currentMode.ordinal() + 1) % modes.length];
     }
 
+    public void displayTelemetry(){
+        displayTelemetry(null);
+    }
     // Method to display telemetry based on the current mode
-    public void displayTelemetry() {
+    public void displayTelemetry(GamePadBindingManager bindingManager) {
         // Always display the current telemetry mode at the top
         telemetry.addLine("Current Telemetry Mode: " + currentMode);
 
@@ -55,7 +58,9 @@ public class DriverStationTelemetryManager {
                     displayBasicTelemetry();
                     break;
                 case BUTTON_BINDINGS:
-                    displayButtonBindings(); // Call the button bindings display
+                    if (bindingManager!=null) {
+                        displayButtonBindings(bindingManager); // Call the button bindings display
+                    }
                     break;
                 case VERBOSE_DRIVE:
                     displayVerboseDriveTelemetry();
@@ -80,7 +85,7 @@ public class DriverStationTelemetryManager {
                     displayPitModeTelemetry();
                     break;
                 case BUTTON_BINDINGS:
-                    displayButtonBindings(); // Call the button bindings display
+                    displayButtonBindings(bindingManager); // Call the button bindings display
                     break;
                 case BASIC:
                     displayBasicTelemetry();
@@ -226,8 +231,7 @@ public class DriverStationTelemetryManager {
         currentMode = TelemetryMode.PIT_MODE;
     }
 
-    public void displayButtonBindings() {
-        GamePadBindingManager bindingManager = GamePadBindingManager.getInstance();
+    public void displayButtonBindings(GamePadBindingManager gamePadBindingManager) {
 
         // Determine the active OpMode type
         Robot.OpModeType currentOpMode = Robot.getInstance().getOpModeType();
@@ -250,7 +254,7 @@ public class DriverStationTelemetryManager {
         for (GamepadType gamepadType : relevantGamepadTypes) {
             telemetry.addLine(String.format("<b>%s Gamepad</b>", gamepadType));
 
-            for (GamePadBinding binding : bindingManager.getBindings()) {
+            for (GamePadBinding binding : gamePadBindingManager.getBindings()) {
                 if (binding instanceof ButtonBinding && ((ButtonBinding) binding).getGamepadType() == gamepadType) {
                     ButtonBinding buttonBinding = (ButtonBinding) binding;
                     String buttonName = buttonBinding.getButtonName();

@@ -23,10 +23,10 @@ public class PitModeDriverBindings {
     GamePadBindingManager bindingManager;
     GamepadEx driverGamePad;
 
-    public PitModeDriverBindings(GamepadEx gamepad) {
+    public PitModeDriverBindings(GamepadEx gamepad, GamePadBindingManager gamePadBindingManager) {
         // Reference to the robot's drive subsystem
         robot = Robot.getInstance();
-        bindingManager = GamePadBindingManager.getInstance();
+        bindingManager = gamePadBindingManager;
         driverGamePad = gamepad;
 
         DcMotorEx leftFront = robot.getDriveSubsystem().getMecanumDrive().leftFront;

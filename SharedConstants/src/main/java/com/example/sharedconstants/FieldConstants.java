@@ -44,7 +44,7 @@ public class FieldConstants {
     public static double ROBOT_LENGTH = 16.5;
     public static double HALF_ROBOT_LENGTH = ROBOT_LENGTH/2.0;
     public static double ROBOT_WIDTH = 13.5;
-    public static double HALF_ROBOT_WIDTH = ROBOT_LENGTH/2.0;
+    public static double HALF_ROBOT_WIDTH = ROBOT_WIDTH/2.0;
 
     public static double SAMPLE_WIDTH = 2.25;
     public static double HALF_SAMPLE_WIDTH= SAMPLE_WIDTH/2.0;
@@ -83,7 +83,7 @@ public class FieldConstants {
     public static Pose2d NET_START_POSE = new Pose2d(-HALF_ROBOT_WIDTH,  -HALF_FIELD + HALF_ROBOT_LENGTH, ANGLE_TOWARD_BLUE);
     public static Pose2d NET_START_POSE_WITH_SAMPLE_PRELOAD = new Pose2d(-HALF_ROBOT_LENGTH,-HALF_FIELD + HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
 
-    public static Pose2d OBS_START_POSE = new Pose2d(HALF_ROBOT_WIDTH,-HALF_FIELD + HALF_ROBOT_LENGTH, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_START_POSE = new Pose2d(HALF_ROBOT_LENGTH,-HALF_FIELD + HALF_ROBOT_WIDTH, ANGLE_TOWARD_NET);
     public static Pose2d OBS_START_POSE_WITH_SAMPLE_PRELOAD = new Pose2d(HALF_ROBOT_LENGTH,-HALF_FIELD + HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
 
     public static Pose2d NET_DO_NOTHING = new Pose2d(-HALF_ROBOT_WIDTH,  -HALF_FIELD + HALF_ROBOT_LENGTH+.01, ANGLE_TOWARD_BLUE);

@@ -23,12 +23,12 @@ import java.util.Collections;
 import java.util.Set;
 
 public class TestModeBindings {
+    GamePadBindingManager bindingManager;
 
-    public TestModeBindings(GamepadEx gamepad) {
+    public TestModeBindings(GamepadEx gamepad, GamePadBindingManager gamePadBindingManager) {
         // Reference to the robot's drive subsystem
         Robot robot = Robot.getInstance();
-        GamePadBindingManager bindingManager = GamePadBindingManager.getInstance();
-
+        bindingManager=gamePadBindingManager;
         DcMotorEx leftFront = robot.getDriveSubsystem().getMecanumDrive().leftFront;
         DcMotorEx leftBack = robot.getDriveSubsystem().getMecanumDrive().leftBack;
         DcMotorEx rightBack = robot.getDriveSubsystem().getMecanumDrive().rightBack;

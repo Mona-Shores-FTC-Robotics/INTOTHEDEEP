@@ -108,7 +108,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             gamepadHandling.getDriverGamepad().readButtons();
 
             // Display Telemetry through the Robot's Telemetry Manager
-            Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();
+            Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry(gamepadHandling.getBindingManager());
 
             // Send packet to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);

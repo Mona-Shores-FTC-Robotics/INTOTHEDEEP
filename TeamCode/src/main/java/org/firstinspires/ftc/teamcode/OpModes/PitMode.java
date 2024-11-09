@@ -89,7 +89,7 @@ public class PitMode extends LinearOpMode
         }
 
         // Setup Button Bindings
-        new PitModeDriverBindings(gamepadHandling.getDriverGamepad());
+        new PitModeDriverBindings(gamepadHandling.getDriverGamepad(),  gamepadHandling.getBindingManager());
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
@@ -115,7 +115,7 @@ public class PitMode extends LinearOpMode
             gamepadHandling.getDriverGamepad().readButtons();
 
             // Display Telemetry through the Robot's Telemetry Manager
-            Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();
+            Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry(gamepadHandling.getBindingManager());
 
             // Send packet to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);
