@@ -11,18 +11,18 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmWithMotionProfileSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 //Right now these are just for Teleop... should they be?
 public class SpecimenHandlingStateMachine {
 
     private final SpecimenIntakeSubsystem intakeSubsystem;
-    private final SpecimenArmWithMotionProfileSubsystem armSubsystem;
+    private final SpecimenArmSubsystem armSubsystem;
 
     // Constructor
     public SpecimenHandlingStateMachine(SpecimenIntakeSubsystem intakeSubsystem,
-                                        SpecimenArmWithMotionProfileSubsystem armSubsystem) {
+                                        SpecimenArmSubsystem armSubsystem) {
         this.intakeSubsystem = intakeSubsystem;
         this.armSubsystem = armSubsystem;
     }
@@ -33,28 +33,28 @@ public class SpecimenHandlingStateMachine {
         switch (armSubsystem.getCurrentState()) {
                 //If the arm is in pickup position and operator pushes button, it should move to staging and turn off the intake
             case SPECIMEN_PICKUP:
-                setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME);
+                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME);
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
             case CW_ARM_HOME:
-                setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
+                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
                 //set the arm with a constant velocity instead of doing a motion profile
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
             case CCW_ARM_HOME:
-                setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
+                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
                 break;
             case SPECIMEN_DELIVERY:
-                setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CCW_ARM_HOME);
+                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME);
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
             default:
             case CONSTANT_POWER:
             case CONSTANT_VELOCITY:
             case ARM_MANUAL:
-                armSubsystem.setCurrentState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CCW_ARM_HOME);
-                setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CCW_ARM_HOME);
+                armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME);
+                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME);
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
 
@@ -72,17 +72,18 @@ public class SpecimenHandlingStateMachine {
 
     // If we detect a good specimen, shut off the intake and move the arm to staging position
     public void onGoodSpecimenDetected() {
-        ParallelCommandGroup retractAndExpelSequence = new ParallelCommandGroup(
+        ParallelCommandGroup stageSpecimen = new ParallelCommandGroup(
                 new InstantCommand(this::setIntakeOff),
                 new InstantCommand(this::setArmTargetStateToStaging)
         );
-        retractAndExpelSequence.schedule();
+        stageSpecimen.schedule();
     }
 
     //TODO is this really a good idea for onBadSpecimenDetection?
     // What if somehow we detect a yellow Specimen or non-our color specimen
     public void onBadSpecimenDetected() {
         SequentialCommandGroup expelPieceSequence = new SequentialCommandGroup(
+                new InstantCommand(this::setIntakeOff),  // Expel the specimen
                 new InstantCommand(this::setArmTargetStateToStaging),
                 new WaitCommand(500),  // Wait for the piece to be expelled
                 new InstantCommand(this::setIntakeReverse)  // Expel the specimen
@@ -113,29 +114,29 @@ public class SpecimenHandlingStateMachine {
         setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_REVERSE);
     }
 
-    private void setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates newState) {
+    private void setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates newState) {
         armSubsystem.setTargetStateWithMotionProfile(newState);
     }
 
     public void setArmTargetStateToPickup() {
-        setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
+        setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
     }
 
     public void setArmTargetStateToDelivery() {
-        setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
+        setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
     }
 
     public void setArmTargetStateToStaging() {
-        setArmTargetState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME);
+        setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME);
     }
 
     public void onConstantPowerButtonCommand() {
         SequentialCommandGroup hangPiece = new SequentialCommandGroup(
                 new InstantCommand(this::CCW_ArmPower),
-                new WaitCommand(SpecimenArmWithMotionProfileSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS),  // Wait for the piece to be expelled
+                new WaitCommand(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS),  // Wait for the piece to be expelled
                 new InstantCommand(this::turnOffConstantPower),  // Expel the specimen
                 new InstantCommand(this::setIntakeReverse),
-                new WaitCommand(SpecimenArmWithMotionProfileSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS),  // Wait for the piece to be expelled
+                new WaitCommand(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS),  // Wait for the piece to be expelled
                 new InstantCommand(this::setIntakeOff)// Expel the specimen
 
         );
@@ -144,7 +145,7 @@ public class SpecimenHandlingStateMachine {
     public Action flipCCWFastAction() {
         return new SequentialAction(
                 new InstantAction(this::CCW_ArmPower),
-                new SleepAction(SpecimenArmWithMotionProfileSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS /1000.0),  // Wait for the piece to be expelled
+                new SleepAction(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS /1000.0),  // Wait for the piece to be expelled
                 new InstantAction(this::turnOffConstantPower),
                 new InstantAction(this::setStateToCCWHome)); // Expel the specimen
     }
@@ -152,52 +153,52 @@ public class SpecimenHandlingStateMachine {
     public Action flipCWFastAction() {
         return new SequentialAction(
                 new InstantAction(this::CW_ArmPower),
-                new SleepAction(SpecimenArmWithMotionProfileSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS /1000.0),  // Wait for the piece to be expelled
+                new SleepAction(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS /1000.0),  // Wait for the piece to be expelled
                 new InstantAction(this::turnOffConstantPower),
                 new InstantAction(this::setStateToCWHome)); // Expel the specimen
     }
 
     private void setStateToCWHome() {
-        armSubsystem.setCurrentState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME);
+        armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME);
         armSubsystem.pidController.setSetPoint(armSubsystem.getCurrentState().getArmAngle());
     }
 
 
     public void setStateToCCWHome(){
-        armSubsystem.setCurrentState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CCW_ARM_HOME);
+        armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME);
         armSubsystem.pidController.setSetPoint(armSubsystem.getCurrentState().getArmAngle());
     }
 
     public void CCW_ArmPower() {
-        armSubsystem.arm.setPower(SpecimenArmWithMotionProfileSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER);
+        armSubsystem.arm.setPower(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER);
         Robot.getInstance().getActiveOpMode().telemetry.addData("Setting Power to:", armSubsystem.arm.getPower());
-        armSubsystem.setCurrentState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CONSTANT_POWER);
+        armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.CONSTANT_POWER);
     }
 
     private void CW_ArmPower() {
-        armSubsystem.arm.setPower(-SpecimenArmWithMotionProfileSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER);
+        armSubsystem.arm.setPower(-SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER);
         Robot.getInstance().getActiveOpMode().telemetry.addData("Setting Power to:", armSubsystem.arm.getPower());
-        armSubsystem.setCurrentState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CONSTANT_POWER);
+        armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.CONSTANT_POWER);
     }
 
 
     public void onConstantVelocityButton() {
         armSubsystem.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armSubsystem.arm.setVelocity(SpecimenArmWithMotionProfileSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_VELOCITY);
-        armSubsystem.setCurrentState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CONSTANT_VELOCITY);
+        armSubsystem.arm.setVelocity(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_VELOCITY);
+        armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.CONSTANT_VELOCITY);
 
     }
     public void turnOffConstantVelocity() {
         armSubsystem.arm.setVelocity(0);
         armSubsystem.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armSubsystem.setCurrentState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.OFF);
+        armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.OFF);
 
 
     }
     public void turnOffConstantPower() {
         armSubsystem.arm.setPower(0);
         armSubsystem.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armSubsystem.setCurrentState(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.OFF);
+        armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.OFF);
 
 
     }

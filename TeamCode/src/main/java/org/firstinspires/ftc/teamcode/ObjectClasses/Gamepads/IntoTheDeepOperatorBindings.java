@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.DefaultSpecimenArmWithMotionProfileCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.DefaultSpecimenArmWithMotionProfileCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
 import java.util.function.DoubleSupplier;
 
@@ -67,7 +67,6 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // X BUTTON                                             //
         //////////////////////////////////////////////////////////
-        bindConstantVelocity(GamepadKeys.Button.X);
 
         //////////////////////////////////////////////////////////
         // RIGHT BUMPER                                         //
@@ -76,19 +75,23 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // DPAD-UP                                              //
         //////////////////////////////////////////////////////////
-        bindConstantPower(GamepadKeys.Button.DPAD_UP);
+        //TODO temporary bind for testing
+        bindDumping(GamepadKeys.Button.DPAD_UP);
+
         //////////////////////////////////////////////////////////
         // DPAD-LEFT                                            //
         //////////////////////////////////////////////////////////
+
 
         //////////////////////////////////////////////////////////
         // DPAD-RIGHT                                           //
         //////////////////////////////////////////////////////////
 
         //////////////////////////////////////////////////////////
-        // DPAD-UP                                              //
+        // DPAD-DOWN                                              //
         //////////////////////////////////////////////////////////
-
+        //TODO temporary bind for testing
+        bindBucket(GamepadKeys.Button.DPAD_DOWN);
         //////////////////////////////////////////////////////////
         // BACK/SHARE BUTTON                                    //
         //////////////////////////////////////////////////////////
@@ -106,39 +109,36 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
     }
 
-    private void bindConstantVelocity(GamepadKeys.Button button) {
-        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-            SpecimenHandlingStateMachine specimenHandlingStateMachine = robot.getSpecimenHandlingStateMachine();
-            Command specimenConstantVelocity = new InstantCommand(specimenHandlingStateMachine::onConstantVelocityButton);
-            Command turnOffConstantVelocity = new InstantCommand(specimenHandlingStateMachine::turnOffConstantVelocity);
-
+    private void bindBucket(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            SampleHandlingStateMachine sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
+            Command moveSampleBucket = new InstantCommand(sampleHandlingStateMachine::onMoveSampleBucketButtonPress);
             operatorGamePad.getGamepadButton(button)
-                    .toggleWhenPressed(specimenConstantVelocity, turnOffConstantVelocity);
-
+                    .whenPressed(moveSampleBucket);
             // Register button binding
             bindingManager.registerBinding(new ButtonBinding(
                     GamepadType.OPERATOR,
                     button,
-                    "Toggle Constant Velocity"
+                    moveSampleBucket,
+                    "Move Bucket"
             ));
         }
     }
 
-    private void bindConstantPower(GamepadKeys.Button button) {
-        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-            SpecimenHandlingStateMachine specimenHandlingStateMachine = robot.getSpecimenHandlingStateMachine();
-            Robot.getInstance().getActiveOpMode().telemetry.addLine("hi im here");
-            Command specimenConstantPower = new InstantCommand(specimenHandlingStateMachine::onConstantPowerButtonCommand);
-            Command turnOffConstantPower = new InstantCommand(specimenHandlingStateMachine::turnOffConstantPower);
+    private void bindDumping(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            SampleHandlingStateMachine sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
+            Command moveSampleDumper = new InstantCommand(sampleHandlingStateMachine::onMoveSampleDumperButtonPress);
 
             operatorGamePad.getGamepadButton(button)
-                    .toggleWhenPressed(specimenConstantPower, turnOffConstantPower);
+                    .whenPressed(moveSampleDumper);
 
             // Register button binding
             bindingManager.registerBinding(new ButtonBinding(
                     GamepadType.OPERATOR,
                     button,
-                    "Toggle Constant Power"
+                    moveSampleDumper,
+                    "Dump"
             ));
         }
     }
@@ -179,7 +179,7 @@ public class IntoTheDeepOperatorBindings {
                 (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) || robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)))
         {
             SampleHandlingStateMachine sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
-            Command sampleIntakeButtonPressCommand = new InstantCommand(sampleHandlingStateMachine::onIntakeButtonPress);
+            Command sampleIntakeButtonPressCommand = new InstantCommand(sampleHandlingStateMachine::onIntakeButtonPressCommand);
 
             operatorGamePad.getGamepadButton(button)
                     .whenPressed(sampleIntakeButtonPressCommand);

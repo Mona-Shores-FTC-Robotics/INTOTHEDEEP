@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
+import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -12,7 +14,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveS
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmWithMotionProfileSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
@@ -46,7 +48,7 @@ public class Robot {
     private static SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem;
 
     //Specimen Subsystems
-    private static SpecimenArmWithMotionProfileSubsystem specimenArmSubsystem;
+    private static SpecimenArmSubsystem specimenArmSubsystem;
     private static SpecimenIntakeSubsystem specimenIntakeSubsystem;
 
     private static ClimberSubsystem climberSubsystem;
@@ -74,51 +76,50 @@ public class Robot {
 
     private void CreateSubsystems(HardwareMap hardwareMap) {
         switch (robotType) {
-            case INTO_THE_DEEP_19429: {
+            case INTO_THE_DEEP_19429:
+            case INTO_THE_DEEP_20245: {
+
+                //Control Hub - Motor Port 0 - leftBack
+                //Control Hub - Motor Port 1 - leftFront
+                //Control Hub - Motor Port 2 - rightBack
+                //Control Hub - Motor Port 3 - rightFront
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
 
-//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
-//                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
-
-//                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
-//                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
-
-
-//                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
-//                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER, sampleLinearActuatorSubsystem);
-
-//                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
-//                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER, sampleLinearActuatorSubsystem);
-
-                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
-                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
-
-                specimenArmSubsystem = new SpecimenArmWithMotionProfileSubsystem(hardwareMap, "specimenarm");
+                //Expansion Hub - Motor Port 0 - specimenarm
+                specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, "specimenarm");
                 registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
 
-                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinLeft", "blinkinRight");
+                //Expansion Hub - Port 1 - samplelinearactuator
+                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
+                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER, sampleLinearActuatorSubsystem);
+
+                //Expansion Hub - Motor Port 2 - samplelift
+                //Control Hub - Servo Port 2 - samplebucket
+                //Control Hub - Servo Port 3 - sampledumper
+                sampleLiftBucketSubsystem = new SampleLiftBucketSubsystem(hardwareMap, "samplelift", "samplebucket", "sampledumper");
+                registerSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET, sampleLiftBucketSubsystem);
+
+                //Expansion Hub - Port 3 - climber
+
+                //Control Hub - Servo Port 0 - sampleintakeright
+                //Control Hub - Servo Port 1 - sampleintakeleft
+                //Control Hub - I2C Bus 1 - samplecolorsensor
+                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
+                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
+
+                //Control Hub - Servo Port 4 - specimenintake
+                //Expansion Hub - I2C Bus 2 - specimencolorsensor
+                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake","specimencolorsensor");
+                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
+
+
+                //Expansion Hub - Servo Port 1 - blinkinleft
+                //Expansion Hub - Servo Port 2 - blinkinright
+                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinleft", "blinkinright");
                 registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
 
                 break;
-            }
-            case INTO_THE_DEEP_20245: {
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
-                registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
-
-//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
-//                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
-
-//                sampleLiftSubsystem = new SampleLiftSubsystem(hardwareMap, "samplelift");
-//                registerSubsystem(SubsystemType.SAMPLE_LIFT, sampleLiftSubsystem);
-
-//                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
-//                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
-
-//                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake");
-//                registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
-                break;
-
             }
         }
     }
@@ -146,7 +147,9 @@ public class Robot {
     }
 
     // This method can be called to register subsystems
-    public void registerSubsystem(SubsystemType type, Object subsystem) {
+    public void registerSubsystem(SubsystemType type, Subsystem subsystem) {
+        CommandScheduler.getInstance().registerSubsystem(subsystem);
+
         subsystemMap.put(type, subsystem);
         availableSubsystems.add(type);
         activeOpMode.telemetry.addLine("Registered subsystem: " + subsystem);
@@ -174,10 +177,10 @@ public class Robot {
 
         initRegisteredSubsystems();
 
-        if (
+        if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
                  hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
                  hasSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) || hasSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)) {
-            sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem);
+            sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
         }
 
         if (
@@ -206,7 +209,7 @@ public class Robot {
     public DriverStationTelemetryManager getDriverStationTelemetryManager() {return driverStationTelemetryManager;}
     public DriveSubsystem getDriveSubsystem()  {return mecanumDriveSubsystem;}
 
-    public SpecimenArmWithMotionProfileSubsystem getSpecimenArmSubsystem() {return specimenArmSubsystem;}
+    public SpecimenArmSubsystem getSpecimenArmSubsystem() {return specimenArmSubsystem;}
     public SpecimenIntakeSubsystem getSpecimenIntakeSubsystem() {return specimenIntakeSubsystem;}
 
     public SampleLiftBucketSubsystem getSampleLiftBucketSubsystem()  {return sampleLiftBucketSubsystem;}

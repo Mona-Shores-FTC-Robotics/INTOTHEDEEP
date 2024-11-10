@@ -23,7 +23,7 @@ public class DefaultSampleLiftCommand extends CommandBase {
 
         if (Math.abs(liftInput) > SampleLiftBucketSubsystem.SAMPLE_LIFT_PARAMS.LIFT_DEAD_ZONE_FOR_MANUAL_LIFT) {
             // Adjust the target position based on manual control method in subsystem
-            sampleLiftBucketSubsystem.setManualTargetState(liftInput); // this argument will be a value between 1 and -1
+            sampleLiftBucketSubsystem.setManualTargetState(-liftInput); // this argument will be a value between 1 and -1
         }
     }
 

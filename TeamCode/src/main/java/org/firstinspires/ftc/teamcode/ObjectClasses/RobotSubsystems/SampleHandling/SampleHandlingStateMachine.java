@@ -15,18 +15,23 @@ import java.util.Objects;
 
 @Config
 public class SampleHandlingStateMachine {
-
-  public static class SampleHandlingParams {
+    public static class SampleHandlingParams {
         public long DELAY_RETRACT_TO_MID_POSITION_IN_MS = 250;
-        public long DELAY_MID_TO_FULL_POSITION_IN_MS = 200;
-        public long DELAY_FULL_TO_RETRACT_POSITION_IN_MS = 450;
+        public long DELAY_MID_TO_FULL_POSITION_IN_MS = 300;
+        public long DELAY_FULL_TO_RETRACT_POSITION_IN_MS = 700;
     }
 
     public static SampleHandlingParams SAMPLE_HANDLING_PARAMS = new SampleHandlingParams();
-
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
+
+
+    public enum SampleHandlingStates {
+        INTAKE, LOW_BASKET, HIGH_BASKET, SCORE_COMPLETE, HOME
+    }
+    private SampleHandlingStates currentState=SampleHandlingStates.HOME;
+    private SampleHandlingStates targetState=SampleHandlingStates.HOME;
 
     // Constructor
     public SampleHandlingStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
@@ -35,6 +40,8 @@ public class SampleHandlingStateMachine {
         this.actuatorSubsystem = actuatorSubsystem;
         this.intakeSubsystem = intakeSubsystem;
         this.liftSubsystem = liftSubsystem;
+        currentState=SampleHandlingStates.HOME;
+        targetState=SampleHandlingStates.HOME;
     }
 
     public SampleHandlingStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
@@ -46,7 +53,7 @@ public class SampleHandlingStateMachine {
     }
 
     // Method to handle button press logic (toggle actuator states)
-    public void onIntakeButtonPress() {
+    public void onIntakeButtonPressCommand() {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)) {
             switch (actuatorSubsystem.getCurrentState()) {
                 case RETRACT:
@@ -125,24 +132,59 @@ public class SampleHandlingStateMachine {
     }
 
     public void onScoreButtonPress() {
-        switch (Objects.requireNonNull(liftSubsystem).getCurrentLiftState()) {
-            case HOME:
-                Command liftToLowBasket = new InstantCommand(this::setLiftToLowBasket);
-                liftToLowBasket.schedule();
+        switch (currentState) {
+            case INTAKE:
+                if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
+                    liftSubsystem.setTargetDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
+                    liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
+                    liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET);
+                    currentState=SampleHandlingStates.LOW_BASKET;
+                }
                 break;
             case LOW_BASKET:
-                Command liftToHighBasket = new InstantCommand(this::setLiftToHighBasket);
-                liftToHighBasket.schedule();
+                liftSubsystem.setTargetDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
+                liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
+                liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
                 break;
-            case MANUAL:
             case HIGH_BASKET:
-            default:
-                Command liftToHome = new InstantCommand(this::setLiftToHome);
-                liftToHome.schedule();
+                liftSubsystem.setTargetDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_DUMP);
+                liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
+                liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
+                //TODO timer?
                 break;
+            case SCORE_COMPLETE:
+                liftSubsystem.setTargetDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
+                liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
+                liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
+
 
         }
     }
+
+
+    public void onMoveSampleBucketButtonPress() {
+        switch (Objects.requireNonNull(liftSubsystem).getCurrentBucketState()) {
+            case BUCKET_INTAKE_POS:
+                liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
+                 break;
+            case BUCKET_SCORE_POS:
+                liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
+                break;
+        }
+    }
+
+    public void onMoveSampleDumperButtonPress() {
+        switch (Objects.requireNonNull(liftSubsystem).getCurrentDumperState()) {
+            case DUMPER_HOME:
+                liftSubsystem.setTargetDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_DUMP);
+                break;
+            case DUMPER_DUMP:
+                liftSubsystem.setTargetDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
+                break;
+        }
+    }
+
+
 
     // Method to handle piece pickup and expel sequence
     public void onGoodSampleDetected() {
@@ -239,6 +281,12 @@ public class SampleHandlingStateMachine {
     }
 
     public void setLiftToHome() {
-         liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HOME);
+         liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
     }
+
+
+
+    public SampleHandlingStates getCurrentSampleHandlingState() { return currentState;}
+    public SampleHandlingStates setCurrentSampleHandlingState() { return targetState;}
+
 }

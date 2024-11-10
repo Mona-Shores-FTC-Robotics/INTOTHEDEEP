@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike;
@@ -19,7 +17,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.UpdateArmPeriodicAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.AutonomousPeriodicAction;
 
 @Autonomous(name = "Preload Specimen")
 public class PreloadAuto extends LinearOpMode {
@@ -84,11 +82,11 @@ public class PreloadAuto extends LinearOpMode {
         MatchConfig.timestampTimer = new ElapsedTime();
         MatchConfig.timestampTimer.reset();
 
-        UpdateArmPeriodicAction updateArmPeriodicAction = new UpdateArmPeriodicAction(Robot.getInstance().getSpecimenArmSubsystem());
+        AutonomousPeriodicAction autonomousPeriodicAction = new AutonomousPeriodicAction();
         MatchConfig.telemetryPacket = new TelemetryPacket();
         ParallelAction parallelAction = new ParallelAction(
                 selectedRoute,
-                updateArmPeriodicAction
+                autonomousPeriodicAction
         );
         MatchConfig.loopTimer = new ElapsedTime();
         MatchConfig.loopTimer.reset();

@@ -28,8 +28,8 @@ import java.util.Deque;
 public class SampleIntakeSubsystem extends SubsystemBase {
 
     public static class IntakeParams {
-        public double INTAKE_ON_POWER = -0.8;
-        public double INTAKE_REVERSE_POWER = 0.8;
+        public double INTAKE_ON_POWER = 0.8;
+        public double INTAKE_REVERSE_POWER = -0.8;
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
         // Set a minimum proximity threshold to consider an object as "near"
@@ -140,6 +140,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     private SampleColor getRawDetectedColor() {
         // Get HSV values and raw RGB values
         float[] hsvValues = new float[3];
+        colorSensor.argb();
         Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues);
 
         int hue = Math.round(hsvValues[0]);

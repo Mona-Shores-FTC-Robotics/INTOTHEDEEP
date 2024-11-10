@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -19,8 +18,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.MoveLinearActuatorAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.MoveSpecimenArm;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm.SpecimenArmWithMotionProfileSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.MoveSpecimenArmAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
@@ -126,7 +125,7 @@ public class RealRobotAdapter implements RobotAdapter {
                         // Define the action if the specimen is detected
                         Action stopSpecimenIntakeAndStageSpecimen = new SequentialAction(
                                 new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF),
-                                new MoveSpecimenArm(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME)
+                                new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME)
                         );
 
                         // Define the action if the specimen is NOT detected (keep intaking for 200 milliseconds)
@@ -146,7 +145,7 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new SequentialAction(
                                 new SleepAction(.5),
                                 new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF),
-                                new MoveSpecimenArm(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.CW_ARM_HOME)
+                                new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME)
                         );
                     } else return problem();
 
@@ -155,7 +154,7 @@ public class RealRobotAdapter implements RobotAdapter {
 
                         return new SequentialAction(
                                 new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON),
-                                new MoveSpecimenArm(SpecimenArmWithMotionProfileSubsystem.SpecimenArmStates.SPECIMEN_PICKUP)
+                                new MoveSpecimenArmAction(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP)
                         );
                     } else return problem();
 
@@ -199,7 +198,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.HOME);
+                        return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                     } else return problem();
                 case INTAKE_SAMPLE_FROM_GROUND:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER))

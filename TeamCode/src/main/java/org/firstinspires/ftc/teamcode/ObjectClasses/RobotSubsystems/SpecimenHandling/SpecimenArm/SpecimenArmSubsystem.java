@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm;
+package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm;
 
 import android.annotation.SuppressLint;
 
@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Config
-public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
+public class SpecimenArmSubsystem extends SubsystemBase {
 
     public static class SpecimenArmParams {
         public long DELAY_UNTIL_POWER_ZERO_MILLISECONDS = 400;
@@ -60,7 +60,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
         public double TIMEOUT_TIME_SECONDS = 5;
 
         public double CONSTANT_VELOCITY=0;
-        public double CONSTANT_POWER=0.9;
+        public double CONSTANT_POWER=0.85;
     }
     public enum SpecimenArmStates {
         CCW_ARM_HOME, CW_ARM_HOME, SPECIMEN_PICKUP, SPECIMEN_DELIVERY, ARM_MANUAL, CONSTANT_VELOCITY, CONSTANT_POWER, OFF;
@@ -126,7 +126,7 @@ public class SpecimenArmWithMotionProfileSubsystem extends SubsystemBase {
     // Timer to track elapsed time for motion profile
     private final ElapsedTime timer;
 
-    public SpecimenArmWithMotionProfileSubsystem(final HardwareMap hMap, final String name) {
+    public SpecimenArmSubsystem(final HardwareMap hMap, final String name) {
         arm = hMap.get(DcMotorEx.class, name);
         arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

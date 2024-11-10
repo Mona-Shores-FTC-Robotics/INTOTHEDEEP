@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm;
+package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands;
 
 import androidx.annotation.NonNull;
 
@@ -6,15 +6,12 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-public class UpdateArmPeriodicAction implements Action {
-    private final SpecimenArmWithMotionProfileSubsystem armSubsystem;
+public class AutonomousPeriodicAction implements Action {
+    public AutonomousPeriodicAction() {
 
-    public UpdateArmPeriodicAction(SpecimenArmWithMotionProfileSubsystem armSubsystem) {
-        this.armSubsystem = armSubsystem;
     }
 
     @Override
@@ -25,7 +22,8 @@ public class UpdateArmPeriodicAction implements Action {
         // Reset the loop timer
         MatchConfig.loopTimer.reset();
 
-        armSubsystem.periodic();  // Call the periodic method to update the arm
+        Robot.getInstance().getSpecimenArmSubsystem().periodic();  // Call the periodic method to update the arm
+        Robot.getInstance().getSpecimenIntakeSubsystem().periodic();
 
         // Display Telemetry through the Robot's Telemetry Manager
         Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();

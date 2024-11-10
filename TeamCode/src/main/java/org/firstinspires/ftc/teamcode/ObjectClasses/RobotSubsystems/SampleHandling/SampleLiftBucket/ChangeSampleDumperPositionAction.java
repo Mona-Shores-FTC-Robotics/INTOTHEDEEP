@@ -10,18 +10,18 @@ import com.acmerobotics.roadrunner.Action;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
-public class ChangeSampleBucketPositionAction implements Action {
+public class ChangeSampleDumperPositionAction implements Action {
 
     // The subsystem the action runs on
     private SampleLiftBucketSubsystem sampleLiftBucketSubsystem;
 
     // Target state for the intake motor
-    private final SampleLiftBucketSubsystem.BucketStates targetState;
+    private final SampleLiftBucketSubsystem.DumperStates targetState;
 
     private boolean hasNotInit = true;  // To track initialization
 
     // Constructor to initialize the action with the subsystem and target state
-    public ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates inputState) {
+    public ChangeSampleDumperPositionAction(SampleLiftBucketSubsystem.DumperStates inputState) {
         targetState = inputState;
     }
 
@@ -29,7 +29,7 @@ public class ChangeSampleBucketPositionAction implements Action {
     public void init() {
         sampleLiftBucketSubsystem = Robot.getInstance().getSampleLiftBucketSubsystem();
         // Set the intake motor power based on the target state
-        sampleLiftBucketSubsystem.setTargetBucketState(targetState);
+        sampleLiftBucketSubsystem.setTargetDumperState(targetState);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ChangeSampleBucketPositionAction implements Action {
     public void end(TelemetryPacket p) {
         hasNotInit=true;
         // Telemetry feedback to show state change completion
-        p.addLine(String.format("Bucket Position set to %s",
+        p.addLine(String.format("Dumper Position set to %s",
                 targetState.toString()));
 
         // Send the telemetry packet to FtcDashboard

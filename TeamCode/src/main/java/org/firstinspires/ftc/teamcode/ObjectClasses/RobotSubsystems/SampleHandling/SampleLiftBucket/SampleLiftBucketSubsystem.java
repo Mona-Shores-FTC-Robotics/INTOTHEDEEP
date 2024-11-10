@@ -23,25 +23,45 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         public double LIFT_POWER = 0.5;
         public double VEL_P = 5.0, VEL_I = 0.0, VEL_D = 0.0, VEL_F = 38.0;
         public double POS_P = 5.0;
-        public final int MAX_TARGET_TICKS = 1750;
-        public final int MIN_TARGET_TICKS = 100;
+        public final int MAX_TARGET_TICKS = 1650;
+        public final int MIN_TARGET_TICKS = 0;
         public double TIMEOUT_TIME_SECONDS = 3;
-        public int HOME_HEIGHT_TICKS = 100;
-        public int HIGH_BASKET_TICKS = 1700;
+        public int HOME_HEIGHT_TICKS = 0;
+        public int HIGH_BASKET_TICKS = 1600;
         public int LOW_BASKET_TICKS = 1100;
         public int LIFT_HEIGHT_TICK_THRESHOLD = 45;
 
-
         // Bucket servo params
-        public double BUCKET_REST_POS = -0.8;
-        public double BUCKET_HIGH_POS = 0.8;
+        public double BUCKET_SCORE_POS = 0;
+        public double BUCKET_INTAKE_POS = 0.75;
 
+        // Dumper servo params
+        public double DUMPER_HOME_POS = .7;
+        public double DUMPER_DUMP_POS = .7;
     }
 
 
+
+    public enum SampleLiftStates {
+        ZERO, HIGH_BASKET, LOW_BASKET, LIFT_HOME, MANUAL;
+        public int ticks;
+        static {
+            ZERO.ticks = 0;
+            HIGH_BASKET.ticks = SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS;
+            LOW_BASKET.ticks = SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS;
+            LIFT_HOME.ticks = SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS;
+        }
+        public void setLiftHeightTicks(int t) {
+            this.ticks = t;
+        }
+        public int getLiftHeightTicks() {
+            return this.ticks;
+        }
+    }
+
     public enum BucketStates {
-        BUCKET_REST_POS(SAMPLE_LIFT_PARAMS.BUCKET_REST_POS),
-        BUCKET_HIGH_POS(SAMPLE_LIFT_PARAMS.BUCKET_HIGH_POS);
+        BUCKET_INTAKE_POS(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS),
+        BUCKET_SCORE_POS(SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS);
 
         public double position;
 
@@ -53,36 +73,48 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         public void updateBucketPosition(double newPosition) {
             this.position = newPosition;
         }
-    }
+        public double getPosition(BucketStates state) {
+            return state.position;
+        }
 
-    public enum SampleLiftStates {
-        ZERO, HIGH_BASKET, LOW_BASKET, HOME, MANUAL;
-        public int ticks;
-        static {
-            ZERO.ticks = 0;
-            HIGH_BASKET.ticks = SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS;
-            LOW_BASKET.ticks = SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS;
-            HOME.ticks = SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS;
+    }
+    public enum DumperStates {
+        DUMPER_HOME(SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS),
+        DUMPER_DUMP(SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS);
+
+        public double position;
+
+        DumperStates(double position) {
+            this.position = position;
         }
-        public void setLiftHeightTicks(int t) {
-            this.ticks = t;
+        public double getPosition(DumperStates state) {
+            return state.position;
         }
-        public int getLiftHeightTicks() {
-            return this.ticks;
+
+        // Dynamically update the intake power if parameters change
+        public void updateDumperPosition(double newPosition) {
+            this.position = newPosition;
         }
     }
 
     public DcMotorEx lift;
     private final Servo bucket;  // Continuous rotation servo
-    private SampleLiftStates currentLiftState;
-    private SampleLiftStates targetLiftState;
+    private final Servo dumper;
+
     private int currentTicks;
     private int targetTicks;
     private double currentPower;
+
+    private SampleLiftStates currentLiftState;
+    private SampleLiftStates targetLiftState;
     private BucketStates currentBucketState;
     private BucketStates targetBucketState;
+    private DumperStates currentDumperState;
+    private DumperStates targetDumperState;
 
-    public SampleLiftBucketSubsystem(final HardwareMap hMap, final String liftName, final String bucketName) {
+
+
+    public SampleLiftBucketSubsystem(final HardwareMap hMap, final String liftName, final String bucketName, final String dumperName) {
         lift = hMap.get(DcMotorEx.class, liftName);
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -95,19 +127,26 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         if (bucketName != null){
             bucket = hMap.get(Servo.class, bucketName);
         } else bucket = null;
+
+        if (dumperName != null){
+            dumper = hMap.get(Servo.class, dumperName);
+        } else dumper = null;
     }
     // Overloaded constructor without color sensor
     public SampleLiftBucketSubsystem(final HardwareMap hMap, final String liftName) {
-        this(hMap, liftName, null);  // Calls the main constructor with no color sensor
+        this(hMap, liftName, null, null);  // Calls the main constructor with no color sensor
     }
 
     public void init() {
         //TODO do we need to split into initAuto() and initTeleop()?
-        targetLiftState = SampleLiftStates.HOME;
+        targetLiftState = SampleLiftStates.LIFT_HOME;
         setTargetTicks(currentLiftState.ticks);  // Use setTargetTicks to initialize
         lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         if (bucket != null){
-            setTargetBucketState(BucketStates.BUCKET_REST_POS);
+            setTargetBucketState(BucketStates.BUCKET_INTAKE_POS);
+        }
+        if (dumper != null){
+            setTargetDumperState(DumperStates.DUMPER_HOME);
         }
     }
 
@@ -124,7 +163,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         if (SAMPLE_LIFT_PARAMS.LIFT_POWER != currentPower) {
             lift.setPower(SAMPLE_LIFT_PARAMS.LIFT_POWER);
         }
-        updateLiftHeightTicks(SampleLiftStates.HOME, SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS);
+        updateDumperParameters(DumperStates.DUMPER_HOME, SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS);
+        updateDumperParameters(DumperStates.DUMPER_HOME, SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS);
+        updateBucketParameters(BucketStates.BUCKET_INTAKE_POS, SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS);
+        updateBucketParameters(BucketStates.BUCKET_SCORE_POS, SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS);
+
+        updateLiftHeightTicks(SampleLiftStates.LIFT_HOME, SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS);
         updateLiftHeightTicks(SampleLiftStates.HIGH_BASKET, SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS);
         updateLiftHeightTicks(SampleLiftStates.LOW_BASKET, SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS);
         updateLiftVelocityPIDFCoefficients(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D, SAMPLE_LIFT_PARAMS.VEL_F);
@@ -158,6 +202,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         // TODO Delay time to move to new state?
         currentBucketState = state;
         bucket.setPosition(targetBucketState.position);
+    }
+
+    public void setTargetDumperState(DumperStates state){
+        targetDumperState = state;
+        currentDumperState = state;
+        dumper.setPosition(targetDumperState.position);
     }
 
     public SampleLiftStates getCurrentLiftState() {
@@ -213,6 +263,24 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         }
     }
 
+
+    private void updateDumperParameters(DumperStates state, double position) {
+        if (state.getPosition(state) != position) {
+            state.updateDumperPosition(position);
+        }
+    }
+
+    private void updateBucketParameters(BucketStates state, double position) {
+        if (state.getPosition(state) != position) {
+            state.updateBucketPosition(position);
+        }
+    }
+
+
+    public BucketStates getCurrentBucketState() { return currentBucketState;}
+    public DumperStates getCurrentDumperState() { return currentDumperState;}
+
+
     // Basic telemetry display in a single line with a descriptive label
     public void displayBasicTelemetry(Telemetry telemetry) {
         @SuppressLint("DefaultLocale")
@@ -234,6 +302,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
 
     public void updateDashboardTelemetry() {
+        MatchConfig.telemetryPacket.put("dumper/Current State", currentDumperState.toString());
+        MatchConfig.telemetryPacket.put("dumper/Target State", targetDumperState.toString());
+        MatchConfig.telemetryPacket.put("bucket/Current State", currentBucketState.toString());
+        MatchConfig.telemetryPacket.put("bucket/Target State", targetBucketState.toString());
+
+
         MatchConfig.telemetryPacket.put("sampleLift/Current State", currentLiftState.toString());
         MatchConfig.telemetryPacket.put("sampleLift/Target State", targetLiftState.toString());
         MatchConfig.telemetryPacket.put("sampleLift/Current Position Ticks", currentTicks);

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpcimentArm;
+package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm;
 
 public class TrapezoidalMotionProfile {
     private final double maxAcceleration; // Acceleration in degrees per millisecond^2

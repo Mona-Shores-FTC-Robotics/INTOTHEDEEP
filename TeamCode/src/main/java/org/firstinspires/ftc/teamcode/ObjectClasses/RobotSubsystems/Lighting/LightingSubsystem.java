@@ -18,12 +18,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 @Config
-public class LightingSubsystem {
+public class LightingSubsystem extends SubsystemBase{
 
     public static class LightingParams extends SubsystemBase {
-
-
-
     }
 
     public static LightingSubsystem.LightingParams LIGHTING_PARAMS = new LightingSubsystem.LightingParams();

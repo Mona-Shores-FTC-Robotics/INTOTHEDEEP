@@ -142,11 +142,11 @@ public class TestModeBindings {
             SampleLiftBucketSubsystem sampleLiftBucketSubsystem = robot.getSampleLiftBucketSubsystem();
             Set<Subsystem> sampleLiftBucketRequirements = Collections.singleton(sampleLiftBucketSubsystem);
 
-            ChangeSampleBucketPositionAction goToRestPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_REST_POS);
-            ChangeSampleBucketPositionAction goToHighBucketPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_HIGH_POS);
+            ChangeSampleBucketPositionAction goToIntakePosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
+            ChangeSampleBucketPositionAction goToHighBucketPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
 
             Command moveToHighBucketCommand = new ActionCommand(goToHighBucketPosition, sampleLiftBucketRequirements);
-            Command moveToRestPositionCommand = new ActionCommand(goToRestPosition, sampleLiftBucketRequirements);
+            Command moveToRestPositionCommand = new ActionCommand(goToIntakePosition, sampleLiftBucketRequirements);
 
             gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                     .whenPressed(moveToHighBucketCommand)
@@ -266,11 +266,11 @@ public class TestModeBindings {
             SampleLiftBucketSubsystem sampleLiftBucketSubsystem = robot.getSampleLiftBucketSubsystem();
             Set<Subsystem> sampleLiftBucketRequirements = Collections.singleton(sampleLiftBucketSubsystem);
 
-            ChangeSampleBucketPositionAction goToRestPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_REST_POS);
-            ChangeSampleBucketPositionAction goToHighBucketPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_HIGH_POS);
+            ChangeSampleBucketPositionAction goToIntakePosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
+            ChangeSampleBucketPositionAction goToHighBucketPosition = new ChangeSampleBucketPositionAction(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
 
             Command moveToHighBucketCommand = new ActionCommand(goToHighBucketPosition, sampleLiftBucketRequirements);
-            Command moveToRestPositionCommand = new ActionCommand(goToRestPosition, sampleLiftBucketRequirements);
+            Command moveToRestPositionCommand = new ActionCommand(goToIntakePosition, sampleLiftBucketRequirements);
 
             gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                     .whenPressed(moveToHighBucketCommand)
