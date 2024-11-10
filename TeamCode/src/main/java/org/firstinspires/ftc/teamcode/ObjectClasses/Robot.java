@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetectionStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
@@ -53,7 +54,8 @@ public class Robot {
 
     private static ClimberSubsystem climberSubsystem;
     private static VisionSubsystem visionSubsystem;
-    private static SampleHandlingStateMachine sampleHandlingStateMachine;
+    private static SampleDetectionStateMachine sampleDetectionStateMachine;
+    private static SampleButtonHandling sampleHandlingStateMachine;
     private static SpecimenHandlingStateMachine specimenHandlingStateMachine;
     private static LightingSubsystem lightingSubsystem;
 
@@ -180,7 +182,8 @@ public class Robot {
         if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
                  hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
                  hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
-            sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
+            sampleDetectionStateMachine = new SampleDetectionStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
+            sampleHandlingStateMachine = new SampleButtonHandling(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
         }
 
         if (
@@ -220,7 +223,9 @@ public class Robot {
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;}
 
     public SpecimenHandlingStateMachine getSpecimenHandlingStateMachine(){return specimenHandlingStateMachine;}
-    public SampleHandlingStateMachine getSampleHandlingStateMachine(){return sampleHandlingStateMachine;}
+    public SampleDetectionStateMachine getSampleDetectionStateMachine(){return sampleDetectionStateMachine;}
+
+    public SampleButtonHandling getSampleHandlingStateMachine(){return sampleHandlingStateMachine;}
 
     public LightingSubsystem getLightingSubsystem() {return lightingSubsystem;}
 

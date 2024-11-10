@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.NET_Score5_SamplePreload;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
@@ -13,6 +14,7 @@ import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_4_Preloa
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short;
 import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time;
+import com.example.sharedconstants.Routes.OBS.OBS_Intake_Automatic_Sample_Handling;
 import com.example.sharedconstants.Routes.OBS.OBS_Intake_Transfer_Dump;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -89,6 +91,10 @@ public class AutoSelector extends LinearOpMode {
         List<Routes> obsRouteList = new ArrayList<>();
         adapter.setAllianceColor(allianceColor);
 
+        obsRoute = new OBS_Intake_Automatic_Sample_Handling(adapter);
+        obsRoute.buildRoute();
+        obsRouteList.add(obsRoute);
+
         // Gets in the way of the other side also tramples over samples.
         obsRoute = new OBS_Intake_Transfer_Dump(adapter);
         obsRoute.buildRoute();
@@ -103,6 +109,9 @@ public class AutoSelector extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //Reset the Singleton CommandScheduler
+        CommandScheduler.getInstance().reset();
+
         // Create and Initialize the robot
         Robot.createInstance(this);
 
@@ -218,8 +227,6 @@ public class AutoSelector extends LinearOpMode {
         MatchConfig.timestampTimer.reset();
 
         Actions.runBlocking(parallelAction);
-
-
 
         // Update final autonomous data
 

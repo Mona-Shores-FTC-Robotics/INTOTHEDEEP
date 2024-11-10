@@ -51,14 +51,14 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        //Reset the Singleton CommandScheduler
+        CommandScheduler.getInstance().reset();
+
         // Create the robot
         Robot.createInstance(this);
 
         // Initialize the robot
         Robot.getInstance().init(Robot.OpModeType.TELEOP);
-
-        //Reset the Singleton CommandScheduler
-        CommandScheduler.getInstance().reset();
 
         //Initialize the Game-pads
         GamepadHandling gamepadHandling = new GamepadHandling(this);

@@ -5,13 +5,13 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 public class AutonomousPeriodicAction implements Action {
     public AutonomousPeriodicAction() {
-
     }
 
     @Override
@@ -22,12 +22,13 @@ public class AutonomousPeriodicAction implements Action {
         // Reset the loop timer
         MatchConfig.loopTimer.reset();
 
+
+//        CommandScheduler.getInstance().run();
+
         Robot.getInstance().getSpecimenArmSubsystem().periodic();
         Robot.getInstance().getSpecimenIntakeSubsystem().periodic();
-
-
-//        Robot.getInstance().getSampleIntakeSubsystem().periodic();
-//        Robot.getInstance().getSampleLinearActuatorSubsystem().periodic();
+        Robot.getInstance().getSampleIntakeSubsystem().periodic();
+        Robot.getInstance().getSampleLinearActuatorSubsystem().periodic();
 
         // Display Telemetry through the Robot's Telemetry Manager
         Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();

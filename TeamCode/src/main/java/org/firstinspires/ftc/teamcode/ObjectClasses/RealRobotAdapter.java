@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine.SAMPLE_HANDLING_PARAMS;
-
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.NullAction;
@@ -200,16 +198,12 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                     } else return problem();
 
-
-
                 case GET_READY_FOR_INTAKE_FROM_GROUND:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {
                         return  new ParallelAction(
                                         new SequentialAction(
-                                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::runWithoutEncodersForward),
-                                                new SleepAction(.3),
-                                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::stopActuator)
+                                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::deployMid)
                                                 ),
                                         new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON)
                         );

@@ -38,7 +38,8 @@ public interface RobotAdapter {
         LEVEL_3_ASCENT,
 
         PICKUP_SPECIMEN_OFF_WALL_SENSOR,
-        GET_READY_FOR_INTAKE_FROM_GROUND, SPECIMEN_INTAKE_FROM_WALL
+        GET_READY_FOR_INTAKE_FROM_GROUND,
+        SPECIMEN_INTAKE_FROM_WALL
     }
 
     // Generalized method to get an Action based on a provided action type

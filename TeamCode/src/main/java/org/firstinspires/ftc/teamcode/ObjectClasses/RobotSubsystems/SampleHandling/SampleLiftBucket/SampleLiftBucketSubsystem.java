@@ -108,11 +108,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     private SampleLiftStates currentLiftState;
     private SampleLiftStates targetLiftState;
     private BucketStates currentBucketState;
-    private BucketStates targetBucketState;
     private DumperStates currentDumperState;
-    private DumperStates targetDumperState;
-
-
 
     public SampleLiftBucketSubsystem(final HardwareMap hMap, final String liftName, final String bucketName, final String dumperName) {
         lift = hMap.get(DcMotorEx.class, liftName);
@@ -142,10 +138,10 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         setTargetTicks(currentLiftState.ticks);  // Use setTargetTicks to initialize
         lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         if (bucket != null){
-            setTargetBucketState(BucketStates.BUCKET_INTAKE_POS);
+            setCurrentBucketState(BucketStates.BUCKET_INTAKE_POS);
         }
         if (dumper != null){
-            setTargetDumperState(DumperStates.DUMPER_HOME);
+            setCurrentDumperState(DumperStates.DUMPER_HOME);
         }
     }
 
@@ -196,16 +192,14 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         targetLiftState = state;
         setTargetTicks(state.getLiftHeightTicks());
     }
-    public void setTargetBucketState(BucketStates state){
-        targetBucketState = state;
+    public void setCurrentBucketState(BucketStates state){
         currentBucketState = state;
-        bucket.setPosition(targetBucketState.position);
+        bucket.setPosition(state.position);
     }
 
-    public void setTargetDumperState(DumperStates state){
-        targetDumperState = state;
+    public void setCurrentDumperState(DumperStates state){
         currentDumperState = state;
-        dumper.setPosition(targetDumperState.position);
+        dumper.setPosition(state.position);
     }
 
     public SampleLiftStates getCurrentLiftState() {
@@ -301,10 +295,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     public void updateDashboardTelemetry() {
         MatchConfig.telemetryPacket.put("dumper/Current State", currentDumperState.toString());
-        MatchConfig.telemetryPacket.put("dumper/Target State", targetDumperState.toString());
         MatchConfig.telemetryPacket.put("bucket/Current State", currentBucketState.toString());
-        MatchConfig.telemetryPacket.put("bucket/Target State", targetBucketState.toString());
-
 
         MatchConfig.telemetryPacket.put("sampleLift/Current State", currentLiftState.toString());
         MatchConfig.telemetryPacket.put("sampleLift/Target State", targetLiftState.toString());

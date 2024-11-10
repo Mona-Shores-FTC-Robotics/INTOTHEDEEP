@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.B
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.DefaultSpecimenArmWithMotionProfileCommand;
@@ -107,7 +107,7 @@ public class IntoTheDeepOperatorBindings {
 
     private void bindBucket(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
-            SampleHandlingStateMachine sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
+            SampleButtonHandling sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
             Command moveSampleBucket = new InstantCommand(sampleHandlingStateMachine::onMoveSampleBucketButtonPress);
             operatorGamePad.getGamepadButton(button)
                     .whenPressed(moveSampleBucket);
@@ -123,7 +123,7 @@ public class IntoTheDeepOperatorBindings {
 
     private void bindDumping(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
-            SampleHandlingStateMachine sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
+            SampleButtonHandling sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
             Command moveSampleDumper = new InstantCommand(sampleHandlingStateMachine::onMoveSampleDumperButtonPress);
 
             operatorGamePad.getGamepadButton(button)
@@ -155,7 +155,7 @@ public class IntoTheDeepOperatorBindings {
     }
     private void bindSampleScoring(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
-            SampleHandlingStateMachine sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
+            SampleButtonHandling sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
             Command sampleScorePressCommand = new InstantCommand(sampleHandlingStateMachine::onScoreButtonPress);
 
             operatorGamePad.getGamepadButton(button)
@@ -173,7 +173,7 @@ public class IntoTheDeepOperatorBindings {
     private void bindSampleIntake(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
         {
-            SampleHandlingStateMachine sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
+            SampleButtonHandling sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
             Command sampleIntakeButtonPressCommand = new InstantCommand(sampleHandlingStateMachine::onIntakeButtonPressCommand);
 
             operatorGamePad.getGamepadButton(button)

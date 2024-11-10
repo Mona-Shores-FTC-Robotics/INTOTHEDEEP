@@ -23,7 +23,7 @@ public class DefaultSampleLinearActuatorCommand extends CommandBase {
 
         if (Math.abs(actuatorInput) > ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION) {
             // Convert joystick input into movement, adjust target ticks based on manual input
-            sampleLinearActuatorSubsystem.setManualTargetState(-actuatorInput);
+            sampleLinearActuatorSubsystem.manualMove(-actuatorInput);
         }
     }
 

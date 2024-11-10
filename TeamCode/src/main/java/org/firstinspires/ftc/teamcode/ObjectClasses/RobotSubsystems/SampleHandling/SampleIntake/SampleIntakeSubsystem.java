@@ -12,6 +12,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -34,11 +35,13 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         // Set a minimum proximity threshold to consider an object as "near"
         public double PROXIMITY_THRESHOLD = .8;
         public int COLOR_HISTORY_SIZE = 5;
+        public double TRANSFER_TIME_MS= 400;
     }
 
     public static IntakeParams INTAKE_PARAMS = new IntakeParams();
 
     public enum SampleIntakeStates {
+        REVERSING_INTAKE_TO_TRANSFER(INTAKE_PARAMS.INTAKE_REVERSE_POWER),
         INTAKE_ON(INTAKE_PARAMS.INTAKE_ON_POWER),
         INTAKE_REVERSE(INTAKE_PARAMS.INTAKE_REVERSE_POWER),
         INTAKE_OFF(INTAKE_PARAMS.INTAKE_OFF_POWER);
@@ -61,11 +64,12 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     private double currentPower;
     private double proximity;
 
-
     private final Deque<SampleColor> colorHistory = new ArrayDeque<>(INTAKE_PARAMS.COLOR_HISTORY_SIZE);
     // Variables to store the latest colors
     private SampleColor lastRawColor = SampleColor.UNKNOWN;
     private SampleColor lastFilteredColor = SampleColor.UNKNOWN;
+    ElapsedTime sampleIntakeTimer = new ElapsedTime();
+    private boolean haveSample = false;
 
     // Constructor with color sensor
     public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoL, final String intakeServoR, final String colorSensorName) {
@@ -92,12 +96,21 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         setCurrentState(SampleIntakeStates.INTAKE_OFF);  // Set default state to off
         currentPower = INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
         lightingSubsystem = Robot.getInstance().getLightingSubsystem();
+        haveSample= false;
     }
 
     @Override
     public void periodic() {
         // Detect the color of the game piece in every loop
-        if (colorSensor!=null) {
+        if (haveSample){
+            Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+            if (currentState==SampleIntakeStates.REVERSING_INTAKE_TO_TRANSFER && sampleIntakeTimer.milliseconds()>=INTAKE_PARAMS.TRANSFER_TIME_MS)
+            {
+                setCurrentState(SampleIntakeStates.INTAKE_OFF);
+                haveSample=false;
+                Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+            }
+        } else if (colorSensor!=null) {
             lastFilteredColor = detectSampleColor();
             handleSamplePickup(lastFilteredColor);
         }
@@ -116,6 +129,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         sampleIntakeRight.setPower(-currentPower);  // Apply the clipped power
     }
 
+    public void transferSampleToBucket() {
+        sampleIntakeTimer.reset();
+        setCurrentState(SampleIntakeStates.REVERSING_INTAKE_TO_TRANSFER);
+    }
 
     // Integrated student sample data using chatGPT
     public SampleColor detectSampleColor() {
@@ -260,13 +277,23 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                 lightingSubsystem.setBothLightsBlue();
             }
 
-            Robot.getInstance().getSampleHandlingStateMachine().onGoodSampleDetectedCommand();
+            if (Robot.getInstance().getSampleDetectionStateMachine()!=null)
+            {
+                //If we are in Teleop then use the onGoodSampleDetectedCommand
+//                if (Robot.getInstance().getOpModeType() == Robot.OpModeType.TELEOP) {
+//                    Robot.getInstance().getSampleHandlingStateMachine().onGoodSampleDetectedCommand();
+//                } else {
+                    haveSample = true;
+                    Robot.getInstance().getSampleDetectionStateMachine().setGoodSampleDetectedState();
+                    Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+//                }
+            }
 
         } else if ((sampleColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) ||
                 (sampleColor == SampleColor.BLUE && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED)) {
 
             // Bad piece: Expel the sample and reset the actuator to Mid
-            Robot.getInstance().getSampleHandlingStateMachine().onBadSampleDetected();
+            Robot.getInstance().getSampleHandlingStateMachine().onBadSampleDetectedCommand();
 
         } else if (sampleColor == SampleColor.UNKNOWN) {
             System.out.println("Unknown color detected, no action taken.");
