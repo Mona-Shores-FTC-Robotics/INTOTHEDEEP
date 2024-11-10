@@ -17,14 +17,6 @@ import java.util.Objects;
 @Config
 public class SampleButtonHandling {
 
-    public static class SampleButtonHandlingParams {
-        public long DELAY_RETRACT_TO_MID_POSITION_IN_MS = 200;
-        public long DELAY_MID_TO_FULL_POSITION_IN_MS = 300;
-        public long DELAY_FULL_TO_RETRACT_POSITION_IN_MS = 600;
-        public long DELAY_MID_TO_RETRACT_POSITION_IN_MS = 300;
-    }
-
-    public static SampleButtonHandlingParams SAMPLE_HANDLING_PARAMS = new SampleButtonHandlingParams();
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
@@ -68,9 +60,14 @@ public class SampleButtonHandling {
                     actuatorSubsystem.fullyRetract();
                     break;
                 case MANUAL:
+                case UNKNOWN:
+                case RETRACTING:
+                case DEPLOYING_TO_MID:
+                case DEPLOYING_TO_FULL:
                 default:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                     actuatorSubsystem.fullyRetract();
+
             }
     }
 
@@ -128,40 +125,6 @@ public class SampleButtonHandling {
         }
     }
 
-    // Method to handle piece pickup and expel sequence
-    public void onGoodSampleDetectedCommand() {
-        SequentialCommandGroup retractAndExpelSequence = new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new InstantCommand(this::setIntakeOff),
-                        new InstantCommand(actuatorSubsystem::runWithoutEncodersReverse)
-                        ),
-                new WaitCommand(500),
-                new InstantCommand(actuatorSubsystem::stopActuator),
-                new InstantCommand(this::setIntakeReverse),
-                new WaitCommand(300),
-                new InstantCommand(this::setIntakeOff));
-        retractAndExpelSequence.schedule();
-    }
-
-    public void onBadSampleDetectedCommand() {
-        SequentialCommandGroup expelPieceSequence = new SequentialCommandGroup(
-                new InstantCommand(this::setIntakeReverse),  // Reverse intake
-                new WaitCommand(250),  // Wait for the piece to be expelled
-                new InstantCommand(actuatorSubsystem::runWithoutEncodersReverse), // move the actuator back a little bit
-                new WaitCommand(250),
-                new ParallelCommandGroup(
-                    new InstantCommand(this::setIntakeOn), // Resume intaking
-                    new InstantCommand(actuatorSubsystem::stopActuator)// move the actuator back a little bit
-                )
-        );
-        expelPieceSequence.schedule();
-    }
-
-
-    // Method to turn the intake on
-    public void setIntakeOn() {
-        intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-    }
 
     // Method to turn the intake off
     public void setIntakeOff() {
@@ -173,28 +136,6 @@ public class SampleButtonHandling {
         intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
     }
 
-    public void setLiftToHighBasket() {
-        // Check if the actuator is fully retracted before moving the lift
-        if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-            liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
-        } else {
-            System.out.println("Cannot raise lift: Actuator is not fully retracted.");
-        }
-    }
 
-    public void setLiftToLowBasket() {
-        // Check if the actuator is fully retracted before moving the lift
-        if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-            liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET);
-        } else {
-            System.out.println("Cannot raise lift: Actuator is not fully retracted.");
-        }
-    }
-
-    public void setLiftToHome() {
-         liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
-    }
-
-    public SampleButtonHandlingStates getCurrentSampleHandlingState() { return currentState;}
 
 }

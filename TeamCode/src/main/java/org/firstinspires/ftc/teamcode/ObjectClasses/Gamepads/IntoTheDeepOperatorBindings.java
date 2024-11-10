@@ -35,12 +35,12 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // RIGHT STICK - X axis - Manually Move SampleIntake    //
         //////////////////////////////////////////////////////////
-        bindManualSampleActuatorMovement(operatorGamePad::getRightX);
+        bindManualSampleActuatorMovement(operatorGamePad::getRightY);
 
         //////////////////////////////////////////////////////////
         // RIGHT STICK - Y axis - Manually Move SampleIntake     //
         //////////////////////////////////////////////////////////
-        bindManualLiftMovement(operatorGamePad::getRightY);
+//        bindManualLiftMovement(operatorGamePad::getRightY);
 
         //////////////////////////////////////////////////////////
         // LEFT BUMPER - Cycle Telemetry                        //

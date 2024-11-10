@@ -36,11 +36,13 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         public double PROXIMITY_THRESHOLD = .8;
         public int COLOR_HISTORY_SIZE = 5;
         public double TRANSFER_TIME_MS= 400;
+        public double EJECT_TIME_MS= 400;
     }
 
     public static IntakeParams INTAKE_PARAMS = new IntakeParams();
 
     public enum SampleIntakeStates {
+        REVERSING_INTAKE_TO_EJECT(INTAKE_PARAMS.INTAKE_REVERSE_POWER),
         REVERSING_INTAKE_TO_TRANSFER(INTAKE_PARAMS.INTAKE_REVERSE_POWER),
         INTAKE_ON(INTAKE_PARAMS.INTAKE_ON_POWER),
         INTAKE_REVERSE(INTAKE_PARAMS.INTAKE_REVERSE_POWER),
@@ -102,13 +104,28 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Detect the color of the game piece in every loop
-        if (haveSample){
+        if (haveSample) {
             Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
-            if (currentState==SampleIntakeStates.REVERSING_INTAKE_TO_TRANSFER && sampleIntakeTimer.milliseconds()>=INTAKE_PARAMS.TRANSFER_TIME_MS)
-            {
-                setCurrentState(SampleIntakeStates.INTAKE_OFF);
-                haveSample=false;
-                Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+            switch (currentState) {
+                case REVERSING_INTAKE_TO_TRANSFER:
+                    if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.TRANSFER_TIME_MS) {
+                        setCurrentState(SampleIntakeStates.INTAKE_OFF);
+                        haveSample = false;
+                        Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+                    }
+                    break;
+                case REVERSING_INTAKE_TO_EJECT:
+                    if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.EJECT_TIME_MS) {
+                        setCurrentState(SampleIntakeStates.INTAKE_OFF);
+                        haveSample = false;
+                        Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+                    }
+                    break;
+                case INTAKE_ON:
+                case INTAKE_OFF:
+                case INTAKE_REVERSE:
+                    //do nothing
+                    break;
             }
         } else if (colorSensor!=null) {
             lastFilteredColor = detectSampleColor();
@@ -132,6 +149,11 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public void transferSampleToBucket() {
         sampleIntakeTimer.reset();
         setCurrentState(SampleIntakeStates.REVERSING_INTAKE_TO_TRANSFER);
+    }
+
+    public void ejectBadSample() {
+        sampleIntakeTimer.reset();
+        setCurrentState(SampleIntakeStates.REVERSING_INTAKE_TO_EJECT);
     }
 
     // Integrated student sample data using chatGPT
@@ -279,22 +301,23 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
             if (Robot.getInstance().getSampleDetectionStateMachine()!=null)
             {
-                //If we are in Teleop then use the onGoodSampleDetectedCommand
-//                if (Robot.getInstance().getOpModeType() == Robot.OpModeType.TELEOP) {
-//                    Robot.getInstance().getSampleHandlingStateMachine().onGoodSampleDetectedCommand();
-//                } else {
-                    haveSample = true;
+                haveSample = true;
                     Robot.getInstance().getSampleDetectionStateMachine().setGoodSampleDetectedState();
                     Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
-//                }
             }
 
         } else if ((sampleColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) ||
                 (sampleColor == SampleColor.BLUE && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED)) {
 
-            // Bad piece: Expel the sample and reset the actuator to Mid
-            Robot.getInstance().getSampleHandlingStateMachine().onBadSampleDetectedCommand();
-
+            if (Robot.getInstance().getSampleDetectionStateMachine()!=null)
+            {
+                haveSample = true;
+                Robot.getInstance().getSampleDetectionStateMachine().setBadSampleDetectedState();
+                Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+            }
+        } else if (sampleColor==SampleColor.NO_SAMPLE)
+        {
+            haveSample=false;
         } else if (sampleColor == SampleColor.UNKNOWN) {
             System.out.println("Unknown color detected, no action taken.");
         }

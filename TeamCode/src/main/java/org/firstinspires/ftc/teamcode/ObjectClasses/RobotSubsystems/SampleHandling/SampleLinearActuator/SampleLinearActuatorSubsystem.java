@@ -17,16 +17,13 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     public static class ActuatorParams {
 
+        public double MANUAL_MOVEMENT_SCALAR = .8;
         public double WITHOUT_ENCODER_POWER = 0.7;  // Default power for both directions
-        public double SCALE_FACTOR_FOR_MANUAL_ACTUATION = 33;
         public double DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.10;
-        public double TIMEOUT_TIME_SECONDS = 3; // Time after which a move action/command will give up
-        public double POWER = .7;  // Unified power for both directions
 
         public double DEPLOYING_TO_FULL_TIME_MS = 600;
         public double DEPLOYING_TO_MID_TIME_MS = 300;
         public double RETRACTION_TIME_MS=700;
-
     }
 
     public static ActuatorParams ACTUATOR_PARAMS = new ActuatorParams();
@@ -38,7 +35,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         DEPLOYING_TO_FULL,
         DEPLOYED_FULLY,
         RETRACTING,
-        MANUAL;
+        MANUAL,
+        UNKNOWN;
     }
 
     private final DcMotorEx sampleActuator;
@@ -105,8 +103,9 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                 break;
             case DEPLOYED_MID:
             case DEPLOYED_FULLY:
-            case MANUAL:
             case FULLY_RETRACTED:
+            case MANUAL:
+            case UNKNOWN:
                 //do nothing
                 break;
         }
@@ -145,9 +144,10 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     // Add a method to handle manual input for the lift
     public void manualMove(double actuatorInput) {
         // Set the actuator state to MANUAL
-        currentState = SampleLinearActuatorSubsystem.SampleActuatorStates.MANUAL;
+        currentState=SampleActuatorStates.MANUAL;
+        actuatorInput *= ACTUATOR_PARAMS.MANUAL_MOVEMENT_SCALAR;
         double actuatorManualPower = Range.clip(actuatorInput, -.5, .5);
-        sampleActuator.setPower(actuatorInput);
+        sampleActuator.setPower(actuatorManualPower);
     }
 
     public void setCurrentState(SampleActuatorStates state) {
@@ -161,14 +161,10 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
             return true;
         }   return !retractedLimitSwitch.getState();  // Assuming switch triggers when low
     }
-    public int getCurrentTicks() {
-        return currentTicks;
-    }
 
     public SampleActuatorStates getCurrentState() {
         return currentState;
     }
-
 
     // Method to stop the motor
     public void stopActuator() {
@@ -180,14 +176,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     private void moveActuator(double power) {
         currentPower = Range.clip(power, -1.0, 1.0);  // Ensure power is within valid range
         sampleActuator.setPower(currentPower);
-    }
-
-    // Switch to RUN_TO_POSITION mode for precise movement
-    public void enableRunToPositionMode() {
-        if (sampleActuator.getMode() != DcMotorEx.RunMode.RUN_TO_POSITION) {
-            sampleActuator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            sampleActuator.setPower(ACTUATOR_PARAMS.POWER);
-        }
     }
 
     // Update dashboard telemetry with actuator state

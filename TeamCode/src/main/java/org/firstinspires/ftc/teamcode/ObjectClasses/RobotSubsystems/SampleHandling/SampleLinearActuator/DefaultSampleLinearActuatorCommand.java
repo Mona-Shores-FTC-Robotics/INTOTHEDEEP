@@ -20,10 +20,13 @@ public class DefaultSampleLinearActuatorCommand extends CommandBase {
     @Override
     public void execute() {
         double actuatorInput = actuatorSupplier.getAsDouble();
-
         if (Math.abs(actuatorInput) > ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION) {
             // Convert joystick input into movement, adjust target ticks based on manual input
             sampleLinearActuatorSubsystem.manualMove(-actuatorInput);
+        }  else if (sampleLinearActuatorSubsystem.getCurrentState()== SampleLinearActuatorSubsystem.SampleActuatorStates.MANUAL)
+        {
+            sampleLinearActuatorSubsystem.stopActuator();
+            sampleLinearActuatorSubsystem.setCurrentState(SampleLinearActuatorSubsystem.SampleActuatorStates.UNKNOWN);
         }
     }
 

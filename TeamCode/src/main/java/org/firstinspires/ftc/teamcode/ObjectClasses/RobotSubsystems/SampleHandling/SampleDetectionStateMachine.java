@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
@@ -13,16 +17,18 @@ public class SampleDetectionStateMachine {
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
 
-    public void setGoodSampleDetectedState() {
-        currentSampleDetectionState = SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
-    }
+
 
     public enum SampleDetectionStates {
         ON_GOOD_SAMPLE_DETECTION,
         GETTING_READY_FOR_TRANSFER,
         READY_FOR_TRANSFER,
         TRANSFERRING,
-        TRANSFERRED
+        TRANSFERRED,
+        ON_BAD_SAMPLE_DETECTED,
+        EJECTING_BAD_SAMPLE,
+        EJECTED,
+        LOOKING_FOR_SAMPLE,
     }
     private SampleDetectionStates currentSampleDetectionState = SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
 
@@ -56,13 +62,37 @@ public class SampleDetectionStateMachine {
                 break;
             case TRANSFERRING:
                 if (intakeSubsystem.getCurrentState()== SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
-                    currentSampleDetectionState = SampleDetectionStates.TRANSFERRED;;
+                    currentSampleDetectionState = SampleDetectionStates.TRANSFERRED;
                 }
+                break;
+            case ON_BAD_SAMPLE_DETECTED:
+                currentSampleDetectionState = SampleDetectionStates.EJECTING_BAD_SAMPLE;
+                intakeSubsystem.ejectBadSample();
+                break;
+            case EJECTING_BAD_SAMPLE:
+                if (intakeSubsystem.getCurrentState()== SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
+                    currentSampleDetectionState = SampleDetectionStates.EJECTED;
+                    actuatorSubsystem.fullyRetract();
+                    intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+                }
+                break;
+            case EJECTED:
+            case TRANSFERRED:
+                //do nothing
+                break;
         }
     }
 
     public SampleDetectionStates getCurrentSampleDetectionState() {
         return currentSampleDetectionState;
+    }
+
+    public void setGoodSampleDetectedState() {
+        currentSampleDetectionState = SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
+    }
+
+    public void setBadSampleDetectedState() {
+        currentSampleDetectionState = SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
     }
 
 }

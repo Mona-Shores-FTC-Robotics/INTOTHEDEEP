@@ -37,7 +37,6 @@ public class SpecimenHandlingStateMachine {
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
             case CW_ARM_HOME:
-
                 onConstantPowerButtonCommand();
                 break;
             case CCW_ARM_HOME:
@@ -184,18 +183,10 @@ public class SpecimenHandlingStateMachine {
         armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.CONSTANT_VELOCITY);
 
     }
-    public void turnOffConstantVelocity() {
-        armSubsystem.arm.setVelocity(0);
-        armSubsystem.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.OFF);
 
-
-    }
     public void turnOffConstantPower() {
         armSubsystem.arm.setPower(0);
         armSubsystem.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armSubsystem.setCurrentState(SpecimenArmSubsystem.SpecimenArmStates.OFF);
-
-
     }
 }
