@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -30,22 +31,22 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double DEAD_ZONE = 0.05;
 
         //PID parameters
-        public double P = 0.0085, I = 0.0, D = 0.0; // PID coefficients
+        public double P = .015, I = 0.0, D = 0.0; // PID coefficients
         public double ANGLE_TOLERANCE_THRESHOLD_DEGREES = 1.0;
 
         //Arm Feedforward parameters
-        public double kS = 0.075, kCos = 0.222, kV = .08, kA = .05; // Feedforward coefficients
+        public double kS = 0.075, kCos = .17, kV = .08, kA = .05; // Feedforward coefficients
 
         //Maximum Power for clipping motor output
         public double MAX_POWER = 0.7;
 
         // Mechanical Parameters}
-        public double GEAR_RATIO = 2.8;
-        public double MOTOR_TICKS_PER_DEGREE = 537.7 / 360.0;
+        public double GEAR_RATIO = 1.0;
+        public double MOTOR_TICKS_PER_DEGREE = 1993.6 / 360.0;
         public double TICKS_PER_DEGREE = MOTOR_TICKS_PER_DEGREE * GEAR_RATIO; // 4.181
 
         //Preset Angles
-        public double CCW_HOME = 244.0;
+        public double CCW_HOME = 270;
         public double SPECIMEN_PICKUP_ANGLE = 210.0;
         public double SPECIMEN_DELIVERY_ANGLE = 105;
         public double SLOP_SWITCH_ANGLE = 110.0;
@@ -130,10 +131,10 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         arm = hMap.get(DcMotorEx.class, name);
         arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        arm.setDirection(DcMotorEx.Direction.FORWARD);
+        arm.setDirection(DcMotorEx.Direction.REVERSE);
         currentState = SpecimenArmStates.CCW_ARM_HOME;
         armEncoder = new OverflowEncoder(new RawEncoder(arm));
-        armEncoder.setDirection(DcMotorEx.Direction.FORWARD);
+        armEncoder.setDirection(DcMotorEx.Direction.REVERSE);
         timer = new ElapsedTime();
     }
 

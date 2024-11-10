@@ -37,9 +37,8 @@ public class SpecimenHandlingStateMachine {
                 setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
             case CW_ARM_HOME:
-                setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_DELIVERY);
-                //set the arm with a constant velocity instead of doing a motion profile
-                setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
+
+                onConstantPowerButtonCommand();
                 break;
             case CCW_ARM_HOME:
                 setArmTargetState(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
@@ -137,9 +136,8 @@ public class SpecimenHandlingStateMachine {
                 new InstantCommand(this::turnOffConstantPower),  // Expel the specimen
                 new InstantCommand(this::setIntakeReverse),
                 new WaitCommand(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS),  // Wait for the piece to be expelled
-                new InstantCommand(this::setIntakeOff)// Expel the specimen
-
-        );
+                new InstantCommand(this::setIntakeOff),// Expel the specime
+                new WaitCommand(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.DELAY_UNTIL_POWER_ZERO_MILLISECONDS));// n
         hangPiece.schedule();
     }
     public Action flipCCWFastAction() {

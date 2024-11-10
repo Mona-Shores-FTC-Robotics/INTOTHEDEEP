@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 
 import java.util.Objects;
 
+import javassist.tools.rmi.Sample;
+
 @Config
 public class SampleHandlingStateMachine {
     public static class SampleHandlingParams {
@@ -145,19 +147,21 @@ public class SampleHandlingStateMachine {
                 liftSubsystem.setTargetDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
                 liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
+                currentState= SampleHandlingStates.HIGH_BASKET;
                 break;
             case HIGH_BASKET:
                 liftSubsystem.setTargetDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_DUMP);
                 liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
+                currentState= SampleHandlingStates.SCORE_COMPLETE;
                 //TODO timer?
                 break;
             case SCORE_COMPLETE:
+            case HOME:
                 liftSubsystem.setTargetDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
                 liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
-
-
+                currentState= SampleHandlingStates.INTAKE;
         }
     }
 
