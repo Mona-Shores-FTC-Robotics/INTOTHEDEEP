@@ -8,7 +8,6 @@ import static com.example.sharedconstants.FieldConstants.OBS_ZONE_DUMP;
 import static com.example.sharedconstants.FieldConstants.OBS_ZONE_PICKUP_FACE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.RIGHT_OF_CHAMBER_INTAKE_1;
 import static com.example.sharedconstants.FieldConstants.RIGHT_OF_CHAMBER_INTAKE_2;
-import static com.example.sharedconstants.FieldConstants.RIGHT_OF_CHAMBER_INTAKE_3;
 
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
@@ -51,7 +50,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_1, ANGLE_TOWARD_BLUE)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND))
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT))
                 .setReversed(true)
                 .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE));
@@ -61,7 +60,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
                 .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_2, ANGLE_TOWARD_BLUE)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND))
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT))
                 .setReversed(true)
                 .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE));
@@ -73,7 +72,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
                 .splineToLinearHeading(OBS_ZONE_DUMP, ANGLE_TOWARD_OBSERVATION)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND));
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT));
 
     }
 }

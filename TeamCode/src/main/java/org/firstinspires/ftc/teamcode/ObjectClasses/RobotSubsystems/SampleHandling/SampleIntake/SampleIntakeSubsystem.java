@@ -11,7 +11,6 @@ import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.Light;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.Range;
 
@@ -261,7 +260,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                 lightingSubsystem.setBothLightsBlue();
             }
 
-            Robot.getInstance().getSampleHandlingStateMachine().onGoodSampleDetected();
+            Robot.getInstance().getSampleHandlingStateMachine().onGoodSampleDetectedCommand();
 
         } else if ((sampleColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) ||
                 (sampleColor == SampleColor.BLUE && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED)) {

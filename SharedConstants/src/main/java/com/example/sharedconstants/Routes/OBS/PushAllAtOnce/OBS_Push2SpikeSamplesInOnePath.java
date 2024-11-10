@@ -3,7 +3,6 @@ package com.example.sharedconstants.Routes.OBS.PushAllAtOnce;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FOUR;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_THREE;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWO;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_STAGING_FOR_PICKUP;

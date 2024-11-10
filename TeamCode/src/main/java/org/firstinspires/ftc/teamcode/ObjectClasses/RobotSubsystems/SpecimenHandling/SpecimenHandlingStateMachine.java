@@ -78,8 +78,6 @@ public class SpecimenHandlingStateMachine {
         stageSpecimen.schedule();
     }
 
-    //TODO is this really a good idea for onBadSpecimenDetection?
-    // What if somehow we detect a yellow Specimen or non-our color specimen
     public void onBadSpecimenDetected() {
         SequentialCommandGroup expelPieceSequence = new SequentialCommandGroup(
                 new InstantCommand(this::setIntakeOff),  // Expel the specimen

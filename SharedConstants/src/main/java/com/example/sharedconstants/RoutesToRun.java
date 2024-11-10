@@ -2,6 +2,7 @@
 package com.example.sharedconstants;
 
 public enum RoutesToRun {
+    OBS_TEST,
     NET_SCORE_1_PRELOAD,
     OBS_SCORE_1_PRELOAD,
     MOVE_ONLY,

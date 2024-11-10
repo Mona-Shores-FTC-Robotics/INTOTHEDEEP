@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.AutonomousPeriodicAction;
 
-@Autonomous(name = "Preload Specimen")
+@Autonomous(name = "Auto Test")
 public class PreloadAuto extends LinearOpMode {
 
     Routes blueObsRoute;
@@ -78,7 +78,7 @@ public class PreloadAuto extends LinearOpMode {
         Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
 
         telemetry.clearAll();
-        telemetry.addLine("howdy");
+
         MatchConfig.timestampTimer = new ElapsedTime();
         MatchConfig.timestampTimer.reset();
 

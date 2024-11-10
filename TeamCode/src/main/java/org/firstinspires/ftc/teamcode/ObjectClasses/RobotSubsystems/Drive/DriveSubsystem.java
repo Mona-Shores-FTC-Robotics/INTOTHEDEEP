@@ -91,17 +91,15 @@ public class DriveSubsystem extends SubsystemBase {
         // Initialize appropriate drive system based on robot type
         switch (robotType) {
             case INTO_THE_DEEP_19429:
-                //todo can we edit this config live in the dashboard? How can we make that happen?
                 DriveParams.configureIntoTheDeep19429RRParams();
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                 DriveParams.configureIntoTheDeep19429Directions(mecanumDrive, this);
                 break;
 
             case INTO_THE_DEEP_20245:
-                //TODO update once 20245 has its own configuration
-                DriveParams.configureIntoTheDeep19429RRParams();
+                DriveParams.configureIntoTheDeep20245RRParams();
                 mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-                DriveParams.configureIntoTheDeep19429Directions(mecanumDrive, this);
+                DriveParams.configureIntoTheDeep20245Directions(mecanumDrive, this);
                 break;
 
         }

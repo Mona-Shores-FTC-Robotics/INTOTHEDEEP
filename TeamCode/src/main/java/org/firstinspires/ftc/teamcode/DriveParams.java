@@ -23,7 +23,7 @@ public class DriveParams {
         // feedforward parameters (in tick units)
         MecanumDrive.PARAMS.kS = 1.1949887108295525;
         MecanumDrive.PARAMS.kV = 0.1256588154090211;
-        MecanumDrive.PARAMS.kA = 0.03 ;
+        MecanumDrive.PARAMS.kA = 0.03;
 
         // path profile parameters (in inches)
         MecanumDrive.PARAMS.maxWheelVel = 32;
@@ -50,6 +50,7 @@ public class DriveParams {
         PinpointDrive.PARAMS.yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
 
     }
+
     public static void configureIntoTheDeep19429Directions(MecanumDrive mecanumDrive, DriveSubsystem driveSubsystem) {
         // Set motor directions
         mecanumDrive.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
@@ -66,5 +67,62 @@ public class DriveParams {
             localizer.rightBack.setDirection(DcMotorEx.Direction.FORWARD);
         }
     }
+
+    public static void configureIntoTheDeep20245RRParams() {
+        // Assuming you want to configure a separate set of parameters for another robot
+        // If MecanumDrive.PARAMS is shared, ensure that configurations don't conflict
+        // Alternatively, consider creating a separate Params object for each configuration
+
+        MecanumDrive.PARAMS.logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+        MecanumDrive.PARAMS.usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+
+        // Drive model parameters
+        MecanumDrive.PARAMS.inPerTick = 1; // SparkFun OTOS Note: you can probably leave this at 1
+        MecanumDrive.PARAMS.lateralInPerTick = 0.5986580181755985;
+        MecanumDrive.PARAMS.trackWidthTicks = 12.734772672832092;
+
+        // Feedforward parameters (in tick units)
+        MecanumDrive.PARAMS.kS = 1.5603878434857292;
+        MecanumDrive.PARAMS.kV = 0.12440377818594824;
+        MecanumDrive.PARAMS.kA = 0.03;
+
+        // Path profile parameters (in inches)
+        MecanumDrive.PARAMS.maxWheelVel = 25;
+        MecanumDrive.PARAMS.minProfileAccel = -25;
+        MecanumDrive.PARAMS.maxProfileAccel = 25;
+
+        // Turn profile parameters (in radians)
+        MecanumDrive.PARAMS.maxAngVel = Math.PI; // Shared with path
+        MecanumDrive.PARAMS.maxAngAccel = Math.PI;
+
+        // Path controller gains
+        MecanumDrive.PARAMS.axialGain = 8;
+        MecanumDrive.PARAMS.lateralGain = 8;
+        MecanumDrive.PARAMS.headingGain = 6; // Shared with turn
+
+        // Velocity controller gains
+        MecanumDrive.PARAMS.axialVelGain = 0.1;
+        MecanumDrive.PARAMS.lateralVelGain = 0.0;
+        MecanumDrive.PARAMS.headingVelGain = 0.0; // Shared with turn
+    }
+
+
+    public static void configureIntoTheDeep20245Directions(MecanumDrive mecanumDrive, DriveSubsystem driveSubsystem) {
+        // Set motor directions
+        mecanumDrive.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+        mecanumDrive.leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+        mecanumDrive.rightFront.setDirection(DcMotorEx.Direction.FORWARD);
+        mecanumDrive.rightBack.setDirection(DcMotorEx.Direction.FORWARD);
+
+        //Set motor encoder directions
+        if (mecanumDrive.localizer instanceof MecanumDrive.DriveLocalizer) {
+            MecanumDrive.DriveLocalizer localizer = (MecanumDrive.DriveLocalizer) mecanumDrive.localizer;
+            localizer.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+            localizer.leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+            localizer.rightFront.setDirection(DcMotorEx.Direction.FORWARD);
+            localizer.rightBack.setDirection(DcMotorEx.Direction.FORWARD);
+        }
+    }
+
 }
 

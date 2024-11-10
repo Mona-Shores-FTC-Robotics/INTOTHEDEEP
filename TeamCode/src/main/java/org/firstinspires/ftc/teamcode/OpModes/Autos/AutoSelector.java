@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.DoNothing;
-import com.example.sharedconstants.Routes.MoveOnly;
 import com.example.sharedconstants.Routes.NET.NET_Score5_SamplePreload;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_2_Preload_and_1_Sample_Short;
@@ -12,16 +12,8 @@ import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_3_Preloa
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_4_Preload_and_3_Samples_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short;
-import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike;
 import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time;
-import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
-import com.example.sharedconstants.Routes.OBS.PushAllAtOnce.OBS_Push2SpikeSamplesInOnePath;
-import com.example.sharedconstants.Routes.OBS.PushAllAtOnce.OBS_Push3SpikeSampleInOnePath;
-import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike;
-import com.example.sharedconstants.Routes.OBS.PushAndScore.OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike;
-import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade;
-import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_4_SampleFirst_Push_2_Spike_Samples;
-import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_5_SampleFirst_Push_3_Spike_Samples;
+import com.example.sharedconstants.Routes.OBS.OBS_Intake_Transfer_Dump;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -31,6 +23,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.AutonomousPeriodicAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,52 +90,11 @@ public class AutoSelector extends LinearOpMode {
         adapter.setAllianceColor(allianceColor);
 
         // Gets in the way of the other side also tramples over samples.
-        obsRoute = new OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
+        obsRoute = new OBS_Intake_Transfer_Dump(adapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute); // Tristan + Landon likes
-
-        // Doesn't wait long enough to pick the specimen up.
-        obsRoute = new OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute); // Tristan + Landon likes
-
-        // Doesn't score enough points but could be used if the other team in our alliance is good.
-        obsRoute = new OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade(adapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
-
-        // Scores less points.
-        obsRoute = new OBS_Score_1_Specimen_Preload(adapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
-
-        // Scored all samples but could possibly get rammed by the other robot.
-        // Scores decent points.
-        obsRoute = new OBS_Score_4_SampleFirst_Push_2_Spike_Samples(adapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
-
-        // Scored all samples but could possibly get rammed by the other robot.
-        // Scores high points.
-        obsRoute = new OBS_Score_5_SampleFirst_Push_3_Spike_Samples(adapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute); // Tristan + Landon likes
-
-        // Doesn't push the samples whatsoever and did not score anything could also ram into the other alliances robots.
-        obsRoute = new OBS_Push3SpikeSampleInOnePath(adapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
-
-        // Pushes the samples perfect for when the other teams robot is also trying to score.
-        obsRoute = new OBS_Push2SpikeSamplesInOnePath(adapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
 
         obsRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time(adapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
-
-        obsRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
@@ -252,10 +204,22 @@ public class AutoSelector extends LinearOpMode {
 
         telemetry.clearAll();
 
+        AutonomousPeriodicAction autonomousPeriodicAction = new AutonomousPeriodicAction();
+        MatchConfig.telemetryPacket = new TelemetryPacket();
+        ParallelAction parallelAction = new ParallelAction(
+                selectedRouteAction,
+                autonomousPeriodicAction
+        );
+
+        MatchConfig.loopTimer = new ElapsedTime();
+        MatchConfig.loopTimer.reset();
+
         MatchConfig.timestampTimer = new ElapsedTime();
         MatchConfig.timestampTimer.reset();
 
-        Actions.runBlocking(selectedRouteAction);
+        Actions.runBlocking(parallelAction);
+
+
 
         // Update final autonomous data
 

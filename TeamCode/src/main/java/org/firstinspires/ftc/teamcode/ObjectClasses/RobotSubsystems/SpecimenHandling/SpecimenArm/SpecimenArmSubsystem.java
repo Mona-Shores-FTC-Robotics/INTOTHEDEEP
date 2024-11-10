@@ -155,7 +155,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         pidController.reset();
         arm.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        //TODO Where should the arm start? Might have to rethink how things are set up depending on if the arm is starting at CW_HOME or CCW_HOME
         currentState = SpecimenArmStates.CCW_ARM_HOME;
         currentAngleDegrees= SPECIMEN_ARM_PARAMS.CCW_HOME;
         targetAngleDegrees = SPECIMEN_ARM_PARAMS.CCW_HOME;

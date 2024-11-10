@@ -165,9 +165,8 @@ public class DriverStationTelemetryManager {
         if (Robot.getInstance().hasSubsystemWithErrorTelemetry(Robot.SubsystemType.SAMPLE_INTAKE)) {
             Robot.getInstance().getSampleIntakeSubsystem().displayBasicTelemetry(telemetry);
         }
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) ||
-                Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)) {
-            Robot.getInstance().getSampleLinearActuatorSubsystem().displayBasicTelemetry(telemetry);
+        if ( Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+                Robot.getInstance().getSampleLinearActuatorSubsystem().displayBasicTelemetry(telemetry);
         }
         if (Robot.getInstance().hasSubsystemWithErrorTelemetry(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
             Robot.getInstance().getSampleLiftBucketSubsystem().displayBasicTelemetry(telemetry);
@@ -200,8 +199,7 @@ public class DriverStationTelemetryManager {
 
     // Verbose telemetry method for SampleLinearActuatorSubsystem
     private void displayVerboseSampleLinearActuatorTelemetry() {
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) ||
-                Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)) {
+        if ( Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
             Robot.getInstance().getSampleLinearActuatorSubsystem().displayVerboseTelemetry(telemetry);
         } else cycleTelemetryMode();
     }

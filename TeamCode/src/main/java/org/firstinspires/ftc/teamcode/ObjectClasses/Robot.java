@@ -58,7 +58,7 @@ public class Robot {
     private static LightingSubsystem lightingSubsystem;
 
     public enum SubsystemType {
-        DRIVE, SAMPLE_INTAKE, SAMPLE_ACTUATOR_WITH_ENCODER, SAMPLE_LIFT_BUCKET, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION, SAMPLE_ACTUATOR_WITHOUT_ENCODER, LIGHTING
+        DRIVE, SAMPLE_INTAKE, SAMPLE_LIFT_BUCKET, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION, SAMPLE_ACTUATOR, LIGHTING
     }
 
     // Use an EnumSet for tracking available subsystems
@@ -92,7 +92,7 @@ public class Robot {
 
                 //Expansion Hub - Port 1 - samplelinearactuator
                 sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
-                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER, sampleLinearActuatorSubsystem);
+                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
 
                 //Expansion Hub - Motor Port 2 - samplelift
                 //Control Hub - Servo Port 2 - samplebucket
@@ -179,7 +179,7 @@ public class Robot {
 
         if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
                  hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
-                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) || hasSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)) {
+                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
             sampleHandlingStateMachine = new SampleHandlingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
         }
 

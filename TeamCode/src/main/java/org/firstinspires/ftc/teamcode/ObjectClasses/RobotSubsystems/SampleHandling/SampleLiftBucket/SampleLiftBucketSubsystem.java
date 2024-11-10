@@ -37,7 +37,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
         // Dumper servo params
         public double DUMPER_HOME_POS = .7;
-        public double DUMPER_DUMP_POS = .7;
+        public double DUMPER_DUMP_POS = .2;
     }
 
 
@@ -138,7 +138,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
 
     public void init() {
-        //TODO do we need to split into initAuto() and initTeleop()?
         targetLiftState = SampleLiftStates.LIFT_HOME;
         setTargetTicks(currentLiftState.ticks);  // Use setTargetTicks to initialize
         lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -199,7 +198,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
     public void setTargetBucketState(BucketStates state){
         targetBucketState = state;
-        // TODO Delay time to move to new state?
         currentBucketState = state;
         bucket.setPosition(targetBucketState.position);
     }

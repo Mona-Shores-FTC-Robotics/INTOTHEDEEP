@@ -13,14 +13,14 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 
 import java.util.Objects;
 
-import javassist.tools.rmi.Sample;
-
 @Config
 public class SampleHandlingStateMachine {
     public static class SampleHandlingParams {
-        public long DELAY_RETRACT_TO_MID_POSITION_IN_MS = 250;
+        public long DELAY_RETRACT_TO_MID_POSITION_IN_MS = 200;
         public long DELAY_MID_TO_FULL_POSITION_IN_MS = 300;
         public long DELAY_FULL_TO_RETRACT_POSITION_IN_MS = 600;
+        public long DELAY_MID_TO_RETRACT_POSITION_IN_MS = 300;
+
     }
 
     public static SampleHandlingParams SAMPLE_HANDLING_PARAMS = new SampleHandlingParams();
@@ -56,33 +56,6 @@ public class SampleHandlingStateMachine {
 
     // Method to handle button press logic (toggle actuator states)
     public void onIntakeButtonPressCommand() {
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)) {
-            switch (actuatorSubsystem.getCurrentState()) {
-                case RETRACT:
-                    Command sampleIntakeMidDeployCommand = new SequentialCommandGroup(
-                            new InstantCommand(this::setIntakeOn),
-                            new InstantCommand(this::deployActuatorMid)
-                    );
-                    sampleIntakeMidDeployCommand.schedule();
-                    break;
-                case DEPLOY_MID:
-                    Command sampleIntakeFullDeployCommand = new SequentialCommandGroup(
-                            new InstantCommand(this::setIntakeOn),
-                            new InstantCommand(this::deployActuatorFull)
-                    );
-                    sampleIntakeFullDeployCommand.schedule();
-                    break;
-                case DEPLOY_FULL:
-                case MANUAL:
-                default:
-                    Command sampleIntakeRetractCommand = new SequentialCommandGroup(
-                            new InstantCommand(this::setIntakeOff),
-                            new InstantCommand(this::retractActuator)
-                    );
-                    sampleIntakeRetractCommand.schedule();
-                    break;
-            }
-        } else {
             switch (actuatorSubsystem.getCurrentState()) {
                 case RETRACT:
                     Command sampleIntakeMidDeployCommand = new SequentialCommandGroup(
@@ -118,7 +91,6 @@ public class SampleHandlingStateMachine {
                     sampleIntakeRetractCommand.schedule();
                     break;
             }
-        }
     }
 
     private void setActuatorStateDeployedMid() {
@@ -154,7 +126,6 @@ public class SampleHandlingStateMachine {
                 liftSubsystem.setTargetBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
                 currentState= SampleHandlingStates.SCORE_COMPLETE;
-                //TODO timer?
                 break;
             case SCORE_COMPLETE:
             case HOME:
@@ -188,10 +159,8 @@ public class SampleHandlingStateMachine {
         }
     }
 
-
-
     // Method to handle piece pickup and expel sequence
-    public void onGoodSampleDetected() {
+    public void onGoodSampleDetectedCommand() {
         SequentialCommandGroup retractAndExpelSequence = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new InstantCommand(this::setIntakeOff),
@@ -203,7 +172,6 @@ public class SampleHandlingStateMachine {
                 new InstantCommand(this::setIntakeReverse),
                 new WaitCommand(300),
                 new InstantCommand(this::setIntakeOff));
-                //Todo Once we have a limit switch, maybe we can handle this better
         // Intothedeepera24!
         // ?
 //                new ContinuousConditionalCommand(

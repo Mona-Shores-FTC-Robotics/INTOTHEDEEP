@@ -45,10 +45,6 @@ public class DriveToObservationZone implements Action {
         if (!started) {
             RealRobotAdapter robotAdapter = new RealRobotAdapter();
             Pose2d currentPose = driveSubsystem.getMecanumDrive().pose;
-            //TODO this works but is a bit unintuitive, if we are blue we have to rotate the pose so that the getACtion can automatically flip it back (along with the path)
-            //  I think this works in auto because we just feed it the same Red start values regardless of whether we are blue or red?
-
-            // todo camera/apriltag?
 
             if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
                 currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log()+PI);

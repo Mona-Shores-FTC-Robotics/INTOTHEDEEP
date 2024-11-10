@@ -31,7 +31,6 @@ public class IntoTheDeepOperatorBindings {
         // LEFT STICK - Y axis - Manually Move SpecimenArm      //
         //////////////////////////////////////////////////////////
         bindManualSpecimenArmMovement(operatorGamePad::getLeftY);
-        //todo add manual speicmen lift variation?
 
         //////////////////////////////////////////////////////////
         // RIGHT STICK - X axis - Manually Move SampleIntake    //
@@ -75,13 +74,11 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // DPAD-UP                                              //
         //////////////////////////////////////////////////////////
-        //TODO temporary bind for testing
-        bindDumping(GamepadKeys.Button.DPAD_UP);
+
 
         //////////////////////////////////////////////////////////
         // DPAD-LEFT                                            //
         //////////////////////////////////////////////////////////
-
 
         //////////////////////////////////////////////////////////
         // DPAD-RIGHT                                           //
@@ -90,8 +87,7 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // DPAD-DOWN                                              //
         //////////////////////////////////////////////////////////
-        //TODO temporary bind for testing
-        bindBucket(GamepadKeys.Button.DPAD_DOWN);
+
         //////////////////////////////////////////////////////////
         // BACK/SHARE BUTTON                                    //
         //////////////////////////////////////////////////////////
@@ -175,8 +171,7 @@ public class IntoTheDeepOperatorBindings {
         }
     }
     private void bindSampleIntake(GamepadKeys.Button button) {
-        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) &&
-                (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER) || robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER)))
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
         {
             SampleHandlingStateMachine sampleHandlingStateMachine = robot.getSampleHandlingStateMachine();
             Command sampleIntakeButtonPressCommand = new InstantCommand(sampleHandlingStateMachine::onIntakeButtonPressCommand);
@@ -228,7 +223,7 @@ public class IntoTheDeepOperatorBindings {
         }
     }
     private void bindManualSampleActuatorMovement (DoubleSupplier analogInput){
-            if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)) {
+            if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
                 Command defaultSampleLinearActuatorCommand = new DefaultSampleLinearActuatorCommand(
                         robot.getSampleLinearActuatorSubsystem(),
                         analogInput // Use the dynamically passed joystick input

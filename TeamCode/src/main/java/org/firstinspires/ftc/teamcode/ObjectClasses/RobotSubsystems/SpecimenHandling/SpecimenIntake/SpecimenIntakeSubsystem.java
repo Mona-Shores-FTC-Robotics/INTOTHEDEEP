@@ -140,14 +140,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         } else if ((specimenColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) ||
                 (specimenColor == SampleColor.BLUE && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED) ||
                 (specimenColor== SampleColor.YELLOW)) {
-
-            //todo should we change color of lights on bad specimen to indicate a problem
-            // On good specimen change color of lights
-                lightingSubsystem.setBothLights(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE);
-
-            // Bad piece: Expel the specimen
-//            Robot.getInstance().getSpecimenHandlingStateMachine().onBadSpecimenDetected();
-
+            lightingSubsystem.setBothLights(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE);
+            Robot.getInstance().getSpecimenHandlingStateMachine().onBadSpecimenDetected();
         } else if (specimenColor == SampleColor.UNKNOWN) {
             System.out.println("Unknown color detected, no action taken.");
         }

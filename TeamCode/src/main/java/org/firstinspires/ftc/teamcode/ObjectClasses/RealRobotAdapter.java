@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingStateMachine.SAMPLE_HANDLING_PARAMS;
+
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -14,10 +17,9 @@ import com.example.sharedconstants.RobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.ChangeSampleDumperPositionAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.MoveLinearActuatorAction;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.MoveSpecimenArmAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
@@ -172,51 +174,73 @@ public class RealRobotAdapter implements RobotAdapter {
 
                 case DEPOSIT_SAMPLE:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        //
-                        // todo Fix me
-                        //I'm not quite sure what this should be doing...
                         return new DriveToObservationZone(3);
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_HIGH_BASKET:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_LOW_BASKET:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET);
                     } else return problem();
 
                 case SAMPLE_LIFT_TO_HOME:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                     } else return problem();
-                case INTAKE_SAMPLE_FROM_GROUND:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER))
+
+
+
+                case GET_READY_FOR_INTAKE_FROM_GROUND:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {
-                        return new ParallelAction(
-                                new MoveLinearActuatorAction(SampleLinearActuatorSubsystem.SampleActuatorStates.DEPLOY_MID),
-                                new SequentialAction(
-                                        new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON),
-                                        new SleepAction(500),
-                                        new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF)
-                                    )
-                                );
+                        return  new ParallelAction(
+                                        new SequentialAction(
+                                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::runWithoutEncodersForward),
+                                                new SleepAction(.3),
+                                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::stopActuator)
+                                                ),
+                                        new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON)
+                        );
                     } else return problem();
+
+                case INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
+                    {
+                        return new SequentialAction(
+                                new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF),
+                                new SequentialAction(
+                                        new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::runWithoutEncodersReverse),
+                                        new SleepAction(.5),
+                                        new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::stopActuator),
+                                        new InstantAction(Robot.getInstance().getSampleHandlingStateMachine()::setIntakeReverse),
+                                        new SleepAction(.6),
+                                        new InstantAction(Robot.getInstance().getSampleHandlingStateMachine()::setIntakeOff)
+                                )
+                        );
+                    } else return problem();
+
                 case DUMP_SAMPLE_IN_OBSERVATION_ZONE:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET))
+                    {
+                        return new SequentialAction(
+                                new ChangeSampleDumperPositionAction(SampleLiftBucketSubsystem.DumperStates.DUMPER_DUMP),
+                                new SleepAction(.8),
+                                new ChangeSampleDumperPositionAction(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME)
+                        );
+                    } else return problem();
 
-
-                    //todo WHAT SHOULD THIS DO?
-                    return problem();
                 default:
                     telemetryManger.displayError("Unknown action type: " + actionType);
                     return new NullAction();

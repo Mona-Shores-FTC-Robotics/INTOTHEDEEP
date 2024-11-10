@@ -17,9 +17,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
-
-
-
     public static class ActuatorParams {
 
         public double WITHOUT_ENCODER_POWER = 0.7;  // Default power for both directions
@@ -104,6 +101,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         currentTicks = sampleActuator.getCurrentPosition();
         currentPower = sampleActuator.getPower();
         updateActuatorState();
+        //todo there might be an issue with the state handling here because we aren't using encoders reliably
         updateParameters();
         updateDashboardTelemetry();  // Update telemetry each loop
         if (colorSensor!=null) {
