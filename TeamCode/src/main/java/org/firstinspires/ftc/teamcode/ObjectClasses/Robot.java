@@ -92,7 +92,7 @@ public class Robot {
 
                 //Expansion Hub - Port 1 - samplelinearactuator
                 sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
-                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITHOUT_ENCODER, sampleLinearActuatorSubsystem);
+                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR_WITH_ENCODER, sampleLinearActuatorSubsystem);
 
                 //Expansion Hub - Motor Port 2 - samplelift
                 //Control Hub - Servo Port 2 - samplebucket

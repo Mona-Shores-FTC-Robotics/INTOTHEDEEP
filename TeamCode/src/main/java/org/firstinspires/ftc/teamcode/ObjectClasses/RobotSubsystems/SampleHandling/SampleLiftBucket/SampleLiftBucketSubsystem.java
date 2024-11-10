@@ -164,7 +164,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             lift.setPower(SAMPLE_LIFT_PARAMS.LIFT_POWER);
         }
         updateDumperParameters(DumperStates.DUMPER_HOME, SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS);
-        updateDumperParameters(DumperStates.DUMPER_HOME, SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS);
+        updateDumperParameters(DumperStates.DUMPER_DUMP, SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS);
         updateBucketParameters(BucketStates.BUCKET_INTAKE_POS, SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS);
         updateBucketParameters(BucketStates.BUCKET_SCORE_POS, SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS);
 

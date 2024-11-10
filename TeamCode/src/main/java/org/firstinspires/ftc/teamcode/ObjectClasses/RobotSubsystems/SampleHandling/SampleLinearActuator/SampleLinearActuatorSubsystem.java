@@ -30,7 +30,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         public double TIMEOUT_TIME_SECONDS = 3; // Time after which a move action/command will give up
 
         public double POWER = .7;  // Unified power for both directions
-        public int DEPLOY_FULL_POSITION_TICKS = 1350;
+        public int DEPLOY_FULL_POSITION_TICKS = 1250;
         public int DEPLOY_MID_POSITION_TICKS = 500;
         public int RETRACT_POSITION_TICKS = 0;
         public double VEL_P = 11;
