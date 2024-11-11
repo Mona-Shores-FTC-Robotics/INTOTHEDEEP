@@ -37,7 +37,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
         // Bucket servo params
         public double BUCKET_SCORE_POS = 0;
-        public double BUCKET_INTAKE_POS = 0.75;
+        public double BUCKET_INTAKE_POS = 0.71;
         public double BUCKET_SAFE_DESCENT_POS4 = .65;
         public double BUCKET_SAFE_DESCENT_POS3 = .55;
         public double BUCKET_SAFE_DESCENT_POS2 = .45;
@@ -49,11 +49,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
 
     public enum SampleLiftStates {
-        HIGH_BASKET, LOW_BASKET, LIFT_HOME, MANUAL;
+        HIGH_BASKET, LOW_BASKET, LIFT_HOME, MANUAL, LOW_BASKET_DOWN;
         public int ticks;
         static {
 
             HIGH_BASKET.ticks = SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS;
+            LOW_BASKET_DOWN.ticks = SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS;
             LOW_BASKET.ticks = SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS;
             LIFT_HOME.ticks = SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS;
         }
@@ -117,11 +118,17 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     private SampleLiftStates currentLiftState;
     private SampleLiftStates targetLiftState;
-    private BucketStates currentBucketState;
-    private DumperStates currentDumperState;
 
     ElapsedTime dumperTimer;
     public boolean hasDumped;
+
+    private BucketStates currentBucketState;
+    private DumperStates currentDumperState;
+    private double targetBucketPosition;
+    private double currentBucketPosition;
+    private double bucketStepIncrement;
+    private ElapsedTime bucketTimer = new ElapsedTime();
+    private boolean movingToTarget = false;
 
     public SampleLiftBucketSubsystem(final HardwareMap hMap, final String liftName, final String bucketName, final String dumperName) {
         lift = hMap.get(DcMotorEx.class, liftName);
@@ -167,6 +174,22 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             setCurrentDumperState(DumperStates.DUMPER_HOME);
             hasDumped=true;
         }
+        // Check if we're in the middle of a bucket movement
+        if (movingToTarget && bucketTimer.milliseconds() > 10) { // Adjust delay (10 ms) as needed for smoothness
+            currentBucketPosition += bucketStepIncrement;  // Increment position
+            bucket.setPosition(currentBucketPosition);     // Move bucket to new position
+            bucketTimer.reset();  // Reset timer for the next step
+
+            // Stop moving if we've reached or surpassed the target position
+            if ((bucketStepIncrement > 0 && currentBucketPosition >= targetBucketPosition) ||
+                    (bucketStepIncrement < 0 && currentBucketPosition <= targetBucketPosition)) {
+                bucket.setPosition(targetBucketPosition);  // Ensure final position is exact
+                movingToTarget = false;  // Stop further updates
+            }
+        }
+
+
+
         updateLiftState();
         updateParameters();  // This lets us use the dashboard changes for tuning
         updateDashboardTelemetry();
@@ -295,6 +318,15 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     public BucketStates getCurrentBucketState() { return currentBucketState;}
     public DumperStates getCurrentDumperState() { return currentDumperState;}
+
+    public void setBucketTargetPosition(double targetPosition, int numSteps) {
+        targetBucketPosition = targetPosition;
+        currentBucketPosition = bucket.getPosition();  // Starting position
+        bucketStepIncrement = (targetBucketPosition - currentBucketPosition) / numSteps;
+        movingToTarget = true;
+        bucketTimer.reset();  // Start timing
+    }
+
 
 
     // Basic telemetry display in a single line with a descriptive label

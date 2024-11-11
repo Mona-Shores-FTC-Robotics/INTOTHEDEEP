@@ -29,11 +29,11 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     public static class IntakeParams {
         public double INTAKE_ON_POWER = 0.8;
-        public double INTAKE_REVERSE_POWER = -0.8;
+        public double INTAKE_REVERSE_POWER = -0.5;
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
         // Set a minimum proximity threshold to consider an object as "near"
-        public double PROXIMITY_THRESHOLD = .8;
+        public double PROXIMITY_THRESHOLD = 40;
         public int COLOR_HISTORY_SIZE = 5;
         public double TRANSFER_TIME_MS= 400;
         public double EJECT_TIME_MS= 400;
@@ -159,7 +159,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     // Integrated student sample data using chatGPT
     public SampleColor detectSampleColor() {
         // Use the global proximity variable and update telemetry
-        proximity = colorSensor.getDistance(DistanceUnit.INCH);
+        proximity = colorSensor.getDistance(DistanceUnit.MM);
 
         if (proximity < INTAKE_PARAMS.PROXIMITY_THRESHOLD) {  // Object detected within the range
             SampleColor rawColor = getRawDetectedColor();

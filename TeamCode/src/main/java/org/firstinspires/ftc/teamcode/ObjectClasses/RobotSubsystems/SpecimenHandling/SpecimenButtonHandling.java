@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling;
-
-
-import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
-//Right now these are just for Teleop... should they be?
 public class SpecimenButtonHandling {
 
     private final SpecimenIntakeSubsystem intakeSubsystem;
@@ -20,6 +16,8 @@ public class SpecimenButtonHandling {
 
     public void onSpecimenHandleButtonPress() {
         switch (armSubsystem.getCurrentState()) {
+            default:
+            case ARM_MANUAL:
             case CCW_ARM_HOME:
                 armSubsystem.setTargetStateWithMotionProfile(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
                 intakeSubsystem.setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
@@ -32,16 +30,7 @@ public class SpecimenButtonHandling {
             case CW_ARM_HOME:
                 armSubsystem.flipCCWFastAction();
                 break;
-            default:
-            case ARM_MANUAL:
-                armSubsystem.setCurrentState(armSubsystem.lastState);
-                onSpecimenHandleButtonPress();
-                break;
+
         }
     }
-
-    private void setIntakeState(SpecimenIntakeSubsystem.SpecimenIntakeStates newState) {
-        intakeSubsystem.setCurrentState(newState);
-    }
-
 }

@@ -19,6 +19,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 @Config
 public class SpecimenIntakeSubsystem extends SubsystemBase {
 
@@ -27,8 +30,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         public double INTAKE_REVERSE_POWER = 0.8;
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
-        public int COLOR_HISTORY_SIZE = 5;
-        public double PROXIMITY_THRESHOLD = .5;
+        public double PROXIMITY_THRESHOLD = 61;
     }
 
     public static SpecimenIntakeParams INTAKE_PARAMS = new SpecimenIntakeParams();
@@ -55,6 +57,9 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     private LightingSubsystem lightingSubsystem;
     private Boolean hasSpecimen;
     private Boolean preloadStaged;
+
+    private static final int HISTORY_SIZE = 5;
+    private Queue<Double> proximityHistory = new LinkedList<>();
 
     // Constructor with color sensor
     public SpecimenIntakeSubsystem(final HardwareMap hMap, final String intakeServo, final String colorSensorName) {
@@ -91,7 +96,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         // Detect the color of the game piece in every loop
         if (colorSensor!=null) {
             hasSpecimen = detectSpecimen();
-           // handleSpecimenPickup();
+            handleSpecimenPickup();
         }
         updateParameters();
         updateDashboardTelemetry();
@@ -112,7 +117,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         if (colorSensor != null) {
             MatchConfig.telemetryPacket.put("Specimen Intake/Proximity", String.format("%.2f", proximity));
         } else {
-            MatchConfig.telemetryPacket.put("Specimen Intake/Detected Color", "No Sensor");
+            MatchConfig.telemetryPacket.put("Specimen Intake/", "No Sensor");
         }
     }
 
@@ -130,7 +135,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
             if (MatchConfig.finalAllianceColor == RED) {
                 lightingSubsystem.setBothLightsRed ();
             } else lightingSubsystem.setBothLightsBlue ();
-            Robot.getInstance().getSpecimenDetectionStateMachine().onSpecimenDetection();
+            setCurrentState(SpecimenIntakeStates.INTAKE_OFF);
+//            Robot.getInstance().getSpecimenDetectionStateMachine().onSpecimenDetection();
         }
     }
 
@@ -146,15 +152,24 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         specimenIntake.setPower(currentPower);  // Apply the clipped power
     }
 
-    // Method to read color from the sensor
-
-    // Integrated student sample data using chatGPT
     public Boolean detectSpecimen() {
-        // Use the global proximity variable and update telemetry
-        proximity = colorSensor.getDistance(DistanceUnit.INCH);
+        // Get the current proximity reading
+        proximity = colorSensor.getDistance(DistanceUnit.MM);
 
-        // Object detected within the range
-        return proximity < INTAKE_PARAMS.PROXIMITY_THRESHOLD;
+        // Add the current reading to the history
+        if (proximityHistory.size() >= HISTORY_SIZE) {
+            proximityHistory.poll();  // Remove the oldest reading if at limit
+        }
+        proximityHistory.add(proximity);
+
+        // Check if all values in the history are below the threshold
+        for (double p : proximityHistory) {
+            if (p >= INTAKE_PARAMS.PROXIMITY_THRESHOLD) {
+                return false;  // Return false if any reading is above the threshold
+            }
+        }
+
+        return proximityHistory.size() == HISTORY_SIZE;  // Return true if all values are below threshold and history is full
     }
 
     // Update intake parameters dynamically (called in periodic)
@@ -163,46 +178,5 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         SpecimenIntakeStates.INTAKE_ON.updateIntakePower(INTAKE_PARAMS.INTAKE_ON_POWER);
         SpecimenIntakeStates.INTAKE_REVERSE.updateIntakePower(INTAKE_PARAMS.INTAKE_REVERSE_POWER);
         SpecimenIntakeStates.INTAKE_OFF.updateIntakePower(INTAKE_PARAMS.INTAKE_OFF_POWER);
-    }
-
-    private SampleColor getRawDetectedColor() {
-        // Get HSV values and raw RGB values
-        float[] hsvValues = new float[3];
-        int red = colorSensor.red();
-        int green = colorSensor.green();
-        int blue = colorSensor.blue();
-        Color.RGBToHSV(red, green, blue, hsvValues);
-
-        int hue = Math.round(hsvValues[0]);
-        float saturation = hsvValues[1];
-        float value = hsvValues[2];
-
-        // Update telemetry for debugging
-        MatchConfig.telemetryPacket.put("Sample Intake/HSV/Hue", hue);
-        MatchConfig.telemetryPacket.put("Sample Intake/HSV/Saturation", saturation);
-        MatchConfig.telemetryPacket.put("Sample Intake/HSV/Value", value);
-        MatchConfig.telemetryPacket.put("Sample Intake/color/Red", red);
-        MatchConfig.telemetryPacket.put("Sample Intake/color/Green", green);
-        MatchConfig.telemetryPacket.put("Sample Intake/color/Blue", blue);
-
-        // Red detection (using updated sample data)
-        if (    (hue >= 10 && hue <= 35) ||
-                (red > 500 && green < 700 && blue < 600)) {
-            return SampleColor.RED;
-        }
-        // Blue detection
-        else if (   (hue >= 190 && hue <= 250) ||
-                (red < 400 && green > 580 && blue > 1200)) {
-            return SampleColor.BLUE;
-        }
-        // Yellow detection
-        else if (   (hue >= 70 && hue <= 120) ||
-                (red > 1000 && green > 1600 && blue < 750)) {
-            return SampleColor.YELLOW;
-        }
-        // "Unknown" detection if no match
-        else {
-            return SampleColor.UNKNOWN;
-        }
     }
 }

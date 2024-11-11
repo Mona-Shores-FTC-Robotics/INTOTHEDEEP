@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -25,22 +26,22 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     public static class SpecimenArmParams {
 
         //Flip parameters
-        public double CCW_FLIP_TIME_MS = 300;
-        public double CONSTANT_POWER_FOR_CCW_FLIP = .95;
-        public double CW_FLIP_TIME_MS = 300;
+        public double CCW_FLIP_TIME_MS = 100;
+        public double CONSTANT_POWER_FOR_CCW_FLIP = .8;
+        public double CW_FLIP_TIME_MS = 400;
         public double CONSTANT_POWER_FOR_CW_FLIP = -0.7;
-        public double ZERO_POWER_TIME = 800;
+        public double ZERO_POWER_TIME = 3000;
 
         //Gamepad parameters
         public double GAMEPAD_STICK_SCALE_FACTOR = 1.0;
         public double DEAD_ZONE = 0.05;
 
         //PID parameters
-        public double P = .015, I = 0.0, D = 0.0; // PID coefficients
+        public double P = .012, I = 0.0, D = 0.0; // PID coefficients
         public double ANGLE_TOLERANCE_THRESHOLD_DEGREES = 1.0;
 
         //Arm Feedforward parameters
-        public double kS = 0.075, kCos = .17, kV = .08, kA = .05; // Feedforward coefficients
+        public double kS = 0.075, kCos = .1, kV = .08, kA = .05; // Feedforward coefficients
 
         //Maximum Power for clipping motor output
         public double MAX_POWER = 0.7;
@@ -96,7 +97,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     //State Variables
     private SpecimenArmStates currentState;
     private SpecimenArmStates targetState;
-    public SpecimenArmStates lastState;
 
     //Angle Variables
     private double currentAngleDegrees;
@@ -160,7 +160,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         pidController.reset();
         arm.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        currentState = lastState = SpecimenArmStates.CCW_ARM_HOME;
+        currentState = SpecimenArmStates.CCW_ARM_HOME;
+        targetState =SpecimenArmStates.CCW_ARM_HOME;
         currentAngleDegrees= SPECIMEN_ARM_PARAMS.CCW_HOME;
         targetAngleDegrees = SPECIMEN_ARM_PARAMS.CCW_HOME;
         pidController.setSetPoint(targetAngleDegrees);
@@ -188,12 +189,14 @@ public class SpecimenArmSubsystem extends SubsystemBase {
             case FLIPPING_TO_CCW:
                 if (flipArmTimer.milliseconds() > SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS) {
                     arm.setPower(0);
+                    arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     setCurrentState(SpecimenArmStates.ZERO_POWER);
                     flipArmTimer.reset();
                 }
                 break;
             case ZERO_POWER:
                 if (flipArmTimer.milliseconds() > SPECIMEN_ARM_PARAMS.ZERO_POWER_TIME) {
+                    arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     setCurrentState(SpecimenArmStates.CCW_ARM_HOME);
                 }
                 break;
@@ -212,6 +215,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         flipArmTimer.reset();
         currentState=SpecimenArmStates.FLIPPING_TO_CCW;
         targetState=SpecimenArmStates.CCW_ARM_HOME;
+        pidController.setSetPoint(SpecimenArmStates.CCW_ARM_HOME.angle);
         arm.setPower(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP);
     }
 
@@ -219,28 +223,38 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         flipArmTimer.reset();
         currentState=SpecimenArmStates.FLIPPING_TO_CW;
         targetState=SpecimenArmStates.CW_ARM_HOME;
+        pidController.setSetPoint(SpecimenArmStates.CW_ARM_HOME.angle);
         arm.setPower(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP);
     }
 
     public void setManualTargetState(double armInput) {
-        lastState = currentState;
-        targetState = SpecimenArmStates.ARM_MANUAL;
-        currentState = SpecimenArmStates.ARM_MANUAL;
+        //Only allow manual movement to adjust pickup
+        if (currentState==SpecimenArmStates.SPECIMEN_PICKUP || currentState == SpecimenArmStates.ARM_MANUAL) {
+            targetState = SpecimenArmStates.ARM_MANUAL;
+            currentState = SpecimenArmStates.ARM_MANUAL;
 
-        // Calculate the change in angle based on input and scale factor
-        double deltaAngle = armInput * SPECIMEN_ARM_PARAMS.GAMEPAD_STICK_SCALE_FACTOR;
+            // Calculate the change in angle based on input and scale factor
+            double deltaAngle = armInput * SPECIMEN_ARM_PARAMS.GAMEPAD_STICK_SCALE_FACTOR;
 
-        // Calculate the new target angle based on the target angle
-        targetAngleDegrees += deltaAngle;
+            // Calculate the new target angle based on the target angle
+            targetAngleDegrees += deltaAngle;
 
-        // Clip target angle to within allowed range
-        targetAngleDegrees = Range.clip(targetAngleDegrees, SPECIMEN_ARM_PARAMS.CW_HOME, SPECIMEN_ARM_PARAMS.CCW_HOME);
+            // Clip target angle to within allowed range
+            targetAngleDegrees = Range.clip(targetAngleDegrees, SPECIMEN_ARM_PARAMS.CW_HOME, SPECIMEN_ARM_PARAMS.CCW_HOME);
 
-        // Update the PID controller's setpoint with the new target angle
-        pidController.setSetPoint(targetAngleDegrees);
+            // Update the PID controller's setpoint with the new target angle
+            pidController.setSetPoint(targetAngleDegrees);
+        }
     }
+
     private void handleManualControl() {
         //depending on which side of the slop we are on we need an offset
+            if (Math.abs(pidController.getSetPoint()-currentAngleDegrees) > 15)
+            {
+                targetAngleDegrees=currentAngleDegrees;
+                pidController.setSetPoint(currentAngleDegrees);
+            }
+
             pidPower = pidController.calculate(currentAngleDegrees); // Pass current position, not error
             feedforwardPower = armFeedforward.calculate(
                     Math.toRadians(currentAngleDegrees),
@@ -277,6 +291,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         //Start the timer
         motionProfileTimer.reset();
     }
+
     private void handleMotionProfile() {
         double elapsedTimeMilliseconds = motionProfileTimer.milliseconds();
 
@@ -317,8 +332,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                 0,
                 0
         );
-        totalPower = pidPower + feedforwardPower;
-        clippedPower = Range.clip (totalPower, - SPECIMEN_ARM_PARAMS.MAX_POWER, SPECIMEN_ARM_PARAMS.MAX_POWER);
+        totalPower =  feedforwardPower;
+        clippedPower = Range.clip (totalPower, -SPECIMEN_ARM_PARAMS.MAX_POWER, SPECIMEN_ARM_PARAMS.MAX_POWER);
         arm.setPower (clippedPower);
     }
 
@@ -369,46 +384,36 @@ public class SpecimenArmSubsystem extends SubsystemBase {
             pidController.setI(i);
             pidController.setD(d);
         }
-
     }
 
     public void displayBasicTelemetry(Telemetry telemetry) {
         @SuppressLint("DefaultLocale")
         String telemetryData = String.format("%s | Angle: %.2f", currentState, currentAngleDegrees);
-
         if (currentState != targetState) {
             telemetryData += String.format(" | Target State: %s", targetState);
         }
-
         telemetry.addLine(telemetryData);
     }
+
     public void displayVerboseTelemetry(Telemetry telemetry) {
         telemetry.addData("specimenArm/Current State", currentState);
         telemetry.addData("specimenArm/Target State", targetState);
         telemetry.addData("specimenArm/Motor Power", arm.getPower());
         telemetry.addData("specimenArm/Motor Velocity", arm.getVelocity());
     }
+
     @SuppressLint("DefaultLocale")
     public void updateDashboardTelemetry() {
         // Display state and target state information on one line
-        String stateOverview = String.format("State: %s | Target State: %s", currentState, targetState);
+        String stateOverview = String.format("State: %s | Target: %s", currentState, targetState);
         MatchConfig.telemetryPacket.addLine(stateOverview);
 
-        MatchConfig.telemetryPacket.put("specimenArm/state/current", String.format("%s", currentState));
-        MatchConfig.telemetryPacket.put("specimenArm/state/target", String.format("%s", targetState));
-
         // Display current and target positions on a separate line
-        String positionOverview;
-        positionOverview = String.format("Position: %.2f | Target Position: %.2f", currentAngleDegrees, targetAngleDegrees);
+        String positionOverview = String.format("Angle: %.2f | Target: %.2f", currentAngleDegrees, targetAngleDegrees);
         MatchConfig.telemetryPacket.addLine(positionOverview);
         // Add power overview on its own line
         String powerSummary = String.format("PID: %.2f | FF: %.2f | Clipped: %.2f", pidPower, feedforwardPower, clippedPower);
         MatchConfig.telemetryPacket.addLine(powerSummary);
-
-        // Detailed telemetry for real-time analysis
-        MatchConfig.telemetryPacket.put("specimenArm/velocity/Target Arm Velocity", String.format("%.2f", targetVelocity));
-        MatchConfig.telemetryPacket.put("specimenArm/velocity/Target Arm Acceleration", String.format("%.2f", targetAcceleration));
-        MatchConfig.telemetryPacket.put("specimenArm/velocity/Total Time for Motion Profile (s)", String.format("%.2f", motionProfileTotalTime/1000));
 
         MatchConfig.telemetryPacket.put("specimenArm/angles/Current Arm Angle", String.format("%.2f", currentAngleDegrees));
         MatchConfig.telemetryPacket.put("specimenArm/angles/Target Arm Angle", String.format("%.2f", targetAngleDegrees));
