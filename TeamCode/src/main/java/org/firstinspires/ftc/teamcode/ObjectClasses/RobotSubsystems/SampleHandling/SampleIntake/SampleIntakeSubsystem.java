@@ -105,20 +105,20 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public void periodic() {
         // Detect the color of the game piece in every loop
         if (haveSample) {
-            Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+            Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
             switch (currentState) {
                 case REVERSING_INTAKE_TO_TRANSFER:
                     if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.TRANSFER_TIME_MS) {
                         setCurrentState(SampleIntakeStates.INTAKE_OFF);
                         haveSample = false;
-                        Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+                        Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
                     }
                     break;
                 case REVERSING_INTAKE_TO_EJECT:
                     if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.EJECT_TIME_MS) {
                         setCurrentState(SampleIntakeStates.INTAKE_OFF);
                         haveSample = false;
-                        Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+                        Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
                     }
                     break;
                 case INTAKE_ON:
@@ -303,7 +303,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
             {
                 haveSample = true;
                     Robot.getInstance().getSampleDetectionStateMachine().setGoodSampleDetectedState();
-                    Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+                    Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
             }
 
         } else if ((sampleColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) ||
@@ -313,7 +313,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
             {
                 haveSample = true;
                 Robot.getInstance().getSampleDetectionStateMachine().setBadSampleDetectedState();
-                Robot.getInstance().getSampleDetectionStateMachine().updateSameDetectionState();
+                Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
             }
         } else if (sampleColor==SampleColor.NO_SAMPLE)
         {

@@ -1,13 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
-
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.WaitCommand;
-
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
@@ -21,11 +14,6 @@ public class SampleButtonHandling {
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
 
-    public enum SampleButtonHandlingStates {
-        INTAKE, LOW_BASKET, HIGH_BASKET, SCORE_COMPLETE, HOME
-    }
-    private SampleButtonHandlingStates currentState= SampleButtonHandlingStates.HOME;
-
     // Constructor
     public SampleButtonHandling(SampleLinearActuatorSubsystem actuatorSubsystem,
                                 SampleIntakeSubsystem intakeSubsystem,
@@ -33,19 +21,11 @@ public class SampleButtonHandling {
         this.actuatorSubsystem = actuatorSubsystem;
         this.intakeSubsystem = intakeSubsystem;
         this.liftSubsystem = liftSubsystem;
-        currentState= SampleButtonHandlingStates.HOME;
     }
 
-    public SampleButtonHandling(SampleLinearActuatorSubsystem actuatorSubsystem,
-                                SampleIntakeSubsystem intakeSubsystem
-                                      ) {
-        this.actuatorSubsystem = actuatorSubsystem;
-        this.intakeSubsystem = intakeSubsystem;
-        this.liftSubsystem = null;
-    }
 
     // Method to handle button press logic (toggle actuator states)
-    public void onIntakeButtonPressCommand() {
+    public void onIntakeButtonPress() {
             switch (actuatorSubsystem.getCurrentState()) {
                 case FULLY_RETRACTED:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
@@ -67,55 +47,72 @@ public class SampleButtonHandling {
                 default:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                     actuatorSubsystem.fullyRetract();
-
             }
     }
 
     public void onScoreButtonPress() {
-        switch (currentState) {
-            case INTAKE:
+        switch (liftSubsystem.getCurrentLiftState()) {
+            case LIFT_HOME:
                 if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-                    liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
-                    liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
+                    liftSubsystem.hasDumped = false;
                     liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET);
-                    currentState= SampleButtonHandlingStates.LOW_BASKET;
                 }
                 break;
             case LOW_BASKET:
-                liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
-                liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
-                liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
-                currentState= SampleButtonHandlingStates.HIGH_BASKET;
+                if (!liftSubsystem.hasDumped){
+                    liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
+                    liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
+                }else {
+                    liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
+                    liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
+                }
                 break;
             case HIGH_BASKET:
-                liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_DUMP);
-                liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
-                liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
-                currentState= SampleButtonHandlingStates.SCORE_COMPLETE;
+                if (!liftSubsystem.hasDumped) {
+                    liftSubsystem.dumpSampleInBucket();
+                }else {
+                    liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
+                    liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
+                }
                 break;
-            case SCORE_COMPLETE:
-            case HOME:
+            case MANUAL:
+            default:
                 liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
                 liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
-                currentState= SampleButtonHandlingStates.INTAKE;
         }
     }
 
 
     public void onMoveSampleBucketButtonPress() {
-        switch (Objects.requireNonNull(liftSubsystem).getCurrentBucketState()) {
+        switch (liftSubsystem.getCurrentBucketState()) {
+
             case BUCKET_INTAKE_POS:
                 liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
                  break;
             case BUCKET_SCORE_POS:
+                liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SAFE_DESCENT1);
+                break;
+            case BUCKET_SAFE_DESCENT1:
+                liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SAFE_DESCENT2);
+                break;
+            case BUCKET_SAFE_DESCENT2:
+                liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SAFE_DESCENT3);
+                break;
+            case BUCKET_SAFE_DESCENT3:
+                liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SAFE_DESCENT4);
+                break;
+            case BUCKET_SAFE_DESCENT4:
                 liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
                 break;
+
+
+
         }
     }
 
     public void onMoveSampleDumperButtonPress() {
-        switch (Objects.requireNonNull(liftSubsystem).getCurrentDumperState()) {
+        switch (liftSubsystem.getCurrentDumperState()) {
             case DUMPER_HOME:
                 liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_DUMP);
                 break;
@@ -135,6 +132,36 @@ public class SampleButtonHandling {
     public void setIntakeReverse() {
         intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
     }
+
+
+//    public void onMoveSampleBucketButtonPress() {
+//        SampleLiftBucketSubsystem.BucketStates currentState = liftSubsystem.getCurrentBucketState();
+//        // Toggle between intake and score positions
+//        double startPosition, endPosition;
+//        if (currentState == SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS) {
+//            liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
+//        } else {
+//            startPosition = SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS.position;
+//            endPosition = SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS.position;
+//            smoothServoTransition(startPosition, endPosition, 50); // 50 incremental steps
+//        }
+//    }
+//
+//    private void smoothServoTransition(double startPosition, double endPosition, int numSteps) {
+//        double stepSize = (endPosition - startPosition) / numSteps;
+//
+//        for (int i = 1; i <= numSteps; i++) {
+//            double currentPosition = startPosition + (stepSize * i);
+//            liftSubsystem.bucket.setPosition(currentPosition); // Set each incremental position
+//
+//            // Wait for the servo to reach the set position (tune delay as needed)
+//            try { Thread.sleep(10); } catch (InterruptedException e) { e.printStackTrace(); }
+//        }
+//
+//        // Final set to end position to ensure it reaches exactly
+//        liftSubsystem.setBucketPosition(endPosition);
+//    }
+
 
 
 

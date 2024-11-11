@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.Action;
 import static com.example.sharedconstants.FieldConstants.*;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
-import static com.example.sharedconstants.RobotAdapter.ActionType.SPECIMEN_ARM_TO_HIGH_CHAMBER;
 
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
@@ -114,9 +113,9 @@ public abstract class Routes {
 
     public void pickupSpecimenFromWall(Boolean reversed) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_INTAKE_FROM_WALL))
                 .setReversed(reversed)
-                .splineToLinearHeading(OBS_ZONE_PICKUP, ANGLE_TOWARD_RED)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.PICKUP_SPECIMEN_OFF_WALL));
+                .splineToLinearHeading(OBS_ZONE_PICKUP, ANGLE_TOWARD_RED);
     }
 
     public void scoreOnHighChamber(Pose2d chamberSlot) {
@@ -125,7 +124,6 @@ public abstract class Routes {
                 .splineToSplineHeading(CHAMBER_STAGING_FOR_SCORING, ANGLE_TOWARD_NET)
                 .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_NET)
                 .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE)
-                .afterDisp(.1, robotAdapter.getAction(SPECIMEN_ARM_TO_HIGH_CHAMBER))
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER))
                 .setTangent(ANGLE_315_DEGREES)
                 .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_OBSERVATION)

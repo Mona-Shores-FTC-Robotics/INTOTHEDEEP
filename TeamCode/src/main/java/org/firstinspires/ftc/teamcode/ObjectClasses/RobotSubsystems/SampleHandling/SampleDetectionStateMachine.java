@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
@@ -17,8 +13,6 @@ public class SampleDetectionStateMachine {
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
 
-
-
     public enum SampleDetectionStates {
         ON_GOOD_SAMPLE_DETECTION,
         GETTING_READY_FOR_TRANSFER,
@@ -30,7 +24,7 @@ public class SampleDetectionStateMachine {
         EJECTED,
         LOOKING_FOR_SAMPLE,
     }
-    private SampleDetectionStates currentSampleDetectionState = SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
+    private SampleDetectionStates currentSampleDetectionState;
 
     public SampleDetectionStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
                                        SampleIntakeSubsystem intakeSubsystem,
@@ -41,7 +35,7 @@ public class SampleDetectionStateMachine {
         currentSampleDetectionState= SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
     }
 
-    public void  updateSameDetectionState() {
+    public void updateSpecimenDetectionState() {
         switch (currentSampleDetectionState) {
             case ON_GOOD_SAMPLE_DETECTION:
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;

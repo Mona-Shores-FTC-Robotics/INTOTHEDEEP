@@ -22,11 +22,6 @@ public interface RobotAdapter {
         SAMPLE_LIFT_TO_LOW_BASKET,
 
         MOVE_PRELOAD_SPECIMEN_TO_CW_HOME,
-
-        SECURE_PRELOAD_SPECIMEN,
-        PICKUP_SPECIMEN_OFF_WALL,
-
-        SPECIMEN_ARM_TO_HIGH_CHAMBER,
         HANG_SPECIMEN_ON_HIGH_CHAMBER,
 
         INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT,
@@ -37,9 +32,8 @@ public interface RobotAdapter {
         LEVEL_2_ASCENT,
         LEVEL_3_ASCENT,
 
-        PICKUP_SPECIMEN_OFF_WALL_SENSOR,
         GET_READY_FOR_INTAKE_FROM_GROUND,
-        SPECIMEN_INTAKE_FROM_WALL
+        GET_READY_FOR_INTAKE_FROM_WALL
     }
 
     // Generalized method to get an Action based on a provided action type

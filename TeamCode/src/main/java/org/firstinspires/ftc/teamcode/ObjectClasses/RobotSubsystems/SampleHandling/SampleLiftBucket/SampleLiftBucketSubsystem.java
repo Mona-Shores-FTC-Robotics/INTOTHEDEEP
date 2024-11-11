@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 
 @Config
 public class SampleLiftBucketSubsystem extends SubsystemBase {
@@ -18,6 +20,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
 
     public static class SampleLiftParams {
+
+        public  double DUMP_TIME_MS = 600;
         public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
         public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
         public double LIFT_POWER = 0.5;
@@ -34,19 +38,21 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         // Bucket servo params
         public double BUCKET_SCORE_POS = 0;
         public double BUCKET_INTAKE_POS = 0.75;
+        public double BUCKET_SAFE_DESCENT_POS4 = .65;
+        public double BUCKET_SAFE_DESCENT_POS3 = .55;
+        public double BUCKET_SAFE_DESCENT_POS2 = .45;
+        public double BUCKET_SAFE_DESCENT_POS1 = .35;
 
         // Dumper servo params
         public double DUMPER_HOME_POS = .7;
         public double DUMPER_DUMP_POS = .2;
     }
 
-
-
     public enum SampleLiftStates {
-        ZERO, HIGH_BASKET, LOW_BASKET, LIFT_HOME, MANUAL;
+        HIGH_BASKET, LOW_BASKET, LIFT_HOME, MANUAL;
         public int ticks;
         static {
-            ZERO.ticks = 0;
+
             HIGH_BASKET.ticks = SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS;
             LOW_BASKET.ticks = SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS;
             LIFT_HOME.ticks = SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS;
@@ -61,7 +67,11 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     public enum BucketStates {
         BUCKET_INTAKE_POS(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS),
-        BUCKET_SCORE_POS(SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS);
+        BUCKET_SCORE_POS(SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS),
+        BUCKET_SAFE_DESCENT1(SAMPLE_LIFT_PARAMS.BUCKET_SAFE_DESCENT_POS1),
+        BUCKET_SAFE_DESCENT2(SAMPLE_LIFT_PARAMS.BUCKET_SAFE_DESCENT_POS2),
+        BUCKET_SAFE_DESCENT3(SAMPLE_LIFT_PARAMS.BUCKET_SAFE_DESCENT_POS3),
+        BUCKET_SAFE_DESCENT4(SAMPLE_LIFT_PARAMS.BUCKET_SAFE_DESCENT_POS4);
 
         public double position;
 
@@ -98,7 +108,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
 
     public DcMotorEx lift;
-    private final Servo bucket;  // Continuous rotation servo
+    public final Servo bucket;  // Continuous rotation servo
     private final Servo dumper;
 
     private int currentTicks;
@@ -110,6 +120,9 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     private BucketStates currentBucketState;
     private DumperStates currentDumperState;
 
+    ElapsedTime dumperTimer;
+    public boolean hasDumped;
+
     public SampleLiftBucketSubsystem(final HardwareMap hMap, final String liftName, final String bucketName, final String dumperName) {
         lift = hMap.get(DcMotorEx.class, liftName);
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -118,7 +131,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         lift.setVelocityPIDFCoefficients(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D, SAMPLE_LIFT_PARAMS.VEL_F);
         lift.setPositionPIDFCoefficients(SAMPLE_LIFT_PARAMS.POS_P);
         lift.setPower(SAMPLE_LIFT_PARAMS.LIFT_POWER);
-        currentLiftState = SampleLiftStates.ZERO;
+        currentLiftState = SampleLiftStates.LIFT_HOME;
 
         if (bucketName != null){
             bucket = hMap.get(Servo.class, bucketName);
@@ -141,6 +154,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             setCurrentBucketState(BucketStates.BUCKET_INTAKE_POS);
         }
         if (dumper != null){
+            hasDumped=false;
+            dumperTimer = new ElapsedTime();
             setCurrentDumperState(DumperStates.DUMPER_HOME);
         }
     }
@@ -148,9 +163,18 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     public void periodic() {
         currentTicks = lift.getCurrentPosition();
         currentPower = lift.getPower();
+        if (currentDumperState == DumperStates.DUMPER_DUMP && dumperTimer.milliseconds()> SAMPLE_LIFT_PARAMS.DUMP_TIME_MS){
+            setCurrentDumperState(DumperStates.DUMPER_HOME);
+            hasDumped=true;
+        }
         updateLiftState();
         updateParameters();  // This lets us use the dashboard changes for tuning
         updateDashboardTelemetry();
+    }
+
+    public void dumpSampleInBucket(){
+            dumperTimer.reset();
+            setCurrentDumperState(DumperStates.DUMPER_DUMP);
     }
 
     // **updateLiftPIDs() Method**

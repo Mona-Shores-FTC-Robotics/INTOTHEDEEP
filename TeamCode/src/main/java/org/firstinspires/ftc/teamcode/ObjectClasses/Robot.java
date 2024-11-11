@@ -16,7 +16,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ClimberS
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenHandlingStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetectionStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 import java.util.EnumSet;
@@ -55,8 +56,10 @@ public class Robot {
     private static ClimberSubsystem climberSubsystem;
     private static VisionSubsystem visionSubsystem;
     private static SampleDetectionStateMachine sampleDetectionStateMachine;
-    private static SampleButtonHandling sampleHandlingStateMachine;
-    private static SpecimenHandlingStateMachine specimenHandlingStateMachine;
+    private static SampleButtonHandling sampleButtonHandling;
+    private static SpecimenButtonHandling specimenButtonHandling;
+    private static SpecimenDetectionStateMachine specimenDetectionStateMachine;
+
     private static LightingSubsystem lightingSubsystem;
 
     public enum SubsystemType {
@@ -183,13 +186,14 @@ public class Robot {
                  hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
                  hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
             sampleDetectionStateMachine = new SampleDetectionStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
-            sampleHandlingStateMachine = new SampleButtonHandling(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
+            sampleButtonHandling = new SampleButtonHandling(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
         }
 
         if (
                 hasSubsystem(SubsystemType.SPECIMEN_ARM) &&
                 hasSubsystem(SubsystemType.SPECIMEN_INTAKE)) {
-            specimenHandlingStateMachine = new SpecimenHandlingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
+            specimenButtonHandling = new SpecimenButtonHandling(specimenIntakeSubsystem, specimenArmSubsystem);
+            specimenDetectionStateMachine = new SpecimenDetectionStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
         }
     }
 
@@ -222,10 +226,11 @@ public class Robot {
     public VisionSubsystem getVisionSubsystem()  {return visionSubsystem;}
     public ClimberSubsystem getClimberSubsystem(){return climberSubsystem;}
 
-    public SpecimenHandlingStateMachine getSpecimenHandlingStateMachine(){return specimenHandlingStateMachine;}
+    public SampleButtonHandling getSampleButtonHandling(){return sampleButtonHandling;}
+    public SpecimenButtonHandling getSpecimenButtonHandling(){return specimenButtonHandling;}
+    public SpecimenDetectionStateMachine getSpecimenDetectionStateMachine(){return specimenDetectionStateMachine;}
     public SampleDetectionStateMachine getSampleDetectionStateMachine(){return sampleDetectionStateMachine;}
 
-    public SampleButtonHandling getSampleHandlingStateMachine(){return sampleHandlingStateMachine;}
 
     public LightingSubsystem getLightingSubsystem() {return lightingSubsystem;}
 

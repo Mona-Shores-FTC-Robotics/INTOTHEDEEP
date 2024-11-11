@@ -24,8 +24,8 @@ public class OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike exte
     public void pickupSpecimenFromWall() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .splineToSplineHeading(CHAMBER_STAGING_FOR_PICKUP, ANGLE_TOWARD_OBSERVATION)
-                .splineToConstantHeading(PoseToVector(OBS_ZONE_PICKUP), ANGLE_TOWARD_RED)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.PICKUP_SPECIMEN_OFF_WALL));
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_INTAKE_FROM_WALL))
+                .splineToConstantHeading(PoseToVector(OBS_ZONE_PICKUP), ANGLE_TOWARD_RED);
     }
 }
 
