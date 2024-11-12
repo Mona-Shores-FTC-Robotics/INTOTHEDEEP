@@ -26,10 +26,10 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     public static class SpecimenArmParams {
 
         //Flip parameters
-        public double CCW_FLIP_TIME_MS = 100;
+        public double CCW_FLIP_TIME_MS = 125;
         public double CONSTANT_POWER_FOR_CCW_FLIP = .8;
-        public double CW_FLIP_TIME_MS = 400;
-        public double CONSTANT_POWER_FOR_CW_FLIP = -0.7;
+        public double CW_FLIP_TIME_MS = 500;
+        public double CONSTANT_POWER_FOR_CW_FLIP = -0.8;
         public double ZERO_POWER_TIME = 3000;
 
         //Gamepad parameters
@@ -53,7 +53,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
         //Preset Angles
         public double CCW_HOME = 270;
-        public double SPECIMEN_PICKUP_ANGLE = 216;
+        public double SPECIMEN_PICKUP_ANGLE = 205;
         public double CW_HOME = 35.23;
 
         // Motion Profile Parameters

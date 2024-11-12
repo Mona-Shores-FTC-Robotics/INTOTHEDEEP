@@ -1,5 +1,7 @@
 package com.example.sharedconstants.Routes.OBS.InakeAndScore;
 
+import static com.example.sharedconstants.FieldConstants.ANGLE_315_DEGREES;
+import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
@@ -48,8 +50,8 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
 
     public void intakeFirstTeamSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setReversed(true)
-                .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_1, ANGLE_TOWARD_BLUE)
+                .setTangent(ANGLE_315_DEGREES)
+                .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_1, ANGLE_45_DEGREES)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT))
                 .setReversed(true)
                 .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
@@ -58,8 +60,8 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
 
     public void intakeSecondTeamSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setReversed(true)
-                .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_2, ANGLE_TOWARD_BLUE)
+                .setTangent(ANGLE_315_DEGREES)
+                .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_2, ANGLE_45_DEGREES)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT))
                 .setReversed(true)
                 .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
@@ -71,9 +73,10 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
     public void intakeThirdTeamSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
-                .splineToLinearHeading(OBS_ZONE_DUMP, ANGLE_TOWARD_OBSERVATION)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT));
-
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT))
+                .setReversed(true)
+                .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE));
     }
 }
 

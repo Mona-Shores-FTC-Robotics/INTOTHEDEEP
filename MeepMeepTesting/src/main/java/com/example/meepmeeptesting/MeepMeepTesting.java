@@ -4,6 +4,8 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
+import static com.example.sharedconstants.RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
+import static com.example.sharedconstants.RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME;
 import static com.example.sharedconstants.RoutesToRun.OBS_TEST;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
@@ -50,7 +52,7 @@ public class MeepMeepTesting {
     // OBS bot pushes 2 samples and focuses on scoring 4 specimens (Total Auto: 83 - over time)
     // NET bot focuses on scoring 5 samples (only has to grab one from observation since it has a preload)
     // Uncomment the following lines to test this configuration
-    private static final RoutesToRun redObservationRoute = OBS_TEST;
+    private static final RoutesToRun redObservationRoute = OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
     private static final RoutesToRun blueObservationRoute = redObservationRoute;
     private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_1_PRELOAD;
     private static final RoutesToRun blueNetRoute = redNetRoute;
