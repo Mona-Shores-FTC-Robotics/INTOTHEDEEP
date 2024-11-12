@@ -15,7 +15,7 @@ public class NET_Score_4_Preload_and_3_Samples extends NET_Score_3_Preload_and_2
     public void buildRoute(){
         super.buildRoute();
         pickupNeutralSample3();
-        depositSample();
+        dumpSampleInBasket();
         netBotRoute = netTrajectoryActionBuilder.build();
     }
 

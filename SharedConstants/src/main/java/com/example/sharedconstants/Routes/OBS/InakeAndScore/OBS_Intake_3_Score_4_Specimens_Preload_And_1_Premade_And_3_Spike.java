@@ -40,7 +40,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike ex
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
                 .splineToLinearHeading(OBS_ZONE_BEFORE_PICKUP,ANGLE_TOWARD_RED)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_INTAKE_FROM_WALL))
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .splineToLinearHeading(OBS_ZONE_PICKUP_FACE_TOWARD_BLUE,ANGLE_TOWARD_RED)
                 .waitSeconds(.2)
                 .splineToLinearHeading(chamberSlot,ANGLE_TOWARD_BLUE)

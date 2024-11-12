@@ -26,7 +26,7 @@ public class OBS_Score_4_SampleFirst_Push_2_Spike_Samples extends OBS_Score_1_Sa
     public void pickupSpecimenFromWall() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setTangent(ANGLE_340_DEGREES)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_INTAKE_FROM_WALL))
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .splineToLinearHeading(OBS_ZONE_PICKUP, ANGLE_TOWARD_RED);
     }
 

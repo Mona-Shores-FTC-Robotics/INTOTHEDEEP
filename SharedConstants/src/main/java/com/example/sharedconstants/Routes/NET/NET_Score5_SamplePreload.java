@@ -13,7 +13,7 @@ import static com.example.sharedconstants.FieldConstants.NET_SPIKE_TWO_SHORT;
 import static com.example.sharedconstants.FieldConstants.NET_START_POSE_WITH_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.FieldConstants.NEXT_TO_NET_ASCENT;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
-import static com.example.sharedconstants.RobotAdapter.ActionType.DEPOSIT_SAMPLE;
+import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_INTAKE_ON;
 
@@ -50,14 +50,14 @@ public class NET_Score5_SamplePreload extends Routes {
         netTrajectoryActionBuilder = robotAdapter.getActionBuilder(NET_START_POSE_WITH_SAMPLE_PRELOAD)
                 .strafeTo(PoseToVector(NET_BASKET_WALL))
                 .afterDisp(2, robotAdapter.getAction(SAMPLE_LIFT_TO_HIGH_BASKET))
-                .stopAndAdd(robotAdapter.getAction((DEPOSIT_SAMPLE)));
+                .stopAndAdd(robotAdapter.getAction((DUMP_SAMPLE_IN_BASKET)));
     }
 
 
     public void depositSample() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .strafeToLinearHeading(PoseToVector(NET_BASKET_NEUTRAL_SIDE), ANGLE_TOWARD_BLUE)
-                .stopAndAdd(robotAdapter.getAction(DEPOSIT_SAMPLE));
+                .stopAndAdd(robotAdapter.getAction(DUMP_SAMPLE_IN_BASKET));
     }
 
     private void pickupNeutralSample1() {
@@ -93,7 +93,7 @@ public void depositSampleWall()
 {
     netTrajectoryActionBuilder = netTrajectoryActionBuilder
             .strafeToConstantHeading(PoseToVector(NET_BASKET_WALL))
-            .stopAndAdd(robotAdapter.getAction(DEPOSIT_SAMPLE));
+            .stopAndAdd(robotAdapter.getAction(DUMP_SAMPLE_IN_BASKET));
 
 }
 }

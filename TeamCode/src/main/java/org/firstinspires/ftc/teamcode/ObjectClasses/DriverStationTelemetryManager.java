@@ -24,9 +24,10 @@ public class DriverStationTelemetryManager {
         BASIC,
         BUTTON_BINDINGS,
         VERBOSE_DRIVE,
+        VERBOSE_SAMPLE_INTAKE,
+        VERBOSE_SAMPLE_LINEAR_ACTUATOR,
         VERBOSE_SAMPLE_LIFT,
         VERBOSE_SPECIMEN_ARM,
-        VERBOSE_SAMPLE_LINEAR_ACTUATOR,
     }
 
     private final Telemetry telemetry;
@@ -101,6 +102,9 @@ public class DriverStationTelemetryManager {
                     break;
                 case VERBOSE_SPECIMEN_ARM:
                     displayVerboseSpecimenArmTelemetry();
+                    break;
+                case VERBOSE_SAMPLE_INTAKE:
+                    displayVerboseSampleIntakeTelemetry();
                     break;
             }
         }
@@ -210,6 +214,14 @@ public class DriverStationTelemetryManager {
             Robot.getInstance().getSpecimenArmSubsystem().displayVerboseTelemetry(telemetry);
         } else cycleTelemetryMode();
     }
+
+    // Verbose telemetry method for SpecimenArmSubsystem
+    private void displayVerboseSampleIntakeTelemetry() {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+            Robot.getInstance().getSampleIntakeSubsystem().displayVerboseTelemetry(telemetry);
+        } else cycleTelemetryMode();
+    }
+
 
     @SuppressLint("DefaultLocale")
     private void displayBaseTelemetry(Telemetry telemetry) {

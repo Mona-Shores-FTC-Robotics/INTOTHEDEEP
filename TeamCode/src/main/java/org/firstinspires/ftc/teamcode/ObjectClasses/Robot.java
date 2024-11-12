@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetectionStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.End_Game.ClimberS
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetectionStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenProcessingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
@@ -55,10 +55,10 @@ public class Robot {
 
     private static ClimberSubsystem climberSubsystem;
     private static VisionSubsystem visionSubsystem;
-    private static SampleDetectionStateMachine sampleDetectionStateMachine;
+    private static SampleProcessingStateMachine sampleProcessingStateMachine;
     private static SampleButtonHandling sampleButtonHandling;
     private static SpecimenButtonHandling specimenButtonHandling;
-    private static SpecimenDetectionStateMachine specimenDetectionStateMachine;
+    private static SpecimenProcessingStateMachine specimenProcessingStateMachine;
 
     private static LightingSubsystem lightingSubsystem;
 
@@ -185,7 +185,7 @@ public class Robot {
         if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
                  hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
                  hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
-            sampleDetectionStateMachine = new SampleDetectionStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
+            sampleProcessingStateMachine = new SampleProcessingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
             sampleButtonHandling = new SampleButtonHandling(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
         }
 
@@ -193,7 +193,7 @@ public class Robot {
                 hasSubsystem(SubsystemType.SPECIMEN_ARM) &&
                 hasSubsystem(SubsystemType.SPECIMEN_INTAKE)) {
             specimenButtonHandling = new SpecimenButtonHandling(specimenIntakeSubsystem, specimenArmSubsystem);
-            specimenDetectionStateMachine = new SpecimenDetectionStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
+            specimenProcessingStateMachine = new SpecimenProcessingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
         }
     }
 
@@ -228,8 +228,8 @@ public class Robot {
 
     public SampleButtonHandling getSampleButtonHandling(){return sampleButtonHandling;}
     public SpecimenButtonHandling getSpecimenButtonHandling(){return specimenButtonHandling;}
-    public SpecimenDetectionStateMachine getSpecimenDetectionStateMachine(){return specimenDetectionStateMachine;}
-    public SampleDetectionStateMachine getSampleDetectionStateMachine(){return sampleDetectionStateMachine;}
+    public SpecimenProcessingStateMachine getSpecimenDetectionStateMachine(){return specimenProcessingStateMachine;}
+    public SampleProcessingStateMachine getSampleProcessingStateMachine(){return sampleProcessingStateMachine;}
 
 
     public LightingSubsystem getLightingSubsystem() {return lightingSubsystem;}

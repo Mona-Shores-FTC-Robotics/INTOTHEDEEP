@@ -18,12 +18,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.ChangeSampleDumperPositionAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.MoveSpecimenArmAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
-
-import java.util.function.Supplier;
 
 public class RealRobotAdapter implements RobotAdapter {
     private final ActionFactory actionFactory;
@@ -112,18 +109,19 @@ public class RealRobotAdapter implements RobotAdapter {
                 case MOVE_PRELOAD_SPECIMEN_TO_CW_HOME:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
                         return new ParallelAction(
-                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFastAction),
-                                new InstantAction(robot.getSpecimenIntakeSubsystem()::preloadHasBeenStaged)
-                                );
+                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFastAction)
+                        );
                     } else return problem();
 
-                    //should there be a difference between these?
                 case HANG_SPECIMEN_ON_HIGH_CHAMBER:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
-                        return new InstantAction(robot.getSpecimenArmSubsystem()::flipCCWFastAction);
+                        return new SequentialAction(
+                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCCWFastAction),
+                                new InstantAction(robot.getSpecimenIntakeSubsystem()::disablePreloadMode)
+                        );
                     } else return problem();
 
-                case DEPOSIT_SAMPLE:
+                case DUMP_SAMPLE_IN_BASKET:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
@@ -151,17 +149,17 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                     } else return problem();
 
-                case GET_READY_FOR_INTAKE_FROM_GROUND:
+                case GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {
                         return  new ParallelAction(
                                         new SequentialAction(
-                                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::deployMid)
+                                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy)
                                                 ),
                                         new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON)
                         );
                     } else return problem();
-                case GET_READY_FOR_INTAKE_FROM_WALL:
+                case GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE))
                     {
                         return  new ParallelAction(

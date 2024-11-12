@@ -6,7 +6,7 @@ import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_START_POSE;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE;
-import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_INTAKE_FROM_GROUND;
+import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
 import static com.example.sharedconstants.RobotAdapter.ActionType.INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT;
 
 import com.acmerobotics.roadrunner.Pose2d;
@@ -28,7 +28,7 @@ public class OBS_Intake_Transfer_Dump extends Routes {
 
     public void scoreObservationPreload(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(FieldConstants.OBS_START_POSE)
-                .stopAndAdd(robotAdapter.getAction(GET_READY_FOR_INTAKE_FROM_GROUND))
+                .stopAndAdd(robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .afterDisp(20, robotAdapter.getAction(INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT))
                 .splineTo(PoseToVector(OBS_START_POSE).plus(new Vector2d(0, 24)), ANGLE_TOWARD_BLUE, slowVelocity)
                 .afterDisp(20, robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE))

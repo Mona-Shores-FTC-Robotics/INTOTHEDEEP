@@ -7,7 +7,7 @@ import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_PICKUP;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_WAYPOINT;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
-import static com.example.sharedconstants.RobotAdapter.ActionType.DEPOSIT_SAMPLE;
+import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_INTAKE_ON;
 
 import com.example.sharedconstants.RobotAdapter;
@@ -21,14 +21,14 @@ public class NET_Score_2_Preload_and_1_Sample extends NET_Score_1_Specimen_Prelo
     {
         super.buildRoute();
         pickupNeutralSample1();
-        depositSample();
+        dumpSampleInBasket();
         netBotRoute = netTrajectoryActionBuilder.build();
     }
 
-    public void depositSample() {
+    public void dumpSampleInBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .strafeToLinearHeading(PoseToVector(NET_BASKET), ANGLE_45_DEGREES)
-                .stopAndAdd(robotAdapter.getAction(DEPOSIT_SAMPLE));
+                .stopAndAdd(robotAdapter.getAction(DUMP_SAMPLE_IN_BASKET));
     }
 
     public void pickupNeutralSample1() {

@@ -64,7 +64,7 @@ public class OBS_Push2SpikeSamplesInOnePath extends OBS_Score_1_Specimen_Preload
     public void pickupSpecimenFromWall() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .splineToSplineHeading(CHAMBER_STAGING_FOR_PICKUP, ANGLE_TOWARD_OBSERVATION)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_INTAKE_FROM_WALL))
+                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .splineToConstantHeading(PoseToVector(OBS_ZONE_PICKUP), ANGLE_TOWARD_RED);
     }
 

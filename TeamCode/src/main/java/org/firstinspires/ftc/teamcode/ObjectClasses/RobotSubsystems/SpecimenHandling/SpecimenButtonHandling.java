@@ -30,7 +30,6 @@ public class SpecimenButtonHandling {
             case CW_ARM_HOME:
                 armSubsystem.flipCCWFastAction();
                 break;
-
         }
     }
 }

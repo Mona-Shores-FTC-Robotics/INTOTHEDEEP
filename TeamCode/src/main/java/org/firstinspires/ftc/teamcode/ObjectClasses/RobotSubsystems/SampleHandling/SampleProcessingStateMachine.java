@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
 import com.acmerobotics.dashboard.config.Config;
-
+import static com.example.sharedconstants.FieldConstants.SampleColor;
+import static com.example.sharedconstants.FieldConstants.AllianceColor;
+import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 
 @Config
-public class SampleDetectionStateMachine {
+public class SampleProcessingStateMachine {
 
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
@@ -16,26 +18,24 @@ public class SampleDetectionStateMachine {
     public enum SampleDetectionStates {
         ON_GOOD_SAMPLE_DETECTION,
         GETTING_READY_FOR_TRANSFER,
-        READY_FOR_TRANSFER,
         TRANSFERRING,
-        TRANSFERRED,
         ON_BAD_SAMPLE_DETECTED,
         EJECTING_BAD_SAMPLE,
-        EJECTED,
         LOOKING_FOR_SAMPLE,
+        WAITING_FOR_SAMPLE_DETECTION,
     }
     private SampleDetectionStates currentSampleDetectionState;
 
-    public SampleDetectionStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
-                                       SampleIntakeSubsystem intakeSubsystem,
-                                       SampleLiftBucketSubsystem liftSubsystem) {
+    public SampleProcessingStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
+                                        SampleIntakeSubsystem intakeSubsystem,
+                                        SampleLiftBucketSubsystem liftSubsystem) {
         this.actuatorSubsystem = actuatorSubsystem;
         this.intakeSubsystem = intakeSubsystem;
         this.liftSubsystem = liftSubsystem;
-        currentSampleDetectionState= SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
+        currentSampleDetectionState= SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
     }
 
-    public void updateSpecimenDetectionState() {
+    public void updateSampleProcessingState() {
         switch (currentSampleDetectionState) {
             case ON_GOOD_SAMPLE_DETECTION:
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;
@@ -47,16 +47,13 @@ public class SampleDetectionStateMachine {
                 break;
             case GETTING_READY_FOR_TRANSFER:
                 if (actuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.FULLY_RETRACTED) {
-                    currentSampleDetectionState = SampleDetectionStates.READY_FOR_TRANSFER;
+                    currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
+                    intakeSubsystem.transferSampleToBucket();
                 }
-                break;
-            case READY_FOR_TRANSFER:
-                currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
-                intakeSubsystem.transferSampleToBucket();
                 break;
             case TRANSFERRING:
                 if (intakeSubsystem.getCurrentState()== SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
-                    currentSampleDetectionState = SampleDetectionStates.TRANSFERRED;
+                    currentSampleDetectionState = SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
                 }
                 break;
             case ON_BAD_SAMPLE_DETECTED:
@@ -65,13 +62,12 @@ public class SampleDetectionStateMachine {
                 break;
             case EJECTING_BAD_SAMPLE:
                 if (intakeSubsystem.getCurrentState()== SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
-                    currentSampleDetectionState = SampleDetectionStates.EJECTED;
-                    actuatorSubsystem.fullyRetract();
-                    intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+                    currentSampleDetectionState = SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
+                    //Presumably we want to grab another sample from the submersible...
+                    actuatorSubsystem.partiallyRetractAndIntakeOn();
                 }
                 break;
-            case EJECTED:
-            case TRANSFERRED:
+            case WAITING_FOR_SAMPLE_DETECTION:
                 //do nothing
                 break;
         }
@@ -81,12 +77,13 @@ public class SampleDetectionStateMachine {
         return currentSampleDetectionState;
     }
 
-    public void setGoodSampleDetectedState() {
-        currentSampleDetectionState = SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
+    public void setOnGoodSampleDetectionState() {
+        currentSampleDetectionState=SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
+    }
+    public void setOnBadSampleDetectionState() {
+        currentSampleDetectionState=SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
     }
 
-    public void setBadSampleDetectedState() {
-        currentSampleDetectionState = SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
-    }
+
 
 }

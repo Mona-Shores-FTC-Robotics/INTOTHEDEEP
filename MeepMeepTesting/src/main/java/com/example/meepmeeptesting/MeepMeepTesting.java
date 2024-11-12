@@ -43,36 +43,10 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    //If you make the routes null, then it will let you select with numbers
-//    private static final RoutesToRun redObservationRoute = null;
-//    private static final RoutesToRun blueObservationRoute = null;
-//    private static final RoutesToRun redNetRoute = null;
-//    private static final RoutesToRun blueNetRoute = null;
-
-    // OBS bot pushes 2 samples and focuses on scoring 4 specimens (Total Auto: 83 - over time)
-    // NET bot focuses on scoring 5 samples (only has to grab one from observation since it has a preload)
-    // Uncomment the following lines to test this configuration
-    private static final RoutesToRun redObservationRoute = OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
-    private static final RoutesToRun blueObservationRoute = redObservationRoute;
-    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_1_PRELOAD;
-    private static final RoutesToRun blueNetRoute = redNetRoute;
-
-    // OBS bot pushes spike samples in one path
-    // NET bot does its thing and tacks on two samples from human player at end (Total Auto: 90 - close)
-    // Uncomment the following lines to test this scenario
-//    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH;
-//    private static final RoutesToRun blueObservationRoute = redObservationRoute;
-//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT;
-//    private static final RoutesToRun blueNetRoute = redNetRoute;
-
-    // **Obs Bot Sample First**
-    // OBS bot starts with sample first to allow the human player to prnepare specimens
-    // Uncomment the following lines to test this scenario
-
-//    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_SCORE_4_SAMPLEFIRST_PUSH_2_SPIKE_SAMPLES;
-//    private static final RoutesToRun blueObservationRoute = redObservationRoute;
-//    private static final RoutesToRun redNetRoute = RoutesToRun.NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE_SHORT;
-//    private static final RoutesToRun blueNetRoute = redNetRoute;
+    private static final RoutesToRun redObservationRoute = null;
+    private static final RoutesToRun blueObservationRoute = null;
+    private static final RoutesToRun redNetRoute = null;
+    private static final RoutesToRun blueNetRoute = null;
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(600);
@@ -194,39 +168,22 @@ public class MeepMeepTesting {
                 return new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter);
             case NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT:
                 return new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter);
-//            case OBS_PUSH_2_SCORE_3_PRELOAD_AND_1_PREMADE_AND_1_SPIKE_SPECIMENS:
-//                return new OBS_Push_2_Score_3_Specimens_Preload_And_1_Premade_And_1_Spike(adapter);
-//            case OBS_PUSH_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_SPIKE_SPECIMENS:
-//                return new OBS_Push_3_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
-//            case OBS_PUSH_3_SCORE_5_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS:
-//                return new OBS_Push_3_Score_5_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
-//            case OBS_PUSH_2_SCORE_4_PRELOAD_AND_1_PREMADE_AND_2_NEUTRAL_SPECIMENS:
-//                return new OBS_Push_2_Score_4_Specimens_Preload_And_1_Premade_And_2_Spike(adapter);
-//            case OBS_SCORE_1_SAMPLE_PRELOAD_PUSH_1_SPIKE_SCORE_1_PREMADE:
-//                return new OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade(adapter);
             case NET_SCORE_1_PRELOAD:
                 return new NET_Score_1_Specimen_Preload(adapter);
+            case NET_SCORE_5_SAMPLE_PRELOAD:
+                return new NET_Score5_SamplePreload(adapter);
             case OBS_SCORE_1_PRELOAD:
                 return new OBS_Score_1_Specimen_Preload(adapter);
             case OBS_SCORE_4_SAMPLEFIRST_PUSH_2_SPIKE_SAMPLES:
                 return new OBS_Score_4_SampleFirst_Push_2_Spike_Samples(adapter);
             case OBS_SCORE_4_SAMPLEFIRST_PUSH_3_SPIKE_SAMPLES:
                 return new OBS_Score_5_SampleFirst_Push_3_Spike_Samples(adapter);
-//            case OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH:
-//                return new OBS_Push3SpikeSampleInOnePath(adapter);
-//            case OBS_PUSH_2_SPIKE_SAMPLES_IN_ONE_PATH:
-//                return new OBS_Push2SpikeSamplesInOnePath(adapter);
-            case NET_SCORE_5_SAMPLE_PRELOAD:
-                return new NET_Score5_SamplePreload(adapter);
-            case MOVE_ONLY:
-                return new MoveOnly(adapter);
             case OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS:
                 return new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
             case OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME:
                 return new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time(adapter);
             case OBS_TEST:
                 return new OBS_Intake_Transfer_Dump(adapter);
-
             case DO_NOTHING:
             default:
                 return new DoNothing(adapter);

@@ -15,7 +15,7 @@ public class NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short ex
     public void buildRoute(){
         super.buildRoute();
         pickupHumanPlayerSample2();
-        depositSampleWall();
+        dumpSampleInBasket();
         netBotRoute = netTrajectoryActionBuilder.build();
     }
 

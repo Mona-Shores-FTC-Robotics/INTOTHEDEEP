@@ -25,21 +25,21 @@ public class SampleButtonHandling {
             switch (actuatorSubsystem.getCurrentState()) {
                 case FULLY_RETRACTED:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-                    actuatorSubsystem.deployMid();
+                    actuatorSubsystem.partiallyDeploy();
                     break;
-                case DEPLOYED_MID:
+                case PARTIALLY_DEPLOYED:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-                    actuatorSubsystem.deployFull();
+                    actuatorSubsystem.fullyDeploy();
                     break;
-                case DEPLOYED_FULLY:
+                case FULLY_DEPLOYED:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
                     actuatorSubsystem.fullyRetract();
                     break;
                 case MANUAL:
                 case UNKNOWN:
-                case RETRACTING:
-                case DEPLOYING_TO_MID:
-                case DEPLOYING_TO_FULL:
+                case FULLY_RETRACTING:
+                case PARTIALLY_DEPLOYING:
+                case FULLY_DEPLOYING:
                 default:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                     actuatorSubsystem.fullyRetract();

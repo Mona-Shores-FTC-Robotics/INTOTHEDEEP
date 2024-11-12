@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
@@ -18,23 +20,29 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public static class ActuatorParams {
 
         public double MANUAL_MOVEMENT_SCALAR = .8;
-        public double WITHOUT_ENCODER_POWER = 0.7;  // Default power for both directions
+        public double NORMAL_POWER = 0.7;  // Default power for both directions
+        public double POWER_FOR_SLOW_DEPLOYMENT = .4;
         public double DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.10;
 
-        public double DEPLOYING_TO_FULL_TIME_MS = 600;
-        public double DEPLOYING_TO_MID_TIME_MS = 300;
-        public double RETRACTION_TIME_MS=700;
+        public double FULL_DEPLOYMENT_TIME_MS = 600;
+        public double PARTIAL_DEPLOYMENT_TIME_MS = 300;
+        public double FULL_RETRACTION_TIME_MS =700;
+        public double PARTIAL_RETRACTION_TIME_MS =100;
     }
 
     public static ActuatorParams ACTUATOR_PARAMS = new ActuatorParams();
 
     public enum SampleActuatorStates {
+        PARTIALLY_RETRACTED_AFTER_EJECTION,
         FULLY_RETRACTED,
-        DEPLOYING_TO_MID,
-        DEPLOYED_MID,
-        DEPLOYING_TO_FULL,
-        DEPLOYED_FULLY,
-        RETRACTING,
+        PARTIALLY_RETRACTING_AFTER_EJECTING,
+        FULLY_RETRACTING,
+
+        PARTIALLY_DEPLOYING,
+        PARTIALLY_DEPLOYED,
+        FULLY_DEPLOYING,
+        FULLY_DEPLOYED,
+
         MANUAL,
         UNKNOWN;
     }
@@ -83,62 +91,84 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
         switch (currentState)
         {
-            case DEPLOYING_TO_MID:
-                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.DEPLOYING_TO_MID_TIME_MS) {
+            case PARTIALLY_DEPLOYING:
+                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS) {
                     stopActuator();
-                    setCurrentState(SampleActuatorStates.DEPLOYED_MID);
+                    setCurrentState(SampleActuatorStates.PARTIALLY_DEPLOYED);
                 }
                 break;
-            case DEPLOYING_TO_FULL:
-                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.DEPLOYING_TO_FULL_TIME_MS) {
+            case FULLY_DEPLOYING:
+                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS) {
                     stopActuator();
-                    setCurrentState(SampleActuatorStates.DEPLOYED_FULLY);
+                    setCurrentState(SampleActuatorStates.FULLY_DEPLOYED);
                 }
                 break;
-            case RETRACTING:
-                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.RETRACTION_TIME_MS) {
+            case PARTIALLY_RETRACTING_AFTER_EJECTING:
+                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS) {
+                    stopActuator();
+                    if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE))
+                    {
+                        Robot.getInstance().getSampleIntakeSubsystem().setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+                    }
+                    setCurrentState(SampleActuatorStates.PARTIALLY_RETRACTED_AFTER_EJECTION);
+                }
+            case FULLY_RETRACTING:
+                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS) {
                     stopActuator();
                     setCurrentState(SampleActuatorStates.FULLY_RETRACTED);
                 }
                 break;
-            case DEPLOYED_MID:
-            case DEPLOYED_FULLY:
+            case PARTIALLY_DEPLOYED:
+            case FULLY_DEPLOYED:
             case FULLY_RETRACTED:
             case MANUAL:
             case UNKNOWN:
+            case PARTIALLY_RETRACTED_AFTER_EJECTION:
                 //do nothing
                 break;
         }
         updateDashboardTelemetry();  // Update telemetry each loop
     }
 
-    public void fullyRetract() {
-        currentState=SampleActuatorStates.RETRACTING;
+
+    public void partiallyRetractAndIntakeOn() {
+        currentState=SampleActuatorStates.PARTIALLY_RETRACTING_AFTER_EJECTING;
         runWithoutEncodersReverse();
         actuatorTimer.reset();
     }
 
-    public void deployMid() {
-        currentState=SampleActuatorStates.DEPLOYING_TO_MID;
+    public void fullyRetract() {
+        currentState=SampleActuatorStates.FULLY_RETRACTING;
+        runWithoutEncodersReverse();
+        actuatorTimer.reset();
+    }
+
+    public void partiallyDeploy() {
+        currentState=SampleActuatorStates.PARTIALLY_DEPLOYING;
         runWithoutEncodersForward();
         actuatorTimer.reset();
     }
 
-    public void deployFull() {
-        currentState=SampleActuatorStates.DEPLOYING_TO_FULL;
-        runWithoutEncodersForward();
+    public void fullyDeploy() {
+        currentState=SampleActuatorStates.FULLY_DEPLOYING;
+        runWithoutEncodersForwardSlowly();
         actuatorTimer.reset();
     }
 
 
     // Method to power the motor on in one direction without encoders
     public void runWithoutEncodersForward() {
-        moveActuator(ACTUATOR_PARAMS.WITHOUT_ENCODER_POWER);
+        moveActuator(ACTUATOR_PARAMS.NORMAL_POWER);
+    }
+
+    // Method to power the motor on in one direction without encoders
+    public void runWithoutEncodersForwardSlowly() {
+        moveActuator(ACTUATOR_PARAMS.POWER_FOR_SLOW_DEPLOYMENT);
     }
 
     // Method to power the motor on in reverse without encoders
     public void runWithoutEncodersReverse() {
-        moveActuator(-ACTUATOR_PARAMS.WITHOUT_ENCODER_POWER);
+        moveActuator(-ACTUATOR_PARAMS.NORMAL_POWER);
     }
 
     // Add a method to handle manual input for the lift

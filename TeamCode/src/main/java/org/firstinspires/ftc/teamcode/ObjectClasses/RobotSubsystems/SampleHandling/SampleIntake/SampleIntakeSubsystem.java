@@ -2,27 +2,22 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import static com.example.sharedconstants.FieldConstants.SampleColor;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
-
-import java.util.ArrayDeque;
-import java.util.Deque;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
 
 @Config
 public class SampleIntakeSubsystem extends SubsystemBase {
@@ -61,30 +56,25 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     private final CRServo sampleIntakeRight;  // Continuous rotation servo
 
     private final RevColorSensorV3 colorSensor;  // Nullable color sensor
-    private SampleIntakeStates currentState;
-    private LightingSubsystem lightingSubsystem;
+    private SampleIntakeStates currentSampleIntakeState;
     private double currentPower;
-    private double proximity;
 
-    private final Deque<SampleColor> colorHistory = new ArrayDeque<>(INTAKE_PARAMS.COLOR_HISTORY_SIZE);
-    // Variables to store the latest colors
-    private SampleColor lastRawColor = SampleColor.UNKNOWN;
-    private SampleColor lastFilteredColor = SampleColor.UNKNOWN;
+    private final SampleDetector sampleDetector;
+    private SampleProcessingStateMachine sampleProcessingStateMachine;
+
     ElapsedTime sampleIntakeTimer = new ElapsedTime();
-    private boolean haveSample = false;
 
     // Constructor with color sensor
     public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoL, final String intakeServoR, final String colorSensorName) {
         sampleIntakeLeft = hMap.get(CRServo.class, intakeServoL);
         sampleIntakeRight = hMap.get(CRServo.class, intakeServoR);
 
-        if (colorSensorName != null && !colorSensorName.isEmpty()) {
-            colorSensor = hMap.get(RevColorSensorV3.class, colorSensorName);
-            if (colorSensor instanceof SwitchableLight) {
-                ((SwitchableLight)colorSensor).enableLight(false);
-            }
+        colorSensor = colorSensorName != null ? hMap.get(RevColorSensorV3.class, colorSensorName) : null;
+
+        if (colorSensor != null) {
+            sampleDetector = new SampleDetector(colorSensor, INTAKE_PARAMS.PROXIMITY_THRESHOLD, INTAKE_PARAMS.COLOR_HISTORY_SIZE);
         } else {
-            colorSensor = null;  // No color sensor configured
+            sampleDetector = null; // no detector if sensor is unavailable;
         }
     }
 
@@ -97,53 +87,63 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public void init() {
         setCurrentState(SampleIntakeStates.INTAKE_OFF);  // Set default state to off
         currentPower = INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
-        lightingSubsystem = Robot.getInstance().getLightingSubsystem();
-        haveSample= false;
+        sampleProcessingStateMachine = Robot.getInstance().getSampleProcessingStateMachine();
     }
 
     @Override
     public void periodic() {
-        // Detect the color of the game piece in every loop
-        if (haveSample) {
-            Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
-            switch (currentState) {
-                case REVERSING_INTAKE_TO_TRANSFER:
-                    if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.TRANSFER_TIME_MS) {
-                        setCurrentState(SampleIntakeStates.INTAKE_OFF);
-                        haveSample = false;
-                        Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
-                    }
+        if (sampleDetector != null) {
+            DetectionState detectionState = sampleDetector.updateDetection();
+
+            switch(detectionState) {
+                case JUST_DETECTED:
+                    handleSamplePickup();
+                    sampleProcessingStateMachine.updateSampleProcessingState();
                     break;
-                case REVERSING_INTAKE_TO_EJECT:
-                    if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.EJECT_TIME_MS) {
-                        setCurrentState(SampleIntakeStates.INTAKE_OFF);
-                        haveSample = false;
-                        Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
-                    }
+
+                case STILL_DETECTED:
+                    sampleProcessingStateMachine.updateSampleProcessingState();
+                    handleEjectionAndTransferStates();
                     break;
-                case INTAKE_ON:
-                case INTAKE_OFF:
-                case INTAKE_REVERSE:
-                    //do nothing
+
+                case NOT_DETECTED:
+                    // Do nothing
                     break;
             }
-        } else if (colorSensor!=null) {
-            lastFilteredColor = detectSampleColor();
-            handleSamplePickup(lastFilteredColor);
         }
         updateParameters();
         updateDashboardTelemetry();
     }
-    // Set the current intake state and update power
-    public void setCurrentState(SampleIntakeStates state) {
-        currentState = state;
-        setPower(state.power);
+
+
+    public void handleSamplePickup() {
+        if (sampleDetector.isGoodSample()) {
+            //If we detect 1) yellow; or 2) blue and we are blue; or 3) red and we are red, then its a good sample
+            sampleProcessingStateMachine.setOnGoodSampleDetectionState();
+        } else if (sampleDetector.isBadSample()) {
+            //Otherwise its a bad sample
+            sampleProcessingStateMachine.setOnBadSampleDetectionState();
+        }
     }
-    // Set servo power, ensuring it's within limits
-    private void setPower(double power) {
-        currentPower = Range.clip(power, -INTAKE_PARAMS.MAX_POWER, INTAKE_PARAMS.MAX_POWER);  // Clip power to safe range
-        sampleIntakeLeft.setPower(currentPower);  // Apply the clipped power
-        sampleIntakeRight.setPower(-currentPower);  // Apply the clipped power
+
+    private void handleEjectionAndTransferStates() {
+        switch (currentSampleIntakeState) {
+            case REVERSING_INTAKE_TO_TRANSFER:
+                if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.TRANSFER_TIME_MS) {
+                    setCurrentState(SampleIntakeStates.INTAKE_OFF);
+                }
+                break;
+            case REVERSING_INTAKE_TO_EJECT:
+                if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.EJECT_TIME_MS) {
+                    setCurrentState(SampleIntakeStates.INTAKE_OFF);
+                }
+                break;
+            case INTAKE_ON:
+            case INTAKE_OFF:
+            case INTAKE_REVERSE:
+                //do nothing
+                break;
+        }
     }
 
     public void transferSampleToBucket() {
@@ -156,86 +156,22 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         setCurrentState(SampleIntakeStates.REVERSING_INTAKE_TO_EJECT);
     }
 
-    // Integrated student sample data using chatGPT
-    public SampleColor detectSampleColor() {
-        // Use the global proximity variable and update telemetry
-        proximity = colorSensor.getDistance(DistanceUnit.MM);
-
-        if (proximity < INTAKE_PARAMS.PROXIMITY_THRESHOLD) {  // Object detected within the range
-            SampleColor rawColor = getRawDetectedColor();
-            lastRawColor = rawColor; // Store raw color
-            addColorToHistory(rawColor);
-            lastFilteredColor = getConsensusColor(); // Store filtered color
-            return lastFilteredColor;
-        } else {
-            colorHistory.clear();
-            lastRawColor = SampleColor.NO_SAMPLE;
-            lastFilteredColor = SampleColor.NO_SAMPLE;
-            return SampleColor.NO_SAMPLE;
-        }
+    // Set servo power, ensuring it's within limits
+    private void setPower(double power) {
+        currentPower = Range.clip(power, -INTAKE_PARAMS.MAX_POWER, INTAKE_PARAMS.MAX_POWER);  // Clip power to safe range
+        sampleIntakeLeft.setPower(currentPower);  // Apply the clipped power
+        sampleIntakeRight.setPower(-currentPower);  // Apply the clipped power
     }
 
-    private SampleColor getRawDetectedColor() {
-        // Get HSV values and raw RGB values
-        float[] hsvValues = new float[3];
-        colorSensor.argb();
-        Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues);
-
-        int hue = Math.round(hsvValues[0]);
-        float saturation = hsvValues[1];
-        float value = hsvValues[2];
-
-        int red = colorSensor.red();
-        int green = colorSensor.green();
-        int blue = colorSensor.blue();
-
-        // Update telemetry for debugging
-        MatchConfig.telemetryPacket.put("Sample Intake/HSV/Hue", hue);
-        MatchConfig.telemetryPacket.put("Sample Intake/HSV/Saturation", saturation);
-        MatchConfig.telemetryPacket.put("Sample Intake/HSV/Value", value);
-        MatchConfig.telemetryPacket.put("Sample Intake/color/Red", red);
-        MatchConfig.telemetryPacket.put("Sample Intake/color/Green", green);
-        MatchConfig.telemetryPacket.put("Sample Intake/color/Blue", blue);
-
-        // Red detection (using updated sample data)
-        if (    (hue >= 10 && hue <= 35) ||
-                (red > 500 && green < 700 && blue < 600)) {
-            return SampleColor.RED;
-        }
-        // Blue detection
-        else if (   (hue >= 190 && hue <= 250) ||
-                (red < 400 && green > 580 && blue > 1200)) {
-            return SampleColor.BLUE;
-        }
-        // Yellow detection
-        else if (   (hue >= 70 && hue <= 120) ||
-                (red > 1000 && green > 1600 && blue < 750)) {
-            return SampleColor.YELLOW;
-        }
-        // "Unknown" detection if no match
-        else {
-            return SampleColor.UNKNOWN;
-        }
+    // Set the current intake state and update power
+    public void setCurrentState(SampleIntakeStates state) {
+        currentSampleIntakeState = state;
+        setPower(state.power);
     }
 
-    private void addColorToHistory(SampleColor color) {
-        if (colorHistory.size() == INTAKE_PARAMS.COLOR_HISTORY_SIZE) {
-            colorHistory.removeFirst();
-        }
-        colorHistory.addLast(color);
-    }
-
-    private SampleColor getConsensusColor() {
-        if (colorHistory.size() < INTAKE_PARAMS.COLOR_HISTORY_SIZE) {
-            return SampleColor.UNKNOWN;
-        }
-        SampleColor firstColor = colorHistory.peekFirst();
-        for (SampleColor color : colorHistory) {
-            if (color != firstColor) {
-                return SampleColor.UNKNOWN;
-            }
-        }
-        return firstColor;
+    // Getters for telemetry use or other purposes
+    public SampleIntakeStates getCurrentState() {
+        return currentSampleIntakeState;
     }
 
     // Update intake parameters dynamically (called in periodic)
@@ -246,80 +182,59 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         SampleIntakeStates.INTAKE_OFF.updateIntakePower(INTAKE_PARAMS.INTAKE_OFF_POWER);
     }
 
+    public SampleDetector getSampleDetector() {
+        return sampleDetector;
+    }
+
     // Telemetry display for the dashboard
     @SuppressLint("DefaultLocale")
     public void updateDashboardTelemetry() {
-        MatchConfig.telemetryPacket.put("Sample Intake/State", currentState.toString());
-        MatchConfig.telemetryPacket.put("Sample Intake/Power", currentPower);
+        String intakeSummary = String.format(
+                "State: %s | Power: %.2f",
+                currentSampleIntakeState,
+                currentPower
+        );
+        MatchConfig.telemetryPacket.put("Sample Intake", intakeSummary);
 
-        if (colorSensor != null) {
-            MatchConfig.telemetryPacket.put("Sample Intake/Raw Color", lastRawColor.toString());
-            MatchConfig.telemetryPacket.put("Sample Intake/Filtered Color", lastFilteredColor.toString());
-            MatchConfig.telemetryPacket.put("Sample Intake/Proximity", String.format("%.2f", proximity));
+        if (sampleDetector != null) {
+            String telemetrySummary = String.format(
+                    "State: %s | Color: %s | Proximity: %.2f mm",
+                    sampleDetector.getDetectionState(),
+                    sampleDetector.getConsensusColor(),
+                    sampleDetector.getConsensusProximity()
+            );
+            MatchConfig.telemetryPacket.put("SampleDetector", telemetrySummary);
         } else {
-            MatchConfig.telemetryPacket.put("Sample Intake/Detected Color", "No Sensor");
+            MatchConfig.telemetryPacket.put("SampleDetector", "No Sample Color Sensor");
         }
     }
 
     // Improved basic telemetry display for the driver station
     public void displayBasicTelemetry(Telemetry telemetry) {
-        // Display the current state and detected color on the same line
-        String intakeState = (currentState != null) ? currentState.toString() : "Unknown";
-        String colorStatus = (colorSensor != null) ? detectSampleColor().toString() : "No Color Sensor";
-        telemetry.addLine(String.format("%s | Color: %s", intakeState, colorStatus));
+        String intakeState = (currentSampleIntakeState != null) ? currentSampleIntakeState.toString() : "Unknown";
+        String colorStatus = (colorSensor != null) ? sampleDetector.getConsensusColor().toString() : "No Color Sensor";
+        String detectionState = (sampleDetector != null) ? sampleDetector.getDetectionState().toString() : "N/A";
+        double proximity = (sampleDetector != null) ? sampleDetector.getConsensusProximity() : -1;
+
+        telemetry.addLine(String.format(
+                "Sample: %s | %s | %s | %.2f mm",
+                intakeState,
+                colorStatus,
+                detectionState,
+                proximity
+        ));
     }
 
     public void displayVerboseTelemetry(Telemetry telemetry) {
-        telemetry.addData("Sample Intake Status", String.format("State: %s", currentState));
-        if (colorSensor != null) {
-            telemetry.addData("Detected Color", detectSampleColor().toString());
-            telemetry.addData("Sample Intake/Proximity", proximity);
-        } else {
-            telemetry.addData("Detected Color", "No Sensor");
-        }
+        telemetry.addData("Sample Intake State", currentSampleIntakeState.toString());
+        telemetry.addData("Sample Intake Power", currentPower);
+        telemetry.addData("Time in Current State (ms)", sampleIntakeTimer.milliseconds());
+        telemetry.addLine();
+        telemetry.addData("Sample Detection State", sampleDetector.getDetectionState().toString());
+        telemetry.addData("Consensus Color", sampleDetector.getConsensusColor().toString());
+        telemetry.addData("Proximity (mm)", sampleDetector.getConsensusProximity());
+        telemetry.addData("Proximity History", sampleDetector.getProximityHistory().toString());
+        telemetry.addData("Raw Detected Color", sampleDetector.getRawDetectedColor().toString());
     }
 
-
-    // Getters for telemetry use or other purposes
-    public SampleIntakeStates getCurrentState() {
-        return currentState;
-    }
-
-    public void handleSamplePickup(SampleColor sampleColor) {
-        if (    (sampleColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED) ||
-                (sampleColor == SampleColor.BLUE && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) ||
-                sampleColor == SampleColor.YELLOW) {
-
-            // Good piece: Retract actuator and process the sample
-            if (sampleColor == SampleColor.YELLOW) {
-                lightingSubsystem.setBothLightsYellow();
-            } else if (sampleColor == SampleColor.RED) {
-                lightingSubsystem.setBothLightsRed();
-            }else  {
-                lightingSubsystem.setBothLightsBlue();
-            }
-
-            if (Robot.getInstance().getSampleDetectionStateMachine()!=null)
-            {
-                haveSample = true;
-                    Robot.getInstance().getSampleDetectionStateMachine().setGoodSampleDetectedState();
-                    Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
-            }
-
-        } else if ((sampleColor == SampleColor.RED && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) ||
-                (sampleColor == SampleColor.BLUE && MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.RED)) {
-
-            if (Robot.getInstance().getSampleDetectionStateMachine()!=null)
-            {
-                haveSample = true;
-                Robot.getInstance().getSampleDetectionStateMachine().setBadSampleDetectedState();
-                Robot.getInstance().getSampleDetectionStateMachine().updateSpecimenDetectionState();
-            }
-        } else if (sampleColor==SampleColor.NO_SAMPLE)
-        {
-            haveSample=false;
-        } else if (sampleColor == SampleColor.UNKNOWN) {
-            System.out.println("Unknown color detected, no action taken.");
-        }
-    }
 }
