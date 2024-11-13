@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -21,23 +22,25 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     public static class SampleLiftParams {
 
-        public  double DUMP_TIME_MS = 600;
+        public double POS_P_DOWNWARD = .2;
+        public double DOWNWARD_F_MULTIPLIER = 0.2;
+        public  double DUMP_TIME_MS = 800;
         public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
         public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
         public double LIFT_POWER = 0.5;
-        public double VEL_P = 5.0, VEL_I = 0.0, VEL_D = 0.0, VEL_F = 38.0;
+        public double VEL_P = 5.0, VEL_I = 0.0, VEL_D = 0.0, VEL_F = 30.0;
         public double POS_P = 5.0;
         public final int MAX_TARGET_TICKS = 1650;
         public final int MIN_TARGET_TICKS = 0;
         public double TIMEOUT_TIME_SECONDS = 3;
         public int HOME_HEIGHT_TICKS = 0;
-        public int HIGH_BASKET_TICKS = 1600;
-        public int LOW_BASKET_TICKS = 1100;
+        public int HIGH_BASKET_TICKS = 1200;
+        public int LOW_BASKET_TICKS = 850;
         public int LIFT_HEIGHT_TICK_THRESHOLD = 45;
 
         // Bucket servo params
         public double BUCKET_SCORE_POS = 0;
-        public double BUCKET_INTAKE_POS = 0.71;
+        public double BUCKET_INTAKE_POS = 0.95;
         public double BUCKET_SAFE_DESCENT_POS4 = .65;
         public double BUCKET_SAFE_DESCENT_POS3 = .55;
         public double BUCKET_SAFE_DESCENT_POS2 = .45;
@@ -187,8 +190,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 movingToTarget = false;  // Stop further updates
             }
         }
-
-
 
         updateLiftState();
         updateParameters();  // This lets us use the dashboard changes for tuning
@@ -360,5 +361,19 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         @SuppressLint("DefaultLocale") String statusOverview = String.format("State: %s, Target: %s, Position: %d, Target: %d",
                 currentLiftState.toString(), targetLiftState.toString(), currentTicks, targetTicks);
         MatchConfig.telemetryPacket.put("sampleLift/Status Overview", statusOverview);
+
+        // Retrieve and print the PIDF coefficients
+        PIDFCoefficients positionCoefficients = lift.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        MatchConfig.telemetryPacket.put("sampleLift/Position P", positionCoefficients.p);
+        MatchConfig.telemetryPacket.put("sampleLift/Position I", positionCoefficients.i);
+        MatchConfig.telemetryPacket.put("sampleLift/Position D", positionCoefficients.d);
+        MatchConfig.telemetryPacket.put("sampleLift/Position F", positionCoefficients.f);
+
+        PIDFCoefficients velocityCoefficients = lift.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        MatchConfig.telemetryPacket.put("sampleLift/Velocity P", velocityCoefficients.p);
+        MatchConfig.telemetryPacket.put("sampleLift/Velocity I", velocityCoefficients.i);
+        MatchConfig.telemetryPacket.put("sampleLift/Velocity D", velocityCoefficients.d);
+        MatchConfig.telemetryPacket.put("sampleLift/Velocity F", velocityCoefficients.f);
+
     }
 }

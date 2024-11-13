@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem.SAMPLE_LIFT_PARAMS;
+
 import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
@@ -30,10 +32,6 @@ public class SampleButtonHandling {
                 case PARTIALLY_DEPLOYED:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
                     actuatorSubsystem.fullyDeploy();
-                    break;
-                case FULLY_DEPLOYED:
-                    intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-                    actuatorSubsystem.fullyRetract();
                     break;
                 case MANUAL:
                 case UNKNOWN:
@@ -67,6 +65,19 @@ public class SampleButtonHandling {
                 if (!liftSubsystem.hasDumped) {
                     liftSubsystem.dumpSampleInBucket();
                 }else {
+                    liftSubsystem.lift.setVelocityPIDFCoefficients(0,0,0,0);
+                    liftSubsystem.lift.setPositionPIDFCoefficients(SAMPLE_LIFT_PARAMS.POS_P_DOWNWARD);
+
+
+
+                    // (Optional) Add a short delay to ensure settings are applied
+                    try {
+                        Thread.sleep(50);  // 50 ms delay (adjust as needed)
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+
                     liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LOW_BASKET_DOWN);
                     liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
                 }
