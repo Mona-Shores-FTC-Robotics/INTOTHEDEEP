@@ -3,53 +3,63 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ElevatorFeedforward;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 
 @Config
 public class SampleLiftBucketSubsystem extends SubsystemBase {
     // Static instance of LIFT_PARAMS
+
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
 
     public static class SampleLiftParams {
+        public double BUCKET_INCREMENT_TIME = 1.0;
+        public int NUM_STEPS = 100;
+        public double KA = .001;
+            public double KV = .03;
+            public double KG = .04;
+            public double KS = 0;
 
-        public double POS_P_DOWNWARD = .2;
-        public double DOWNWARD_F_MULTIPLIER = 0.2;
-        public  double DUMP_TIME_MS = 800;
-        public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
-        public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
-        public double LIFT_POWER = 0.5;
-        public double VEL_P = 5.0, VEL_I = 0.0, VEL_D = 0.0, VEL_F = 30.0;
-        public double POS_P = 5.0;
-        public final int MAX_TARGET_TICKS = 1650;
-        public final int MIN_TARGET_TICKS = 0;
-        public double TIMEOUT_TIME_SECONDS = 3;
-        public int HOME_HEIGHT_TICKS = 0;
-        public int HIGH_BASKET_TICKS = 1200;
-        public int LOW_BASKET_TICKS = 850;
-        public int LIFT_HEIGHT_TICK_THRESHOLD = 45;
+            public  double DUMP_TIME_MS = 800;
+            public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
+            public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
+            public double LIFT_POWER = 0.5;
 
-        // Bucket servo params
-        public double BUCKET_SCORE_POS = 0;
-        public double BUCKET_INTAKE_POS = 0.95;
-        public double BUCKET_SAFE_DESCENT_POS4 = .65;
-        public double BUCKET_SAFE_DESCENT_POS3 = .55;
-        public double BUCKET_SAFE_DESCENT_POS2 = .45;
-        public double BUCKET_SAFE_DESCENT_POS1 = .35;
+            public final int MAX_TARGET_TICKS = 1650;
+            public final int MIN_TARGET_TICKS = 0;
+            public double TIMEOUT_TIME_SECONDS = 3;
+            public int HOME_HEIGHT_TICKS = 0;
+            public int HIGH_BASKET_TICKS = 1200;
+            public int LOW_BASKET_TICKS = 850;
+            public int LIFT_HEIGHT_TICK_THRESHOLD = 30;
 
-        // Dumper servo params
-        public double DUMPER_HOME_POS = .7;
-        public double DUMPER_DUMP_POS = .2;
-    }
+            public double VEL_P=0.0000004, VEL_I=0, VEL_D=0;
+
+            // Bucket servo params
+            public double BUCKET_SCORE_POS = 0;
+            public double BUCKET_INTAKE_POS = 0.95;
+            public double BUCKET_SAFE_DESCENT_POS4 = .65;
+            public double BUCKET_SAFE_DESCENT_POS3 = .55;
+            public double BUCKET_SAFE_DESCENT_POS2 = .45;
+            public double BUCKET_SAFE_DESCENT_POS1 = .35;
+
+            // Dumper servo params
+            public double DUMPER_HOME_POS = .7;
+            public double DUMPER_DUMP_POS = .2;
+
+            public double UPWARD_VELOCITY = 50;     // Ticks per second (adjust as needed)
+            public double DOWNWARD_VELOCITY = -1.265;  // Ticks per second (negative for downward)
+            public double UPWARD_ACCELERATION = 40;    // Ticks per second squared (adjust as needed)
+            public double DOWNWARD_ACCELERATION = -2; // Ticks per second squared (negative for downward)
+        }
 
     public enum SampleLiftStates {
         HIGH_BASKET, LOW_BASKET, LIFT_HOME, MANUAL, LOW_BASKET_DOWN;
@@ -117,7 +127,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     private int currentTicks;
     private int targetTicks;
-    private double currentPower;
 
     private SampleLiftStates currentLiftState;
     private SampleLiftStates targetLiftState;
@@ -130,17 +139,29 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     private double targetBucketPosition;
     private double currentBucketPosition;
     private double bucketStepIncrement;
-    private ElapsedTime bucketTimer = new ElapsedTime();
+    private final ElapsedTime bucketTimer = new ElapsedTime();
     private boolean movingToTarget = false;
+
+    private ElevatorFeedforward elevatorFeedforward;
+    private final PIDController pidController;
+
+    private double pidOutput;
+    private double feedforwardOutput;
+    private double totalOutput;
 
     public SampleLiftBucketSubsystem(final HardwareMap hMap, final String liftName, final String bucketName, final String dumperName) {
         lift = hMap.get(DcMotorEx.class, liftName);
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         lift.setDirection(DcMotorEx.Direction.FORWARD);
-        lift.setVelocityPIDFCoefficients(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D, SAMPLE_LIFT_PARAMS.VEL_F);
-        lift.setPositionPIDFCoefficients(SAMPLE_LIFT_PARAMS.POS_P);
-        lift.setPower(SAMPLE_LIFT_PARAMS.LIFT_POWER);
+
+        elevatorFeedforward= new ElevatorFeedforward(
+                SAMPLE_LIFT_PARAMS.KS,
+                SAMPLE_LIFT_PARAMS.KG,
+                SAMPLE_LIFT_PARAMS.KV,
+                SAMPLE_LIFT_PARAMS.KA);
+
+        pidController = new PIDController(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D);
         currentLiftState = SampleLiftStates.LIFT_HOME;
 
         if (bucketName != null){
@@ -157,14 +178,22 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
 
     public void init() {
+        // Set the motor to RUN_WITHOUT_ENCODER since we're handling control manually
+        lift.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setPower(0);
+        currentLiftState = SampleLiftStates.LIFT_HOME;
         targetLiftState = SampleLiftStates.LIFT_HOME;
-        setTargetTicks(currentLiftState.ticks);  // Use setTargetTicks to initialize
-        lift.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        if (bucket != null){
+        pidController.reset();
+        pidController.setSetPoint(currentLiftState.ticks);
+        setTargetTicks(currentLiftState.ticks);
+
+
+
+        if (bucket != null) {
             setCurrentBucketState(BucketStates.BUCKET_INTAKE_POS);
         }
-        if (dumper != null){
-            hasDumped=false;
+        if (dumper != null) {
+            hasDumped = false;
             dumperTimer = new ElapsedTime();
             setCurrentDumperState(DumperStates.DUMPER_HOME);
         }
@@ -172,28 +201,72 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     public void periodic() {
         currentTicks = lift.getCurrentPosition();
-        currentPower = lift.getPower();
-        if (currentDumperState == DumperStates.DUMPER_DUMP && dumperTimer.milliseconds()> SAMPLE_LIFT_PARAMS.DUMP_TIME_MS){
-            setCurrentDumperState(DumperStates.DUMPER_HOME);
-            hasDumped=true;
-        }
-        // Check if we're in the middle of a bucket movement
-        if (movingToTarget && bucketTimer.milliseconds() > 10) { // Adjust delay (10 ms) as needed for smoothness
-            currentBucketPosition += bucketStepIncrement;  // Increment position
-            bucket.setPosition(currentBucketPosition);     // Move bucket to new position
-            bucketTimer.reset();  // Reset timer for the next step
 
-            // Stop moving if we've reached or surpassed the target position
+        // Handle dumper timing
+        if (currentDumperState == DumperStates.DUMPER_DUMP && dumperTimer.milliseconds() > SAMPLE_LIFT_PARAMS.DUMP_TIME_MS) {
+            setCurrentDumperState(DumperStates.DUMPER_HOME);
+            hasDumped = true;
+        }
+
+        // Handle bucket movement
+        if (movingToTarget && bucketTimer.milliseconds() > SAMPLE_LIFT_PARAMS.BUCKET_INCREMENT_TIME) { // Adjust delay as needed
+            currentBucketPosition += bucketStepIncrement;
+            bucket.setPosition(currentBucketPosition);
+            bucketTimer.reset();
+
             if ((bucketStepIncrement > 0 && currentBucketPosition >= targetBucketPosition) ||
                     (bucketStepIncrement < 0 && currentBucketPosition <= targetBucketPosition)) {
-                bucket.setPosition(targetBucketPosition);  // Ensure final position is exact
-                movingToTarget = false;  // Stop further updates
+                bucket.setPosition(targetBucketPosition);
+                movingToTarget = false;
             }
         }
 
+        // Update lift control
+        updateLiftControl();
+
         updateLiftState();
-        updateParameters();  // This lets us use the dashboard changes for tuning
+        updateParameters();
         updateDashboardTelemetry();
+    }
+
+    private void updateLiftControl() {
+        currentTicks = lift.getCurrentPosition();
+
+        // Get the PID correction based on the current position
+        pidOutput = pidController.calculate(currentTicks);
+
+        // Calculate position difference
+        int positionDifference = targetTicks - currentTicks;
+        double desiredVelocity;
+        double desiredAcceleration;
+        // Determine desired velocity and acceleration based on threshold
+        if (Math.abs(positionDifference) > SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD) {
+            if (positionDifference > 0) {
+                // Moving up
+                desiredVelocity = SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY;
+                desiredAcceleration = SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION;
+            } else {
+                // Moving down
+                desiredVelocity = SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY;
+                desiredAcceleration = SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION;
+            }
+        } else {
+            // Holding position
+            desiredVelocity = 0;
+            desiredAcceleration = 0;
+        }
+
+        // Calculate the feedforward output
+        feedforwardOutput = elevatorFeedforward.calculate(desiredVelocity, desiredAcceleration);
+
+        // Combine feedforward and PID outputs
+        totalOutput = pidOutput + feedforwardOutput;
+
+        // Clip the total output to safe power limits
+        totalOutput = Range.clip(totalOutput, -1.0, 1.0);
+
+        // Set power to the lift motor
+        lift.setPower(totalOutput);
     }
 
     public void dumpSampleInBucket(){
@@ -203,9 +276,15 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     // **updateLiftPIDs() Method**
     public void updateParameters() {
-        if (SAMPLE_LIFT_PARAMS.LIFT_POWER != currentPower) {
-            lift.setPower(SAMPLE_LIFT_PARAMS.LIFT_POWER);
-        }
+        // Update PID coefficients if they change
+        pidController.setPID(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D);
+
+        elevatorFeedforward = new ElevatorFeedforward(
+                SAMPLE_LIFT_PARAMS.KS,
+                SAMPLE_LIFT_PARAMS.KG,
+                SAMPLE_LIFT_PARAMS.KV,
+                SAMPLE_LIFT_PARAMS.KA);
+
         updateDumperParameters(DumperStates.DUMPER_HOME, SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS);
         updateDumperParameters(DumperStates.DUMPER_DUMP, SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS);
         updateBucketParameters(BucketStates.BUCKET_INTAKE_POS, SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS);
@@ -214,16 +293,15 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         updateLiftHeightTicks(SampleLiftStates.LIFT_HOME, SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS);
         updateLiftHeightTicks(SampleLiftStates.HIGH_BASKET, SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS);
         updateLiftHeightTicks(SampleLiftStates.LOW_BASKET, SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS);
-        updateLiftVelocityPIDFCoefficients(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D, SAMPLE_LIFT_PARAMS.VEL_F);
-        updateLiftPositionPIDFCoefficients(SAMPLE_LIFT_PARAMS.POS_P);
     }
 
     public void setTargetTicks(int ticks) {
         // Clip the ticks to ensure they're within valid limits
         targetTicks = Range.clip(ticks, SAMPLE_LIFT_PARAMS.MIN_TARGET_TICKS, SAMPLE_LIFT_PARAMS.MAX_TARGET_TICKS);
 
-        // Set the motor's target position
-        lift.setTargetPosition(targetTicks);
+        // Reset the PID controller and set the new setpoint
+        pidController.reset();
+        pidController.setSetPoint(targetTicks);
     }
 
     public boolean isLiftAtTarget() {
@@ -280,21 +358,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         int newTargetTicks = getTargetTicks() + deltaTicks;
 
         setTargetTicks(newTargetTicks);  // Use setTargetTicks to ensure valid bounds
-    }
-
-    private void updateLiftVelocityPIDFCoefficients(double p, double i, double d, double f) {
-        PIDFCoefficients currentVelocityCoefficients = lift.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        if (currentVelocityCoefficients.p != p || currentVelocityCoefficients.i != i ||
-                currentVelocityCoefficients.d != d || currentVelocityCoefficients.f != f) {
-            lift.setVelocityPIDFCoefficients(p, i, d, f);
-        }
-    }
-
-    private void updateLiftPositionPIDFCoefficients(double p) {
-        double currentPositionCoefficient = lift.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION).p;
-        if (currentPositionCoefficient != p) {
-            lift.setPositionPIDFCoefficients(p);
-        }
     }
 
     private void updateLiftHeightTicks(SampleLiftStates liftState, int newHeightTicks) {
@@ -354,26 +417,35 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         MatchConfig.telemetryPacket.put("dumper/Current State", currentDumperState.toString());
         MatchConfig.telemetryPacket.put("bucket/Current State", currentBucketState.toString());
 
-        MatchConfig.telemetryPacket.put("sampleLift/Current State", currentLiftState.toString());
-        MatchConfig.telemetryPacket.put("sampleLift/Target State", targetLiftState.toString());
         MatchConfig.telemetryPacket.put("sampleLift/Current Position Ticks", currentTicks);
         MatchConfig.telemetryPacket.put("sampleLift/Target Position Ticks", targetTicks);
-        @SuppressLint("DefaultLocale") String statusOverview = String.format("State: %s, Target: %s, Position: %d, Target: %d",
-                currentLiftState.toString(), targetLiftState.toString(), currentTicks, targetTicks);
-        MatchConfig.telemetryPacket.put("sampleLift/Status Overview", statusOverview);
 
-        // Retrieve and print the PIDF coefficients
-        PIDFCoefficients positionCoefficients = lift.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-        MatchConfig.telemetryPacket.put("sampleLift/Position P", positionCoefficients.p);
-        MatchConfig.telemetryPacket.put("sampleLift/Position I", positionCoefficients.i);
-        MatchConfig.telemetryPacket.put("sampleLift/Position D", positionCoefficients.d);
-        MatchConfig.telemetryPacket.put("sampleLift/Position F", positionCoefficients.f);
+        // Line 1: Lift States
+        @SuppressLint("DefaultLocale")
+        String statesLine = String.format(
+                "Lift State: %s | Target State: %s",
+                currentLiftState.toString(),
+                targetLiftState.toString()
+        );
+        MatchConfig.telemetryPacket.put("SampleLift/States", statesLine);
 
-        PIDFCoefficients velocityCoefficients = lift.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        MatchConfig.telemetryPacket.put("sampleLift/Velocity P", velocityCoefficients.p);
-        MatchConfig.telemetryPacket.put("sampleLift/Velocity I", velocityCoefficients.i);
-        MatchConfig.telemetryPacket.put("sampleLift/Velocity D", velocityCoefficients.d);
-        MatchConfig.telemetryPacket.put("sampleLift/Velocity F", velocityCoefficients.f);
+        // Line 2: Positions
+        @SuppressLint("DefaultLocale") String positionsLine = String.format(
+                "Current Pos: %d | Target Pos: %d",
+                currentTicks,
+                targetTicks
+        );
+        MatchConfig.telemetryPacket.put("SampleLift/Positions", positionsLine);
+
+        // Line 3: Power Calculations
+        @SuppressLint("DefaultLocale") String powerLine = String.format(
+                "PID Out: %.6f | FF Out: %.6f | Total Out: %.6f",
+                pidOutput,
+                feedforwardOutput,
+                totalOutput
+        );
+        MatchConfig.telemetryPacket.put("SampleLift/Power", powerLine);
+
 
     }
 }
