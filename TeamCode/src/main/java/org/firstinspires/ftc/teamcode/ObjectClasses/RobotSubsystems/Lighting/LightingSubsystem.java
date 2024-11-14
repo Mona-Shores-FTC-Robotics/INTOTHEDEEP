@@ -135,7 +135,7 @@ public class LightingSubsystem extends SubsystemBase{
                 setAllianceColor();
             } else if (haveSample) {
                 if (sampleDetector.isGoodSample()) {
-                    setBothLightsSampleColor();
+                    setGreenIndicatorColor();
                 } else if (stillHaveBadSample && badSampleWarningTimer.seconds() >= LIGHTING_PARAMS.WARNING_DURATION_SECONDS) {
                     setBadSampleProblemColor();
                 } else if (stillHaveBadSample) {
@@ -152,11 +152,11 @@ public class LightingSubsystem extends SubsystemBase{
     }
 
     private void setBadSampleWarningColor() {
-        setBothLights(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_WHITE);
+        setBothLights(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_GRAY);
     }
 
     private void setBadSampleProblemColor() {
-        setBothLights(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+        setBothLights(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
     }
 
     private void setTooManyPiecesWarningColor() {
@@ -164,7 +164,7 @@ public class LightingSubsystem extends SubsystemBase{
     }
 
     private void setTooManyPiecesProblemColor() {
-        setBothLights(RevBlinkinLedDriver.BlinkinPattern.GRAY);
+        setBothLights(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
     }
 
     private void setAllianceColor() {
@@ -178,20 +178,20 @@ public class LightingSubsystem extends SubsystemBase{
         }
     }
 
-    private void setBothLightsSampleColor() {
+    private void setBothLightsSampleColor() {    //WE ARE NOT USING THIS
         FieldConstants.SampleColor sampleColor = sampleDetector.getConsensusColor();
         switch (sampleColor) {
             case RED:
                 setBothLightsRed();
-                //todo set Score AutoDrive button to go to observation zone?
+
                 break;
             case BLUE:
                 setBothLightsBlue();
-                //todo  set Score AutoDrive button to go to observation zone?
+
                 break;
             case YELLOW:
                 setBothLightsYellow();
-                //todo  set Score AutoDrive button to go to basket?
+
                 break;
             default:
                 setBothLightsBlack();
