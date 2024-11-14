@@ -23,7 +23,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveC
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.function.DoubleSupplier;
 
 public class IntoTheDeepDriverBindings {
@@ -85,11 +87,6 @@ public class IntoTheDeepDriverBindings {
         // A BUTTON - Specimen Handling (Intake and Scoring)    //
         //////////////////////////////////////////////////////////
         bindSpecimenArmIntakeAndScore(GamepadKeys.Button.A);
-
-        //////////////////////////////////////////////////////////
-        // DPAD_RIGHT -Retry                              //
-        //////////////////////////////////////////////////////////
-        retrySpecimenScore(GamepadKeys.Button.DPAD_RIGHT);
     }
 
     private void retrySpecimenScore(GamepadKeys.Button button) {
@@ -142,9 +139,19 @@ public class IntoTheDeepDriverBindings {
 
     private void driveToObservationZone(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+
+
             Command driveToObservationZoneCommand = new InstantCommand(() -> {
                 driveToObservationZoneAction = new DriveToObservationZone();
-                ActionCommand actionCommand = new ActionCommand(driveToObservationZoneAction, Collections.singleton(robot.getDriveSubsystem()));
+                ActionCommand actionCommand = new ActionCommand(driveToObservationZoneAction ,
+                        Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+                                        robot.getDriveSubsystem() ,
+                                        robot.getSpecimenArmSubsystem() ,
+                                        robot.getSpecimenIntakeSubsystem()
+                                    )
+                                )
+                        )
+                );
                 actionCommand.schedule();
             });
 

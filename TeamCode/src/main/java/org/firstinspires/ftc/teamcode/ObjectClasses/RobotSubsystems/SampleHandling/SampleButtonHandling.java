@@ -56,6 +56,8 @@ public class SampleButtonHandling {
             }
     }
 
+
+    //This got implemented with Actions/ActionCommands so this probably can be deleted
     public void onScoreButtonPress() {
         switch (liftSubsystem.getCurrentLiftState()) {
             case LIFT_HOME:

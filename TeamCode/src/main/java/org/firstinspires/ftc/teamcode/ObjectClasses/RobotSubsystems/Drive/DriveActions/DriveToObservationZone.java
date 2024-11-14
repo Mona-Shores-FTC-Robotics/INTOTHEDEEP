@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions;
 
+import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static java.lang.Math.PI;
 
@@ -8,6 +9,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -23,6 +25,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 
 import java.util.Arrays;
+import java.util.Set;
 
 public class DriveToObservationZone implements Action {
     private final DriveSubsystem driveSubsystem;
@@ -75,8 +78,13 @@ public class DriveToObservationZone implements Action {
             }
 
             action = robotAdapter.getActionBuilder(currentPose)
+                    .setTangent(ANGLE_TOWARD_OBSERVATION)
+                    .splineToLinearHeading(FieldConstants.OBS_ZONE_BEFORE_PICKUP, ANGLE_TOWARD_RED)
                     .setReversed(true)
-                    .splineToLinearHeading(FieldConstants.OBS_ZONE_PICKUP, ANGLE_TOWARD_RED).build();
+                    .afterDisp(0, new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::gotoPickupAngle))
+                    .afterDisp(0, new InstantAction(Robot.getInstance().getSpecimenIntakeSubsystem()::turnOnIntake))
+                    .splineToLinearHeading(FieldConstants.OBS_ZONE_PICKUP_FACE_TOWARD_BLUE, ANGLE_TOWARD_RED)
+                    .build();
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry
             started = true; // Ensure the action is only initialized once

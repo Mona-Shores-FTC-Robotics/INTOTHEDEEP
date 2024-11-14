@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions;
 
+import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static java.lang.Math.PI;
 
@@ -56,7 +57,7 @@ public class DriveToNetZone implements Action {
             }
 
             action = robotAdapter.getActionBuilder(currentPose)
-                    .setReversed(true)
+                    .setTangent(ANGLE_TOWARD_NET)
                     .splineToLinearHeading(FieldConstants.NET_BASKET_NEUTRAL_SIDE, ANGLE_TOWARD_RED).build();
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry

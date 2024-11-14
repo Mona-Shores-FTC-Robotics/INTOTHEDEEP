@@ -45,14 +45,10 @@ public class IntoTheDeepOperatorBindings {
         bindManualSpecimenArmMovement(operatorGamePad::getLeftY);
 
         //////////////////////////////////////////////////////////
-        // RIGHT STICK - X axis - Manually Move SampleIntake    //
+        // RIGHT STICK - Y axis - Manually Move SampleIntake    //
         //////////////////////////////////////////////////////////
         bindManualSampleActuatorMovement(operatorGamePad::getRightY);
-
-        //////////////////////////////////////////////////////////
-        // RIGHT STICK - Y axis - Manually Move SampleIntake     //
-        //////////////////////////////////////////////////////////
-//        bindManualLiftMovement(operatorGamePad::getRightY);
+//      bindManualLiftMovement(operatorGamePad::getRightY);
 
         //////////////////////////////////////////////////////////
         // LEFT BUMPER - Cycle Telemetry                        //
@@ -65,17 +61,12 @@ public class IntoTheDeepOperatorBindings {
         bindSampleIntakeAndTransfer(GamepadKeys.Button.A);
 
         //////////////////////////////////////////////////////////
-        // B BUTTON - Handle Sample Scoring                     //
-        //////////////////////////////////////////////////////////
-        bindMoveLiftAndScoreSample(GamepadKeys.Button.B);
-
-        //////////////////////////////////////////////////////////
         // X BUTTON                                             //
         //////////////////////////////////////////////////////////
         bindReadyForSampleScoring(GamepadKeys.Button.X);
 
         //////////////////////////////////////////////////////////
-        // RIGHT BUMPER                                         //
+        // Y Button                                             //
         //////////////////////////////////////////////////////////
         bindScoreSample(GamepadKeys.Button.Y);
 
@@ -83,10 +74,12 @@ public class IntoTheDeepOperatorBindings {
         // DPAD-UP                                              //
         //////////////////////////////////////////////////////////
         bindBucket(GamepadKeys.Button.DPAD_UP);
+
         //////////////////////////////////////////////////////////
         // DPAD-LEFT                                            //
         //////////////////////////////////////////////////////////
         bindSampleIntakeToggle(GamepadKeys.Button.DPAD_LEFT);
+
         //////////////////////////////////////////////////////////
         // DPAD-RIGHT                                           //
         //////////////////////////////////////////////////////////
@@ -101,14 +94,6 @@ public class IntoTheDeepOperatorBindings {
 
         //////////////////////////////////////////////////////////
         // START/OPTIONS BUTTON                                 //
-        //////////////////////////////////////////////////////////
-
-        //////////////////////////////////////////////////////////
-        // RIGHT TRIGGER                                        //
-        //////////////////////////////////////////////////////////
-
-        //////////////////////////////////////////////////////////
-        // LEFT TRIGGER                                         //
         //////////////////////////////////////////////////////////
     }
 
@@ -196,23 +181,6 @@ public class IntoTheDeepOperatorBindings {
                 "Cycle telemetry"
         ));
     }
-    private void bindMoveLiftAndScoreSample(GamepadKeys.Button button) {
-        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
-            SampleButtonHandling sampleHandlingStateMachine = robot.getSampleButtonHandling();
-            Command sampleScorePressCommand = new InstantCommand(sampleHandlingStateMachine::onScoreButtonPress);
-
-            operatorGamePad.getGamepadButton(button)
-                    .whenPressed(sampleScorePressCommand);
-
-            // Register button binding
-            bindingManager.registerBinding(new ButtonBinding(
-                    GamepadType.OPERATOR,
-                    button,
-                    sampleScorePressCommand,
-                    "Score Sample"
-            ));
-        }
-    }
 
     private void bindReadyForSampleScoring(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
@@ -228,7 +196,7 @@ public class IntoTheDeepOperatorBindings {
             bindingManager.registerBinding(new ButtonBinding(
                     GamepadType.OPERATOR,
                     button,
-                    "Prepare to Score Sample / Score"
+                    "Lift Sample to Bucket"
             ));
         }
     }
@@ -252,7 +220,7 @@ public class IntoTheDeepOperatorBindings {
             bindingManager.registerBinding(new ButtonBinding(
                     GamepadType.OPERATOR,
                     button,
-                    "Score Sample"
+                    "Score Sample->Drive->Lower Lift"
             ));
         }
     }
@@ -272,7 +240,7 @@ public class IntoTheDeepOperatorBindings {
                     GamepadType.OPERATOR,
                     button,
                     sampleIntakeButtonPressCommand,
-                    "Intake Sample"
+                    "Move Sample Actuator"
             ));
         }
     }

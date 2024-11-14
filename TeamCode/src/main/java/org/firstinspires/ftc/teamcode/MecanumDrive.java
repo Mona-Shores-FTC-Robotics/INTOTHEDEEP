@@ -93,6 +93,8 @@ public class MecanumDrive {
 
     public static Params PARAMS = new Params();
 
+    //TODO I'm confused as to whether these are updated with our driveparams or not
+
     public final MecanumKinematics kinematics = new MecanumKinematics(
             PARAMS.inPerTick * PARAMS.trackWidthTicks, PARAMS.inPerTick / PARAMS.lateralInPerTick);
 
