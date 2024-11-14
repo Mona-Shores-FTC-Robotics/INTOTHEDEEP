@@ -134,6 +134,12 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         setPower(currentState.power);
     }
 
+    public void reverseIntake() {
+        currentState = SpecimenIntakeStates.INTAKE_REVERSE;
+        setPower(currentState.power);
+    }
+
+
     // Update intake parameters dynamically (called in periodic)
     private void updateParameters() {
         // Update the power for each state dynamically from dashboard changes

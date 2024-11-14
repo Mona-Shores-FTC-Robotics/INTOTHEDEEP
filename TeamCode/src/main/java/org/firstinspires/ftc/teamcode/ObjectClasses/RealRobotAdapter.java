@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
@@ -21,6 +22,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
+
+import java.util.function.Supplier;
 
 public class RealRobotAdapter implements RobotAdapter {
     private final ActionFactory actionFactory;
@@ -126,22 +129,17 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                     } else return problem();
 
-
-
-
-
-
                 case MOVE_PRELOAD_SPECIMEN_TO_CW_HOME:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
                         return new ParallelAction(
-                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFastAction)
+                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFast)
                         );
                     } else return problem();
 
                 case HANG_SPECIMEN_ON_HIGH_CHAMBER:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
                         return new SequentialAction(
-                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCCWFastAction),
+                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCCWFast),
                                 new InstantAction(robot.getSpecimenIntakeSubsystem()::disablePreloadMode)
                         );
                     } else return problem();
@@ -180,9 +178,17 @@ public class RealRobotAdapter implements RobotAdapter {
                                     new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON));
                     } else return problem();
 
+                case SPECIMEN_PICKUP_RETRY:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+                        Supplier<Action> redoSupplier = () -> new ConditionalAction(
+                                new NullAction(),
+                                new DriveForwardAndBack(7),
+                                robot.getSpecimenIntakeSubsystem().getSpecimenDetector()::haveSpecimen
+                        );
+                        return new SequentialAction(redoSupplier.get(), redoSupplier.get(), redoSupplier.get());
+                    } else return problem();
 
-
-                case INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT:
+            case INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {
                         return new SequentialAction(
@@ -211,10 +217,10 @@ public class RealRobotAdapter implements RobotAdapter {
                 case WAIT_FOR_SPECIMEN_INTAKE_FROM_WALL:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE))
                     {
-                        return new ConditionalAction(
+                        return new ConditionalWaitAction(
                                 new NullAction(),  // this should make it so we just proceed when haveSpecimen is true
                                 robot.getSpecimenIntakeSubsystem().getSpecimenDetector()::haveSpecimen,  //this is the condition upon which it performs the first action
-                                100); // this is how often it checks the condition
+                               100); // this is how often it checks the condition
                     }
                 default:
                     telemetryManger.displayError("Unknown action type: " + actionType);

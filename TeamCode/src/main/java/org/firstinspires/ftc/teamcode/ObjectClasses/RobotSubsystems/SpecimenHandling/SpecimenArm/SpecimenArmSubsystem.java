@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 @Config
 public class SpecimenArmSubsystem extends SubsystemBase {
 
+
     public static class SpecimenArmParams {
 
         public double VELOCITY_SET_POINT_DEGREES_PER_SECOND = 30;
@@ -212,7 +213,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         updateDashboardTelemetry();
     }
 
-    public void flipCCWFastAction() {
+    public void flipCCWFast() {
         flipArmTimer.reset();
         currentState=SpecimenArmStates.FLIPPING_TO_CCW;
         targetAngleDegrees=CCW_ARM_HOME.angle;
@@ -220,12 +221,23 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         arm.setPower(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP);
     }
 
-    public void flipCWFastAction() {
+    public void flipCWFast() {
         flipArmTimer.reset();
         currentState=SpecimenArmStates.FLIPPING_TO_CW;
         targetAngleDegrees= CW_ARM_HOME.angle;
         pidController.setSetPoint(CW_ARM_HOME.angle);
         arm.setPower(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP);
+    }
+
+    public void fallToCCW() {
+        arm.setPower(0);
+        setCurrentState(SpecimenArmStates.ZERO_POWER_AT_CCW_ARM_HOME);
+        zeroPowerTimer.reset();
+    }
+
+    public void gotoPickupAngle() {
+
+        setCurrentState(SpecimenArmStates.SPECIMEN_PICKUP);
     }
 
     public void setManualTargetAngle(double armInput) {
@@ -302,6 +314,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         return currentState;
     }
     public void setCurrentState(SpecimenArmStates state) {
+        targetAngleDegrees = state.getArmAngle();
         pidController.setSetPoint(state.getArmAngle());
         currentState = state;
     }

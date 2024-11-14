@@ -8,6 +8,8 @@ import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike;
 import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Score2;
+import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Score2_With_Retry;
+import com.example.sharedconstants.Routes.OBS.OBS_Retry_Test;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -44,16 +46,16 @@ public class AutoTest extends LinearOpMode {
 
         //Make the blue routes
         robotAdapter.setAllianceColor(FieldConstants.AllianceColor.BLUE);
-        blueObsRoute = new OBS_Score2(robotAdapter);
+        blueObsRoute = new OBS_Score2_With_Retry(robotAdapter);
         blueObsRoute.buildRoute();
-        blueNetRoute = new OBS_Score2(robotAdapter);
+        blueNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
         blueNetRoute.buildRoute();
 
         //Make the red routes
         robotAdapter.setAllianceColor(FieldConstants.AllianceColor.RED);
-        redObsRoute = new OBS_Score2(robotAdapter);
+        redObsRoute = new OBS_Score2_With_Retry(robotAdapter);
         redObsRoute.buildRoute();
-        redNetRoute = new OBS_Score2(robotAdapter);
+        redNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
         redNetRoute.buildRoute();
 
         while (opModeInInit()) {

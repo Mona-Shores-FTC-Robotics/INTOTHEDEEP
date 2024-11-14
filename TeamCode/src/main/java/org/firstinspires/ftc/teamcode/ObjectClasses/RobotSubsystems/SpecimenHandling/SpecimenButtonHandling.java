@@ -26,12 +26,12 @@ public class SpecimenButtonHandling {
                 break;
             case SPECIMEN_PICKUP:
                 //It should automatically move out of this state, but it shouldn't hurt to have this here in case our detection doesn't work
-                armSubsystem.flipCWFastAction();
+                armSubsystem.flipCWFast();
                 intakeSubsystem.setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 break;
             case CW_ARM_HOME:
             case ZERO_POWER_AT_CW_ARM_HOME:
-                armSubsystem.flipCCWFastAction();
+                armSubsystem.flipCCWFast();
                 break;
         }
     }

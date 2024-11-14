@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.G
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToChamber;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToNetZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
@@ -32,6 +33,7 @@ public class IntoTheDeepDriverBindings {
     DriveToObservationZone driveToObservationZoneAction;
     DriveToNetZone driveToNetZoneAction;
     DriveToChamber driveToChamberAction;
+    DriveForwardAndBack driveForwardAndBack;
 
 
     public IntoTheDeepDriverBindings(GamepadEx gamePad, GamePadBindingManager gamePadBindingManager) {
@@ -70,7 +72,7 @@ public class IntoTheDeepDriverBindings {
         toggleFieldOrientedControl(GamepadKeys.Button.START);
 
         //////////////////////////////////////////////////////////
-        // B BUTTON                                             //
+        // X BUTTON                                             //
         //////////////////////////////////////////////////////////
         driveToNetZone(GamepadKeys.Button.X);
 
@@ -83,6 +85,30 @@ public class IntoTheDeepDriverBindings {
         // A BUTTON - Specimen Handling (Intake and Scoring)    //
         //////////////////////////////////////////////////////////
         bindSpecimenArmIntakeAndScore(GamepadKeys.Button.A);
+
+        //////////////////////////////////////////////////////////
+        // DPAD_RIGHT -Retry                              //
+        //////////////////////////////////////////////////////////
+        retrySpecimenScore(GamepadKeys.Button.DPAD_RIGHT);
+    }
+
+    private void retrySpecimenScore(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            Command retrySpecimenScoreCommand =
+                    new InstantCommand(() -> {
+                        driveForwardAndBack = new DriveForwardAndBack(10);
+                        ActionCommand actionCommand = new ActionCommand(driveForwardAndBack, Collections.singleton(robot.getDriveSubsystem()));
+                        actionCommand.schedule();
+                    });
+            driverGamePad.getGamepadButton(button)
+                            .whenPressed(retrySpecimenScoreCommand);
+            // Register the drive forward binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    button,
+                    "Retry Specimen Scoring"
+            ));
+        }
     }
 
     private void driveToNetZone(GamepadKeys.Button button) {
@@ -174,7 +200,7 @@ public class IntoTheDeepDriverBindings {
                     GamepadType.DRIVER,
                     button,
                     resetYawCommand,
-                    "Reset Localization to Start Pose"
+                    "Reset to Start Pose"
             ));
         }
     }
