@@ -171,13 +171,17 @@ public class RealRobotAdapter implements RobotAdapter {
                                         new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON)
                         );
                     } else return problem();
+
                 case GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE))
                     {
                         return  new ParallelAction(
                                     new InstantAction(()->Robot.getInstance().getSpecimenArmSubsystem().setTargetAngle(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP)),
-                                    new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON));
+                                    new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON));
                     } else return problem();
+
+
+
                 case INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {
@@ -204,6 +208,14 @@ public class RealRobotAdapter implements RobotAdapter {
                         );
                     } else return problem();
 
+                case WAIT_FOR_SPECIMEN_INTAKE_FROM_WALL:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE))
+                    {
+                        return new ConditionalAction(
+                                new NullAction(),  // this should make it so we just proceed when haveSpecimen is true
+                                robot.getSpecimenIntakeSubsystem().getSpecimenDetector()::haveSpecimen,  //this is the condition upon which it performs the first action
+                                100); // this is how often it checks the condition
+                    }
                 default:
                     telemetryManger.displayError("Unknown action type: " + actionType);
                     return new NullAction();

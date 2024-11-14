@@ -6,6 +6,7 @@ import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
 import static com.example.sharedconstants.RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
 import static com.example.sharedconstants.RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_2;
 import static com.example.sharedconstants.RoutesToRun.OBS_TEST;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
@@ -13,6 +14,7 @@ import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkRed;
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeLightBlue;
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeLightRed;
 import com.example.sharedconstants.FieldConstants;
+import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Score2;
 import com.example.sharedconstants.Routes.OBS.OBS_Intake_Transfer_Dump;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.DoNothing;
@@ -43,8 +45,8 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = null;
-    private static final RoutesToRun blueObservationRoute = null;
+    private static final RoutesToRun redObservationRoute = OBS_SCORE_2;
+    private static final RoutesToRun blueObservationRoute = OBS_SCORE_2;
     private static final RoutesToRun redNetRoute = null;
     private static final RoutesToRun blueNetRoute = null;
 
@@ -182,6 +184,8 @@ public class MeepMeepTesting {
                 return new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike(adapter);
             case OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME:
                 return new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time(adapter);
+            case OBS_SCORE_2:
+                return new OBS_Score2(adapter);
             case OBS_TEST:
                 return new OBS_Intake_Transfer_Dump(adapter);
             case DO_NOTHING:

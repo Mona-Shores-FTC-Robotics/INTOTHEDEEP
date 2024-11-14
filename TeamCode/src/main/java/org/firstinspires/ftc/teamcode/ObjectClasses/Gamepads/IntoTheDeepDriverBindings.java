@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.example.sharedconstants.FieldConstants;
+import com.sun.tools.javac.util.List;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.AnalogBinding;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.G
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToChamber;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToNetZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeCommand;
@@ -27,6 +30,9 @@ public class IntoTheDeepDriverBindings {
     Robot robot;
     GamePadBindingManager bindingManager;
     DriveToObservationZone driveToObservationZoneAction;
+    DriveToNetZone driveToNetZoneAction;
+    DriveToChamber driveToChamberAction;
+
 
     public IntoTheDeepDriverBindings(GamepadEx gamePad, GamePadBindingManager gamePadBindingManager) {
         robot = Robot.getInstance();
@@ -64,16 +70,48 @@ public class IntoTheDeepDriverBindings {
         toggleFieldOrientedControl(GamepadKeys.Button.START);
 
         //////////////////////////////////////////////////////////
-        // X BUTTON                                             //
+        // B BUTTON                                             //
         //////////////////////////////////////////////////////////
-        driveToObservationZone(GamepadKeys.Button.X);
+        driveToNetZone(GamepadKeys.Button.X);
+
+        //////////////////////////////////////////////////////////
+        // B BUTTON                                             //
+        //////////////////////////////////////////////////////////
+        driveToObservationZone(GamepadKeys.Button.B);
 
         //////////////////////////////////////////////////////////
         // A BUTTON - Specimen Handling (Intake and Scoring)    //
         //////////////////////////////////////////////////////////
-        bindSpecimenIntakeAndScore(GamepadKeys.Button.A);
+        bindSpecimenArmIntakeAndScore(GamepadKeys.Button.A);
+    }
 
+    private void driveToNetZone(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            Command driveToNetZoneCommand =
+                    new InstantCommand(() -> {
+                        driveToNetZoneAction = new DriveToNetZone();
+                        ActionCommand actionCommand = new ActionCommand(driveToObservationZoneAction, Collections.singleton(robot.getDriveSubsystem()));
+                        actionCommand.schedule();
+                    });
 
+            Command stopDriveToNetZone = new InstantCommand(() -> {
+                if (driveToNetZoneAction != null) {
+                    driveToNetZoneAction.cancelAbruptly();
+                    driveToNetZoneAction = null;
+                }
+            });
+
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed(driveToNetZoneCommand)
+                    .whenReleased(stopDriveToNetZone);
+
+            // Register the drive forward binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    button,
+                    "Drive to Net Zone"
+            ));
+        }
     }
 
     private void driveToObservationZone(GamepadKeys.Button button) {
@@ -201,13 +239,15 @@ public class IntoTheDeepDriverBindings {
 
             CommandScheduler.getInstance().setDefaultCommand(robot.getDriveSubsystem(), defaultDriveCommand);
 
-            bindingManager.registerBinding(new AnalogBinding(GamepadType.DRIVER, "Left Y", "Drive"));
-            bindingManager.registerBinding(new AnalogBinding(GamepadType.DRIVER, "Left X", "Strafe"));
-            bindingManager.registerBinding(new AnalogBinding(GamepadType.DRIVER, "Right X", "Rotate"));
+            bindingManager.registerBinding(new AnalogBinding(
+                    GamepadType.DRIVER,
+                    List.of("Left Y", "Left X", "Right X"),
+                    "Drive/Strafe/Rotate"
+            ));
         }
     }
 
-    private void bindSpecimenIntakeAndScore(GamepadKeys.Button button) {
+    private void bindSpecimenArmIntakeAndScore(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) &&
                 robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
             SpecimenButtonHandling specimenHandlingStateMachine = robot.getSpecimenButtonHandling();

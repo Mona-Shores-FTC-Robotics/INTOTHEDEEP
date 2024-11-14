@@ -272,9 +272,13 @@ public class DriverStationTelemetryManager {
                     telemetry.addLine(String.format("<font face=\"monospace\">%s: %s</font>", buttonName, description));
                 } else if (binding instanceof AnalogBinding && ((AnalogBinding) binding).getGamepadType() == gamepadType) {
                     AnalogBinding analogBinding = (AnalogBinding) binding;
-                    String analogInputName = analogBinding.getAnalogInputName(); // Customize this as needed for specific control names
+                    List<String> analogInputNames = analogBinding.getAnalogInputNames(); // Updated to use the list of analog input names
                     String description = analogBinding.getDescription();
-                    telemetry.addLine(String.format("<font face=\"monospace\">%s: %s</font>", analogInputName, description));
+
+                    // Iterate over each analog input name and display it with the description
+                    for (String analogInputName : analogInputNames) {
+                        telemetry.addLine(String.format("<font face=\"monospace\">%s: %s</font>", analogInputName, description));
+                    }
                 }
             }
 

@@ -2,6 +2,10 @@ Clean up code to see if we can eliminate non-action stuff
 Get buttons mapped perfectly
 Implement Auto drive buttons
 Test transition between auto and teleop
-Can we try to do something conditional in Auto (wait for specimen? grab specimen in submersible during auto?)
+Can we try to do something conditional in Auto (wait for specimen? grab specimen in submersible during auto?)2
 Test autonomous observation side
 Test autonomous net side
+Do we need April Tag pose resetting or does odometry hold for a match?
+
+change start position for starting sideways
+get lighting to work

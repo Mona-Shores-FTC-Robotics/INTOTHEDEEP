@@ -236,7 +236,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         String intakeState = (currentSampleIntakeState != null) ? currentSampleIntakeState.toString() : "Unknown";
         String colorStatus = (colorSensor != null) ? sampleDetector.getConsensusColor().toString() : "No Color Sensor";
         telemetry.addLine(String.format(
-                "Sample: %s | %s ",
+                "%s | %s ",
                 intakeState,
                 colorStatus
         ));

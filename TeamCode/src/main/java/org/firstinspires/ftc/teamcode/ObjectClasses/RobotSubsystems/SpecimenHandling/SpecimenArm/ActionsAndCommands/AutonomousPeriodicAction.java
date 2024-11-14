@@ -22,9 +22,6 @@ public class AutonomousPeriodicAction implements Action {
         // Reset the loop timer
         MatchConfig.loopTimer.reset();
 
-
-//        CommandScheduler.getInstance().run();
-
         Robot.getInstance().getSpecimenArmSubsystem().periodic();
         Robot.getInstance().getSpecimenIntakeSubsystem().periodic();
         Robot.getInstance().getSampleIntakeSubsystem().periodic();

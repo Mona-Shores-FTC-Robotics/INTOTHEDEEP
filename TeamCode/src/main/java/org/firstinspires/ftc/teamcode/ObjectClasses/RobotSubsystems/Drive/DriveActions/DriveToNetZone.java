@@ -17,19 +17,19 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 
-public class DriveToNet implements Action {
+public class DriveToNetZone implements Action {
     private final DriveSubsystem driveSubsystem;
     private boolean started;
     private boolean cancelled;
     private Action action;// Flag to indicate if the action has been cancelled
 
-    public DriveToNet() {
+    public DriveToNetZone() {
         this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
         this.started = false;
         this.cancelled = false; // Initialize the cancellation flag
     }
 
-    public DriveToNet(double inches) {
+    public DriveToNetZone(double inches) {
         this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
         this.started = false;
         this.cancelled = false; // Initialize the cancellation flag

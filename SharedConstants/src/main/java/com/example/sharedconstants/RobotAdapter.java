@@ -33,7 +33,7 @@ public interface RobotAdapter {
 
         LEVEL_1_ASCENT,
         LEVEL_2_ASCENT,
-        LEVEL_3_ASCENT, SCORE_IN_HIGH_BASKET,
+        LEVEL_3_ASCENT, SCORE_IN_HIGH_BASKET, WAIT_FOR_SPECIMEN_INTAKE_FROM_WALL,
     }
 
     // Generalized method to get an Action based on a provided action type

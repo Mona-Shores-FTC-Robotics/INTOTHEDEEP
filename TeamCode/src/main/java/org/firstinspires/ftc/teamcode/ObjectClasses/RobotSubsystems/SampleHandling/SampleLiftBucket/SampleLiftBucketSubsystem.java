@@ -397,7 +397,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     // Basic telemetry display in a single line with a descriptive label
     public void displayBasicTelemetry(Telemetry telemetry) {
         @SuppressLint("DefaultLocale")
-        String telemetryData = String.format("State: %s | Position: %d", currentLiftState, currentTicks);
+        String telemetryData = String.format("%s | Lift Position: %d", currentLiftState, currentTicks);
 
         if (currentLiftState != targetLiftState) {
             telemetryData += String.format(" | Target State: %s", targetLiftState);

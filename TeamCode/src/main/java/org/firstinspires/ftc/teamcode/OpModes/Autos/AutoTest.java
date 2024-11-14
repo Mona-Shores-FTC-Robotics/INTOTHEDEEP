@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike;
+import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Score2;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.AutonomousPeriodicAction;
 
 @Autonomous(name = "Auto Test")
-public class PreloadAuto extends LinearOpMode {
+public class AutoTest extends LinearOpMode {
 
     Routes blueObsRoute;
     Routes blueNetRoute;
@@ -43,16 +44,16 @@ public class PreloadAuto extends LinearOpMode {
 
         //Make the blue routes
         robotAdapter.setAllianceColor(FieldConstants.AllianceColor.BLUE);
-        blueObsRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike(robotAdapter);
+        blueObsRoute = new OBS_Score2(robotAdapter);
         blueObsRoute.buildRoute();
-        blueNetRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike(robotAdapter);
+        blueNetRoute = new OBS_Score2(robotAdapter);
         blueNetRoute.buildRoute();
 
         //Make the red routes
         robotAdapter.setAllianceColor(FieldConstants.AllianceColor.RED);
-        redObsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
+        redObsRoute = new OBS_Score2(robotAdapter);
         redObsRoute.buildRoute();
-        redNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
+        redNetRoute = new OBS_Score2(robotAdapter);
         redNetRoute.buildRoute();
 
         while (opModeInInit()) {
