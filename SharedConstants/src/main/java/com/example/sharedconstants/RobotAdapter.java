@@ -24,7 +24,7 @@ public interface RobotAdapter {
 
         GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND,
         INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT,
-        DUMP_SAMPLE_IN_BASKET,
+        PREPARE_TO_SCORE_IN_HIGH_BASKET,
         DUMP_SAMPLE_IN_OBSERVATION_ZONE,
 
         MOVE_PRELOAD_SPECIMEN_TO_CW_HOME,
@@ -33,7 +33,7 @@ public interface RobotAdapter {
 
         LEVEL_1_ASCENT,
         LEVEL_2_ASCENT,
-        LEVEL_3_ASCENT,
+        LEVEL_3_ASCENT, SCORE_IN_HIGH_BASKET,
     }
 
     // Generalized method to get an Action based on a provided action type

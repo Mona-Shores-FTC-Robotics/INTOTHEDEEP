@@ -3,9 +3,19 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem.SAMPLE_LIFT_PARAMS;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.Subsystem;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.DriveForwardFromBasket;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Config
 public class SampleButtonHandling {
@@ -14,6 +24,8 @@ public class SampleButtonHandling {
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
 
+    private boolean driveAwayTriggered = false; // Flag to track if drive-away action should be triggered
+    private ElapsedTime driveAwayTimer = new ElapsedTime(); // Timer for drive-away delay
     // Constructor
     public SampleButtonHandling(SampleLinearActuatorSubsystem actuatorSubsystem,
                                 SampleIntakeSubsystem intakeSubsystem,
@@ -51,23 +63,18 @@ public class SampleButtonHandling {
                     liftSubsystem.hasDumped = false;
                     liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
                     liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
-
                 }
                 break;
-//            case LOW_BASKET:
-//                if (!liftSubsystem.hasDumped){
-//                    liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
-//                    liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
-//                }else {
-//                    liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
-//                    liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
-//                }
-//                break;
             case HIGH_BASKET:
                 if (!liftSubsystem.hasDumped) {
                     liftSubsystem.dumpSampleInBucket();
-                }else //if (liftSubsystem.getCurrentBucketState() == SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS)
-                    {
+                    driveAwayTriggered = false;
+                }else if (!driveAwayTriggered)
+                {
+                    executeDriveAway();
+                    driveAwayTimer.reset();
+                } else if (driveAwayTimer.seconds() >= 3) {
+                    // Start timer for drive-away delay
                     onMoveSampleBucketButtonPress();
                     liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                 }
@@ -99,4 +106,15 @@ public class SampleButtonHandling {
                     SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS.position, SAMPLE_LIFT_PARAMS.NUM_STEPS);  // Smooth move to intake position
         }
     }
+
+    public void executeDriveAway() {
+        // Implement the logic to drive the robot backward a small distance.
+        // Example:
+        Set<Subsystem> requirements = new HashSet<>();
+        requirements.add(Robot.getInstance().getDriveSubsystem());
+        Command driveForwardCommand = new ActionCommand(new DriveForwardFromBasket(10),requirements);
+        driveForwardCommand.schedule();
+        driveAwayTriggered=true;
+    }
+
 }

@@ -12,7 +12,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.ChangeSampleDumperPositionAction;
@@ -105,29 +105,6 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_REVERSE);
                     } else return problem();
 
-
-                case MOVE_PRELOAD_SPECIMEN_TO_CW_HOME:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-                        return new ParallelAction(
-                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFastAction)
-                        );
-                    } else return problem();
-
-                case HANG_SPECIMEN_ON_HIGH_CHAMBER:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
-                        return new SequentialAction(
-                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCCWFastAction),
-                                new InstantAction(robot.getSpecimenIntakeSubsystem()::disablePreloadMode)
-                        );
-                    } else return problem();
-
-                case DUMP_SAMPLE_IN_BASKET:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
-                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        return new DriveToObservationZone(3);
-                    } else return problem();
-
                 case SAMPLE_LIFT_TO_HIGH_BASKET:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
@@ -149,6 +126,41 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                     } else return problem();
 
+
+
+
+
+
+                case MOVE_PRELOAD_SPECIMEN_TO_CW_HOME:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+                        return new ParallelAction(
+                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFastAction)
+                        );
+                    } else return problem();
+
+                case HANG_SPECIMEN_ON_HIGH_CHAMBER:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+                        return new SequentialAction(
+                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCCWFastAction),
+                                new InstantAction(robot.getSpecimenIntakeSubsystem()::disablePreloadMode)
+                        );
+                    } else return problem();
+
+                case PREPARE_TO_SCORE_IN_HIGH_BASKET:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+                        return new PrepareToScoreInHighBasketAction();
+                    } else return problem();
+
+                case SCORE_IN_HIGH_BASKET:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+                        return new NullAction();
+                    } else return problem();
+
+
                 case GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {
@@ -163,7 +175,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE))
                     {
                         return  new ParallelAction(
-                                    new InstantAction(()->Robot.getInstance().getSpecimenArmSubsystem().setTargetStateWithMotionProfile(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP)),
+                                    new InstantAction(()->Robot.getInstance().getSpecimenArmSubsystem().setTargetAngle(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP)),
                                     new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON));
                     } else return problem();
                 case INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT:

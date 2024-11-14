@@ -4,27 +4,41 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Sampl
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
+
 import java.util.function.DoubleSupplier;
 
 public class DefaultSampleLinearActuatorCommand extends CommandBase {
 
     private final SampleLinearActuatorSubsystem sampleLinearActuatorSubsystem;
+    private final SampleIntakeSubsystem sampleIntakeSubsystem;
     private final DoubleSupplier actuatorSupplier;
 
-    public DefaultSampleLinearActuatorCommand(SampleLinearActuatorSubsystem subsystem, DoubleSupplier actuatorInput) {
+    public DefaultSampleLinearActuatorCommand(SampleLinearActuatorSubsystem subsystem,
+                                              SampleIntakeSubsystem intakeSubsystem,
+                                              DoubleSupplier actuatorInput) {
         this.sampleLinearActuatorSubsystem = subsystem;
+        this.sampleIntakeSubsystem = intakeSubsystem;
         this.actuatorSupplier = actuatorInput;
-        addRequirements(sampleLinearActuatorSubsystem);
+        addRequirements(sampleLinearActuatorSubsystem, sampleIntakeSubsystem);
     }
 
     @Override
     public void execute() {
         double actuatorInput = actuatorSupplier.getAsDouble();
+
         if (Math.abs(actuatorInput) > ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION) {
-            // Convert joystick input into movement, adjust target ticks based on manual input
+            // Move actuator based on input
             sampleLinearActuatorSubsystem.manualMove(-actuatorInput);
-        }  else if (sampleLinearActuatorSubsystem.getCurrentState()== SampleLinearActuatorSubsystem.SampleActuatorStates.MANUAL)
-        {
+
+            // Check direction and control intake accordingly
+            if (actuatorInput > 0) {  // Forward movement
+                sampleIntakeSubsystem.turnOffIntake();  // Turn on intake
+            } else if (actuatorInput < 0) {  // Backward movement
+                sampleIntakeSubsystem.turnOnIntake();  // Turn off intake
+            }
+        } else if (sampleLinearActuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.MANUAL) {
             sampleLinearActuatorSubsystem.stopActuator();
             sampleLinearActuatorSubsystem.setCurrentState(SampleLinearActuatorSubsystem.SampleActuatorStates.UNKNOWN);
         }

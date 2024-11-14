@@ -20,45 +20,46 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
 
+
     public static class SampleLiftParams {
         public double BUCKET_INCREMENT_TIME = 1.0;
         public int NUM_STEPS = 100;
         public double KA = .001;
-            public double KV = .03;
-            public double KG = .04;
-            public double KS = 0;
+        public double KV = .03;
+        public double KG = .04;
+        public double KS = 0;
 
-            public  double DUMP_TIME_MS = 800;
-            public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
-            public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
-            public double LIFT_POWER = 0.5;
+        public  double DUMP_TIME_MS = 800;
+        public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
+        public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
+        public double LIFT_POWER = 0.5;
 
-            public final int MAX_TARGET_TICKS = 1650;
-            public final int MIN_TARGET_TICKS = 0;
-            public double TIMEOUT_TIME_SECONDS = 3;
-            public int HOME_HEIGHT_TICKS = 0;
-            public int HIGH_BASKET_TICKS = 1200;
-            public int LOW_BASKET_TICKS = 850;
-            public int LIFT_HEIGHT_TICK_THRESHOLD = 30;
+        public final int MAX_TARGET_TICKS = 1650;
+        public final int MIN_TARGET_TICKS = 0;
+        public double TIMEOUT_TIME_SECONDS = 3;
+        public int HOME_HEIGHT_TICKS = 0;
+        public int HIGH_BASKET_TICKS = 1200;
+        public int LOW_BASKET_TICKS = 850;
+        public int LIFT_HEIGHT_TICK_THRESHOLD = 30;
 
-            public double VEL_P=0.0000004, VEL_I=0, VEL_D=0;
+        public double VEL_P=0.0000004, VEL_I=0, VEL_D=0;
 
-            // Bucket servo params
-            public double BUCKET_SCORE_POS = 0;
-            public double BUCKET_INTAKE_POS = 0.95;
-            public double BUCKET_SAFE_DESCENT_POS4 = .65;
-            public double BUCKET_SAFE_DESCENT_POS3 = .55;
-            public double BUCKET_SAFE_DESCENT_POS2 = .45;
-            public double BUCKET_SAFE_DESCENT_POS1 = .35;
+        // Bucket servo params
+        public double BUCKET_SCORE_POS = 0;
+        public double BUCKET_INTAKE_POS = 0.95;
+        public double BUCKET_SAFE_DESCENT_POS4 = .65;
+        public double BUCKET_SAFE_DESCENT_POS3 = .55;
+        public double BUCKET_SAFE_DESCENT_POS2 = .45;
+        public double BUCKET_SAFE_DESCENT_POS1 = .35;
 
-            // Dumper servo params
-            public double DUMPER_HOME_POS = .7;
-            public double DUMPER_DUMP_POS = .2;
+        // Dumper servo params
+        public double DUMPER_HOME_POS = .7;
+        public double DUMPER_DUMP_POS = .2;
 
-            public double UPWARD_VELOCITY = 50;     // Ticks per second (adjust as needed)
-            public double DOWNWARD_VELOCITY = -1.265;  // Ticks per second (negative for downward)
-            public double UPWARD_ACCELERATION = 40;    // Ticks per second squared (adjust as needed)
-            public double DOWNWARD_ACCELERATION = -2; // Ticks per second squared (negative for downward)
+        public double UPWARD_VELOCITY = 35;     // Ticks per second (adjust as needed)
+        public double DOWNWARD_VELOCITY = -1.265;  // Ticks per second (negative for downward)
+        public double UPWARD_ACCELERATION = 25;    // Ticks per second squared (adjust as needed)
+        public double DOWNWARD_ACCELERATION = -2; // Ticks per second squared (negative for downward)
         }
 
     public enum SampleLiftStates {
@@ -402,7 +403,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             telemetryData += String.format(" | Target State: %s", targetLiftState);
         }
 
-        telemetry.addData("Sample Lift Status", telemetryData);
+        telemetry.addLine(telemetryData);
     }
 
     public void displayVerboseTelemetry(Telemetry telemetry) {
@@ -445,7 +446,31 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 totalOutput
         );
         MatchConfig.telemetryPacket.put("SampleLift/Power", powerLine);
+    }
 
 
+    public void moveLiftToHighBasket() {
+        setTargetLiftState(SampleLiftStates.HIGH_BASKET);
+    }
+
+    public void moveLiftToHome() {
+        setTargetLiftState(SampleLiftStates.LIFT_HOME);
+    }
+
+    public void moveLiftToLowBasket() {
+        setTargetLiftState(SampleLiftStates.LOW_BASKET);
+    }
+
+    public void setBucketToScorePosition() {
+        setBucketTargetPosition(SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS, 10);
+    }
+    public void setBucketToIntakePosition() {
+        setBucketTargetPosition(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS, 10);
+    }
+    public void setDumperToHomePosition() {
+        setCurrentDumperState(DumperStates.DUMPER_HOME);
+    }
+    public void setDumperToDumpPosition() {
+        setCurrentDumperState(DumperStates.DUMPER_DUMP);
     }
 }

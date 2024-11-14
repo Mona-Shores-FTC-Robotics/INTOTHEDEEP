@@ -21,12 +21,13 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GameP
 @Config
 public class SpecimenIntakeSubsystem extends SubsystemBase {
 
+
     public static class SpecimenIntakeParams {
         public double INTAKE_ON_POWER = -0.8;
         public double INTAKE_REVERSE_POWER = 0.8;
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
-        public double PROXIMITY_THRESHOLD_IN_MM = 61;
+        public double PROXIMITY_THRESHOLD_IN_MM = 30;
         public int HISTORY_SIZE = 5;
     }
 
@@ -123,6 +124,16 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         specimenIntake.setPower(currentPower);  // Apply the clipped power
     }
 
+    public void turnOnIntake() {
+        currentState = SpecimenIntakeStates.INTAKE_ON;
+        setPower(currentState.power);
+    }
+
+    public void turnOffIntake() {
+        currentState = SpecimenIntakeStates.INTAKE_OFF;
+        setPower(currentState.power);
+    }
+
     // Update intake parameters dynamically (called in periodic)
     private void updateParameters() {
         // Update the power for each state dynamically from dashboard changes
@@ -139,11 +150,10 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     public void displayBasicTelemetry(org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
         String intakeState = (currentState != null) ? currentState.toString() : "Unknown";
         String detectionState = (specimenDetector != null) ? specimenDetector.getDetectionState().toString() : "N/A";
-        double proximity = (specimenDetector != null) ? specimenDetector.getConsensusProximity() : -1;
 
         telemetry.addLine(String.format(
-                "Specimen: %s | %s | %.2f mm",
-                intakeState, detectionState, proximity
+                "%s | %s",
+                intakeState, detectionState
         ));
     }
 

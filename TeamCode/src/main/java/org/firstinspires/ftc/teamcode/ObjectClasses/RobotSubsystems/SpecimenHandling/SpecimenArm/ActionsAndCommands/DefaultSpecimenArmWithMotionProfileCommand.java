@@ -24,7 +24,7 @@ public class DefaultSpecimenArmWithMotionProfileCommand extends CommandBase {
         double armInput = armSupplier.getAsDouble();
         if (Math.abs(armInput) > SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.DEAD_ZONE){
             // Adjust the target position based on manual control method in subsystem
-            specimenArmSubsystem.setManualTargetState(-armInput); // this argument will be a value between 1 and -1
+            specimenArmSubsystem.setManualTargetAngle(-armInput); // this argument will be a value between 1 and -1
         }
     }
 

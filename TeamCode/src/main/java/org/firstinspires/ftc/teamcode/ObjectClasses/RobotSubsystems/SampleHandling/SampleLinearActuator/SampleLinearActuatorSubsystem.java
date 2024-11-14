@@ -217,7 +217,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     // Compact telemetry display for the driver station
     public void displayBasicTelemetry(org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
         @SuppressLint("DefaultLocale")
-        String telemetryData = String.format("%s | Pos: %d", currentState != null ? currentState : "Unknown", currentTicks);
+        String telemetryData = String.format("%s | Pos: %d", currentState != null ? currentState : "MANUAL_ACTUATOR", currentTicks);
         telemetry.addLine(telemetryData);
     }
 

@@ -121,8 +121,22 @@ public class Robot {
 
                 //Expansion Hub - Servo Port 1 - blinkinleft
                 //Expansion Hub - Servo Port 2 - blinkinright
-                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinleft", "blinkinright");
-                registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
+//                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinleft", "blinkinright");
+//                registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
+
+                if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
+                        hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
+                        hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
+                    sampleProcessingStateMachine = new SampleProcessingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
+                    sampleButtonHandling = new SampleButtonHandling(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
+                }
+
+                if (
+                        hasSubsystem(SubsystemType.SPECIMEN_ARM) &&
+                                hasSubsystem(SubsystemType.SPECIMEN_INTAKE)) {
+                    specimenButtonHandling = new SpecimenButtonHandling(specimenIntakeSubsystem, specimenArmSubsystem);
+                    specimenProcessingStateMachine = new SpecimenProcessingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
+                }
 
                 break;
             }
@@ -181,20 +195,6 @@ public class Robot {
         opModeType = oType;
 
         initRegisteredSubsystems();
-
-        if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
-                 hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
-                 hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
-            sampleProcessingStateMachine = new SampleProcessingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
-            sampleButtonHandling = new SampleButtonHandling(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
-        }
-
-        if (
-                hasSubsystem(SubsystemType.SPECIMEN_ARM) &&
-                hasSubsystem(SubsystemType.SPECIMEN_INTAKE)) {
-            specimenButtonHandling = new SpecimenButtonHandling(specimenIntakeSubsystem, specimenArmSubsystem);
-            specimenProcessingStateMachine = new SpecimenProcessingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
-        }
     }
 
     // Common initialization method for all modes

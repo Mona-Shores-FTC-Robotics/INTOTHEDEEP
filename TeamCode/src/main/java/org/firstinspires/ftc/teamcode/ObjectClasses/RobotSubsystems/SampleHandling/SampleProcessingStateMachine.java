@@ -84,6 +84,4 @@ public class SampleProcessingStateMachine {
         currentSampleDetectionState=SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
     }
 
-
-
 }

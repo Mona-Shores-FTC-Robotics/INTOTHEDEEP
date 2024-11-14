@@ -17,7 +17,7 @@ import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_TWO;
 import static com.example.sharedconstants.FieldConstants.OBS_START_POSE_WITH_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static com.example.sharedconstants.FieldConstants.RIGHT_OF_CHAMBER;
-import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_BASKET;
+import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
 
@@ -43,7 +43,7 @@ public class OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade extends Rou
                 .waitSeconds(1)
                 .strafeTo(PoseToVector(NET_BASKET_WALL))
                 .afterDisp(3, robotAdapter.getAction(SAMPLE_LIFT_TO_HIGH_BASKET))
-                .stopAndAdd(robotAdapter.getAction(DUMP_SAMPLE_IN_BASKET));
+                .stopAndAdd(robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET));
     }
 
     private void returnToStart() {

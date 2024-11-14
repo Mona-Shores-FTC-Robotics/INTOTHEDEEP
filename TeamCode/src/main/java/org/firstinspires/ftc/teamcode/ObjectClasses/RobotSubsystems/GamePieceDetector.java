@@ -4,6 +4,7 @@ import static com.example.sharedconstants.FieldConstants.SampleColor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -43,7 +44,6 @@ public abstract class GamePieceDetector {
             }
         } else {
             detectionState = DetectionState.NOT_DETECTED;
-            clearDetectionState();
         }
 
         return detectionState;
@@ -52,6 +52,7 @@ public abstract class GamePieceDetector {
 
     private boolean updateProximity() {
         double proximity = sensor.getDistance(DistanceUnit.MM);
+
         if (proximityHistory.size() >= getProximityHistorySize()) {
             proximityHistory.poll();
         }
@@ -77,6 +78,7 @@ public abstract class GamePieceDetector {
 
     protected boolean updateColorIfRequired() {
         SampleColor color = getRawDetectedColor();
+
         if (colorHistory.size() >= getColorHistorySize()) {
             colorHistory.poll();
         }

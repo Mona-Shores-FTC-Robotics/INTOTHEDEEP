@@ -225,13 +225,13 @@ public class DriverStationTelemetryManager {
 
     @SuppressLint("DefaultLocale")
     private void displayBaseTelemetry(Telemetry telemetry) {
-        telemetry.addLine()
-                .addData("Loop Time (ms)", String.format("%.0f", MatchConfig.getAverageLoopTime()));
-
-        if (Robot.getInstance().getOpModeType()== Robot.OpModeType.TELEOP) {
-            telemetry.addLine()
-                    .addData("Teleop Time (s)", String.format("%d", MatchConfig.teleOpTimer.time(TimeUnit.SECONDS)));
-        }
+        telemetry.addLine(String.format(
+                "Loop Time (ms): %.0f | Teleop Time (s): %d",
+                MatchConfig.getAverageLoopTime(),
+                Robot.getInstance().getOpModeType() == Robot.OpModeType.TELEOP
+                        ? MatchConfig.teleOpTimer.time(TimeUnit.SECONDS)
+                        : 0 // Default value if not in TELEOP mode
+        ));
         telemetry.addLine()
                 .addData("Alliance Color", MatchConfig.finalAllianceColor)
                 .addData("Side of Field", MatchConfig.finalSideOfField);

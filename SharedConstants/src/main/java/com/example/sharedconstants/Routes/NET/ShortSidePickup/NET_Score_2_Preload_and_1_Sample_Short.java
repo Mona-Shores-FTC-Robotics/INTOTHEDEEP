@@ -4,7 +4,7 @@ import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_NEUTRAL_SIDE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_SHORT;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
-import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_BASKET;
+import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_INTAKE_ON;
 
 import com.example.sharedconstants.RobotAdapter;
@@ -25,7 +25,7 @@ public class NET_Score_2_Preload_and_1_Sample_Short extends NET_Score_1_Specimen
     public void depositSample() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .strafeToLinearHeading(PoseToVector(NET_BASKET_NEUTRAL_SIDE), ANGLE_TOWARD_BLUE)
-                .stopAndAdd(robotAdapter.getAction(DUMP_SAMPLE_IN_BASKET));
+                .stopAndAdd(robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET));
     }
 
     private void pickupNeutralSample1() {

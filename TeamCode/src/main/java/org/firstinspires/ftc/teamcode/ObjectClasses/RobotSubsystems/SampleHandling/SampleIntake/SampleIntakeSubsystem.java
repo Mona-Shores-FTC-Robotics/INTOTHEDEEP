@@ -32,6 +32,9 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         public int COLOR_HISTORY_SIZE = 5;
         public double TRANSFER_TIME_MS= 400;
         public double EJECT_TIME_MS= 400;
+
+        public double LEFT_POWER_REVERSE = -0.5;
+        public double RIGHT_POWER_REVERSE = -0.5;
     }
 
     public static IntakeParams INTAKE_PARAMS = new IntakeParams();
@@ -103,11 +106,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
                 case STILL_DETECTED:
                     sampleProcessingStateMachine.updateSampleProcessingState();
-                    handleEjectionAndTransferStates();
                     break;
 
                 case NOT_DETECTED:
-                    // Do nothing
+                    handleEjectionAndTransferStates();
                     break;
             }
         }
@@ -163,10 +165,29 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         sampleIntakeRight.setPower(-currentPower);  // Apply the clipped power
     }
 
+    // Set servo power, ensuring it's within limits
+    private void setPower(double powerLeft, double powerRight) {
+        sampleIntakeLeft.setPower(powerLeft);  // Apply the clipped power
+        sampleIntakeRight.setPower(-powerRight);  // Apply the clipped power
+    }
+
     // Set the current intake state and update power
     public void setCurrentState(SampleIntakeStates state) {
         currentSampleIntakeState = state;
-        setPower(state.power);
+        if (state == SampleIntakeStates.REVERSING_INTAKE_TO_TRANSFER) {
+            setPower(INTAKE_PARAMS.LEFT_POWER_REVERSE, INTAKE_PARAMS.RIGHT_POWER_REVERSE);
+        } else setPower(state.power);
+    }
+
+    // Set the current intake state and update power
+    public void turnOffIntake() {
+        SampleIntakeStates intakeOffState = SampleIntakeStates.INTAKE_OFF;
+        setPower(intakeOffState.power);
+    }
+
+    public void turnOnIntake() {
+        SampleIntakeStates intakeOnState = SampleIntakeStates.INTAKE_ON;
+        setPower(intakeOnState.power);
     }
 
     // Getters for telemetry use or other purposes
@@ -210,18 +231,14 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     }
 
     // Improved basic telemetry display for the driver station
+    @SuppressLint("DefaultLocale")
     public void displayBasicTelemetry(Telemetry telemetry) {
         String intakeState = (currentSampleIntakeState != null) ? currentSampleIntakeState.toString() : "Unknown";
         String colorStatus = (colorSensor != null) ? sampleDetector.getConsensusColor().toString() : "No Color Sensor";
-        String detectionState = (sampleDetector != null) ? sampleDetector.getDetectionState().toString() : "N/A";
-        double proximity = (sampleDetector != null) ? sampleDetector.getConsensusProximity() : -1;
-
         telemetry.addLine(String.format(
-                "Sample: %s | %s | %s | %.2f mm",
+                "Sample: %s | %s ",
                 intakeState,
-                colorStatus,
-                detectionState,
-                proximity
+                colorStatus
         ));
     }
 

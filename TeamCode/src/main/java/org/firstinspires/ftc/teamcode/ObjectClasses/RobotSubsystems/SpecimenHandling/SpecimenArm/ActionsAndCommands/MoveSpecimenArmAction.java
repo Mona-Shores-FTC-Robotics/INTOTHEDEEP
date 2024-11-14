@@ -41,7 +41,7 @@ public class MoveSpecimenArmAction implements Action {
         // Reset the timeout timer and set timeout to false
         timeoutTimer.reset();
         timeout = false;
-        specimenArmSubsystem.setTargetStateWithMotionProfile(targetState);
+        specimenArmSubsystem.setTargetAngle(targetState);
     }
 
     @Override

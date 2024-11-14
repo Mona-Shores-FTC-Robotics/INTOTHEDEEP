@@ -1,20 +1,32 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+
+import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.AnalogBinding;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.ButtonBinding;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.DriveForwardFromBasket;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.ScoreSampleAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.DefaultSpecimenArmWithMotionProfileCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 public class IntoTheDeepOperatorBindings {
@@ -48,11 +60,6 @@ public class IntoTheDeepOperatorBindings {
         cycleTelemetry(GamepadKeys.Button.LEFT_BUMPER);
 
         //////////////////////////////////////////////////////////
-        // Y BUTTON - Specimen Handling (Intake and Scoring)    //
-        //////////////////////////////////////////////////////////
-        bindSpecimenIntakeAndScore(GamepadKeys.Button.Y);
-
-        //////////////////////////////////////////////////////////
         // A BUTTON - Sample Intake (Automated Handoff)         //
         //////////////////////////////////////////////////////////
         bindSampleIntakeAndTransfer(GamepadKeys.Button.A);
@@ -65,11 +72,12 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // X BUTTON                                             //
         //////////////////////////////////////////////////////////
-        bindDumping(GamepadKeys.Button.X);
+        bindReadyForSampleScoring(GamepadKeys.Button.X);
 
         //////////////////////////////////////////////////////////
         // RIGHT BUMPER                                         //
         //////////////////////////////////////////////////////////
+        bindScoreSample(GamepadKeys.Button.Y);
 
         //////////////////////////////////////////////////////////
         // DPAD-UP                                              //
@@ -78,15 +86,15 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // DPAD-LEFT                                            //
         //////////////////////////////////////////////////////////
-
+        bindSampleIntakeToggle(GamepadKeys.Button.DPAD_LEFT);
         //////////////////////////////////////////////////////////
         // DPAD-RIGHT                                           //
         //////////////////////////////////////////////////////////
-
+        bindSpecimenIntakeToggle(GamepadKeys.Button.DPAD_RIGHT);
         //////////////////////////////////////////////////////////
         // DPAD-DOWN                                              //
         //////////////////////////////////////////////////////////
-
+        bindDumping(GamepadKeys.Button.DPAD_DOWN);
         //////////////////////////////////////////////////////////
         // BACK/SHARE BUTTON                                    //
         //////////////////////////////////////////////////////////
@@ -102,6 +110,43 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // LEFT TRIGGER                                         //
         //////////////////////////////////////////////////////////
+    }
+
+
+    private void bindSpecimenIntakeToggle(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+            SpecimenIntakeSubsystem intakeSubsystem = Robot.getInstance().getSpecimenIntakeSubsystem();
+            Command turnIntakeOn = new InstantCommand(intakeSubsystem::turnOnIntake);
+            Command turnIntakeOff = new InstantCommand(intakeSubsystem::turnOffIntake);
+
+            operatorGamePad.getGamepadButton(button)
+                    .toggleWhenPressed(turnIntakeOn, turnIntakeOff);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Toggle Specimen Intake"
+            ));
+        }
+    }
+
+    private void bindSampleIntakeToggle(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+            SampleIntakeSubsystem intakeSubsystem = Robot.getInstance().getSampleIntakeSubsystem();
+            Command turnIntakeOn = new InstantCommand(intakeSubsystem::turnOnIntake);
+            Command turnIntakeOff = new InstantCommand(intakeSubsystem::turnOffIntake);
+
+            operatorGamePad.getGamepadButton(button)
+                    .toggleWhenPressed(turnIntakeOn, turnIntakeOff);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Toggle Sample Intake"
+            ));
+        }
     }
 
     private void bindBucket(GamepadKeys.Button button) {
@@ -168,6 +213,51 @@ public class IntoTheDeepOperatorBindings {
             ));
         }
     }
+
+    private void bindReadyForSampleScoring(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            Set<Subsystem> requirements = new HashSet<>();
+            requirements.add(Robot.getInstance().getSampleLiftBucketSubsystem());
+
+            Command prepareToScoreSample = new ActionCommand(new PrepareToScoreInHighBasketAction(),requirements);
+
+            operatorGamePad.getGamepadButton(button)
+                    .whenPressed(prepareToScoreSample);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Prepare to Score Sample / Score"
+            ));
+        }
+    }
+
+    private void bindScoreSample(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            Set<Subsystem> requirements = new HashSet<>();
+            requirements.add(Robot.getInstance().getSampleLiftBucketSubsystem());
+            requirements.add(Robot.getInstance().getDriveSubsystem());
+
+            operatorGamePad.getGamepadButton(button)
+                    .whenPressed(() -> {
+                        // Define a new SequentialAction each time the button is pressed
+                        ScoreSampleAction ScoreSampleAction = new ScoreSampleAction();
+                        // Wrap the SequentialAction in an ActionCommand and schedule it
+                        Command scoreSample = new ActionCommand(ScoreSampleAction, requirements);
+                        scoreSample.schedule();
+                    });
+
+            // Register button binding for debugging or tracking purposes
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Score Sample"
+            ));
+        }
+    }
+
+
     private void bindSampleIntakeAndTransfer(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
         {
@@ -186,24 +276,7 @@ public class IntoTheDeepOperatorBindings {
             ));
         }
     }
-    private void bindSpecimenIntakeAndScore(GamepadKeys.Button button) {
-        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) &&
-                robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
-            SpecimenButtonHandling specimenHandlingStateMachine = robot.getSpecimenButtonHandling();
-            Command specimenHandlePressCommand = new InstantCommand(specimenHandlingStateMachine::onSpecimenHandleButtonPress);
 
-            operatorGamePad.getGamepadButton(button)
-                    .whenPressed(specimenHandlePressCommand);
-
-            // Register button binding
-            bindingManager.registerBinding(new ButtonBinding(
-                    GamepadType.OPERATOR,
-                    button,
-                    specimenHandlePressCommand,
-                    "Handle Specimen"
-            ));
-        }
-    }
     private void bindManualLiftMovement(DoubleSupplier analogInput) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
             Command defaultSampleLiftCommand = new DefaultSampleLiftCommand(
@@ -224,6 +297,7 @@ public class IntoTheDeepOperatorBindings {
             if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
                 Command defaultSampleLinearActuatorCommand = new DefaultSampleLinearActuatorCommand(
                         robot.getSampleLinearActuatorSubsystem(),
+                        robot.getSampleIntakeSubsystem(),
                         analogInput // Use the dynamically passed joystick input
                 );
 

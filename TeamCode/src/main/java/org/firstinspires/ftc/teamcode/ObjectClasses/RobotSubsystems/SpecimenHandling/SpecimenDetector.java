@@ -29,9 +29,24 @@ public class SpecimenDetector extends GamePieceDetector {
         return 0; // SpecimenDetector does not use color history
     }
 
+
     @Override
     protected SampleColor getRawDetectedColor() {
-        return SampleColor.UNKNOWN; // SpecimenDetector does not require color detection
+        // Retrieve the raw color from the sensor and convert it to SampleColor
+        int red = sensor.red();
+        int green = sensor.green();
+        int blue = sensor.blue();
+
+        // Example logic to determine color, replace with your own thresholds as needed
+        if (red > blue && red > green) {
+            return SampleColor.RED;
+        } else if (blue > red && blue > green) {
+            return SampleColor.BLUE;
+        } else if (green > red && green > blue) {
+            return SampleColor.YELLOW;
+        } else {
+            return SampleColor.UNKNOWN; // Default if no specific color is detected
+        }
     }
 
     public boolean haveSpecimen() {

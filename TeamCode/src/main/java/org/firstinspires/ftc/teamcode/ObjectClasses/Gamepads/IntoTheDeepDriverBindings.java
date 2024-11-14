@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
 
 import java.util.Collections;
 import java.util.function.DoubleSupplier;
@@ -63,9 +64,15 @@ public class IntoTheDeepDriverBindings {
         toggleFieldOrientedControl(GamepadKeys.Button.START);
 
         //////////////////////////////////////////////////////////
-        // X BUTTON                     //
+        // X BUTTON                                             //
         //////////////////////////////////////////////////////////
         driveToObservationZone(GamepadKeys.Button.X);
+
+        //////////////////////////////////////////////////////////
+        // A BUTTON - Specimen Handling (Intake and Scoring)    //
+        //////////////////////////////////////////////////////////
+        bindSpecimenIntakeAndScore(GamepadKeys.Button.A);
+
 
     }
 
@@ -198,6 +205,24 @@ public class IntoTheDeepDriverBindings {
             bindingManager.registerBinding(new AnalogBinding(GamepadType.DRIVER, "Left X", "Strafe"));
             bindingManager.registerBinding(new AnalogBinding(GamepadType.DRIVER, "Right X", "Rotate"));
         }
+    }
 
+    private void bindSpecimenIntakeAndScore(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) &&
+                robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+            SpecimenButtonHandling specimenHandlingStateMachine = robot.getSpecimenButtonHandling();
+            Command specimenHandlePressCommand = new InstantCommand(specimenHandlingStateMachine::onSpecimenHandleButtonPress);
+
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed(specimenHandlePressCommand);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    button,
+                    specimenHandlePressCommand,
+                    "Pickup/Score Specimen"
+            ));
+        }
     }
 }
