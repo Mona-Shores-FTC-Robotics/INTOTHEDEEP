@@ -1,5 +1,7 @@
-1) Clean up code to see if we can eliminate non-action stuff
-2) Get buttons mapped perfectly
-3) Implement Auto drive buttons
-4) Test transition between auto and teleop
-5) Can we try to do something conditional in Auto (wait for specimen? grab specimen in submersible during auto?)
+Clean up code to see if we can eliminate non-action stuff
+Get buttons mapped perfectly
+Implement Auto drive buttons
+Test transition between auto and teleop
+Can we try to do something conditional in Auto (wait for specimen? grab specimen in submersible during auto?)
+Test autonomous observation side
+Test autonomous net side
