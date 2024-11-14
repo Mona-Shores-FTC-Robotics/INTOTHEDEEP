@@ -26,7 +26,7 @@ public class ActionCommand implements Command {
     @Override
     public void execute() {
         action.preview(MatchConfig.telemetryPacket.fieldOverlay());
-        finished = action.run(MatchConfig.telemetryPacket); // Set finished to true only when action is complete
+        finished = !action.run(MatchConfig.telemetryPacket); // Set finished to true only when action is complete
     }
 
     @Override
