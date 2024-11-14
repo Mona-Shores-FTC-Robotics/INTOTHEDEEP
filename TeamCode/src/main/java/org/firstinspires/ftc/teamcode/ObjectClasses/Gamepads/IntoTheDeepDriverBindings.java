@@ -116,7 +116,7 @@ public class IntoTheDeepDriverBindings {
             Command driveToNetZoneCommand =
                     new InstantCommand(() -> {
                         driveToNetZoneAction = new DriveToNetZone();
-                        ActionCommand actionCommand = new ActionCommand(driveToObservationZoneAction, Collections.singleton(robot.getDriveSubsystem()));
+                        ActionCommand actionCommand = new ActionCommand(driveToNetZoneAction, Collections.singleton(robot.getDriveSubsystem()));
                         actionCommand.schedule();
                     });
 
@@ -267,7 +267,7 @@ public class IntoTheDeepDriverBindings {
 
             bindingManager.registerBinding(new AnalogBinding(
                     GamepadType.DRIVER,
-                    List.of("Left Y", "Left X", "Right X"),
+                    List.of("Ly", "Lx", "Rx"),
                     "Drive/Strafe/Rotate"
             ));
         }
