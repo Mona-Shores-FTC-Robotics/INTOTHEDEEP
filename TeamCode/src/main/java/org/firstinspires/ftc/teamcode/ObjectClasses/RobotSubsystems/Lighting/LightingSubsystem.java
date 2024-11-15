@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 
 public class LightingSubsystem extends SubsystemBase{
 
+
     public static class LightingParams extends SubsystemBase {
         private final double WARNING_DURATION_SECONDS=3.0;
         private final double GREEN_INDICATOR_DURATION = 1.0; // 0.5 seconds
@@ -223,4 +224,55 @@ public class LightingSubsystem extends SubsystemBase{
         blinkinRight.setPattern(pattern);
     }
 
+    public void updateLightsBasedOnAllianceColorAndSide(FieldConstants.AllianceColor finalAllianceColor, FieldConstants.SideOfField finalSideOfField) {
+        // Determine preload status
+        boolean preload = true;
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
+            preload = Robot.getInstance().getSpecimenIntakeSubsystem().checkForPreload();
+        }
+
+        // Determine light patterns based on preload status
+        RevBlinkinLedDriver.BlinkinPattern leftPattern;
+        RevBlinkinLedDriver.BlinkinPattern rightPattern;
+
+        if (finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+            if (finalSideOfField == FieldConstants.SideOfField.NET) {
+                leftPattern = preload ? RevBlinkinLedDriver.BlinkinPattern.BLUE : RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE;
+                rightPattern = preload ? RevBlinkinLedDriver.BlinkinPattern.BLACK : RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_GRAY;
+            } else if (finalSideOfField == FieldConstants.SideOfField.OBSERVATION) {
+                rightPattern = preload ? RevBlinkinLedDriver.BlinkinPattern.BLUE : RevBlinkinLedDriver.BlinkinPattern.STROBE_BLUE;
+                leftPattern = preload ? RevBlinkinLedDriver.BlinkinPattern.BLACK : RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_GRAY;
+            } else {
+                leftPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+                rightPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+            }
+        } else if (finalAllianceColor == FieldConstants.AllianceColor.RED) {
+            if (finalSideOfField == FieldConstants.SideOfField.NET) {
+                leftPattern = preload ? RevBlinkinLedDriver.BlinkinPattern.RED : RevBlinkinLedDriver.BlinkinPattern.STROBE_RED;
+                rightPattern = preload ? RevBlinkinLedDriver.BlinkinPattern.BLACK : RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_GRAY;
+            } else if (finalSideOfField == FieldConstants.SideOfField.OBSERVATION) {
+                rightPattern = preload ? RevBlinkinLedDriver.BlinkinPattern.RED : RevBlinkinLedDriver.BlinkinPattern.STROBE_RED;
+                leftPattern = preload ? RevBlinkinLedDriver.BlinkinPattern.BLACK : RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_GRAY;
+            } else {
+                leftPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+                rightPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+            }
+        } else {
+            // Default to both lights off
+            leftPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+            rightPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        }
+
+        // Apply patterns to lights
+        setLeftLight(leftPattern);
+        setRightLight(rightPattern);
+
+        // Optional telemetry for debugging
+        Robot.getInstance().getActiveOpMode().telemetry.addData("Preload Detected", preload);
+        Robot.getInstance().getActiveOpMode().telemetry.addData("Alliance Color", finalAllianceColor);
+        Robot.getInstance().getActiveOpMode().telemetry.addData("Side of Field", finalSideOfField);
+        Robot.getInstance().getActiveOpMode().telemetry.addData("Left Light Pattern", leftPattern.toString());
+        Robot.getInstance().getActiveOpMode().telemetry.addData("Right Light Pattern", rightPattern.toString());
+        Robot.getInstance().getActiveOpMode().telemetry.update();
+    }
 }

@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
+import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalAllianceColor;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalSideOfField;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.SubsystemType.SPECIMEN_INTAKE;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -20,7 +24,10 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.AutonomousPeriodicAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 @Autonomous(name = "Auto Test")
 public class AutoTest extends LinearOpMode {
@@ -58,13 +65,30 @@ public class AutoTest extends LinearOpMode {
         redNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
         redNetRoute.buildRoute();
 
+
         while (opModeInInit()) {
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSide();
+
+            // Monitor preload: respects locked state
+            if (Robot.getInstance().hasSubsystem(SPECIMEN_INTAKE)) {
+                Robot.getInstance()
+                        .getSpecimenIntakeSubsystem()
+                        .monitorSpecimenPreload(robotAdapter , gamepadHandling.LockedSettingsFlag , gamepadHandling.manualOverrideFlag);
+            }
+
+            // Allow driver to override and lock alliance color and side
+            gamepadHandling.SelectAllianceAndSide(telemetry);
+
+            //Handle Lighting During Init
+            if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.LIGHTING)) {
+                Robot.getInstance().getLightingSubsystem().updateLightsBasedOnAllianceColorAndSide(finalAllianceColor , finalSideOfField);
+            }
+
             telemetry.update();
             sleep(10);
         }
+
         //set the color of our adapter to the final alliance color - this technically shouldn't matter
         robotAdapter.setAllianceColor(MatchConfig.finalAllianceColor);
 

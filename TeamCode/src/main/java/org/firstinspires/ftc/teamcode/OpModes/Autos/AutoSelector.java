@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autos;
 
+import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalAllianceColor;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalSideOfField;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.SubsystemType.SPECIMEN_INTAKE;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -33,7 +37,7 @@ import java.util.List;
 
 @Autonomous(name = "Auto Selector")
 public class AutoSelector extends LinearOpMode {
-    private RealRobotAdapter adapter;
+    private RealRobotAdapter robotAdapter;
     private GamepadHandling gamepadHandling;
     private List<Routes> blueNetRoutesList = new ArrayList<>();
     private List<Routes> blueObsRoutesList = new ArrayList<>();
@@ -46,40 +50,40 @@ public class AutoSelector extends LinearOpMode {
     private List<Routes> buildNetRoutes(FieldConstants.AllianceColor allianceColor) {
         Routes netRoute;
         List<Routes> netRouteList = new ArrayList<>();
-        adapter.setAllianceColor(allianceColor);
+        robotAdapter.setAllianceColor(allianceColor);
 
         // Less points but scores perectly fine.
-        netRoute = new NET_Score_2_Preload_and_1_Sample_Short(adapter);
+        netRoute = new NET_Score_2_Preload_and_1_Sample_Short(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
         // Score more points than last.
-        netRoute = new NET_Score_3_Preload_and_2_Samples_Short(adapter);
+        netRoute = new NET_Score_3_Preload_and_2_Samples_Short(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
         // Same as the last one but Scores more points.
-        netRoute = new NET_Score_4_Preload_and_3_Samples_Short(adapter);
+        netRoute = new NET_Score_4_Preload_and_3_Samples_Short(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute); // Tristan + Landon likes
 
         // In the risk of getting bumped by the other robot but scores more points.
-        netRoute = new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter);
+        netRoute = new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute); // Tristan + Landon likes
 
         // Scores more points but it might get more interfere with the robot because it goes to the observation zone twice.
-        netRoute = new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter);
+        netRoute = new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
         // Scores less points.
-        netRoute = new NET_Score_1_Specimen_Preload(adapter);
+        netRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
         // It scores a lot of points and it won't inter fear with the robot.
-        netRoute = new NET_Score5_SamplePreload(adapter);
+        netRoute = new NET_Score5_SamplePreload(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute); // Tristan + Landon likes
 
@@ -89,18 +93,18 @@ public class AutoSelector extends LinearOpMode {
     private List<Routes> buildOBSRoutes(FieldConstants.AllianceColor allianceColor) {
         Routes obsRoute;
         List<Routes> obsRouteList = new ArrayList<>();
-        adapter.setAllianceColor(allianceColor);
+        robotAdapter.setAllianceColor(allianceColor);
 
-        obsRoute = new OBS_Intake_Automatic_Sample_Handling(adapter);
+        obsRoute = new OBS_Intake_Automatic_Sample_Handling(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
         // Gets in the way of the other side also tramples over samples.
-        obsRoute = new OBS_Intake_Transfer_Dump(adapter);
+        obsRoute = new OBS_Intake_Transfer_Dump(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute); // Tristan + Landon likes
 
-        obsRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time(adapter);
+        obsRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
@@ -122,17 +126,32 @@ public class AutoSelector extends LinearOpMode {
         gamepadHandling = new GamepadHandling(this);
 
         // Create the RealRobotAdapter instance
-        adapter = new RealRobotAdapter();
+        robotAdapter = new RealRobotAdapter();
 
         buildRoutes();
 
         // Perform route selection during init
         while (opModeInInit()) {
+            // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSide();
-            selectRoute();
+
+            // Monitor preload: respects locked state
+            if (Robot.getInstance().hasSubsystem(SPECIMEN_INTAKE)) {
+                Robot.getInstance()
+                        .getSpecimenIntakeSubsystem()
+                        .monitorSpecimenPreload(robotAdapter , gamepadHandling.LockedSettingsFlag , gamepadHandling.manualOverrideFlag);
+            }
+
+            // Allow driver to override and lock alliance color and side
+            gamepadHandling.SelectAllianceAndSide(telemetry);
+
+            //Handle Lighting During Init
+            if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.LIGHTING)) {
+                Robot.getInstance().getLightingSubsystem().updateLightsBasedOnAllianceColorAndSide(finalAllianceColor , finalSideOfField);
+            }
+
             telemetry.update();
-            sleep(50);  // Small debounce delay
+            sleep(10);
         }
         runSelectedRoute();
     }
@@ -185,7 +204,7 @@ public class AutoSelector extends LinearOpMode {
             }
         }
         //set the color of our adapter to the final alliance color - this technically shouldn't matter
-        adapter.setAllianceColor(MatchConfig.finalAllianceColor);
+        robotAdapter.setAllianceColor(MatchConfig.finalAllianceColor);
 
         // Cycle through routes using gamepadHandling's method
         selectedIndex = gamepadHandling.cycleThroughRoutes(routeList, selectedIndex);

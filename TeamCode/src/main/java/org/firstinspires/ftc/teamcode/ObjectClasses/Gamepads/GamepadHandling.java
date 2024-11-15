@@ -27,9 +27,8 @@ public class GamepadHandling {
     private final GamepadEx driverGamepad;
     private final GamepadEx operatorGamepad;
     private final GamePadBindingManager bindingManager;
-
-
     public boolean LockedSettingsFlag = false;
+    public boolean manualOverrideFlag = false;
 
     public GamepadHandling(LinearOpMode opMode) {
         bindingManager = new GamePadBindingManager();
@@ -53,65 +52,6 @@ public class GamepadHandling {
         return bindingManager;
     }
 
-    public void SelectAndLockColorAndSideAndRobotType(Telemetry telemetry) {
-        if (LockedSettingsFlag) {
-            telemetry.addLine("Settings Locked");
-            telemetry.addLine("Alliance: " + finalAllianceColor);
-            telemetry.addLine("Side: " + finalSideOfField);
-            telemetry.addLine("Robot Type: " + finalRobotType);
-            telemetry.addLine("Press B to unlock settings");
-
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-                LockedSettingsFlag = false;  // Unlock settings if B is pressed again
-            }
-        } else {
-            telemetry.addLine("Lock settings with B");
-            telemetry.addLine("");
-            telemetry.addLine("Alliance: " + finalAllianceColor);
-            telemetry.addLine("Side: " + finalSideOfField);
-            telemetry.addLine("Robot Type: " + finalRobotType);
-            telemetry.addLine("");
-
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-                LockedSettingsFlag = true;
-            }
-
-            // Allow selection of alliance color
-            telemetry.addLine("Color (DPAD-UP/DOWN)");
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                finalAllianceColor = AllianceColor.BLUE;
-                finalOpponentColor = AllianceColor.RED;
-            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                finalAllianceColor = AllianceColor.RED;
-                finalOpponentColor = AllianceColor.BLUE;
-            }
-
-            // Allow selection of side of field based on alliance color
-            telemetry.addLine("Side Of Field (DPAD-LEFT/RIGHT)");
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                if (finalAllianceColor == AllianceColor.BLUE) {
-                    finalSideOfField = SideOfField.NET;
-                } else if (finalAllianceColor == AllianceColor.RED) {
-                    finalSideOfField = SideOfField.OBSERVATION;
-                }
-            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                if (finalAllianceColor == AllianceColor.RED) {
-                    finalSideOfField = SideOfField.NET;
-                } else if (finalAllianceColor == AllianceColor.BLUE) {
-                    finalSideOfField = SideOfField.OBSERVATION;
-                }
-            }
-
-            // Allow selection of robot type using bumpers
-            telemetry.addLine("Robot Type (Left/Right Bumper)");
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-                finalRobotType = getPreviousRobotType(finalRobotType);
-            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                finalRobotType = getNextRobotType(finalRobotType);
-            }
-        }
-    }
-
     public int cycleThroughRoutes(List<Routes> routes, int currentIndex) {
         if (driverGamepad.wasJustPressed(GamepadKeys.Button.X)) {
             currentIndex--;
@@ -127,84 +67,61 @@ public class GamepadHandling {
         return currentIndex;
     }
 
-
-    public void SelectAndLockColorAndSide() {
-        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
+    public void SelectAllianceAndSide(Telemetry telemetry) {
         if (LockedSettingsFlag) {
-            telemetry.addLine("Settings Locked");
-            telemetry.addLine("Alliance: " + finalAllianceColor);
-            telemetry.addLine("Side: " + finalSideOfField);
-            telemetry.addLine("Robot Type: " + finalRobotType);
+            // Display locked state
+            telemetry.addData("Alliance Color Locked" , finalAllianceColor);
+            telemetry.addData("Side Locked" , finalSideOfField);
             telemetry.addLine("Press B to unlock settings");
 
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-                LockedSettingsFlag = false;  // Unlock settings if B is pressed again
+                LockedSettingsFlag = false;  // Unlock settings
             }
         } else {
+            // Settings are unlocked: allow manual override, locking, and disabling override
+            telemetry.addLine("Settings Override Mode");
             telemetry.addLine("Lock settings with B");
-            telemetry.addLine("");
-            telemetry.addLine("Alliance: " + finalAllianceColor);
-            telemetry.addLine("Side: " + finalSideOfField);
-            telemetry.addLine("Robot Type: " + finalRobotType);
-            telemetry.addLine("");
+            telemetry.addLine("Toggle manual override with X");
+            telemetry.addLine();
 
+            // Display whether manual override is active
+            telemetry.addData("Manual Override" , manualOverrideFlag ? "Enabled" : "Disabled");
+
+            // Show current settings
+            telemetry.addData("Current Alliance Color" , finalAllianceColor);
+            telemetry.addData("Current Side of Field" , finalSideOfField);
+            telemetry.addLine();
+
+            // Handle locking
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-                LockedSettingsFlag = true;
+                LockedSettingsFlag = true;  // Lock settings
             }
 
-            // Allow selection of alliance color
-            telemetry.addLine("Color (DPAD-UP/DOWN)");
+            // Allow the driver to disable manual override
+            if (driverGamepad.wasJustPressed(GamepadKeys.Button.X)) {
+                manualOverrideFlag = false;  // Revert to sensor-based updates
+            }
+
+            // Allow override for alliance color
+            telemetry.addLine("Alliance Color (DPAD-UP/DOWN)");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 finalAllianceColor = AllianceColor.BLUE;
                 finalOpponentColor = AllianceColor.RED;
+                manualOverrideFlag = true;  // Mark as manually overridden
             } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 finalAllianceColor = AllianceColor.RED;
                 finalOpponentColor = AllianceColor.BLUE;
+                manualOverrideFlag = true;  // Mark as manually overridden
             }
 
-            // Allow selection of side of field based on alliance color
-            telemetry.addLine("Side Of Field (DPAD-LEFT/RIGHT)");
+            // Allow override for side of the field
+            telemetry.addLine("Side of Field (DPAD-LEFT/RIGHT)");
             if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                if (finalAllianceColor == AllianceColor.BLUE) {
-                    finalSideOfField = SideOfField.NET;
-                } else if (finalAllianceColor == AllianceColor.RED) {
-                    finalSideOfField = SideOfField.OBSERVATION;
-                }
+                finalSideOfField = SideOfField.NET;
+                manualOverrideFlag = true;  // Mark as manually overridden
             } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                if (finalAllianceColor == AllianceColor.RED) {
-                    finalSideOfField = SideOfField.NET;
-                } else if (finalAllianceColor == AllianceColor.BLUE) {
-                    finalSideOfField = SideOfField.OBSERVATION;
-                }
-            }
-        }
-    }
-
-    public void SelectAndLockColor() {
-        Telemetry telemetry = Robot.getInstance().getActiveOpMode().telemetry;
-        telemetry.addLine("");
-
-        if (LockedSettingsFlag) {
-            telemetry.addData("Alliance Color Locked", finalAllianceColor);
-            telemetry.addLine("Press B to unlock Alliance Color");
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-                LockedSettingsFlag = false;
-            }
-        } else {
-            telemetry.addLine("Lock Alliance Color with B");
-            telemetry.addLine("Alliance Color: " + finalAllianceColor);
-
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
-                LockedSettingsFlag = true;
-            }
-
-            telemetry.addLine("Color (DPAD-UP/DOWN)");
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                finalAllianceColor = AllianceColor.BLUE;
-                finalOpponentColor = AllianceColor.RED;
-            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                finalAllianceColor = AllianceColor.RED;
-                finalOpponentColor = AllianceColor.BLUE;
+                finalSideOfField = SideOfField.OBSERVATION;
+                manualOverrideFlag = true;  // Mark as manually
             }
         }
     }

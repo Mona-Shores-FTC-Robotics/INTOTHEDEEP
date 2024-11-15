@@ -4,18 +4,24 @@ import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.example.sharedconstants.FieldConstants;
+import com.example.sharedconstants.RobotAdapter;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
 
+import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalAllianceColor;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalSideOfField;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState;
 
 @Config
@@ -176,4 +182,31 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
         MatchConfig.telemetryPacket.put("Specimen Intake Status", intakeStatus);
     }
+
+
+    public boolean checkForPreload() {
+        return specimenDetector != null && specimenDetector.haveSpecimen();
+    }
+
+    public FieldConstants.AllianceColor updateAllianceColorBasedOnPreload() {
+        // Determine alliance color based on specimen detector consensus
+        if (specimenDetector != null && specimenDetector.getConsensusColor() == FieldConstants.SampleColor.RED) {
+            MatchConfig.finalAllianceColor = FieldConstants.AllianceColor.RED;
+        } else { // (specimenDetector != null && specimenDetector.getConsensusColor() == FieldConstants.SampleColor.BLUE)
+            MatchConfig.finalAllianceColor = FieldConstants.AllianceColor.BLUE;
+       }
+        return MatchConfig.finalAllianceColor;
+    }
+
+    public void monitorSpecimenPreload(RealRobotAdapter adapter, Boolean lockedSettingsFlag, Boolean manualOverrideFlag) {
+        // Skip updates if settings are locked or manually overridden
+        if (!lockedSettingsFlag && !manualOverrideFlag) {
+            boolean havePreload = checkForPreload();
+            if (havePreload) {
+                FieldConstants.AllianceColor detectedColor = updateAllianceColorBasedOnPreload();
+                adapter.setAllianceColor(detectedColor);
+            }
+        }
+    }
+
 }
