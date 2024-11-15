@@ -65,7 +65,6 @@ public class AutoTest extends LinearOpMode {
         redNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
         redNetRoute.buildRoute();
 
-
         while (opModeInInit()) {
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
@@ -88,7 +87,6 @@ public class AutoTest extends LinearOpMode {
             telemetry.update();
             sleep(10);
         }
-
         //set the color of our adapter to the final alliance color - this technically shouldn't matter
         robotAdapter.setAllianceColor(MatchConfig.finalAllianceColor);
 
