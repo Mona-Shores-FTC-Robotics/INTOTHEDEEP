@@ -6,14 +6,10 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Speci
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.ftc.Encoder;
-import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
-import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
-import com.qualcomm.hardware.digitalchickenlabs.OctoQuadBase;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -32,8 +28,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
     public static class SpecimenArmParams {
 
-        public double VELOCITY_SET_POINT_DEGREES_PER_SECOND = 30;
-
         //Flip parameters
         public double CCW_FLIP_TIME_MS = 250;
         public double CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
@@ -46,11 +40,11 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double DEAD_ZONE = 0.05;
 
         //PID parameters
-        public double P = 0.015, I = .0001, D = .0001; // PID coefficients
-        public double ANGLE_TOLERANCE_THRESHOLD_DEGREES = 2.0;
+        public double P = 0.016, I = .01, D = 0; // PID coefficients
+        public double ANGLE_TOLERANCE_THRESHOLD_DEGREES = .5;
 
         //Arm Feedforward parameters
-        public double kS = 0.018, kCos = 0.13, kV = 0.020, kA = 0; // Feedforward coefficients
+        public double kS = 0, kCos = 0.13, kV = 0, kA = 0; // Feedforward coefficients
 
         //Maximum Power for clipping motor output
         public double MAX_POWER = 0.7;
@@ -95,7 +89,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
     public static SpecimenArmParams SPECIMEN_ARM_PARAMS = new SpecimenArmParams();
     public DcMotorEx arm;
-    private double directionMultiplier = 1.0; // Set to -1.0 to reverse direction
 
     // Arm Encoder Variables
     private double currentVelocity;
@@ -281,30 +274,14 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     }
 
     private void moveToTargetAngle() {
-        // Calculate the error between the target and current angle
-        double angleError = targetAngleDegrees - currentAngleDegrees;
-
-        // Implement a simple proportional velocity controller
-        double desiredVelocityDegreesPerSecond = SPECIMEN_ARM_PARAMS.VELOCITY_SET_POINT_DEGREES_PER_SECOND * Math.signum(angleError);
-
-        // Optionally, limit the desired velocity based on how far you are from the target
-        desiredVelocityDegreesPerSecond *= Math.min(1.0, Math.abs(angleError) / SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES);
-
-        // Calculate desired acceleration (could be zero or based on how you want to ramp up/down)
-        double desiredAccelerationDegreesPerSecondSquared = 0.0; // Or calculate based on your motion profile
-
-        // Convert desired velocity and acceleration to radians
-        double desiredVelocityRadiansPerSecond = Math.toRadians(desiredVelocityDegreesPerSecond);
-        double desiredAccelerationRadiansPerSecondSquared = Math.toRadians(desiredAccelerationDegreesPerSecondSquared);
-
         // Calculate PID output
         pidPower = pidController.calculate(currentAngleDegrees);
 
         // Calculate feedforward output
         feedforwardPower = armFeedforward.calculate(
                 Math.toRadians(currentAngleDegrees),
-                desiredVelocityRadiansPerSecond,
-                desiredAccelerationRadiansPerSecondSquared
+                0,
+                0
         );
 
         // Combine PID and feedforward control efforts
@@ -338,20 +315,10 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         pidController.setSetPoint(state.getArmAngle());
         currentState = state;
     }
-//    private double calculateCurrentArmAngleInDegrees() {
-//        // Calculate the base angle from encoder ticks
-//        double angle = currentTicks / SPECIMEN_ARM_PARAMS.TICKS_PER_DEGREE;
-//        // Add the starting offset - zero encoder ticks should correspond to CCW Home position
-//        angle += SPECIMEN_ARM_PARAMS.CCW_HOME;
-//
-//        // Normalize the angle to 0–360
-//        angle = (angle % 360 + 360) % 360;
-//
-//        return angle;
-//    }
+
 private double calculateCurrentArmAngleInDegrees() {
     // Convert ticks to degrees, apply offset, and reverse direction if needed
-    double rawDegrees = currentTicks * DEGREES_PER_US * directionMultiplier;
+    double rawDegrees = currentTicks * DEGREES_PER_US;
     double adjustedDegrees = rawDegrees - SPECIMEN_ARM_PARAMS.ENCODER_OFFSET;
 
     // Normalize to 0-360 range
@@ -425,8 +392,6 @@ private double calculateCurrentArmAngleInDegrees() {
 
     public void displayVerboseTelemetry(Telemetry telemetry) {
         telemetry.addData("specimenArm/Current State", currentState);
-        telemetry.addData("specimenArm/Motor Power", arm.getPower());
-        telemetry.addData("specimenArm/Motor Velocity", arm.getVelocity());
     }
 
     @SuppressLint("DefaultLocale")
@@ -441,5 +406,7 @@ private double calculateCurrentArmAngleInDegrees() {
 
         MatchConfig.telemetryPacket.put("SpecimenArm/angles/Current Arm Angle", String.format("%.2f", currentAngleDegrees));
         MatchConfig.telemetryPacket.put("SpecimenArm/angles/Target Arm Angle", String.format("%.2f", targetAngleDegrees));
+
+        MatchConfig.telemetryPacket.put("SpecimenArm/Current Arm Velocity", String.format("%.2f", currentVelocity));
     }
 }
