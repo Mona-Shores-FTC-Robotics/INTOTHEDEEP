@@ -62,6 +62,8 @@ public class AutoTest extends LinearOpMode {
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
             gamepadHandling.SelectAndLockColorAndSide();
+            FieldConstants.SampleColor color = Robot.getInstance().getSpecimenIntakeSubsystem().getSpecimenDetector().getConsensusColor();
+            telemetry.addData("Specimen Color", color);
             telemetry.update();
             sleep(10);
         }
