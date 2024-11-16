@@ -11,7 +11,9 @@ import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_PRELOAD_AND_3_
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
 import static com.example.sharedconstants.RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME;
+import static com.example.sharedconstants.RoutesToRun.OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_2;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_SAMPLEFIRST_PUSH_3_SPIKE_SAMPLES;
 import static com.example.sharedconstants.RoutesToRun.OBS_TEST;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
@@ -32,6 +34,7 @@ import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_5_Preloa
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short;
 import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike;
 import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time;
+import com.example.sharedconstants.Routes.OBS.PushAllAtOnce.OBS_Push3SpikeSampleInOnePath;
 import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_4_SampleFirst_Push_2_Spike_Samples;
 import com.example.sharedconstants.Routes.OBS.SampleFirst.OBS_Score_5_SampleFirst_Push_3_Spike_Samples;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
@@ -50,8 +53,8 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME;
-    private static final RoutesToRun blueObservationRoute = OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME;
+    private static final RoutesToRun redObservationRoute = OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH;
+    private static final RoutesToRun blueObservationRoute = redObservationRoute;
     private static final RoutesToRun redNetRoute = NET_SCORE_3_PRELOAD_AND_2_SAMPLES_SHORT;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
@@ -191,6 +194,8 @@ public class MeepMeepTesting {
                 return new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time(adapter);
             case OBS_SCORE_2:
                 return new OBS_Score2(adapter);
+            case OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH:
+                return new OBS_Push3SpikeSampleInOnePath(adapter);
             case OBS_TEST:
                 return new OBS_Intake_Transfer_Dump(adapter);
             case DO_NOTHING:

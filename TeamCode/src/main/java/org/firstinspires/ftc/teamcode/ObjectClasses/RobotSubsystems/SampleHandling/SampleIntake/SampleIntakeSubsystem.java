@@ -24,17 +24,17 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     public static class IntakeParams {
         public double INTAKE_ON_POWER = 0.8;
-        public double INTAKE_REVERSE_POWER = -0.5;
+        public double INTAKE_REVERSE_POWER = -1;
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
         // Set a minimum proximity threshold to consider an object as "near"
         public double PROXIMITY_THRESHOLD = 40;
         public int COLOR_HISTORY_SIZE = 5;
-        public double TRANSFER_TIME_MS= 400;
+        public double TRANSFER_TIME_MS= 800;
         public double EJECT_TIME_MS= 400;
 
-        public double LEFT_POWER_REVERSE = -0.5;
-        public double RIGHT_POWER_REVERSE = -0.5;
+        public double LEFT_POWER_REVERSE = -1;
+        public double RIGHT_POWER_REVERSE = -1;
     }
 
     public static IntakeParams INTAKE_PARAMS = new IntakeParams();

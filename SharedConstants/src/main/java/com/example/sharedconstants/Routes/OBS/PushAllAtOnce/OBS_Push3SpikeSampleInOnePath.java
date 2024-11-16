@@ -7,6 +7,7 @@ import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FOUR;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_THREE;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWO;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_STAGING_FOR_PICKUP;
+import static com.example.sharedconstants.FieldConstants.OBS_APPROACH;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_TWO;
@@ -33,12 +34,13 @@ public class OBS_Push3SpikeSampleInOnePath extends OBS_Score_1_Specimen_Preload 
         pushFirstNeutralSpecimen();
         pushSecondNeutralSpecimen();
         pushThirdNeutralSpecimen();
-        pickupSpecimenFromWall(false);
+        pickupSpecimenFromWall(true);
         scoreOnHighChamber(CHAMBER_SLOT_TWO);
         pickupSpecimenFromWall();
         scoreOnHighChamber(CHAMBER_SLOT_THREE);
         pickupSpecimenFromWall();
         scoreOnHighChamber(CHAMBER_SLOT_FOUR);
+        pickupSpecimenFromWall();
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
@@ -67,8 +69,9 @@ public class OBS_Push3SpikeSampleInOnePath extends OBS_Score_1_Specimen_Preload 
     public void pickupSpecimenFromWall() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .splineToSplineHeading(CHAMBER_STAGING_FOR_PICKUP, ANGLE_TOWARD_OBSERVATION)
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
-                .splineToConstantHeading(PoseToVector(OBS_ZONE_PICKUP), ANGLE_TOWARD_RED);
+                .afterDisp(5,robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
+                .splineToConstantHeading(PoseToVector(OBS_APPROACH), ANGLE_TOWARD_RED)
+                .splineToConstantHeading(PoseToVector(OBS_ZONE_PICKUP), ANGLE_TOWARD_RED, slowVelocity, slowAcceleration);
     }
 
 

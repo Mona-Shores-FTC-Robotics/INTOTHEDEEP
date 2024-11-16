@@ -113,9 +113,9 @@ public abstract class Routes {
 
     public void pickupSpecimenFromWall(Boolean reversed) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
+                .afterDisp(3, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .setReversed(reversed)
-                .splineToLinearHeading(OBS_ZONE_PICKUP, ANGLE_TOWARD_RED);
+                .splineToLinearHeading(OBS_ZONE_PICKUP, ANGLE_TOWARD_RED, slowVelocity, slowAcceleration);
     }
 
     public void scoreOnHighChamber(Pose2d chamberSlot) {

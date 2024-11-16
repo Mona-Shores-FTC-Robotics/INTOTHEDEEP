@@ -29,7 +29,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
         pickupSpecimenFromWallAndScore();
         intakeSecondTeamSpecimen();
         pickupSpecimenFromWallAndScore();
-//        intakeThirdTeamSpecimen();
+        intakeThirdTeamSpecimen();
         pickupSpecimenFromWallAndScore();
 //        intakeThirdTeamSpecimen();
 //        pickupSpecimenFromWall();

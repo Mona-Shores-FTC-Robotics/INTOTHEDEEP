@@ -30,7 +30,7 @@ public enum RoutesToRun {
 //    OBS_SCORE_1_SAMPLE_PRELOAD_PUSH_1_SPIKE_SCORE_1_PREMADE,
 
     // Experiment with double specimen preload
-//    OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH,
+     OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH,
 //    OBS_PUSH_2_SPIKE_SAMPLES_IN_ONE_PATH,
 
 

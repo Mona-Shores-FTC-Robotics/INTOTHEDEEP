@@ -61,7 +61,7 @@ public class IntoTheDeepOperatorBindings {
         bindSampleIntakeAndTransfer(GamepadKeys.Button.A);
 
         //////////////////////////////////////////////////////////
-        // X BUTTON                                             //
+        // X BUTTON - Moves sample lift up and prepares to dunk                                       //
         //////////////////////////////////////////////////////////
         bindReadyForSampleScoring(GamepadKeys.Button.X);
 
