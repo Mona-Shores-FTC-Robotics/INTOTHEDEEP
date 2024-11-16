@@ -26,11 +26,11 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
     public void buildRoute() {
         super.buildRoute();
         intakeFirstTeamSpecimen();
-        pickupSpecimenFromWallAndScore();
-        intakeSecondTeamSpecimen();
-        pickupSpecimenFromWallAndScore();
-        intakeThirdTeamSpecimen();
-        pickupSpecimenFromWallAndScore();
+//        pickupSpecimenFromWallAndScore();
+//        intakeSecondTeamSpecimen();
+//        pickupSpecimenFromWallAndScore();
+//        intakeThirdTeamSpecimen();
+//        pickupSpecimenFromWallAndScore();
 //        intakeThirdTeamSpecimen();
 //        pickupSpecimenFromWall();
 //        scoreOnHighChamber(CHAMBER_SLOT_FOUR);
@@ -53,7 +53,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
     public void intakeFirstTeamSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setTangent(ANGLE_315_DEGREES)
-                .afterDisp(8, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
+                .afterDisp(24, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .splineToLinearHeading(RIGHT_OF_CHAMBER_INTAKE_1, ANGLE_45_DEGREES)
                 .splineToLinearHeading(
                         new Pose2d(RIGHT_OF_CHAMBER_INTAKE_1.position.x,
@@ -62,6 +62,7 @@ public class OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_No
                 .setReversed(true)
                 .afterDisp(3, robotAdapter.getAction(RobotAdapter.ActionType.SAMPLE_ACTUATOR_RETRCACT))
                 .splineToLinearHeading(OBS_ZONE_DUMP,ANGLE_TOWARD_RED)
+                .waitSeconds(.45)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE));
     }
 
