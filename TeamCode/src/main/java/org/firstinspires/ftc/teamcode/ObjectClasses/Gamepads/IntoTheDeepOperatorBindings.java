@@ -101,7 +101,7 @@ public class IntoTheDeepOperatorBindings {
     private void bindSpecimenIntakeToggle(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
             SpecimenIntakeSubsystem intakeSubsystem = Robot.getInstance().getSpecimenIntakeSubsystem();
-            Command turnIntakeOn = new InstantCommand(intakeSubsystem::turnOnIntake);
+            Command turnIntakeOn = new InstantCommand(intakeSubsystem::reverseIntake);
             Command turnIntakeOff = new InstantCommand(intakeSubsystem::turnOffIntake);
 
             operatorGamePad.getGamepadButton(button)
