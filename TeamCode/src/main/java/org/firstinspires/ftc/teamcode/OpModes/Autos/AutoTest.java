@@ -53,14 +53,14 @@ public class AutoTest extends LinearOpMode {
 
         //Make the blue routes
         robotAdapter.setAllianceColor(FieldConstants.AllianceColor.BLUE);
-        blueObsRoute = new OBS_Score2_With_Retry(robotAdapter);
+        blueObsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
         blueObsRoute.buildRoute();
         blueNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
         blueNetRoute.buildRoute();
 
         //Make the red routes
         robotAdapter.setAllianceColor(FieldConstants.AllianceColor.RED);
-        redObsRoute = new OBS_Score2_With_Retry(robotAdapter);
+        redObsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
         redObsRoute.buildRoute();
         redNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
         redNetRoute.buildRoute();
@@ -117,10 +117,7 @@ public class AutoTest extends LinearOpMode {
         MatchConfig.loopTimer.reset();
         Actions.runBlocking(parallelAction);
 
-        Robot.getInstance().getDriveSubsystem().updateInternalIMU();
-        MatchConfig.endOfAutonomousAbsoluteYawDegrees = Robot.getInstance().getDriveSubsystem().getInternalIMUYawDegrees();
-        MatchConfig.endOfAutonomousOffset = Robot.getInstance().getDriveSubsystem().yawOffsetDegrees;
-        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+        MatchConfig.hasAutoRun=true;
     }
 
     public Routes selectRoute() {

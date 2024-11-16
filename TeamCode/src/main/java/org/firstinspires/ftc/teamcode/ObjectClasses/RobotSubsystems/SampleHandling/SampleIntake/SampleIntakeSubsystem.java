@@ -190,6 +190,11 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         setPower(intakeOnState.power);
     }
 
+    public void reverseIntake() {
+        SampleIntakeStates intakeReverseState = SampleIntakeStates.INTAKE_REVERSE;
+        setPower(intakeReverseState.power);
+    }
+
     // Getters for telemetry use or other purposes
     public SampleIntakeStates getCurrentState() {
         return currentSampleIntakeState;

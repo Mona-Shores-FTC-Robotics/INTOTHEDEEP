@@ -18,9 +18,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 @Config
 public class SpecimenArmSubsystem extends SubsystemBase {
@@ -28,9 +28,10 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
     public static class SpecimenArmParams {
 
+
         //Flip parameters
-        public double CCW_FLIP_TIME_MS = 350;
-        public double CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
+        public double CCW_FLIP_TIME_MS = 500;
+        public double CONSTANT_POWER_FOR_CCW_FLIP = .9;
         public double CW_FLIP_TIME_MS = 400;
         public double CONSTANT_POWER_FOR_CW_FLIP = -0.9;
         public double ZERO_POWER_SETTLE_TIME_MS = 225;
@@ -40,18 +41,19 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double DEAD_ZONE = 0.05;
 
         //PID parameters
-        public double P = 0.016, I = .01, D = 0; // PID coefficients
+        public double P = 0.0165, I = .09, D = .001; // PID coefficients
         public double ANGLE_TOLERANCE_THRESHOLD_DEGREES = .5;
 
         //Arm Feedforward parameters
-        public double kS = 0, kCos = 0.13, kV = 0, kA = 0; // Feedforward coefficients
+        public double kS = 0, kCos = 0.135, kV = 0, kA = 0; // Feedforward coefficients
 
         //Maximum Power for clipping motor output
         public double MAX_POWER = 0.7;
 
         //Preset Angles
         public double CCW_HOME = 245.69;
-        public double SPECIMEN_PICKUP_ANGLE = 219;
+        public double FLIP_ARM_ANGLE = 100;
+        public double SPECIMEN_PICKUP_ANGLE = 221.0;
         //210 is bad
         //211 worked
         //215 most we can do
@@ -63,13 +65,16 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double ENCODER_OFFSET=123.28;
     }
     public enum SpecimenArmStates {
+
         CCW_ARM_HOME,
         CW_ARM_HOME,
         SPECIMEN_PICKUP,
         FLIPPING_TO_CCW,
         FLIPPING_TO_CW,
         ZERO_POWER_AT_CCW_ARM_HOME,
-        ZERO_POWER_AT_CW_ARM_HOME;
+        ZERO_POWER_AT_CW_ARM_HOME,
+        ROTATING_CCW_TO_TARGET; // New state for constant power rotation
+
         private double angle;
 
         static {
@@ -180,11 +185,25 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         // Retrieve current position from the encoder
         OctoQuad.EncoderDataBlock encoderDataBlock = new OctoQuad.EncoderDataBlock();
         octoquad.readAllEncoderData(encoderDataBlock);
-        currentTicks = encoderDataBlock.positions[armEncoderChannel]; // Position in microseconds (uS)
-        currentVelocity = encoderDataBlock.velocities[armEncoderChannel]; // Position in microseconds (uS)
+        currentTicks = encoderDataBlock.positions[armEncoderChannel];
+        currentVelocity = encoderDataBlock.velocities[armEncoderChannel];
         currentAngleDegrees = calculateCurrentArmAngleInDegrees();
 
         switch (currentState) {
+//            case ROTATING_CCW_TO_TARGET:
+//                // Check if the arm has reached the target angle or timeout
+//                if (currentAngleDegrees >= targetAngleDegrees) {
+//                    arm.setPower(0); // Stop the arm
+//                    setCurrentState(SpecimenArmStates.CCW_ARM_HOME); // Example: Transition to a default state
+//                } else if (flipArmTimer.seconds() > 2.5) {
+//                    arm.setPower(0); // Stop the arm
+//                    setCurrentState(SpecimenArmStates.CCW_ARM_HOME); // Example: Transition to a default state
+//                } else {
+//                    // Continue rotating the arm
+//                    arm.setPower(SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP);
+//                }
+//                break;
+
             case FLIPPING_TO_CW:
                 if (flipArmTimer.milliseconds() > SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS) {
                     arm.setPower(0);
@@ -192,21 +211,26 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     zeroPowerTimer.reset();
                 }
                 break;
+
             case FLIPPING_TO_CCW:
                 if (flipArmTimer.milliseconds() > SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS) {
                     arm.setPower(0);
+//                    Robot.getInstance().getSpecimenIntakeSubsystem().setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_REVERSE);
                     setCurrentState(SpecimenArmStates.ZERO_POWER_AT_CCW_ARM_HOME);
                     zeroPowerTimer.reset();
                 }
                 break;
+
             case ZERO_POWER_AT_CCW_ARM_HOME:
                 if (zeroPowerTimer.milliseconds() > SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS) {
-                  setCurrentState(CCW_ARM_HOME);
+                    setCurrentState(SpecimenArmStates.CCW_ARM_HOME);
+                    Robot.getInstance().getSpecimenIntakeSubsystem().setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 }
                 break;
+
             case ZERO_POWER_AT_CW_ARM_HOME:
                 if (zeroPowerTimer.milliseconds() > SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS) {
-                    setCurrentState(CW_ARM_HOME);
+                    setCurrentState(SpecimenArmStates.CW_ARM_HOME);
                 }
                 break;
 
@@ -214,18 +238,18 @@ public class SpecimenArmSubsystem extends SubsystemBase {
             case CW_ARM_HOME:
             case SPECIMEN_PICKUP:
             default:
-//                 Check if movement is needed based on the target angle
+                // Check if movement is needed based on the target angle
                 if (Math.abs(targetAngleDegrees - currentAngleDegrees) > SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES) {
-                    moveToTargetAngle();  // Move towards the target if outside tolerance
+                    moveToTargetAngle(); // Move towards the target if outside tolerance
                 } else {
-                    maintainPosition();  // Hold the position if within tolerance
+                    maintainPosition(); // Hold the position if within tolerance
                 }
                 break;
         }
+
         updateParameters();
         updateDashboardTelemetry();
     }
-
     public void flipCCWFast() {
         flipArmTimer.reset();
         currentState=SpecimenArmStates.FLIPPING_TO_CCW;
@@ -382,6 +406,22 @@ private double calculateCurrentArmAngleInDegrees() {
             pidController.setI(i);
             pidController.setD(d);
         }
+    }
+
+    public void rotateToAngleWithConstantPower(double targetAngle, double power) {
+        arm.setPower(power);
+        // Set the target angle and power
+        targetAngleDegrees = targetAngle;
+
+        // Start the timeout timer
+        flipArmTimer.reset();
+        // Set the arm state to ROTATING_TO_TARGET
+        setCurrentState(SpecimenArmStates.ROTATING_CCW_TO_TARGET);
+    }
+
+    public void rotateToCCWWithConstantPower()
+    {
+        rotateToAngleWithConstantPower(SPECIMEN_ARM_PARAMS.FLIP_ARM_ANGLE, SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP);
     }
 
     public void displayBasicTelemetry(Telemetry telemetry) {

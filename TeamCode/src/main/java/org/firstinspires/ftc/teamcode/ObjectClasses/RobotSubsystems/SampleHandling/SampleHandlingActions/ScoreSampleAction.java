@@ -7,6 +7,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
+
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 public class ScoreSampleAction implements Action {
@@ -18,7 +20,8 @@ public class ScoreSampleAction implements Action {
         // Define the sequence of actions within the constructor
         actionSequence = new SequentialAction(
                 new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::dumpSampleInBucket),
-                new DriveForwardFromBasket(10)
+                new SleepAction(.45),
+                new DriveForwardFromBasketAndBringLiftDown(10)
         );
     }
 

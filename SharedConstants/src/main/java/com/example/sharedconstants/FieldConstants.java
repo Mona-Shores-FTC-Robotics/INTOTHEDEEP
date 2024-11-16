@@ -67,13 +67,16 @@ public class FieldConstants {
     public static double ANGLE_340_DEGREES = Math.toRadians(340);
 
     //Chamber Slot Poses
-    public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH+1, ANGLE_TOWARD_BLUE);
-    public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,TILE/6), 0));
-    public static Pose2d CHAMBER_SLOT_THREE = CHAMBER_SLOT_TWO.plus(new Twist2d(new Vector2d(0, TILE/6), 0));
-    public static Pose2d CHAMBER_SLOT_FOUR = CHAMBER_SLOT_THREE.plus(new Twist2d(new Vector2d(0, TILE/6), 0));
-    public static Pose2d CHAMBER_SLOT_FIVE = CHAMBER_SLOT_FOUR.plus(new Twist2d(new Vector2d(0,TILE/6), 0));
-    public static Pose2d CHAMBER_SLOT_SIX = CHAMBER_SLOT_FIVE.plus(new Twist2d(new Vector2d(0,TILE/6), 0));
-    public static Pose2d CHAMBER_SLOT_SEVEN = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,TILE/6), 0));
+    public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH+2, ANGLE_TOWARD_BLUE);
+    public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,TILE/10), 0));
+    public static Pose2d CHAMBER_SLOT_THREE = CHAMBER_SLOT_TWO.plus(new Twist2d(new Vector2d(0, TILE/10), 0));
+    public static Pose2d CHAMBER_SLOT_FOUR = CHAMBER_SLOT_THREE.plus(new Twist2d(new Vector2d(0, TILE/10), 0));
+    public static Pose2d CHAMBER_SLOT_FIVE = CHAMBER_SLOT_FOUR.plus(new Twist2d(new Vector2d(0,TILE/10), 0));
+    public static Pose2d CHAMBER_SLOT_SIX = CHAMBER_SLOT_FIVE.plus(new Twist2d(new Vector2d(0,TILE/10), 0));
+    public static Pose2d CHAMBER_SLOT_SEVEN = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,TILE/10), 0));
+    public static Pose2d CHAMBER_SLOT_EIGHT = CHAMBER_SLOT_SEVEN.plus(new Twist2d(new Vector2d(0,TILE/10), 0));
+    public static Pose2d CHAMBER_SLOT_NINE = CHAMBER_SLOT_EIGHT.plus(new Twist2d(new Vector2d(0,TILE/10), 0));
+    public static Pose2d CHAMBER_SLOT_TEN = CHAMBER_SLOT_NINE.plus(new Twist2d(new Vector2d(0,TILE/10), 0));
 
     public static Pose2d CHAMBER_STAGING_FOR_SCORING = new Pose2d(TILE+HALF_TILE, -TILE-HALF_ROBOT_LENGTH-3, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_STAGING_FOR_PICKUP =new Pose2d(TILE+HALF_TILE, -TILE-HALF_ROBOT_LENGTH-3, ANGLE_TOWARD_BLUE);
@@ -129,8 +132,8 @@ public class FieldConstants {
     public static Pose2d OBS_ZONE_BEFORE_PICKUP = new Pose2d(2*TILE+HALF_ROBOT_WIDTH, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM+1.1+HALF_TILE, ANGLE_TOWARD_BLUE);
 
     public static Pose2d RIGHT_OF_CHAMBER =  new Pose2d(TILE+HALF_TILE+1, -TILE-4, ANGLE_TOWARD_RED);
-    public static Pose2d RIGHT_OF_CHAMBER_INTAKE_1 =  new Pose2d(TILE+HALF_TILE+1+TILE-EIGHTH_TILE-5, -TILE-4-HALF_ROBOT_LENGTH-QUARTER_TILE, ANGLE_TOWARD_BLUE);
-    public static Pose2d RIGHT_OF_CHAMBER_INTAKE_2 =  new Pose2d(TILE+HALF_TILE+1+TILE+EIGHTH_TILE-1, -TILE-4-HALF_ROBOT_LENGTH-SAMPLE_LENGTH, ANGLE_TOWARD_BLUE);
+    public static Pose2d RIGHT_OF_CHAMBER_INTAKE_1 =  new Pose2d(TILE+HALF_TILE+1+TILE-EIGHTH_TILE-2, -TILE-4-HALF_ROBOT_LENGTH-QUARTER_TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d RIGHT_OF_CHAMBER_INTAKE_2 =  new Pose2d(TILE+HALF_TILE+1+TILE+EIGHTH_TILE-1, -TILE-4-HALF_ROBOT_LENGTH-QUARTER_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d RIGHT_OF_CHAMBER_INTAKE_3 =  new Pose2d(TILE+HALF_TILE+1+TILE+EIGHTH_TILE-1-EIGHTH_TILE, -TILE-4-1, ANGLE_TOWARD_OBSERVATION);
     public static Pose2d NEXT_TO_OBS_ASCENT = new Pose2d(TILE+HALF_TILE, -HALF_TILE-QUARTER_TILE, ANGLE_TOWARD_OBSERVATION);
 

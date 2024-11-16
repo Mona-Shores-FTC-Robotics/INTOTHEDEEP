@@ -74,6 +74,7 @@ public class DriveSubsystem extends SubsystemBase {
     private double prevLeftBackTargetSpeed = 0;
     private double prevRightBackTargetSpeed = 0;
 
+
     @Config
     public static class DriveModeConfig {
         public static DriveMode selectedDriveMode = DriveMode.SPEED_CONTROL;
@@ -139,6 +140,16 @@ public class DriveSubsystem extends SubsystemBase {
         // This is the offset to get to 0 degrees from the robot's current heading
         MatchConfig.offsetFromStartPoseDegrees = -1 * Math.toDegrees(getMecanumDrive().pose.heading.toDouble());
     }
+
+    public void CalculateImprovedYawOffset() {
+        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+            MatchConfig.offsetFromStartPoseDegrees = 90;  // 90 degrees for blue side
+        } else {
+            MatchConfig.offsetFromStartPoseDegrees = -90;  // -90 degrees for red side
+        }
+
+    }
+
 
     public MecanumDrive getMecanumDrive() {
         return mecanumDrive; // This could be a MecanumDrive/SparkFunDrive/PinpointDrive depending on initialization

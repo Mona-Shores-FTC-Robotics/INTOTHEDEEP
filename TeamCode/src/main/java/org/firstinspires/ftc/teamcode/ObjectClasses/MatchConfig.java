@@ -32,6 +32,7 @@ public class MatchConfig {
     // Sliding window average variables
     private static final int WINDOW_SIZE = 100;
     private static final double[] loopTimes = new double[WINDOW_SIZE];
+    public static boolean hasAutoRun=false;
     private static int loopIndex = 0;
     private static int loopCount = 0; // Number of recorded loop times
     private static double totalLoopTime = 0;

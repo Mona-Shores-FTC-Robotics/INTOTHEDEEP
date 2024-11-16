@@ -21,9 +21,9 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
 
 
+
     public static class SampleLiftParams {
         public double BUCKET_INCREMENT_TIME = 1.0;
-        public int NUM_STEPS = 100;
         public double KA = .001;
         public double KV = .03;
         public double KG = .04;
@@ -46,11 +46,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
         // Bucket servo params
         public double BUCKET_SCORE_POS = 0;
-        public double BUCKET_INTAKE_POS = 0.95;
+        public double BUCKET_INTAKE_POS = .73;
 
         // Dumper servo params
-        public double DUMPER_HOME_POS = .7;
-        public double DUMPER_DUMP_POS = .2;
+        public double DUMPER_HOME_POS = 0.41 ;
+        public double DUMPER_PRESCORE_POS =.45;
+        public double DUMPER_DUMP_POS = 0.65 ;
 
         public double UPWARD_VELOCITY = 35;     // Ticks per second (adjust as needed)
         public double DOWNWARD_VELOCITY = -1.265;  // Ticks per second (negative for downward)
@@ -80,7 +81,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         BUCKET_INTAKE_POS(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS),
         BUCKET_SCORE_POS(SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS),
         MOVING_TO_SCORE_POSITION(0),
-        MOVING_TO_INTAKE_POSITION(0);
+        MOVING_TO_INTAKE_POSITION(0),
+        MOVING_TO_PRE_SCORE_POSITION(0);
 
         public double position;
 
@@ -99,7 +101,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
     public enum DumperStates {
         DUMPER_HOME(SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS),
-        DUMPER_DUMP(SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS);
+        DUMPER_DUMP(SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS),
+        DUMPER_PRESCORE(SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS);
 
         public double position;
 
@@ -294,6 +297,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
         updateDumperParameters(DumperStates.DUMPER_HOME, SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS);
         updateDumperParameters(DumperStates.DUMPER_DUMP, SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS);
+        updateDumperParameters(DumperStates.DUMPER_PRESCORE, SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS);
         updateBucketParameters(BucketStates.BUCKET_INTAKE_POS, SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS);
         updateBucketParameters(BucketStates.BUCKET_SCORE_POS, SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS);
 
@@ -333,6 +337,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         currentDumperState = state;
         dumper.setPosition(state.position);
     }
+
+    public void moveDumperToPreScore() {
+        currentDumperState= DumperStates.DUMPER_PRESCORE;
+        dumper.setPosition(currentDumperState.position);
+    }
+
 
     public SampleLiftStates getCurrentLiftState() {
         return currentLiftState;

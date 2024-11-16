@@ -11,7 +11,6 @@ import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.FieldConstants;
@@ -21,7 +20,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 
-public class DriveForwardFromBasket implements Action {
+public class DriveForwardFromBasketAndBringLiftDown implements Action {
     private final DriveSubsystem driveSubsystem;
     private boolean started;
     private boolean cancelled;
@@ -32,7 +31,7 @@ public class DriveForwardFromBasket implements Action {
     public static VelConstraint slowVelocity;
     public static AccelConstraint slowAcceleration;
 
-    public DriveForwardFromBasket(double distance) {
+    public DriveForwardFromBasketAndBringLiftDown(double distance) {
         this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
         this.distance = distance;
 

@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalAllianceColor;
@@ -34,7 +35,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
         public double PROXIMITY_THRESHOLD_IN_MM = 30;
-        public int HISTORY_SIZE = 5;
+        public int HISTORY_SIZE = 20;
     }
 
     public static SpecimenIntakeParams SPECIMEN_INTAKE_PARAMS = new SpecimenIntakeParams();
@@ -86,8 +87,9 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (specimenDetector != null) {
+        if (specimenDetector != null && Robot.getInstance().getSpecimenArmSubsystem().getCurrentState() == SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP) {
             // Update the detection state via the detector
+
             DetectionState specimenDetectionState = specimenDetector.updateDetection();
             switch (specimenDetectionState) {
                 case JUST_DETECTED:

@@ -20,6 +20,7 @@ public class PrepareToScoreInHighBasketAction implements Action {
             Robot robot = Robot.getInstance();
             actionSequence = new SequentialAction(
                     new InstantAction(robot.getSampleLiftBucketSubsystem()::moveLiftToHighBasket),
+                    new InstantAction(robot.getSampleLiftBucketSubsystem()::moveDumperToPreScore),
                     new InstantAction(robot.getSampleLiftBucketSubsystem()::setBucketToScorePosition)
             );
             started = true;

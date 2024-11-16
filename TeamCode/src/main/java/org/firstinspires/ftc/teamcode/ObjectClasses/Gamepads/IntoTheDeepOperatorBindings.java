@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
-import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.SequentialAction;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -15,7 +13,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.B
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.DriveForwardFromBasket;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.ScoreSampleAction;
@@ -23,6 +20,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.DefaultSpecimenArmWithMotionProfileCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 import java.util.HashSet;
@@ -61,7 +59,7 @@ public class IntoTheDeepOperatorBindings {
         bindSampleIntakeAndTransfer(GamepadKeys.Button.A);
 
         //////////////////////////////////////////////////////////
-        // X BUTTON - Moves sample lift up and prepares to dunk                                       //
+        // X BUTTON                                             //
         //////////////////////////////////////////////////////////
         bindReadyForSampleScoring(GamepadKeys.Button.X);
 
@@ -95,6 +93,24 @@ public class IntoTheDeepOperatorBindings {
         //////////////////////////////////////////////////////////
         // START/OPTIONS BUTTON                                 //
         //////////////////////////////////////////////////////////
+
+    }
+
+    private void bindFlipArmToAngle(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
+        {
+            SpecimenArmSubsystem armSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
+            Command flipArmCommandNewWay = new InstantCommand(armSubsystem::rotateToCCWWithConstantPower);
+            operatorGamePad.getGamepadButton(button)
+                    .whenPressed(flipArmCommandNewWay);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Flip Arm To Angle"
+            ));
+        }
     }
 
 
@@ -111,7 +127,7 @@ public class IntoTheDeepOperatorBindings {
             bindingManager.registerBinding(new ButtonBinding(
                     GamepadType.OPERATOR,
                     button,
-                    "Toggle Specimen Intake"
+                    "Reverse Specimen Intake"
             ));
         }
     }
@@ -119,7 +135,7 @@ public class IntoTheDeepOperatorBindings {
     private void bindSampleIntakeToggle(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
             SampleIntakeSubsystem intakeSubsystem = Robot.getInstance().getSampleIntakeSubsystem();
-            Command turnIntakeOn = new InstantCommand(intakeSubsystem::turnOnIntake);
+            Command turnIntakeOn = new InstantCommand(intakeSubsystem::reverseIntake);
             Command turnIntakeOff = new InstantCommand(intakeSubsystem::turnOffIntake);
 
             operatorGamePad.getGamepadButton(button)
@@ -129,7 +145,7 @@ public class IntoTheDeepOperatorBindings {
             bindingManager.registerBinding(new ButtonBinding(
                     GamepadType.OPERATOR,
                     button,
-                    "Toggle Sample Intake"
+                    "Reverse Sample Intake"
             ));
         }
     }
@@ -262,23 +278,23 @@ public class IntoTheDeepOperatorBindings {
         }
     }
     private void bindManualSampleActuatorMovement (DoubleSupplier analogInput){
-            if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
-                Command defaultSampleLinearActuatorCommand = new DefaultSampleLinearActuatorCommand(
-                        robot.getSampleLinearActuatorSubsystem(),
-                        robot.getSampleIntakeSubsystem(),
-                        analogInput // Use the dynamically passed joystick input
-                );
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+            Command defaultSampleLinearActuatorCommand = new DefaultSampleLinearActuatorCommand(
+                    robot.getSampleLinearActuatorSubsystem(),
+                    robot.getSampleIntakeSubsystem(),
+                    analogInput // Use the dynamically passed joystick input
+            );
 
-                CommandScheduler.getInstance().setDefaultCommand(robot.getSampleLinearActuatorSubsystem(), defaultSampleLinearActuatorCommand);
+            CommandScheduler.getInstance().setDefaultCommand(robot.getSampleLinearActuatorSubsystem(), defaultSampleLinearActuatorCommand);
 
-                // Register the default specimen arm command (no specific button)
-                bindingManager.registerBinding(new AnalogBinding(
-                        GamepadType.OPERATOR,
-                        "Right X", // No specific button
-                        "Manual Sample Linear Actuator"
-                ));
-            }
+            // Register the default specimen arm command (no specific button)
+            bindingManager.registerBinding(new AnalogBinding(
+                    GamepadType.OPERATOR,
+                    "Right X", // No specific button
+                    "Manual Sample Linear Actuator"
+            ));
         }
+    }
     private void bindManualSpecimenArmMovement (DoubleSupplier analogInput){
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
             Command defaultSpecimenArmCommand = new DefaultSpecimenArmWithMotionProfileCommand(
