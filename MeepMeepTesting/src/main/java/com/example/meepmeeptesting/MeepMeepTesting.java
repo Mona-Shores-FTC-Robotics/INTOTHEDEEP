@@ -4,6 +4,11 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_1_PRELOAD;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_2_PRELOAD_AND_1_SAMPLE_SHORT;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_3_PRELOAD_AND_2_SAMPLES_SHORT;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_PRELOAD_AND_3_SAMPLES_SHORT;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS;
 import static com.example.sharedconstants.RoutesToRun.OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_2;
@@ -45,10 +50,10 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_SCORE_2;
-    private static final RoutesToRun blueObservationRoute = OBS_SCORE_2;
-    private static final RoutesToRun redNetRoute = null;
-    private static final RoutesToRun blueNetRoute = null;
+    private static final RoutesToRun redObservationRoute = OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME;
+    private static final RoutesToRun blueObservationRoute = OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME;
+    private static final RoutesToRun redNetRoute = NET_SCORE_3_PRELOAD_AND_2_SAMPLES_SHORT;
+    private static final RoutesToRun blueNetRoute = redNetRoute;
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(600);
@@ -166,10 +171,10 @@ public class MeepMeepTesting {
                 return new NET_Score_3_Preload_and_2_Samples_Short(adapter);
             case NET_SCORE_4_PRELOAD_AND_3_SAMPLES_SHORT:
                 return new NET_Score_4_Preload_and_3_Samples_Short(adapter);
-            case NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE_SHORT:
-                return new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter);
-            case NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT:
-                return new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter);
+//            case NET_SCORE_5_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE_SHORT:
+//                return new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(adapter);
+//            case NET_SCORE_6_PRELOAD_AND_3_SAMPLES_AND_2_HUMAN_PLAYER_SAMPLE_SHORT:
+//                return new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(adapter);
             case NET_SCORE_1_PRELOAD:
                 return new NET_Score_1_Specimen_Preload(adapter);
             case NET_SCORE_5_SAMPLE_PRELOAD:

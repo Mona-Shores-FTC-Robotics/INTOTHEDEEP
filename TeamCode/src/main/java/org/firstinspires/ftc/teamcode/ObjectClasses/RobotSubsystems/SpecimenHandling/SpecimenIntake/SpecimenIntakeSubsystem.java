@@ -185,6 +185,14 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
 
     public boolean checkForPreload() {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE))
+        {
+            if (Robot.getInstance().getSpecimenIntakeSubsystem().specimenDetector!=null) {
+                Robot.getInstance().getSpecimenIntakeSubsystem().specimenDetector.updateDetection();
+                Robot.getInstance().getActiveOpMode().telemetry.addData("Have Specimen", specimenDetector.haveSpecimen());
+                Robot.getInstance().getActiveOpMode().telemetry.addData("Specimen Color", specimenDetector.getConsensusColor());
+            }
+        }
         return specimenDetector != null && specimenDetector.haveSpecimen();
     }
 

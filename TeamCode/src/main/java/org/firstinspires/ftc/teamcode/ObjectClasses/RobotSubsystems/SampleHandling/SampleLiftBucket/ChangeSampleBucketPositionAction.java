@@ -29,7 +29,7 @@ public class ChangeSampleBucketPositionAction implements Action {
     public void init() {
         sampleLiftBucketSubsystem = Robot.getInstance().getSampleLiftBucketSubsystem();
         // Set the intake motor power based on the target state
-        sampleLiftBucketSubsystem.setCurrentBucketState(targetState);
+        sampleLiftBucketSubsystem.setBucketTargetPositionWithSteps(targetState.position, 15);
     }
 
     @Override

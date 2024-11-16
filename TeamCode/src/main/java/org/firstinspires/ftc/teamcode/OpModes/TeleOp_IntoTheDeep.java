@@ -29,6 +29,10 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalAllianceColor;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalSideOfField;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.SubsystemType.SPECIMEN_INTAKE;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -67,7 +71,10 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
         while (opModeInInit()) {
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSide();
+
+            // Allow driver to override and lock alliance color and side
+            gamepadHandling.SelectAllianceAndSide(telemetry);
+
             telemetry.update();
             sleep(10);
         }

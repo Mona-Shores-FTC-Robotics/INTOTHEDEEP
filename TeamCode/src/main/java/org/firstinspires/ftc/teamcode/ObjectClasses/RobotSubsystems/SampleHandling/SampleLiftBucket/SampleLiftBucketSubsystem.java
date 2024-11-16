@@ -47,10 +47,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         // Bucket servo params
         public double BUCKET_SCORE_POS = 0;
         public double BUCKET_INTAKE_POS = 0.95;
-        public double BUCKET_SAFE_DESCENT_POS4 = .65;
-        public double BUCKET_SAFE_DESCENT_POS3 = .55;
-        public double BUCKET_SAFE_DESCENT_POS2 = .45;
-        public double BUCKET_SAFE_DESCENT_POS1 = .35;
 
         // Dumper servo params
         public double DUMPER_HOME_POS = .7;
@@ -83,10 +79,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     public enum BucketStates {
         BUCKET_INTAKE_POS(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS),
         BUCKET_SCORE_POS(SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS),
-        BUCKET_SAFE_DESCENT1(SAMPLE_LIFT_PARAMS.BUCKET_SAFE_DESCENT_POS1),
-        BUCKET_SAFE_DESCENT2(SAMPLE_LIFT_PARAMS.BUCKET_SAFE_DESCENT_POS2),
-        BUCKET_SAFE_DESCENT3(SAMPLE_LIFT_PARAMS.BUCKET_SAFE_DESCENT_POS3),
-        BUCKET_SAFE_DESCENT4(SAMPLE_LIFT_PARAMS.BUCKET_SAFE_DESCENT_POS4);
+        MOVING_TO_SCORE_POSITION(0),
+        MOVING_TO_INTAKE_POSITION(0);
 
         public double position;
 
@@ -192,6 +186,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
         if (bucket != null) {
             setCurrentBucketState(BucketStates.BUCKET_INTAKE_POS);
+            currentBucketPosition=BucketStates.BUCKET_INTAKE_POS.position;
+            bucket.setPosition(BucketStates.BUCKET_INTAKE_POS.position);
         }
         if (dumper != null) {
             hasDumped = false;
@@ -215,11 +211,21 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             bucket.setPosition(currentBucketPosition);
             bucketTimer.reset();
 
-            if ((bucketStepIncrement > 0 && currentBucketPosition >= targetBucketPosition) ||
-                    (bucketStepIncrement < 0 && currentBucketPosition <= targetBucketPosition)) {
-                bucket.setPosition(targetBucketPosition);
+            if (currentBucketState==BucketStates.MOVING_TO_INTAKE_POSITION &&
+                    currentBucketPosition >= targetBucketPosition )
+            {
+                bucket.setPosition(BucketStates.BUCKET_INTAKE_POS.position);
+                currentBucketState=BucketStates.BUCKET_INTAKE_POS;
+                movingToTarget = false;
+            } else if (currentBucketState==BucketStates.MOVING_TO_SCORE_POSITION &&
+                    currentBucketPosition <= targetBucketPosition)
+            {
+                bucket.setPosition(BucketStates.BUCKET_SCORE_POS.position);
+                currentBucketState=BucketStates.BUCKET_SCORE_POS;
                 movingToTarget = false;
             }
+
+
         }
 
         // Update lift control
@@ -321,7 +327,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
     public void setCurrentBucketState(BucketStates state){
         currentBucketState = state;
-        bucket.setPosition(state.position);
     }
 
     public void setCurrentDumperState(DumperStates state){
@@ -384,7 +389,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     public BucketStates getCurrentBucketState() { return currentBucketState;}
     public DumperStates getCurrentDumperState() { return currentDumperState;}
 
-    public void setBucketTargetPosition(double targetPosition, int numSteps) {
+    public void setBucketTargetPositionWithSteps(double targetPosition, int numSteps) {
         targetBucketPosition = targetPosition;
         currentBucketPosition = bucket.getPosition();  // Starting position
         bucketStepIncrement = (targetBucketPosition - currentBucketPosition) / numSteps;
@@ -461,16 +466,22 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         setTargetLiftState(SampleLiftStates.LOW_BASKET);
     }
 
-    public void setBucketToScorePosition() {
-        setBucketTargetPosition(SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS, 10);
-    }
-    public void setBucketToIntakePosition() {
-        setBucketTargetPosition(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS, 10);
-    }
     public void setDumperToHomePosition() {
         setCurrentDumperState(DumperStates.DUMPER_HOME);
     }
     public void setDumperToDumpPosition() {
         setCurrentDumperState(DumperStates.DUMPER_DUMP);
     }
+
+
+    public void setBucketToIntakePosition() {
+        currentBucketState=BucketStates.MOVING_TO_INTAKE_POSITION;
+        setBucketTargetPositionWithSteps(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS, 35);
+    }
+
+    public void setBucketToScorePosition() {
+        currentBucketState=BucketStates.MOVING_TO_SCORE_POSITION;
+        setBucketTargetPositionWithSteps(SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS, 10);
+    }
+
 }

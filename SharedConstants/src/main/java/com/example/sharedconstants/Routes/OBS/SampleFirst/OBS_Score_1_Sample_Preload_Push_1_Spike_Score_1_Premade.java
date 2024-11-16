@@ -1,10 +1,11 @@
 package com.example.sharedconstants.Routes.OBS.SampleFirst;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
+import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE;
-import static com.example.sharedconstants.FieldConstants.NET_BASKET_WALL;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_TWO;
@@ -41,7 +42,7 @@ public class OBS_Score_1_Sample_Preload_Push_1_Spike_Score_1_Premade extends Rou
     public void scorePreloadSampleInBasket() {
         obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(OBS_START_POSE_WITH_SAMPLE_PRELOAD)
                 .waitSeconds(1)
-                .strafeTo(PoseToVector(NET_BASKET_WALL))
+                .strafeToLinearHeading(PoseToVector(NET_BASKET), ANGLE_TOWARD_NET)
                 .afterDisp(3, robotAdapter.getAction(SAMPLE_LIFT_TO_HIGH_BASKET))
                 .stopAndAdd(robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET));
     }

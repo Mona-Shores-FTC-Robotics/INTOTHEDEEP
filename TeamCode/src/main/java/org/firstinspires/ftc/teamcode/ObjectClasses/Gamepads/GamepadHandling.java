@@ -81,7 +81,7 @@ public class GamepadHandling {
             // Settings are unlocked: allow manual override, locking, and disabling override
             telemetry.addLine("Settings Override Mode");
             telemetry.addLine("Lock settings with B");
-            telemetry.addLine("Toggle manual override with X");
+            telemetry.addLine("Disable manual override with X");
             telemetry.addLine();
 
             // Display whether manual override is active

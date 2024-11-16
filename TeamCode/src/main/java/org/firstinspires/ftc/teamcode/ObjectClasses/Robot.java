@@ -121,8 +121,8 @@ public class Robot {
 
                 //Expansion Hub - Servo Port 1 - blinkinleft
                 //Expansion Hub - Servo Port 2 - blinkinright
-//                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinleft", "blinkinright");
-//                registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
+                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinfront", "blinkinback");
+                registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
 
                 if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
                         hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&

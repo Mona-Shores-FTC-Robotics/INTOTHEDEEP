@@ -73,7 +73,8 @@ public class PitMode extends LinearOpMode
 
         while (opModeInInit()) {
             gamepadHandling.getDriverGamepad().readButtons();
-            gamepadHandling.SelectAndLockColorAndSide();
+            // Allow driver to override and lock alliance color and side
+            gamepadHandling.SelectAllianceAndSide(telemetry);
 
             telemetry.update();
             sleep(10);

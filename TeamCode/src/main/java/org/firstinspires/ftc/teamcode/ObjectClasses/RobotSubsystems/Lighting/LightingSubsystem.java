@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
 
@@ -23,8 +22,8 @@ public class LightingSubsystem extends SubsystemBase{
 
     public static LightingSubsystem.LightingParams LIGHTING_PARAMS = new LightingSubsystem.LightingParams();
 
-    private final RevBlinkinLedDriver blinkinLeft;
-    private final RevBlinkinLedDriver blinkinRight;
+    private final RevBlinkinLedDriver blinkinBack;
+    private final RevBlinkinLedDriver blinkinFront;
     private SpecimenDetector specimenDetector;
     private SampleDetector sampleDetector;
 
@@ -46,9 +45,9 @@ public class LightingSubsystem extends SubsystemBase{
 
 
     // Constructor with color sensor
-    public LightingSubsystem(final HardwareMap hMap, final String leftLights, final String rightLights) {
-        blinkinLeft = hMap.get(RevBlinkinLedDriver.class, leftLights);
-        blinkinRight = hMap.get(RevBlinkinLedDriver.class, rightLights);
+    public LightingSubsystem(final HardwareMap hMap, final String frontLights, final String backLights) {
+        blinkinFront = hMap.get(RevBlinkinLedDriver.class, frontLights);
+        blinkinBack = hMap.get(RevBlinkinLedDriver.class, backLights);
     }
 
     // Initialize lighting system
@@ -214,14 +213,14 @@ public class LightingSubsystem extends SubsystemBase{
     }
 
     public void setLeftLight(RevBlinkinLedDriver.BlinkinPattern pattern) {
-        blinkinLeft.setPattern(pattern);
+        blinkinBack.setPattern(pattern);
     }
     public void setRightLight(RevBlinkinLedDriver.BlinkinPattern pattern) {
-        blinkinRight.setPattern(pattern);
+        blinkinFront.setPattern(pattern);
     }
     public void setBothLights(RevBlinkinLedDriver.BlinkinPattern pattern) {
-        blinkinLeft.setPattern(pattern);
-        blinkinRight.setPattern(pattern);
+        blinkinBack.setPattern(pattern);
+        blinkinFront.setPattern(pattern);
     }
 
     public void updateLightsBasedOnAllianceColorAndSide(FieldConstants.AllianceColor finalAllianceColor, FieldConstants.SideOfField finalSideOfField) {

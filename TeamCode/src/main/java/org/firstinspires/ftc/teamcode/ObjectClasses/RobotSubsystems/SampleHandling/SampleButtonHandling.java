@@ -64,7 +64,7 @@ public class SampleButtonHandling {
                 if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
                     liftSubsystem.hasDumped = false;
                     liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
-                    liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
+                    liftSubsystem.setBucketToScorePosition();
                 }
                 break;
             case HIGH_BASKET:
@@ -102,10 +102,9 @@ public class SampleButtonHandling {
     public void onMoveSampleBucketButtonPress() {
         SampleLiftBucketSubsystem.BucketStates currentState = liftSubsystem.getCurrentBucketState();
         if (currentState == SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS) {
-            liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_SCORE_POS);
+            liftSubsystem.setBucketToScorePosition();
         } else {
-            liftSubsystem.setBucketTargetPosition(
-                    SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS.position, SAMPLE_LIFT_PARAMS.NUM_STEPS);  // Smooth move to intake position
+            liftSubsystem.setBucketToIntakePosition();
         }
     }
 

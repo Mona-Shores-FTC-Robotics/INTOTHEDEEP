@@ -36,7 +36,7 @@ public class OBS_Score2 extends OBS_Score_1_Specimen_Preload {
                 .setReversed(true)
                 .afterDisp(12, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .splineToLinearHeading(OBS_ZONE_BEFORE_PICKUP, ANGLE_TOWARD_RED)
-                .splineToLinearHeading(OBS_ZONE_PICKUP_FACE_TOWARD_BLUE, ANGLE_TOWARD_RED)
+                .splineToLinearHeading(OBS_ZONE_PICKUP_FACE_TOWARD_BLUE, ANGLE_TOWARD_RED,slowVelocity,slowAcceleration)
                 .stopAndAdd(robotAdapter.getAction(RobotAdapter.ActionType.WAIT_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .splineToLinearHeading(chamberSlot, ANGLE_TOWARD_BLUE)
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));

@@ -191,21 +191,26 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new SequentialAction(redoSupplier.get(), redoSupplier.get(), redoSupplier.get());
                     } else return problem();
 
-            case INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
-                    {
-                        return new SequentialAction(
-                                new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF),
-                                new SequentialAction(
-                                        new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::runWithoutEncodersReverse),
-                                        new SleepAction(.5),
-                                        new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::stopActuator),
-                                        new InstantAction(Robot.getInstance().getSampleButtonHandling()::setIntakeReverse),
-                                        new SleepAction(.6),
-                                        new InstantAction(Robot.getInstance().getSampleButtonHandling()::setIntakeOff)
-                                )
-                        );
-                    } else return problem();
+//            case INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT:
+//                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
+//                    {
+//                        return new SequentialAction(
+//                                new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF),
+//                                new SequentialAction(
+//                                        new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::runWithoutEncodersReverse),
+//                                        new SleepAction(.5),
+//                                        new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::stopActuator),
+//                                        new InstantAction(Robot.getInstance().getSampleButtonHandling()::setIntakeReverse),
+//                                        new SleepAction(.6),
+//                                        new InstantAction(Robot.getInstance().getSampleButtonHandling()::setIntakeOff)
+//                                )
+//                        );
+//                    } else return problem();
+
+                case SAMPLE_ACTUATOR_RETRCACT:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+                     return new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract);
+                    }
 
                 case DUMP_SAMPLE_IN_OBSERVATION_ZONE:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET))

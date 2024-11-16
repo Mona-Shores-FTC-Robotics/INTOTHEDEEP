@@ -18,8 +18,10 @@ import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_4_Preloa
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short;
 import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short;
 import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time;
+import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Score2;
 import com.example.sharedconstants.Routes.OBS.OBS_Intake_Automatic_Sample_Handling;
 import com.example.sharedconstants.Routes.OBS.OBS_Intake_Transfer_Dump;
+import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -52,12 +54,17 @@ public class AutoSelector extends LinearOpMode {
         List<Routes> netRouteList = new ArrayList<>();
         robotAdapter.setAllianceColor(allianceColor);
 
-        // Less points but scores perectly fine.
+        // Tested 11-15-24
+        netRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
+        netRoute.buildRoute();
+        netRouteList.add(netRoute);
+
+        // Tested 11-15-24
         netRoute = new NET_Score_2_Preload_and_1_Sample_Short(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
-        // Score more points than last.
+        // Tested 11-15-24
         netRoute = new NET_Score_3_Preload_and_2_Samples_Short(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
@@ -77,13 +84,8 @@ public class AutoSelector extends LinearOpMode {
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
-        // Scores less points.
-        netRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
-        netRoute.buildRoute();
-        netRouteList.add(netRoute);
-
         // It scores a lot of points and it won't inter fear with the robot.
-        netRoute = new NET_Score5_SamplePreload(robotAdapter);
+        netRoute = new NET_Score5_SamplePreload(robotAdapter); //reviewed 11/15/24
         netRoute.buildRoute();
         netRouteList.add(netRoute); // Tristan + Landon likes
 
@@ -95,14 +97,13 @@ public class AutoSelector extends LinearOpMode {
         List<Routes> obsRouteList = new ArrayList<>();
         robotAdapter.setAllianceColor(allianceColor);
 
-        obsRoute = new OBS_Intake_Automatic_Sample_Handling(robotAdapter);
+        obsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
-        // Gets in the way of the other side also tramples over samples.
-        obsRoute = new OBS_Intake_Transfer_Dump(robotAdapter);
+        obsRoute = new OBS_Score2(robotAdapter);
         obsRoute.buildRoute();
-        obsRouteList.add(obsRoute); // Tristan + Landon likes
+        obsRouteList.add(obsRoute);
 
         obsRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time(robotAdapter);
         obsRoute.buildRoute();
@@ -144,6 +145,8 @@ public class AutoSelector extends LinearOpMode {
 
             // Allow driver to override and lock alliance color and side
             gamepadHandling.SelectAllianceAndSide(telemetry);
+            selectRoute();
+
 
             //Handle Lighting During Init
             if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.LIGHTING)) {

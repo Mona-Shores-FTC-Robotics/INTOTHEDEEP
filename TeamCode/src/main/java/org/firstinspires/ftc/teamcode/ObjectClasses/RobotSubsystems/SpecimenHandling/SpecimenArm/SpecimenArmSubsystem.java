@@ -29,7 +29,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     public static class SpecimenArmParams {
 
         //Flip parameters
-        public double CCW_FLIP_TIME_MS = 250;
+        public double CCW_FLIP_TIME_MS = 350;
         public double CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
         public double CW_FLIP_TIME_MS = 400;
         public double CONSTANT_POWER_FOR_CW_FLIP = -0.9;
@@ -51,7 +51,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
         //Preset Angles
         public double CCW_HOME = 245.69;
-        public double SPECIMEN_PICKUP_ANGLE = 211.0;
+        public double SPECIMEN_PICKUP_ANGLE = 219;
         //210 is bad
         //211 worked
         //215 most we can do
