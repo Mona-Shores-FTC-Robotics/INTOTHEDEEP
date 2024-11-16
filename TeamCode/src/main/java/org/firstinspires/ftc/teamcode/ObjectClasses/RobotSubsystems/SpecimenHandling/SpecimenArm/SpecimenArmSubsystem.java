@@ -31,7 +31,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
         //Flip parameters
         public double CCW_FLIP_TIME_MS = 500;
-        public double CONSTANT_POWER_FOR_CCW_FLIP = .9;
+        public double CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
         public double CW_FLIP_TIME_MS = 400;
         public double CONSTANT_POWER_FOR_CW_FLIP = -0.9;
         public double ZERO_POWER_SETTLE_TIME_MS = 225;
@@ -215,7 +215,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
             case FLIPPING_TO_CCW:
                 if (flipArmTimer.milliseconds() > SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS) {
                     arm.setPower(0);
-//                    Robot.getInstance().getSpecimenIntakeSubsystem().setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_REVERSE);
+                    Robot.getInstance().getSpecimenIntakeSubsystem().setSlowReverse();
                     setCurrentState(SpecimenArmStates.ZERO_POWER_AT_CCW_ARM_HOME);
                     zeroPowerTimer.reset();
                 }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions;
 
+import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
+import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static java.lang.Math.PI;
@@ -47,10 +49,6 @@ public class DriveToNetZone implements Action {
         if (!started) {
             RealRobotAdapter robotAdapter = new RealRobotAdapter();
             Pose2d currentPose = driveSubsystem.getMecanumDrive().pose;
-            //TODO this works but is a bit unintuitive, if we are blue we have to rotate the pose so that the getACtion can automatically flip it back (along with the path)
-            //  I think this works in auto because we just feed it the same Red start values regardless of whether we are blue or red?
-
-            // todo camera/apriltag?
 
             if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
                 currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log()+PI);
@@ -58,7 +56,7 @@ public class DriveToNetZone implements Action {
 
             action = robotAdapter.getActionBuilder(currentPose)
                     .setTangent(ANGLE_TOWARD_NET)
-                    .splineToLinearHeading(FieldConstants.NET_BASKET_NEUTRAL_SIDE, ANGLE_TOWARD_RED).build();
+                    .splineToLinearHeading(FieldConstants.NET_BASKET, ANGLE_225_DEGREES).build();
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry
             started = true; // Ensure the action is only initialized once

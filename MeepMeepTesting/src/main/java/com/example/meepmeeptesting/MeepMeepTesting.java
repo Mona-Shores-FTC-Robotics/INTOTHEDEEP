@@ -53,7 +53,7 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_INTAKE_3_SCORE_4_PRELOAD_AND_1_PREMADE_AND_3_SPIKE_SPECIMENS_NOT_AT_1_TIME;
+    private static final RoutesToRun redObservationRoute = OBS_PUSH_3_SPIKE_SAMPLES_IN_ONE_PATH;
     private static final RoutesToRun blueObservationRoute = redObservationRoute;
     private static final RoutesToRun redNetRoute = NET_SCORE_3_PRELOAD_AND_2_SAMPLES_SHORT;
     private static final RoutesToRun blueNetRoute = redNetRoute;

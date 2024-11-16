@@ -5,31 +5,28 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.RobotAdapter;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
 
-import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalAllianceColor;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalSideOfField;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState;
 
 @Config
 public class SpecimenIntakeSubsystem extends SubsystemBase {
 
 
+
     public static class SpecimenIntakeParams {
+        public double  SLOW_REVERSE_DELAY_TIME_MS = 1500;
+        public double INTAKE_SLOW_REVERSE_POWER = -.2;
         public double INTAKE_ON_POWER = -0.8;
         public double INTAKE_REVERSE_POWER = 0.8;
         public double INTAKE_OFF_POWER = 0.0;
@@ -43,7 +40,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     public enum SpecimenIntakeStates {
         INTAKE_ON(SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER),
         INTAKE_REVERSE(SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER),
-        INTAKE_OFF(SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER);
+        INTAKE_OFF(SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER),
+        SLOW_REVERSE(SPECIMEN_INTAKE_PARAMS.INTAKE_SLOW_REVERSE_POWER);
         public double power;
         SpecimenIntakeStates(double power) {
             this.power = power;
@@ -61,6 +59,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     private Boolean preloadModeActive;
 
     private final SpecimenDetector specimenDetector;
+
+    private ElapsedTime slowReverseTimer = new ElapsedTime();
 
     // Constructor with color sensor
     public SpecimenIntakeSubsystem(final HardwareMap hMap, final String intakeServo, final String colorSensorName) {
@@ -87,7 +87,10 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (specimenDetector != null && Robot.getInstance().getSpecimenArmSubsystem().getCurrentState() == SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP) {
+        if (specimenDetector != null
+                && (Robot.getInstance().getSpecimenArmSubsystem().getCurrentState() == SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP||
+                    Robot.getInstance().getSpecimenArmSubsystem().getCurrentState()== SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME))
+        {
             // Update the detection state via the detector
 
             DetectionState specimenDetectionState = specimenDetector.updateDetection();
@@ -103,6 +106,11 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
                 case NOT_DETECTED:
                     break;
+            }
+        }
+        if (currentState == SpecimenIntakeStates.SLOW_REVERSE) {
+            if (slowReverseTimer.milliseconds() > SPECIMEN_INTAKE_PARAMS.SLOW_REVERSE_DELAY_TIME_MS) {
+                turnOffIntake();
             }
         }
         updateParameters();
@@ -145,6 +153,13 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     public void reverseIntake() {
         currentState = SpecimenIntakeStates.INTAKE_REVERSE;
         setPower(currentState.power);
+    }
+
+
+    public void setSlowReverse() {
+        currentState = SpecimenIntakeStates.SLOW_REVERSE;
+        setPower(currentState.power);
+
     }
 
 
