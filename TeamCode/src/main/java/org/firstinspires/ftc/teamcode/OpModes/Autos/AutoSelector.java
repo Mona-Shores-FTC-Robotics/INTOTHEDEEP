@@ -18,6 +18,7 @@ import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preloa
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_4_Preload_and_3_Samples;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples;
+import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_All_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle;
@@ -84,15 +85,15 @@ public class AutoSelector extends LinearOpMode {
 
         //Best Auto but needs high speeds (~50 velocity/acceleration)
         //This would just leave a preload sample by our robot for the NET bot to score and then score all 5 specimens
-        obsRoute = new OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
+//        obsRoute = new OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
 
         //Superb auto, but needs high speeds (~50 velocity/acceleration)
         //Scores preload Specimen, pushes 3 spikes to Human player, and then picks four specimens up from human player and scores them
-        obsRoute = new OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
+//        obsRoute = new OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
 
         //Most Reasonable Auto (~25 velocity/acceleration)
         //Scores preload Specimen, pushes 2 spikes to Human player, and then picks three specimens up from human player and scores them
@@ -104,9 +105,9 @@ public class AutoSelector extends LinearOpMode {
         //Next Most Reasonable Auto (~30 velocity/acceleration)
         //Scores preload Specimen, pushes 3 spikes to Human player, and then picks three specimens up from human player and scores them
         //This assumes our partner took one of the Human Player starting specimens
-        obsRoute = new OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
+//        obsRoute = new OBS_Score4_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
 
         obsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
         obsRoute.buildRoute();

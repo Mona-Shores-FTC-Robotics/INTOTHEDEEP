@@ -130,13 +130,13 @@ public class RealRobotAdapter implements RobotAdapter {
                     } else return problem();
 
                 case MOVE_PRELOAD_SPECIMEN_TO_CW_HOME:
-                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-                        return new ParallelAction(
-                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFast)
-                        );
+                    if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+                        return new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFast);
                     } else return problem();
 
-                case HANG_SPECIMEN_ON_HIGH_CHAMBER:
+
+
+            case HANG_SPECIMEN_ON_HIGH_CHAMBER:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
                         return new SequentialAction(
                                 new InstantAction(robot.getSpecimenArmSubsystem()::flipCCWFast),
@@ -173,9 +173,12 @@ public class RealRobotAdapter implements RobotAdapter {
                 case GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE))
                     {
-                        return  new ParallelAction(
-                                    new InstantAction(()->Robot.getInstance().getSpecimenArmSubsystem().setTargetAngle(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP)),
-                                    new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON));
+                        return new ConditionalAction(
+                                new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFast),
+                                new ParallelAction(
+                                        new InstantAction(()->Robot.getInstance().getSpecimenArmSubsystem().setTargetAngle(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP)),
+                                        new ChangeSpecimenIntakePowerAction(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON)),
+                                Robot.getInstance().getSpecimenIntakeSubsystem().getSpecimenDetector()::haveSpecimen);
                     } else return problem();
 
                 case SPECIMEN_PICKUP_RETRY:

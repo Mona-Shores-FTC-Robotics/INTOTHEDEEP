@@ -87,21 +87,21 @@ public class DriveParams {
         MecanumDrive.PARAMS.kA = 0.03;
 
         // Path profile parameters (in inches)
-        MecanumDrive.PARAMS.maxWheelVel = 45;
-        MecanumDrive.PARAMS.minProfileAccel = -45;
-        MecanumDrive.PARAMS.maxProfileAccel = 45;
+        MecanumDrive.PARAMS.maxWheelVel = 26;
+        MecanumDrive.PARAMS.minProfileAccel = -26;
+        MecanumDrive.PARAMS.maxProfileAccel = 26;
 
         // Turn profile parameters (in radians)
         MecanumDrive.PARAMS.maxAngVel = Math.PI*2; // shared with path//
         MecanumDrive.PARAMS.maxAngAccel = Math.PI*2; // shared with path
 
         // Path controller gains
-        MecanumDrive.PARAMS.axialGain = 8;
+        MecanumDrive.PARAMS.axialGain = 8.0;
         MecanumDrive.PARAMS.lateralGain = 8;
         MecanumDrive.PARAMS.headingGain = 6; // Shared with turn
 
         // Velocity controller gains
-        MecanumDrive.PARAMS.axialVelGain = 0.1;
+        MecanumDrive.PARAMS.axialVelGain = 0.0;
         MecanumDrive.PARAMS.lateralVelGain = 0.0;
         MecanumDrive.PARAMS.headingVelGain = 0.0; // Shared with turn
     }

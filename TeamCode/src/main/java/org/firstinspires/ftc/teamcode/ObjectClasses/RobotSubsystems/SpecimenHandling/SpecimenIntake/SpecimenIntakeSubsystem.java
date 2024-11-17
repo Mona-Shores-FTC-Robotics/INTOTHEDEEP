@@ -26,13 +26,12 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     public static class SpecimenIntakeParams {
         public double  SLOW_REVERSE_DELAY_TIME_MS = 1500;
-        public double INTAKE_SLOW_REVERSE_POWER = -.2;
-        public double INTAKE_ON_POWER = -0.8;
-        public double INTAKE_REVERSE_POWER = 0.8;
+        public double INTAKE_ON_POWER = -1.0;
+        public double INTAKE_REVERSE_POWER = 1.0;
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
         public double PROXIMITY_THRESHOLD_IN_MM = 30;
-        public int HISTORY_SIZE = 20;
+        public int HISTORY_SIZE = 6;
     }
 
     public static SpecimenIntakeParams SPECIMEN_INTAKE_PARAMS = new SpecimenIntakeParams();
@@ -40,8 +39,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     public enum SpecimenIntakeStates {
         INTAKE_ON(SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER),
         INTAKE_REVERSE(SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER),
-        INTAKE_OFF(SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER),
-        SLOW_REVERSE(SPECIMEN_INTAKE_PARAMS.INTAKE_SLOW_REVERSE_POWER);
+        INTAKE_OFF(SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER);
         public double power;
         SpecimenIntakeStates(double power) {
             this.power = power;
@@ -59,9 +57,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     private Boolean preloadModeActive;
 
     private final SpecimenDetector specimenDetector;
-
-    private ElapsedTime slowReverseTimer = new ElapsedTime();
-
     // Constructor with color sensor
     public SpecimenIntakeSubsystem(final HardwareMap hMap, final String intakeServo, final String colorSensorName) {
         specimenIntake = hMap.get(CRServo.class, intakeServo);
@@ -87,9 +82,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (specimenDetector != null
-                && (Robot.getInstance().getSpecimenArmSubsystem().getCurrentState() == SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP||
-                    Robot.getInstance().getSpecimenArmSubsystem().getCurrentState()== SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME))
+        if (specimenDetector != null)
         {
             // Update the detection state via the detector
 
@@ -106,11 +99,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
                 case NOT_DETECTED:
                     break;
-            }
-        }
-        if (currentState == SpecimenIntakeStates.SLOW_REVERSE) {
-            if (slowReverseTimer.milliseconds() > SPECIMEN_INTAKE_PARAMS.SLOW_REVERSE_DELAY_TIME_MS) {
-                turnOffIntake();
             }
         }
         updateParameters();
@@ -155,14 +143,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         setPower(currentState.power);
     }
 
-
-    public void setSlowReverse() {
-        currentState = SpecimenIntakeStates.SLOW_REVERSE;
-        setPower(currentState.power);
-
-    }
-
-
     // Update intake parameters dynamically (called in periodic)
     private void updateParameters() {
         // Update the power for each state dynamically from dashboard changes
@@ -206,8 +186,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         {
             if (Robot.getInstance().getSpecimenIntakeSubsystem().specimenDetector!=null) {
                 Robot.getInstance().getSpecimenIntakeSubsystem().specimenDetector.updateDetection();
-                Robot.getInstance().getActiveOpMode().telemetry.addData("Have Specimen", specimenDetector.haveSpecimen());
-                Robot.getInstance().getActiveOpMode().telemetry.addData("Specimen Color", specimenDetector.getConsensusColor());
             }
         }
         return specimenDetector != null && specimenDetector.haveSpecimen();

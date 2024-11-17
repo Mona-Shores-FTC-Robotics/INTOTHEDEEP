@@ -51,7 +51,7 @@ public class FieldConstants {
     public static double SAMPLE_LENGTH = 4;
     public static double HALF_SAMPLE_LENGTH = SAMPLE_LENGTH/2.0;
 
-    public static double PICKUP_ROOM = 1.5;
+    public static double PICKUP_ROOM = 2.5;
 
     public static double ANGLE_TOWARD_OBSERVATION = Math.toRadians(0);
     public static double ANGLE_30_DEGREES = Math.toRadians(30);
@@ -68,17 +68,17 @@ public class FieldConstants {
 
     //Chamber Slot Poses
     public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH+3, ANGLE_TOWARD_BLUE);
-    public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_THREE = CHAMBER_SLOT_TWO.plus(new Twist2d(new Vector2d(0, SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_FOUR = CHAMBER_SLOT_THREE.plus(new Twist2d(new Vector2d(0, SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_FIVE = CHAMBER_SLOT_FOUR.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_SIX = CHAMBER_SLOT_FIVE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_SEVEN = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_EIGHT = CHAMBER_SLOT_SEVEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_NINE = CHAMBER_SLOT_EIGHT.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_TEN = CHAMBER_SLOT_NINE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_ELEVEN = CHAMBER_SLOT_TEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+1), 0));
-    public static Pose2d CHAMBER_SLOT_TWELVE = CHAMBER_SLOT_ELEVEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+1), 0));
+    public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_THREE = CHAMBER_SLOT_TWO.plus(new Twist2d(new Vector2d(0, SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_FOUR = CHAMBER_SLOT_THREE.plus(new Twist2d(new Vector2d(0, SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_FIVE = CHAMBER_SLOT_FOUR.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_SIX = CHAMBER_SLOT_FIVE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_SEVEN = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_EIGHT = CHAMBER_SLOT_SEVEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_NINE = CHAMBER_SLOT_EIGHT.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_TEN = CHAMBER_SLOT_NINE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_ELEVEN = CHAMBER_SLOT_TEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_TWELVE = CHAMBER_SLOT_ELEVEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
 
     public static Pose2d NET_START_POSE = new Pose2d(HALF_ROBOT_LENGTH-TILE,  -HALF_FIELD + HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
     public static Pose2d NET_DO_NOTHING = new Pose2d(NET_START_POSE.position.plus(new Vector2d(0, 0.01)), ANGLE_TOWARD_BLUE);
@@ -118,13 +118,13 @@ public class FieldConstants {
 
     public static Pose2d RIGHT_OF_CHAMBER =  new Pose2d(TILE+HALF_TILE+1, -TILE-4, ANGLE_TOWARD_BLUE);
 
-    public static Pose2d OBS_BEHIND_SPIKE_ONE = new Pose2d(2*TILE-QUARTER_TILE+1, -HALF_TILE, ANGLE_TOWARD_RED);
-    public static Pose2d OBS_SPIKE_ONE = new Pose2d(2*TILE, -TILE, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_DELIVER_SPIKE_ONE = new Pose2d(2*TILE, -2*TILE-SAMPLE_LENGTH, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_BEHIND_SPIKE_ONE = new Pose2d(2*TILE-QUARTER_TILE+2, -HALF_TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_SPIKE_ONE = new Pose2d(2*TILE+1, -TILE, Math.toRadians(96));
+    public static Pose2d OBS_DELIVER_SPIKE_ONE = new Pose2d(2*TILE+1, -TILE-HALF_TILE-QUARTER_TILE-5.9, Math.toRadians(96));
 
-    public static Pose2d OBS_BEHIND_SPIKE_TWO = new Pose2d(2*TILE+QUARTER_TILE, -HALF_TILE, ANGLE_TOWARD_RED);
-    public static Pose2d OBS_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH, -TILE, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_DELIVER_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH, -2*TILE-SAMPLE_LENGTH, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_BEHIND_SPIKE_TWO = new Pose2d(2*TILE+QUARTER_TILE+2, -HALF_TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH+1, -TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_DELIVER_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH+1, -TILE-HALF_TILE-QUARTER_TILE-5.5, ANGLE_TOWARD_BLUE);
 
     public static Pose2d OBS_BEHIND_SPIKE_THREE = new Pose2d(3*TILE-HALF_ROBOT_WIDTH-QUARTER_TILE+1, -HALF_TILE+EIGHTH_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d OBS_SPIKE_THREE = new Pose2d(3*TILE-HALF_ROBOT_WIDTH+.5, -TILE, ANGLE_TOWARD_BLUE);

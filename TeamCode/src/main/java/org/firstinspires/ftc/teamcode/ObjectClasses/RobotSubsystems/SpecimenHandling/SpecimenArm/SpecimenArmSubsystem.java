@@ -30,18 +30,19 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
 
         //Flip parameters
-        public double CCW_FLIP_TIME_MS = 500;
+        public double CCW_FLIP_TIME_MS = 550; //this worked at 450 for the 4 spec auto
+        public double REVERSE_FLIP_TIME_MS = CCW_FLIP_TIME_MS-100; //start reversing 100 ms before we stop the energy burst
         public double CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
-        public double CW_FLIP_TIME_MS = 400;
-        public double CONSTANT_POWER_FOR_CW_FLIP = -0.9;
-        public double ZERO_POWER_SETTLE_TIME_MS = 225;
+        public double CW_FLIP_TIME_MS = 700;
+        public double CONSTANT_POWER_FOR_CW_FLIP = -1.0;
+        public double ZERO_POWER_SETTLE_TIME_MS = 828;
 
         //GamePad parameters
         public double STICK_SCALE_FACTOR = 5;
         public double DEAD_ZONE = 0.05;
 
         //PID parameters
-        public double P = 0.0165, I = .09, D = .001; // PID coefficients
+        public double P = 0.0158, I = .05, D = .001; // PID coefficients
         public double ANGLE_TOLERANCE_THRESHOLD_DEGREES = .5;
 
         //Arm Feedforward parameters
@@ -99,14 +100,14 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     private double currentVelocity;
     private double currentTicks;
 
+    private boolean reversing=false;
+
     //State Variables
     private SpecimenArmStates currentState;
 
     //Angle Variables
     private double currentAngleDegrees;
     private double targetAngleDegrees;
-
-
 
     //Feedforward
     private ArmFeedforward armFeedforward;
@@ -213,9 +214,13 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                 break;
 
             case FLIPPING_TO_CCW:
+                if (flipArmTimer.milliseconds() > SPECIMEN_ARM_PARAMS.REVERSE_FLIP_TIME_MS && !reversing)
+                {
+                    Robot.getInstance().getSpecimenIntakeSubsystem().reverseIntake();
+                    reversing=true;
+                }
                 if (flipArmTimer.milliseconds() > SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS) {
                     arm.setPower(0);
-                    Robot.getInstance().getSpecimenIntakeSubsystem().setSlowReverse();
                     setCurrentState(SpecimenArmStates.ZERO_POWER_AT_CCW_ARM_HOME);
                     zeroPowerTimer.reset();
                 }
@@ -224,7 +229,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
             case ZERO_POWER_AT_CCW_ARM_HOME:
                 if (zeroPowerTimer.milliseconds() > SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS) {
                     setCurrentState(SpecimenArmStates.CCW_ARM_HOME);
-                    Robot.getInstance().getSpecimenIntakeSubsystem().setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
                 }
                 break;
 
@@ -235,6 +239,15 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                 break;
 
             case CCW_ARM_HOME:
+                Robot.getInstance().getSpecimenIntakeSubsystem().setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
+                reversing=false;
+                // Check if movement is needed based on the target angle
+                if (Math.abs(targetAngleDegrees - currentAngleDegrees) > SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES) {
+                    moveToTargetAngle(); // Move towards the target if outside tolerance
+                } else {
+                    maintainPosition(); // Hold the position if within tolerance
+                }
+                break;
             case CW_ARM_HOME:
             case SPECIMEN_PICKUP:
             default:
@@ -254,7 +267,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         flipArmTimer.reset();
         currentState=SpecimenArmStates.FLIPPING_TO_CCW;
         targetAngleDegrees=CCW_ARM_HOME.angle;
-        pidController.setSetPoint(SpecimenArmStates.CCW_ARM_HOME.angle);
+        pidController.setSetPoint(CCW_ARM_HOME.angle);
         arm.setPower(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP);
     }
 
@@ -264,12 +277,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         targetAngleDegrees= CW_ARM_HOME.angle;
         pidController.setSetPoint(CW_ARM_HOME.angle);
         arm.setPower(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP);
-    }
-
-    public void fallToCCW() {
-        arm.setPower(0);
-        setCurrentState(SpecimenArmStates.ZERO_POWER_AT_CCW_ARM_HOME);
-        zeroPowerTimer.reset();
     }
 
     public void gotoPickupAngle() {
