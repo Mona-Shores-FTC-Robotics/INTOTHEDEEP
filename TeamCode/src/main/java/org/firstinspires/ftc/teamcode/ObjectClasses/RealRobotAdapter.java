@@ -12,9 +12,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
-import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
@@ -22,7 +20,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
@@ -207,7 +204,7 @@ public class RealRobotAdapter implements RobotAdapter {
 //                        );
 //                    } else return problem();
 
-                case SAMPLE_ACTUATOR_RETRCACT:
+                case SAMPLE_ACTUATOR_RETRACT:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
                      return new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract);
                     }

@@ -8,9 +8,9 @@ import static com.example.sharedconstants.FieldConstants.HUMAN_PLAYER_SAMPLE_STA
 import static com.example.sharedconstants.FieldConstants.NET_ASCENT;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_NEUTRAL_SIDE;
-import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_SHORT;
-import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE_SHORT;
-import static com.example.sharedconstants.FieldConstants.NET_SPIKE_TWO_SHORT;
+import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE;
+import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE;
+import static com.example.sharedconstants.FieldConstants.NET_SPIKE_TWO;
 import static com.example.sharedconstants.FieldConstants.NET_START_POSE;
 import static com.example.sharedconstants.FieldConstants.NEXT_TO_NET_ASCENT;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
@@ -66,19 +66,19 @@ public class NET_Score5_SamplePreload extends Routes {
     private void pickupNeutralSample1() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .afterDisp(1, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
-                .splineToLinearHeading(NET_SPIKE_ONE_SHORT, ANGLE_TOWARD_BLUE);
+                .splineToLinearHeading(NET_SPIKE_ONE , ANGLE_TOWARD_BLUE);
     }
 
     private void pickupNeutralSample2() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .afterDisp(1, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
-                .splineToConstantHeading(PoseToVector(NET_SPIKE_TWO_SHORT), ANGLE_TOWARD_BLUE);
+                .splineToConstantHeading(PoseToVector(NET_SPIKE_TWO), ANGLE_TOWARD_BLUE);
     }
 
     private void pickupNeutralSample3() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .afterDisp(1, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
-                .splineToConstantHeading(PoseToVector(NET_SPIKE_THREE_SHORT), ANGLE_TOWARD_BLUE);
+                .splineToConstantHeading(PoseToVector(NET_SPIKE_THREE), ANGLE_TOWARD_BLUE);
     }
 
 public void pickupHumanPlayerSample1() {

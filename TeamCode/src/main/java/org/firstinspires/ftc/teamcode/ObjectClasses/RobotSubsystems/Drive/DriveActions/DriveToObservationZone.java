@@ -79,11 +79,11 @@ public class DriveToObservationZone implements Action {
 
             action = robotAdapter.getActionBuilder(currentPose)
                     .setTangent(ANGLE_TOWARD_OBSERVATION)
-                    .splineToLinearHeading(FieldConstants.OBS_ZONE_BEFORE_PICKUP, ANGLE_TOWARD_RED)
+                    .splineToLinearHeading(FieldConstants.OBS_TRIANGLE_APPROACH, ANGLE_TOWARD_RED)
                     .setReversed(true)
                     .afterDisp(0, new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::gotoPickupAngle))
                     .afterDisp(0, new InstantAction(Robot.getInstance().getSpecimenIntakeSubsystem()::turnOnIntake))
-                    .splineToLinearHeading(FieldConstants.OBS_ZONE_PICKUP_FACE_TOWARD_BLUE, ANGLE_TOWARD_RED)
+                    .splineToLinearHeading(FieldConstants.OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED)
                     .build();
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry

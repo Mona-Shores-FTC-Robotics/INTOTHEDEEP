@@ -1,13 +1,14 @@
-package com.example.sharedconstants.Routes.OBS.PushAllAtOnce;
+package com.example.sharedconstants.Routes.OBS;
 
+import static com.example.sharedconstants.FieldConstants.ANGLE_115_DEGREES;
+import static com.example.sharedconstants.FieldConstants.ANGLE_315_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FIVE;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FOUR;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_THREE;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWO;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_STAGING_FOR_PICKUP;
-import static com.example.sharedconstants.FieldConstants.OBS_APPROACH;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_TWO;
@@ -17,15 +18,18 @@ import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_TWO;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_TWO;
-import static com.example.sharedconstants.FieldConstants.OBS_ZONE_PICKUP;
+import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_APPROACH;
+import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_PICKUP;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static com.example.sharedconstants.FieldConstants.RIGHT_OF_CHAMBER;
+import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
+
+import com.acmerobotics.roadrunner.Pose2d;
 import com.example.sharedconstants.RobotAdapter;
-import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 
-public class OBS_Push3SpikeSampleInOnePath extends OBS_Score_1_Specimen_Preload {
+public class OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle extends OBS_Score_1_Specimen_Preload {
 
-    public OBS_Push3SpikeSampleInOnePath(RobotAdapter robotAdapter) {
+    public OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
 
@@ -34,18 +38,20 @@ public class OBS_Push3SpikeSampleInOnePath extends OBS_Score_1_Specimen_Preload 
         pushFirstNeutralSpecimen();
         pushSecondNeutralSpecimen();
         pushThirdNeutralSpecimen();
-        pickupSpecimenFromWall(true);
-        scoreOnHighChamber(CHAMBER_SLOT_TWO);
-        pickupSpecimenFromWall();
-        scoreOnHighChamber(CHAMBER_SLOT_THREE);
-        pickupSpecimenFromWall();
-        scoreOnHighChamber(CHAMBER_SLOT_FOUR);
-        pickupSpecimenFromWall();
+        pickupSpecimenFromTriangleComingFromThirdSpike();
+        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_TWO);
+        pickupSpecimenFromTriangle();
+        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_THREE);
+        pickupSpecimenFromTriangle();
+        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FOUR);
+        pickupSpecimenFromTriangle();
+        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE);
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
     public void pushFirstNeutralSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+                .setTangent(ANGLE_315_DEGREES)
                 .splineToConstantHeading(PoseToVector(RIGHT_OF_CHAMBER), ANGLE_TOWARD_BLUE)
                 .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_ONE), ANGLE_TOWARD_OBSERVATION)
                 .splineToConstantHeading(PoseToVector(OBS_SPIKE_ONE), ANGLE_TOWARD_RED)
@@ -66,14 +72,30 @@ public class OBS_Push3SpikeSampleInOnePath extends OBS_Score_1_Specimen_Preload 
                 .splineToConstantHeading(PoseToVector(OBS_DELIVER_SPIKE_THREE), ANGLE_TOWARD_RED);
     }
 
-    public void pickupSpecimenFromWall() {
+
+    public void scoreOnHighChamberFromTriangle(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .splineToSplineHeading(CHAMBER_STAGING_FOR_PICKUP, ANGLE_TOWARD_OBSERVATION)
-                .afterDisp(5,robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
-                .splineToConstantHeading(PoseToVector(OBS_APPROACH), ANGLE_TOWARD_RED)
-                .splineToConstantHeading(PoseToVector(OBS_ZONE_PICKUP), ANGLE_TOWARD_RED, slowVelocity, slowAcceleration);
+                .setReversed(false)
+                .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_115_DEGREES)
+                .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));
     }
 
+    public void pickupSpecimenFromTriangle() {
+        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+                .setTangent(ANGLE_315_DEGREES)
+                .afterDisp(3, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
+                .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_APPROACH), ANGLE_TOWARD_RED)
+                .setReversed(true)
+                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, slowVelocity, slowAcceleration);
+    }
+
+    public void pickupSpecimenFromTriangleComingFromThirdSpike() {
+        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+                .afterDisp(3, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
+                .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_APPROACH), ANGLE_TOWARD_RED)
+                .setReversed(true)
+                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, slowVelocity, slowAcceleration);
+    }
 
 }
 

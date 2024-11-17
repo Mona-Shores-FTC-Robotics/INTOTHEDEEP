@@ -21,12 +21,12 @@ import java.util.Arrays;
 public abstract class Routes {
 
     // Velocity and acceleration overrides
-    public static final double SLOW_VELOCITY_OVERRIDE = 10;
-    public static final double SLOW_ACCELERATION_OVERRIDE = 10;
+    public static final double SLOW_VELOCITY_OVERRIDE = 15;
+    public static final double SLOW_ACCELERATION_OVERRIDE = 15;
     public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
 
-    public static final double NORMAL_VELOCITY_OVERRIDE = 25;
-    public static final double NORMAL_ACCELERATION_OVERRIDE = 25;
+    public static final double NORMAL_VELOCITY_OVERRIDE = 30;
+    public static final double NORMAL_ACCELERATION_OVERRIDE = 30;
     public static final double NORMAL_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
 
     public static final double FAST_VELOCITY_OVERRIDE = 40;
@@ -110,26 +110,4 @@ public abstract class Routes {
         ));
         fastAcceleration = new ProfileAccelConstraint(-FAST_ACCELERATION_OVERRIDE, FAST_ACCELERATION_OVERRIDE);
     }
-
-    public void pickupSpecimenFromWall(Boolean reversed) {
-        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .afterDisp(3, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
-                .setReversed(reversed)
-                .splineToLinearHeading(OBS_ZONE_PICKUP, ANGLE_TOWARD_RED, slowVelocity, slowAcceleration);
-    }
-
-    public void scoreOnHighChamber(Pose2d chamberSlot) {
-        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setReversed(true)
-                .splineToSplineHeading(CHAMBER_STAGING_FOR_SCORING, ANGLE_TOWARD_NET)
-                .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_NET)
-                .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE)
-                .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER))
-                .setTangent(ANGLE_315_DEGREES)
-                .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(3, -3)), ANGLE_TOWARD_OBSERVATION)
-                .afterDisp(0, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME));
-    }
-
-
-
 }

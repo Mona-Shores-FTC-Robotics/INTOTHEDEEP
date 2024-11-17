@@ -27,6 +27,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         public double INTAKE_REVERSE_POWER = -1;
         public double INTAKE_OFF_POWER = 0.0;
         public double MAX_POWER = 1.0;  // Max allowable power for intake servo
+
         // Set a minimum proximity threshold to consider an object as "near"
         public double PROXIMITY_THRESHOLD = 40;
         public int COLOR_HISTORY_SIZE = 5;
@@ -95,7 +96,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (sampleDetector != null) {
+
+        if (isColorSensorConnected()) {
             DetectionState detectionState = sampleDetector.updateDetection();
 
             switch(detectionState) {
@@ -112,11 +114,15 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     handleEjectionAndTransferStates();
                     break;
             }
+        } else
+        {
+            // Fallback logic when sensor is disconnected or detector is unavailable
+            //Todo Test what happens when we disconnect the sample color sensor (can we manually do things still?)
+            MatchConfig.telemetryPacket.put("SampleDetector", "Sensor Disconnected or Unavailable - Using Fallback");
         }
         updateParameters();
         updateDashboardTelemetry();
     }
-
 
     public void handleSamplePickup() {
         if (sampleDetector.isGoodSample()) {
@@ -257,6 +263,22 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         telemetry.addData("Proximity (mm)", sampleDetector.getConsensusProximity());
         telemetry.addData("Proximity History", sampleDetector.getProximityHistory().toString());
         telemetry.addData("Raw Detected Color", sampleDetector.getRawDetectedColor().toString());
+    }
+
+    private boolean isColorSensorConnected() {
+        try {
+            if (colorSensor != null && sampleDetector != null) {
+                String connectionInfo = colorSensor.getConnectionInfo();
+                MatchConfig.telemetryPacket.put("Color Sensor Connection Info", connectionInfo);
+
+                // Validate connection info
+                return connectionInfo != null && connectionInfo.toLowerCase().contains("i2c");
+            }
+        } catch (Exception e) {
+            // If an exception occurs, the sensor might be disconnected or unresponsive
+            MatchConfig.telemetryPacket.put("Color Sensor Error", "Disconnected or Inaccessible");
+        }
+        return false; // Return false if null or an exception is caught
     }
 
 }

@@ -3,7 +3,10 @@ package com.example.sharedconstants.Routes.OBS;
 import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ELEVEN;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TEN;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWELVE;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWO;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.MOVE_PRELOAD_SPECIMEN_TO_CW_HOME;
@@ -22,7 +25,7 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
     }
 
     public void buildRoute() {
-        scoreObservationPreload(CHAMBER_SLOT_TWO);
+        scoreObservationPreload(CHAMBER_SLOT_ONE);
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
@@ -32,8 +35,7 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
                 .setTangent(ANGLE_TOWARD_BLUE)
                 .afterDisp(2, robotAdapter.getAction(MOVE_PRELOAD_SPECIMEN_TO_CW_HOME))
                 .splineToLinearHeading(chamberSlot, chamberSlot.heading.toDouble())
-                .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
-                .setReversed(true);
+                .waitSeconds(.1)
+                .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)));
     }
-
 }

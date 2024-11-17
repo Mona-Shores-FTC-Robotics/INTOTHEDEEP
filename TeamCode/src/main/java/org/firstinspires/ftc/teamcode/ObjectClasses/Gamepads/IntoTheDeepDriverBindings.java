@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
+import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.example.sharedconstants.FieldConstants;
 import com.sun.tools.javac.util.List;
 
@@ -20,7 +23,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveA
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToNetZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.SlowModeCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DriveAtFixedDegreeHeadingCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
@@ -37,6 +40,13 @@ public class IntoTheDeepDriverBindings {
     DriveToNetZone driveToNetZoneAction;
     DriveToChamber driveToChamberAction;
     DriveForwardAndBack driveForwardAndBack;
+    public Command driveTo90OrMinus90;
+    public Command driveTo45or225;
+
+    private TriggerReader fixedBucketScoreAngleTrigger;
+    private TriggerReader fixedSpecimenScoreAngleTrigger;
+    private boolean isBucketAngleCommandActive = false; // Track if 45/225 mode is active
+    private boolean isSpecimenAngleCommandActive = false; // Track if -90/90 mode is active
 
 
     public IntoTheDeepDriverBindings(GamepadEx gamePad , GamePadBindingManager gamePadBindingManager) {
@@ -95,6 +105,15 @@ public class IntoTheDeepDriverBindings {
         bindSpecimenIntakeToggle(GamepadKeys.Button.Y);
 
 
+        //////////////////////////////////////////////////////////
+        // A BUTTON - Specimen Handling (Intake and Scoring)    //
+        //////////////////////////////////////////////////////////
+        bindBucketAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
+
+        //////////////////////////////////////////////////////////
+        // y BUTTON - Reverse Specimen Intake                   //
+        //////////////////////////////////////////////////////////
+        bindSpecimenAngleDriving(GamepadKeys.Trigger.RIGHT_TRIGGER);
     }
 
     private void bindSpecimenIntakeToggle(GamepadKeys.Button button) {
@@ -272,20 +291,15 @@ public class IntoTheDeepDriverBindings {
 
     private void bindSlowMode(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            Command slowModeCommand = new SlowModeCommand(robot.getDriveSubsystem() ,
-                    driverGamePad::getLeftY ,
-                    driverGamePad::getLeftX ,
-                    driverGamePad::getRightX
-            );
-
             driverGamePad.getGamepadButton(button)
-                    .whenHeld(slowModeCommand);
+                    .whenPressed(new InstantCommand(robot.getDriveSubsystem()::enableSlowMode))
+                    .whenReleased(new InstantCommand(robot.getDriveSubsystem()::disableSlowMode)
+                    );
 
             bindingManager.registerBinding(new ButtonBinding(
-                    GamepadType.DRIVER ,
-                    button ,
-                    slowModeCommand ,
-                    "Slow Mode"
+                    GamepadType.DRIVER,
+                    button,
+                    "Toggle Slow Mode"
             ));
         }
     }
@@ -325,23 +339,64 @@ public class IntoTheDeepDriverBindings {
             ));
         }
     }
-//
-//    private void bindTriggerToCommand(GamepadKeys.Trigger trigger, double threshold, Command command) {
-//        // Monitor the trigger value continuously
-//        driverGamePad.getGamepadButton(trigger)
-//                .whileActiveContinuous(() -> {
-//                    if (driverGamePad.getTrigger(trigger) > threshold) {
-//                        CommandScheduler.getInstance().schedule(command);
-//                    }
-//                });
-//
-//        // Register the binding for telemetry/debugging
-//        bindingManager.registerBinding(new AnalogBinding(
-//                GamepadType.DRIVER,
-//                Collections.singletonList(trigger.name()),
-//                "Trigger Binding"
-//        ));
-//    }
+    private void bindBucketAngle(GamepadKeys.Trigger trigger) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            driveTo45or225 = new DriveAtFixedDegreeHeadingCommand(
+                    robot.getDriveSubsystem(),
+                    driverGamePad::getLeftY,
+                    driverGamePad::getLeftX,
+                    (MatchConfig.finalAllianceColor == BLUE) ? 225 : 45
+            );
+            fixedBucketScoreAngleTrigger = new TriggerReader(driverGamePad, trigger, 0.5);
 
+            // Register for debugging/telemetry
+            bindingManager.registerBinding(new AnalogBinding(
+                    GamepadType.DRIVER,
+                    Collections.singletonList(trigger.name()),
+                    "Toggle 45/225 Mode"
+            ));
+        }
+    }
+
+    private void bindSpecimenAngleDriving(GamepadKeys.Trigger trigger) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            driveTo90OrMinus90 = new DriveAtFixedDegreeHeadingCommand(
+                    robot.getDriveSubsystem(),
+                    driverGamePad::getLeftY,
+                    driverGamePad::getLeftX,
+                    (MatchConfig.finalAllianceColor == BLUE) ? -90 : 90
+            );
+            fixedSpecimenScoreAngleTrigger = new TriggerReader(driverGamePad, trigger, 0.5);
+
+            // Register for debugging/telemetry
+            bindingManager.registerBinding(new AnalogBinding(
+                    GamepadType.DRIVER,
+                    Collections.singletonList(trigger.name()),
+                    "Toggle -90/90 Mode"
+            ));
+        }
+    }
+    public void updateTriggerBindings() {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            // Toggle 45/225 mode (left trigger)
+            toggleTriggerCommand(fixedBucketScoreAngleTrigger, driveTo45or225, isBucketAngleCommandActive);
+            isBucketAngleCommandActive = CommandScheduler.getInstance().isScheduled(driveTo45or225);
+
+            // Toggle -90/90 mode (right trigger)
+            toggleTriggerCommand(fixedSpecimenScoreAngleTrigger, driveTo90OrMinus90, isSpecimenAngleCommandActive);
+            isSpecimenAngleCommandActive = CommandScheduler.getInstance().isScheduled(driveTo90OrMinus90);
+        }
+    }
+
+    private void toggleTriggerCommand(TriggerReader triggerReader, Command command, boolean isActive) {
+        triggerReader.readValue();
+        if (triggerReader.wasJustPressed()) {
+            if (isActive) {
+                CommandScheduler.getInstance().cancel(command);
+            } else {
+                CommandScheduler.getInstance().schedule(command);
+            }
+        }
+    }
 }
 

@@ -10,10 +10,6 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
-import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike;
-import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Score2;
-import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Score2_With_Retry;
-import com.example.sharedconstants.Routes.OBS.OBS_Retry_Test;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -24,10 +20,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.AutonomousPeriodicAction;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 @Autonomous(name = "Auto Test")
 public class AutoTest extends LinearOpMode {

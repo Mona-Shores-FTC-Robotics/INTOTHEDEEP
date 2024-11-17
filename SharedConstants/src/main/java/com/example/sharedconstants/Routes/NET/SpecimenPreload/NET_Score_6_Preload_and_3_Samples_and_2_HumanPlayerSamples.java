@@ -1,28 +1,25 @@
-package com.example.sharedconstants.Routes.NET.LongSidePickup;
+package com.example.sharedconstants.Routes.NET.SpecimenPreload;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.HUMAN_PLAYER_SAMPLE_PICKUP;
 import static com.example.sharedconstants.FieldConstants.HUMAN_PLAYER_SAMPLE_STAGING;
-
-import static com.example.sharedconstants.FieldConstants.NET_BASKET;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
-import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_INTAKE_ON;
 
 import com.example.sharedconstants.RobotAdapter;
 
-public class NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample extends NET_Score_4_Preload_and_3_Samples {
-    public NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample(RobotAdapter robotAdapter) {
+public class NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples extends NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample {
+    public NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
     public void buildRoute(){
         super.buildRoute();
-        pickupHumanPlayerSample();
-        depositSampleWall();
+        pickupHumanPlayerSample2();
+        scoreSampleInHighBasket();
         netBotRoute = netTrajectoryActionBuilder.build();
     }
 
-    public void pickupHumanPlayerSample() {
+    public void pickupHumanPlayerSample2() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_TOWARD_OBSERVATION)
                 .splineToSplineHeading(HUMAN_PLAYER_SAMPLE_STAGING, ANGLE_TOWARD_OBSERVATION)
@@ -30,11 +27,4 @@ public class NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample extends N
                 .strafeTo(PoseToVector(HUMAN_PLAYER_SAMPLE_PICKUP));
     }
 
-    public void depositSampleWall()
-    {
-        netTrajectoryActionBuilder = netTrajectoryActionBuilder
-                .strafeToConstantHeading(PoseToVector(NET_BASKET))
-                .stopAndAdd(robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET));
-
-    }
 }

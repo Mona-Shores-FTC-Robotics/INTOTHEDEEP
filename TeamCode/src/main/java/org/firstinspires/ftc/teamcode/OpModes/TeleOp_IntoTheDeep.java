@@ -37,6 +37,8 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.SubsystemType.S
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -53,6 +55,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 @TeleOp(name="TeleOp_IntoTheDeep")
 public class TeleOp_IntoTheDeep extends LinearOpMode
 {
+    private IntoTheDeepDriverBindings driverBindings;
+
     @Override
     public void runOpMode()
     {
@@ -91,7 +95,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
         // Setup Button Bindings
         // Example for avoiding duplicate bindings
-        new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad(), gamepadHandling.getBindingManager());
+        driverBindings = new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad(), gamepadHandling.getBindingManager());
         new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad(), gamepadHandling.getBindingManager());
 
         //Start the TeleOp Timer
@@ -115,6 +119,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
             // Read buttons
             gamepadHandling.getDriverGamepad().readButtons();
+            driverBindings.updateTriggerBindings();
 
             // Display Telemetry through the Robot's Telemetry Manager
             Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry(gamepadHandling.getBindingManager());

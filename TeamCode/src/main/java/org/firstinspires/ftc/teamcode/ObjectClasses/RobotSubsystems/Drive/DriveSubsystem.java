@@ -162,9 +162,11 @@ public class DriveSubsystem extends SubsystemBase {
         boolean gamepadActive = driverGamepadIsActive(leftY, leftX, rightX);
 
         if (gamepadActive) {
-            leftYAdjusted = leftY * STICK_PARAMS.DRIVE_SPEED_FACTOR;
-            leftXAdjusted = leftX * STICK_PARAMS.STRAFE_SPEED_FACTOR;
-            rightXAdjusted = rightX * STICK_PARAMS.TURN_SPEED_FACTOR;
+            double speedFactor = isSlowModeEnabled() ? STICK_PARAMS.SLOW_MODE_FACTOR : 1.0;
+
+            leftYAdjusted = leftY * STICK_PARAMS.DRIVE_SPEED_FACTOR * speedFactor;
+            leftXAdjusted = leftX * STICK_PARAMS.STRAFE_SPEED_FACTOR * speedFactor;
+            rightXAdjusted = rightX * STICK_PARAMS.TURN_SPEED_FACTOR * speedFactor;
             if (fieldOrientedControl) {
                 fieldOrientedControl(leftYAdjusted, leftXAdjusted);
             }
@@ -283,6 +285,7 @@ public class DriveSubsystem extends SubsystemBase {
             public double DRIVE_SPEED_FACTOR = 0.82;
             public double STRAFE_SPEED_FACTOR = 1.0;
             public double TURN_SPEED_FACTOR = 1.0;
+            public double SLOW_MODE_FACTOR = 0.5; // Reduce speed by 50% in slow mode
         }
 
         public static class RampParams {
@@ -610,4 +613,19 @@ public class DriveSubsystem extends SubsystemBase {
             return angle;
         }
     }
+
+    private boolean slowModeEnabled = false;
+
+    public void enableSlowMode() {
+        slowModeEnabled = true;
+    }
+
+    public void disableSlowMode() {
+        slowModeEnabled = false;
+    }
+
+    public boolean isSlowModeEnabled() {
+        return slowModeEnabled;
+    }
+
 }

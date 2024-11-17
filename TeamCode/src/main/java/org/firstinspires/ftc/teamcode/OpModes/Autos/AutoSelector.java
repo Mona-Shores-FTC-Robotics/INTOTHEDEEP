@@ -10,18 +10,18 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
+import com.example.sharedconstants.Routes.DoNothing;
 import com.example.sharedconstants.Routes.NET.NET_Score5_SamplePreload;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
-import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_2_Preload_and_1_Sample_Short;
-import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_3_Preload_and_2_Samples_Short;
-import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_4_Preload_and_3_Samples_Short;
-import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short;
-import com.example.sharedconstants.Routes.NET.ShortSidePickup.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short;
-import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time;
-import com.example.sharedconstants.Routes.OBS.InakeAndScore.OBS_Score2;
-import com.example.sharedconstants.Routes.OBS.OBS_Intake_Automatic_Sample_Handling;
-import com.example.sharedconstants.Routes.OBS.OBS_Intake_Transfer_Dump;
+import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preload_and_1_Sample;
+import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
+import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_4_Preload_and_3_Samples;
+import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample;
+import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
+import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -60,32 +60,17 @@ public class AutoSelector extends LinearOpMode {
         netRouteList.add(netRoute);
 
         // Tested 11-15-24
-        netRoute = new NET_Score_2_Preload_and_1_Sample_Short(robotAdapter);
+        netRoute = new NET_Score_2_Preload_and_1_Sample(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
         // Tested 11-15-24
-        netRoute = new NET_Score_3_Preload_and_2_Samples_Short(robotAdapter);
+        netRoute = new NET_Score_3_Preload_and_2_Samples(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
         // Same as the last one but Scores more points.
-        netRoute = new NET_Score_4_Preload_and_3_Samples_Short(robotAdapter);
-        netRoute.buildRoute();
-        netRouteList.add(netRoute); // Tristan + Landon likes
-
-        // In the risk of getting bumped by the other robot but scores more points.
-        netRoute = new NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample_Short(robotAdapter);
-        netRoute.buildRoute();
-        netRouteList.add(netRoute); // Tristan + Landon likes
-
-        // Scores more points but it might get more interfere with the robot because it goes to the observation zone twice.
-        netRoute = new NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples_Short(robotAdapter);
-        netRoute.buildRoute();
-        netRouteList.add(netRoute);
-
-        // It scores a lot of points and it won't inter fear with the robot.
-        netRoute = new NET_Score5_SamplePreload(robotAdapter); //reviewed 11/15/24
+        netRoute = new NET_Score_4_Preload_and_3_Samples(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute); // Tristan + Landon likes
 
@@ -97,17 +82,40 @@ public class AutoSelector extends LinearOpMode {
         List<Routes> obsRouteList = new ArrayList<>();
         robotAdapter.setAllianceColor(allianceColor);
 
+        //Best Auto but needs high speeds (~50 velocity/acceleration)
+        //This would just leave a preload sample by our robot for the NET bot to score and then score all 5 specimens
+        obsRoute = new OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
+        obsRoute.buildRoute();
+        obsRouteList.add(obsRoute);
+
+        //Superb auto, but needs high speeds (~50 velocity/acceleration)
+        //Scores preload Specimen, pushes 3 spikes to Human player, and then picks four specimens up from human player and scores them
+        obsRoute = new OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
+        obsRoute.buildRoute();
+        obsRouteList.add(obsRoute);
+
+        //Most Reasonable Auto (~25 velocity/acceleration)
+        //Scores preload Specimen, pushes 2 spikes to Human player, and then picks three specimens up from human player and scores them
+        //This assumes our partner did NOT take one of the Human Player starting specimens
+        obsRoute = new OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle(robotAdapter);
+        obsRoute.buildRoute();
+        obsRouteList.add(obsRoute);
+
+        //Next Most Reasonable Auto (~30 velocity/acceleration)
+        //Scores preload Specimen, pushes 3 spikes to Human player, and then picks three specimens up from human player and scores them
+        //This assumes our partner took one of the Human Player starting specimens
+        obsRoute = new OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle(robotAdapter);
+        obsRoute.buildRoute();
+        obsRouteList.add(obsRoute);
+
         obsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
-        obsRoute = new OBS_Score2(robotAdapter);
+        obsRoute = new DoNothing(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
-        obsRoute = new OBS_Intake_3_Score_4_Specimens_Preload_And_1_Premade_And_3_Spike_Not_At_1_Time(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
 
         return obsRouteList;
     }
