@@ -26,6 +26,8 @@ public class AutonomousPeriodicAction implements Action {
         Robot.getInstance().getSpecimenIntakeSubsystem().periodic();
         Robot.getInstance().getSampleIntakeSubsystem().periodic();
         Robot.getInstance().getSampleLinearActuatorSubsystem().periodic();
+        Robot.getInstance().getSampleLiftBucketSubsystem().periodic();
+        Robot.getInstance().getLightingSubsystem().periodic();
 
         // Display Telemetry through the Robot's Telemetry Manager
         Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry();

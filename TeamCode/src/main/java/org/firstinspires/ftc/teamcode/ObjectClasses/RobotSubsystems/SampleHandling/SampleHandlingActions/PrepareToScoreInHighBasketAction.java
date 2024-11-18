@@ -16,6 +16,10 @@ public class PrepareToScoreInHighBasketAction implements Action {
 
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+        telemetryPacket.put("PrepareToScore", "Running");
+        telemetryPacket.put("Action Started", started);
+        telemetryPacket.put("Action Sequence Null", actionSequence == null);
+
         if (!started) {
             Robot robot = Robot.getInstance();
             actionSequence = new SequentialAction(
@@ -23,6 +27,7 @@ public class PrepareToScoreInHighBasketAction implements Action {
                     new InstantAction(robot.getSampleLiftBucketSubsystem()::moveDumperToPreScore),
                     new InstantAction(robot.getSampleLiftBucketSubsystem()::setBucketToScorePosition)
             );
+            telemetryPacket.put("Action Sequence", "Initialized");
             started = true;
         }
 

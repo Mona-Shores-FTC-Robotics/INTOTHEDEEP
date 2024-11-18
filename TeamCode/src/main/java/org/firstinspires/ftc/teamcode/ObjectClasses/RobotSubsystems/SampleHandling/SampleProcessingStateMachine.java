@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
@@ -13,6 +14,7 @@ public class SampleProcessingStateMachine {
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
+    private LightingSubsystem lightingSubsystem;
 
     public enum SampleDetectionStates {
         ON_GOOD_SAMPLE_DETECTION,
@@ -32,6 +34,12 @@ public class SampleProcessingStateMachine {
         this.intakeSubsystem = intakeSubsystem;
         this.liftSubsystem = liftSubsystem;
         currentSampleDetectionState= SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
+
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.LIGHTING))
+        {
+            lightingSubsystem=Robot.getInstance().getLightingSubsystem();
+        }
+
     }
 
     public void updateSampleProcessingState() {
@@ -46,11 +54,21 @@ public class SampleProcessingStateMachine {
                 break;
             case ON_GOOD_SAMPLE_DETECTION:
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;
+
+                if (lightingSubsystem != null) {
+
+                }
+
                 intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                 liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                 liftSubsystem.setBucketToIntakePosition();
                 actuatorSubsystem.fullyRetract();
+
+
+
+
+
                 break;
             case GETTING_READY_FOR_TRANSFER:
                 if (actuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.FULLY_RETRACTED) {

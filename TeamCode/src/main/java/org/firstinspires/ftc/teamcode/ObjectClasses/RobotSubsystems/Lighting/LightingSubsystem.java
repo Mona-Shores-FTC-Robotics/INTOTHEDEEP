@@ -27,23 +27,6 @@ public class LightingSubsystem extends SubsystemBase{
     private SpecimenDetector specimenDetector;
     private SampleDetector sampleDetector;
 
-    boolean haveSpecimen;
-    boolean haveSample;
-
-    boolean haveTooManyGamePieces=false;
-    boolean stillHaveBadSample=false;
-
-    private final ElapsedTime tooManyPiecesWarningTimer = new ElapsedTime();
-    private final ElapsedTime badSampleWarningTimer = new ElapsedTime();
-    // Add flags for warning and problem lights
-    private boolean warningLightSet = false;
-    private boolean problemLightSet = false;
-    private boolean tooManyPiecesWarningSet = false;
-    // Add green indicator timer
-    private final ElapsedTime greenIndicatorTimer = new ElapsedTime();
-    private boolean greenIndicatorActive = false;
-
-
     // Constructor with color sensor
     public LightingSubsystem(final HardwareMap hMap, final String frontLights, final String backLights) {
         blinkinFront = hMap.get(RevBlinkinLedDriver.class, frontLights);
@@ -54,120 +37,29 @@ public class LightingSubsystem extends SubsystemBase{
     public void init() {
        sampleDetector = Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector();
        specimenDetector = Robot.getInstance().getSpecimenIntakeSubsystem().getSpecimenDetector();
-       haveTooManyGamePieces=false;
     }
 
-    @Override
-    public void periodic() {
-        // Update specimen detection and lighting
-        if (specimenDetector != null) {
-            switch (specimenDetector.getDetectionState()) {
-                case JUST_DETECTED:
-                    haveSpecimen = true;
-                    greenIndicatorActive = true;
-                    greenIndicatorTimer.reset();
-                    setGreenIndicatorColor(); // Temporarily set green on new detection
-                    warningLightSet = false;
-                    problemLightSet = false;
-                    tooManyPiecesWarningSet = false;
-                    break;
-                case STILL_DETECTED:
-                    haveSpecimen = true;
-                    break;
-                case NOT_DETECTED:
-                    haveSpecimen = false;
-                    break;
-            }
-        } else {
-            haveSpecimen = false;
-        }
-
-        // Update sample detection and lighting
-        if (sampleDetector != null) {
-            switch (sampleDetector.getDetectionState()) {
-                case JUST_DETECTED:
-                    haveSample = true;
-                    greenIndicatorActive = true;
-                    greenIndicatorTimer.reset();
-                    setGreenIndicatorColor(); // Temporarily set green on new detection
-                    warningLightSet = false;
-                    problemLightSet = false;
-                    tooManyPiecesWarningSet = false;
-                    if (sampleDetector.isGoodSample()) {
-                        stillHaveBadSample = false;
-                    } else if (sampleDetector.isBadSample()) {
-                        stillHaveBadSample = true;
-                        badSampleWarningTimer.reset();
-                    }
-                    break;
-                case STILL_DETECTED:
-                    haveSample = true;
-                    break;
-                case NOT_DETECTED:
-                    haveSample = false;
-                    break;
-            }
-        } else {
-            haveSample = false;
-        }
-
-        // Handle green indicator duration
-        if (greenIndicatorActive && greenIndicatorTimer.seconds() >= LIGHTING_PARAMS.GREEN_INDICATOR_DURATION) {
-            greenIndicatorActive = false;
-        }
-
-        // Check for too many game pieces condition
-        if (haveSpecimen && haveSample) {
-            if (!tooManyPiecesWarningSet) {
-                tooManyPiecesWarningSet = true;
-                tooManyPiecesWarningTimer.reset();
-                setTooManyPiecesWarningColor();
-            } else if (tooManyPiecesWarningTimer.seconds() >= LIGHTING_PARAMS.WARNING_DURATION_SECONDS) {
-                setTooManyPiecesProblemColor();
-            }
-        } else {
-            tooManyPiecesWarningSet = false;
-        }
-
-        // Set the final colors based on detection and conditions, if green indicator is not active
-        if (!greenIndicatorActive) {
-            if (haveSpecimen) {
-                setAllianceColor();
-            } else if (haveSample) {
-                if (sampleDetector.isGoodSample()) {
-                    setBothLightsSampleColor();
-                } else if (stillHaveBadSample && badSampleWarningTimer.seconds() >= LIGHTING_PARAMS.WARNING_DURATION_SECONDS) {
-                    setBadSampleProblemColor();
-                } else if (stillHaveBadSample) {
-                    setBadSampleWarningColor();
-                }
-            } else {
-                setBothLightsBlack();
-            }
-        }
-    }
-
-    private void setGreenIndicatorColor() {
+    public void setGreenIndicatorColor() {
         setBothLights(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 
-    private void setBadSampleWarningColor() {
+    public void setBadSampleWarningColor() {
         setBothLights(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_WHITE);
     }
 
-    private void setBadSampleProblemColor() {
+    public void setBadSampleProblemColor() {
         setBothLights(RevBlinkinLedDriver.BlinkinPattern.WHITE);
     }
 
-    private void setTooManyPiecesWarningColor() {
+    public void setTooManyPiecesWarningColor() {
         setBothLights(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_GRAY);
     }
 
-    private void setTooManyPiecesProblemColor() {
+    public void setTooManyPiecesProblemColor() {
         setBothLights(RevBlinkinLedDriver.BlinkinPattern.GRAY);
     }
 
-    private void setAllianceColor() {
+    public void setAllianceColor() {
         switch (MatchConfig.finalAllianceColor ) {
             case RED:
                 setBothLightsRed();
@@ -178,7 +70,7 @@ public class LightingSubsystem extends SubsystemBase{
         }
     }
 
-    private void setBothLightsSampleColor() {
+    public void setBothLightsSampleColor() {
         FieldConstants.SampleColor sampleColor = sampleDetector.getConsensusColor();
         switch (sampleColor) {
             case RED:
@@ -265,13 +157,5 @@ public class LightingSubsystem extends SubsystemBase{
         // Apply patterns to lights
         setLeftLight(leftPattern);
         setRightLight(rightPattern);
-
-        // Optional telemetry for debugging
-        Robot.getInstance().getActiveOpMode().telemetry.addData("Preload Detected", preload);
-        Robot.getInstance().getActiveOpMode().telemetry.addData("Alliance Color", finalAllianceColor);
-        Robot.getInstance().getActiveOpMode().telemetry.addData("Side of Field", finalSideOfField);
-        Robot.getInstance().getActiveOpMode().telemetry.addData("Left Light Pattern", leftPattern.toString());
-        Robot.getInstance().getActiveOpMode().telemetry.addData("Right Light Pattern", rightPattern.toString());
-        Robot.getInstance().getActiveOpMode().telemetry.update();
     }
 }
