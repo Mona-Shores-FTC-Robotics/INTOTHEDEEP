@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import android.annotation.SuppressLint;
 
-import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -31,8 +30,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         // Set a minimum proximity threshold to consider an object as "near"
         public double PROXIMITY_THRESHOLD = 40;
         public int COLOR_HISTORY_SIZE = 5;
-        public double TRANSFER_TIME_MS= 800;
-        public double EJECT_TIME_MS= 400;
+        public double TRANSFER_TIME_MS= 1000;
+        public double EJECT_TIME_MS= 800;
 
         public double LEFT_POWER_REVERSE = -1;
         public double RIGHT_POWER_REVERSE = -1;
@@ -68,6 +67,13 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     ElapsedTime sampleIntakeTimer = new ElapsedTime();
 
+    private enum IntakeDetectState{
+        DETECTING,
+        DETECTED
+    }
+
+    IntakeDetectState currentIntakeDetectionState;
+
     // Constructor with color sensor
     public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoL, final String intakeServoR, final String colorSensorName) {
         sampleIntakeLeft = hMap.get(CRServo.class, intakeServoL);
@@ -92,26 +98,36 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         setCurrentState(SampleIntakeStates.INTAKE_OFF);  // Set default state to off
         currentPower = INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
         sampleProcessingStateMachine = Robot.getInstance().getSampleProcessingStateMachine();
+        currentIntakeDetectionState=IntakeDetectState.DETECTING;
     }
 
     @Override
     public void periodic() {
+        sampleProcessingStateMachine.updateSampleProcessingState();
+        updateIntakeStateMachine();
 
+        switch (currentIntakeDetectionState) {
+            case DETECTING:
+                if ((isColorSensorConnected()) && (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED))
+                    currentIntakeDetectionState = IntakeDetectState.DETECTED;
+                break;
+            case DETECTED:
+                if (sampleProcessingStateMachine.getCurrentSampleDetectionState()== SampleProcessingStateMachine.SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION) {
+                    currentIntakeDetectionState = IntakeDetectState.DETECTING;
+                }
+                break;
+        }
+        /*
         if (isColorSensorConnected()) {
             DetectionState detectionState = sampleDetector.updateDetection();
-
             switch(detectionState) {
                 case JUST_DETECTED:
-                    handleSamplePickup();
                     sampleProcessingStateMachine.updateSampleProcessingState();
                     break;
-
                 case STILL_DETECTED:
                     sampleProcessingStateMachine.updateSampleProcessingState();
                     break;
-
                 case NOT_DETECTED:
-                    handleEjectionAndTransferStates();
                     break;
             }
         } else
@@ -119,22 +135,12 @@ public class SampleIntakeSubsystem extends SubsystemBase {
             // Fallback logic when sensor is disconnected or detector is unavailable
             //Todo Test what happens when we disconnect the sample color sensor (can we manually do things still?)
             MatchConfig.telemetryPacket.put("SampleDetector", "Sensor Disconnected or Unavailable - Using Fallback");
-        }
+        }*/
         updateParameters();
         updateDashboardTelemetry();
     }
 
-    public void handleSamplePickup() {
-        if (sampleDetector.isGoodSample()) {
-            //If we detect 1) yellow; or 2) blue and we are blue; or 3) red and we are red, then its a good sample
-            sampleProcessingStateMachine.setOnGoodSampleDetectionState();
-        } else if (sampleDetector.isBadSample()) {
-            //Otherwise its a bad sample
-            sampleProcessingStateMachine.setOnBadSampleDetectionState();
-        }
-    }
-
-    private void handleEjectionAndTransferStates() {
+    private void updateIntakeStateMachine() {
         switch (currentSampleIntakeState) {
             case REVERSING_INTAKE_TO_TRANSFER:
                 if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.TRANSFER_TIME_MS) {
@@ -272,7 +278,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                 MatchConfig.telemetryPacket.put("Color Sensor Connection Info", connectionInfo);
 
                 // Validate connection info
-                return connectionInfo != null && connectionInfo.toLowerCase().contains("i2c");
+                return connectionInfo != null && connectionInfo.toLowerCase().contains("bus");
             }
         } catch (Exception e) {
             // If an exception occurs, the sensor might be disconnected or unresponsive

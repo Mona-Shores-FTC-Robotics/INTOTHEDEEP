@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
@@ -35,6 +36,15 @@ public class SampleProcessingStateMachine {
 
     public void updateSampleProcessingState() {
         switch (currentSampleDetectionState) {
+            case WAITING_FOR_SAMPLE_DETECTION:
+                if (Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector().haveSample()) {
+                    if (Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector().isGoodSample()) {
+                        currentSampleDetectionState = SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
+                    } else {
+                        currentSampleDetectionState = SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
+                    }
+                }
+                break;
             case ON_GOOD_SAMPLE_DETECTION:
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;
                 intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
@@ -50,7 +60,7 @@ public class SampleProcessingStateMachine {
                 }
                 break;
             case TRANSFERRING:
-                if (intakeSubsystem.getCurrentState()== SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
+                if (intakeSubsystem.getCurrentState() == SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
                     currentSampleDetectionState = SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
                 }
                 break;
@@ -59,15 +69,13 @@ public class SampleProcessingStateMachine {
                 intakeSubsystem.ejectBadSample();
                 break;
             case EJECTING_BAD_SAMPLE:
-                if (intakeSubsystem.getCurrentState()== SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
+                if (intakeSubsystem.getCurrentState() == SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
                     currentSampleDetectionState = SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
                     //Presumably we want to grab another sample from the submersible...
                     actuatorSubsystem.partiallyRetractAndIntakeOn();
                 }
                 break;
-            case WAITING_FOR_SAMPLE_DETECTION:
-                //do nothing
-                break;
+
         }
     }
 

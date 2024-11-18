@@ -19,9 +19,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     // Static instance of LIFT_PARAMS
 
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
-
-
-
     public static class SampleLiftParams {
         public double BUCKET_INCREMENT_TIME = 1.0;
         public double KA = .001;
@@ -49,9 +46,9 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         public double BUCKET_INTAKE_POS = .73;
 
         // Dumper servo params
-        public double DUMPER_HOME_POS = 0.41 ;
-        public double DUMPER_PRESCORE_POS =.45;
-        public double DUMPER_DUMP_POS = 0.65 ;
+        public double DUMPER_HOME_POS = 0.72 ;
+        public double DUMPER_PRESCORE_POS =0.75;
+        public double DUMPER_DUMP_POS = 0.85 ;
 
         public double UPWARD_VELOCITY = 35;     // Ticks per second (adjust as needed)
         public double DOWNWARD_VELOCITY = -1.265;  // Ticks per second (negative for downward)
