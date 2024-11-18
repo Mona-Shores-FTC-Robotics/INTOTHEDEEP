@@ -37,13 +37,12 @@ public class SampleProcessingStateMachine {
     public void updateSampleProcessingState() {
         switch (currentSampleDetectionState) {
             case WAITING_FOR_SAMPLE_DETECTION:
-                if (Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector().haveSample()) {
-                    if (Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector().isGoodSample()) {
+                if (intakeSubsystem.getCurrentIntakeDetectState() == SampleIntakeSubsystem.IntakeDetectState.DETECTED_GOOD_SAMPLE) {
                         currentSampleDetectionState = SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
-                    } else {
+                    }
+                else if (intakeSubsystem.getCurrentIntakeDetectState() == SampleIntakeSubsystem.IntakeDetectState.DETECTED_BAD_SAMPLE)  {
                         currentSampleDetectionState = SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
                     }
-                }
                 break;
             case ON_GOOD_SAMPLE_DETECTION:
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;

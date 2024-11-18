@@ -67,12 +67,13 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     ElapsedTime sampleIntakeTimer = new ElapsedTime();
 
-    private enum IntakeDetectState{
+    public enum IntakeDetectState{
         DETECTING,
-        DETECTED
+        DETECTED_GOOD_SAMPLE,
+        DETECTED_BAD_SAMPLE,
     }
 
-    IntakeDetectState currentIntakeDetectionState;
+    private IntakeDetectState currentIntakeDetectionState;
 
     // Constructor with color sensor
     public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoL, final String intakeServoR, final String colorSensorName) {
@@ -103,39 +104,25 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        sampleProcessingStateMachine.updateSampleProcessingState();
         updateIntakeStateMachine();
+        sampleProcessingStateMachine.updateSampleProcessingState();
 
         switch (currentIntakeDetectionState) {
             case DETECTING:
                 if ((isColorSensorConnected()) && (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED))
-                    currentIntakeDetectionState = IntakeDetectState.DETECTED;
+                    if (sampleDetector.isGoodSample())
+                        currentIntakeDetectionState = IntakeDetectState.DETECTED_GOOD_SAMPLE;
+                    else
+                        currentIntakeDetectionState = IntakeDetectState.DETECTED_BAD_SAMPLE;
                 break;
-            case DETECTED:
+            case DETECTED_BAD_SAMPLE:
+            case DETECTED_GOOD_SAMPLE:
                 if (sampleProcessingStateMachine.getCurrentSampleDetectionState()== SampleProcessingStateMachine.SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION) {
+                    sampleDetector.clearDetectionState();
                     currentIntakeDetectionState = IntakeDetectState.DETECTING;
                 }
                 break;
         }
-        /*
-        if (isColorSensorConnected()) {
-            DetectionState detectionState = sampleDetector.updateDetection();
-            switch(detectionState) {
-                case JUST_DETECTED:
-                    sampleProcessingStateMachine.updateSampleProcessingState();
-                    break;
-                case STILL_DETECTED:
-                    sampleProcessingStateMachine.updateSampleProcessingState();
-                    break;
-                case NOT_DETECTED:
-                    break;
-            }
-        } else
-        {
-            // Fallback logic when sensor is disconnected or detector is unavailable
-            //Todo Test what happens when we disconnect the sample color sensor (can we manually do things still?)
-            MatchConfig.telemetryPacket.put("SampleDetector", "Sensor Disconnected or Unavailable - Using Fallback");
-        }*/
         updateParameters();
         updateDashboardTelemetry();
     }
@@ -285,6 +272,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
             MatchConfig.telemetryPacket.put("Color Sensor Error", "Disconnected or Inaccessible");
         }
         return false; // Return false if null or an exception is caught
+    }
+
+    public IntakeDetectState getCurrentIntakeDetectState() {
+        return currentIntakeDetectionState;
     }
 
 }

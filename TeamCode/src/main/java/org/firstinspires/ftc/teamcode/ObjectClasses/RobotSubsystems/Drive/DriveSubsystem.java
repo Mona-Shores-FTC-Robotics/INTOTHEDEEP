@@ -189,6 +189,32 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     /**
+     * Adjust the drive, strafe, and turn values for robot-centric or field-centric control
+     */
+    public void setDriveStrafeValues(double leftY, double leftX) {
+        boolean gamepadActive = driverGamepadIsActive(leftY, leftX);
+
+        if (gamepadActive) {
+            double speedFactor = isSlowModeEnabled() ? STICK_PARAMS.SLOW_MODE_FACTOR : 1.0;
+
+            leftYAdjusted = leftY * STICK_PARAMS.DRIVE_SPEED_FACTOR * speedFactor;
+            leftXAdjusted = leftX * STICK_PARAMS.STRAFE_SPEED_FACTOR * speedFactor;
+            if (fieldOrientedControl) {
+                fieldOrientedControl(leftYAdjusted, leftXAdjusted);
+            }
+        } else {
+            // No input, set adjusted values to 0
+            leftYAdjusted = 0;
+            leftXAdjusted = 0;
+        }
+
+        // Set drive, strafe, and turn values
+        drive = leftYAdjusted;
+        strafe = leftXAdjusted;
+    }
+
+
+    /**
      * Implements field-centric control. Adjusts the robot's movement based on the heading.
      */
     public void fieldOrientedControl(double y, double x) {
@@ -222,6 +248,11 @@ public class DriveSubsystem extends SubsystemBase {
         return (Math.abs(leftY) > STICK_PARAMS.DEAD_ZONE ||
                 Math.abs(leftX) > STICK_PARAMS.DEAD_ZONE ||
                 Math.abs(rightX) > STICK_PARAMS.DEAD_ZONE);
+    }
+
+    public Boolean driverGamepadIsActive(double leftY, double leftX) {
+        return (Math.abs(leftY) > STICK_PARAMS.DEAD_ZONE ||
+                Math.abs(leftX) > STICK_PARAMS.DEAD_ZONE);
     }
 
     public void configurePID() {
@@ -289,7 +320,7 @@ public class DriveSubsystem extends SubsystemBase {
     public static class TeleopParams {
 
         public static class StickParams {
-            public double DEAD_ZONE = 0.2;
+            public double DEAD_ZONE = 0.1;
             public double DRIVE_SPEED_FACTOR = 0.82;
             public double STRAFE_SPEED_FACTOR = 1.0;
             public double TURN_SPEED_FACTOR = 1.0;
