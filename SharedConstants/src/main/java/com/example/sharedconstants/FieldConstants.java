@@ -74,6 +74,8 @@ public class FieldConstants {
     public static Pose2d CHAMBER_SLOT_FIVE = CHAMBER_SLOT_FOUR.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_SIX = CHAMBER_SLOT_FIVE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_SEVEN = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_SEVEN_ROTATED = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), Math.toRadians(5)));
+
     public static Pose2d CHAMBER_SLOT_EIGHT = CHAMBER_SLOT_SEVEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_NINE = CHAMBER_SLOT_EIGHT.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_TEN = CHAMBER_SLOT_NINE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));

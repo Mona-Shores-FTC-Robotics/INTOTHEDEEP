@@ -32,7 +32,6 @@ public class NET_Score_2_Preload_and_1_Sample extends NET_Score_1_Specimen_Prelo
                 .splineToConstantHeading(PoseToVector(NET_SPIKE_ONE_APPROACH), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .splineToConstantHeading(PoseToVector(NET_SPIKE_ONE), ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
                 .waitSeconds(.3);
-
     }
 
     public void scoreSampleInHighBasket() {
