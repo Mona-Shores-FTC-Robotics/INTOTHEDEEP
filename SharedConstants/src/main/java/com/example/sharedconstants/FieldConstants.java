@@ -51,7 +51,7 @@ public class FieldConstants {
     public static double SAMPLE_LENGTH = 4;
     public static double HALF_SAMPLE_LENGTH = SAMPLE_LENGTH/2.0;
 
-    public static double PICKUP_ROOM = 2.5;
+    public static double PICKUP_ROOM = 3.0;
 
     public static double ANGLE_TOWARD_OBSERVATION = Math.toRadians(0);
     public static double ANGLE_30_DEGREES = Math.toRadians(30);
@@ -118,9 +118,9 @@ public class FieldConstants {
 
     public static Pose2d RIGHT_OF_CHAMBER =  new Pose2d(TILE+HALF_TILE+1, -TILE-4, ANGLE_TOWARD_BLUE);
 
-    public static Pose2d OBS_BEHIND_SPIKE_ONE = new Pose2d(2*TILE-QUARTER_TILE+2, -HALF_TILE, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_SPIKE_ONE = new Pose2d(2*TILE+1, -TILE, Math.toRadians(96));
-    public static Pose2d OBS_DELIVER_SPIKE_ONE = new Pose2d(2*TILE+1, -TILE-HALF_TILE-QUARTER_TILE-5.9, Math.toRadians(96));
+    public static Pose2d OBS_BEHIND_SPIKE_ONE = new Pose2d(2*TILE-QUARTER_TILE+3.5, -HALF_TILE-2, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_SPIKE_ONE = new Pose2d(2*TILE+1, -TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_DELIVER_SPIKE_ONE = new Pose2d(2*TILE+1, -TILE-HALF_TILE-QUARTER_TILE-5.5, ANGLE_115_DEGREES);
 
     public static Pose2d OBS_BEHIND_SPIKE_TWO = new Pose2d(2*TILE+QUARTER_TILE+2, -HALF_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d OBS_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH+1, -TILE, ANGLE_TOWARD_BLUE);

@@ -32,24 +32,27 @@ import java.util.Arrays;
 public class OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle extends OBS_Score_1_Specimen_Preload {
 
     //Scored 4 Specimens on 11/17/24  8 times
-    private static final double OBS_VELOCITY_OVERRIDE = 27.8;
-    private static final double OBS_ACCELERATION_OVERRIDE = 27.8;
+
+    private static final double OBS_FAST_VELOCITY_OVERRIDE = 28.5;
+    private static final double OBS_FAST_ACCELERATION_OVERRIDE = 28.5;
+    private static final double OBS_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+
+    private static final double OBS_VELOCITY_OVERRIDE = 28;
+    private static final double OBS_ACCELERATION_OVERRIDE = 28;
     private static final double OBS_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
-    private static final double OBS_SLOW_VELOCITY_OVERRIDE = 15;
-    private static final double OBS_SLOW_ACCELERATION_OVERRIDE = 15;
+    private static final double OBS_SLOW_VELOCITY_OVERRIDE = 11;
+    private static final double OBS_SLOW_ACCELERATION_OVERRIDE = 11;
     private static final double OBS_SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
 
-    private static final double OBS_VERY_SLOW_VELOCITY_OVERRIDE = 11;
-    private static final double OBS_VERY_SLOW_ACCELERATION_OVERRIDE = 11;
-    private static final double OBS_VERY_SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
+    public static VelConstraint obsFastVelocity;
+    public static AccelConstraint obsFastAcceleration;
 
     public static VelConstraint obsVelocity;
     public static AccelConstraint obsAcceleration;
+
     public static VelConstraint obsSlowVelocity;
     public static AccelConstraint obsSlowAcceleration;
-    public static VelConstraint obsVerySlowVelocity;
-    public static AccelConstraint obsVerySlowAcceleration;
 
     public OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle(RobotAdapter robotAdapter) {
         super(robotAdapter);
@@ -65,21 +68,23 @@ public class OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle extends OBS_Scor
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE);
         pickupSpecimenFromTriangle();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_SEVEN);
+        driveToPark();
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
+
 
     public void pushFirstNeutralSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
                 .splineToConstantHeading(PoseToVector(RIGHT_OF_CHAMBER), ANGLE_TOWARD_BLUE, obsVelocity, obsAcceleration)
-                .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_ONE), Math.toRadians(350), obsVelocity, obsAcceleration)
-                .splineToSplineHeading(OBS_SPIKE_ONE,ANGLE_TOWARD_RED , obsVelocity, obsAcceleration)
-                .splineToSplineHeading(OBS_DELIVER_SPIKE_ONE, ANGLE_TOWARD_RED, obsVelocity, obsAcceleration);
+                .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_ONE), Math.toRadians(350), obsFastVelocity, obsFastAcceleration)
+                .splineToConstantHeading(PoseToVector(OBS_SPIKE_ONE),ANGLE_TOWARD_RED , obsFastVelocity, obsFastAcceleration)
+                .splineToConstantHeading(PoseToVector(OBS_DELIVER_SPIKE_ONE), ANGLE_TOWARD_RED, obsFastVelocity, obsFastAcceleration);
     }
 
     public void pushSecondNeutralSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .splineToSplineHeading(OBS_BEHIND_SPIKE_TWO, Math.toRadians(350), obsVelocity, obsAcceleration)
+                .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_TWO), Math.toRadians(350), obsVelocity, obsAcceleration)
                 .splineToConstantHeading(PoseToVector(OBS_SPIKE_TWO), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
                 .splineToConstantHeading(PoseToVector(OBS_DELIVER_SPIKE_TWO), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration);
     }
@@ -97,8 +102,8 @@ public class OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle extends OBS_Scor
                 .afterDisp(15, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_APPROACH), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
                 .setReversed(true)
-                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsVerySlowVelocity, obsVerySlowAcceleration)
-                .waitSeconds(.3);
+                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration)
+                .waitSeconds(.2);
     }
 
     public void pickupSpecimenFromTriangleComingFromSecondSpike() {
@@ -106,10 +111,20 @@ public class OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle extends OBS_Scor
                 .afterDisp(5, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_APPROACH), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
                 .setReversed(true)
-                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsVerySlowVelocity, obsVerySlowAcceleration)
-                .waitSeconds(.3);
+                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration)
+                .waitSeconds(.2);
 
     }
+
+
+    private void driveToPark() {
+        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+                .setReversed(true)
+                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsVelocity, obsAcceleration);
+
+    }
+
+
 
     public void SetupConstraints(){
         obsVelocity = new MinVelConstraint(Arrays.asList(
@@ -118,17 +133,17 @@ public class OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle extends OBS_Scor
         ));
         obsAcceleration = new ProfileAccelConstraint(-OBS_ACCELERATION_OVERRIDE, OBS_ACCELERATION_OVERRIDE);
 
+        obsFastVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(OBS_FAST_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(OBS_FAST_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        obsFastAcceleration = new ProfileAccelConstraint(-OBS_FAST_ACCELERATION_OVERRIDE, OBS_FAST_ACCELERATION_OVERRIDE);
+
         obsSlowVelocity = new MinVelConstraint(Arrays.asList(
                 new TranslationalVelConstraint(OBS_SLOW_VELOCITY_OVERRIDE),
                 new AngularVelConstraint(OBS_SLOW_ANGULAR_VELOCITY_OVERRIDE)
         ));
         obsSlowAcceleration = new ProfileAccelConstraint(-OBS_SLOW_ACCELERATION_OVERRIDE, OBS_SLOW_ACCELERATION_OVERRIDE);
-
-        obsVerySlowVelocity = new MinVelConstraint(Arrays.asList(
-                new TranslationalVelConstraint(OBS_VERY_SLOW_VELOCITY_OVERRIDE),
-                new AngularVelConstraint(OBS_VERY_SLOW_ANGULAR_VELOCITY_OVERRIDE)
-        ));
-        obsVerySlowAcceleration = new ProfileAccelConstraint(-OBS_VERY_SLOW_ACCELERATION_OVERRIDE, OBS_VERY_SLOW_ACCELERATION_OVERRIDE);
     }
 }
 

@@ -111,6 +111,7 @@ public class AutoTest extends LinearOpMode {
         Actions.runBlocking(parallelAction);
 
         MatchConfig.hasAutoRun=true;
+        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
     }
 
     public Routes selectRoute() {

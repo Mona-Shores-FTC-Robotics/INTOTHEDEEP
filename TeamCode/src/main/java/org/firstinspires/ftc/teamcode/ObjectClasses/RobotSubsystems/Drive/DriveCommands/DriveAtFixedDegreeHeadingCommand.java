@@ -29,6 +29,15 @@ public class DriveAtFixedDegreeHeadingCommand extends CommandBase {
     private final DoubleSupplier strafeSupplier;
     private final PIDFController headingPID;
 
+    // Store the previously used PID and tolerance values
+    private double previousKP = PARAMS_FIXED_ORIENTATION.KP;
+    private double previousKI = PARAMS_FIXED_ORIENTATION.KI;
+    private double previousKD = PARAMS_FIXED_ORIENTATION.KD;
+    private double previousKF = PARAMS_FIXED_ORIENTATION.KF;
+    private double previousToleranceDegrees = PARAMS_FIXED_ORIENTATION.TOLERANCE_DEGREES;
+
+    private final double fixedHeadingRadians;
+
     public DriveAtFixedDegreeHeadingCommand(DriveSubsystem driveSubsystem ,
                                             DoubleSupplier driveSupplier ,
                                             DoubleSupplier strafeSupplier ,
@@ -36,7 +45,7 @@ public class DriveAtFixedDegreeHeadingCommand extends CommandBase {
         this.driveSubsystem = driveSubsystem;
         this.driveSupplier = driveSupplier;
         this.strafeSupplier = strafeSupplier;
-        double fixedHeadingRadians = Math.toRadians(fixedHeadingDegrees);
+        fixedHeadingRadians = Math.toRadians(fixedHeadingDegrees);
 
         // Initialize the PIDF Controller using PARAMS_FIXED_ORIENTATION
         headingPID = new PIDFController(
@@ -54,27 +63,67 @@ public class DriveAtFixedDegreeHeadingCommand extends CommandBase {
 
         addRequirements(driveSubsystem);
     }
-
     @Override
     public void execute() {
-        // Get drive and strafe inputs from the suppliers
+        // Check if PID parameters or tolerance have changed, and update the controller if necessary
+        if (previousKP != PARAMS_FIXED_ORIENTATION.KP ||
+                previousKI != PARAMS_FIXED_ORIENTATION.KI ||
+                previousKD != PARAMS_FIXED_ORIENTATION.KD ||
+                previousKF != PARAMS_FIXED_ORIENTATION.KF) {
+            headingPID.setPIDF(
+                    PARAMS_FIXED_ORIENTATION.KP,
+                    PARAMS_FIXED_ORIENTATION.KI,
+                    PARAMS_FIXED_ORIENTATION.KD,
+                    PARAMS_FIXED_ORIENTATION.KF
+            );
+            previousKP = PARAMS_FIXED_ORIENTATION.KP;
+            previousKI = PARAMS_FIXED_ORIENTATION.KI;
+            previousKD = PARAMS_FIXED_ORIENTATION.KD;
+            previousKF = PARAMS_FIXED_ORIENTATION.KF;
+        }
+
+        if (previousToleranceDegrees != PARAMS_FIXED_ORIENTATION.TOLERANCE_DEGREES) {
+            headingPID.setTolerance(Math.toRadians(PARAMS_FIXED_ORIENTATION.TOLERANCE_DEGREES));
+            previousToleranceDegrees = PARAMS_FIXED_ORIENTATION.TOLERANCE_DEGREES;
+        }
+
+        // Get drive and strafe inputs
         double drive = driveSupplier.getAsDouble();
         double strafe = strafeSupplier.getAsDouble();
 
-        // Get the current heading from the DriveSubsystem
-        double currentHeading = driveSubsystem.getMecanumDrive().pose.heading.log();
+        // Get the current heading in radians
+        double currentHeading = Math.toRadians(driveSubsystem.getMecanumDrive().pose.heading.log());
 
-        // Calculate heading correction using the PID controller
-        double headingCorrection = headingPID.calculate(currentHeading);
+        // Normalize the current heading and the setpoint to handle wraparound
+        double normalizedCurrentHeading = Math.atan2(Math.sin(currentHeading), Math.cos(currentHeading));
+        double normalizedSetpoint = Math.atan2(Math.sin(fixedHeadingRadians), Math.cos(fixedHeadingRadians));
+
+        // Update the PID controller's setpoint (if dynamic updates are required)
+        headingPID.setSetPoint(normalizedSetpoint);
+
+        // Compute the correction using the PID controller
+        double rawCorrection = headingPID.calculate(normalizedCurrentHeading);
+
+        // Clamp the correction to [-1.0, 1.0]
+        double maxOutput = 1.0;
+        double scaledCorrection = Math.max(-maxOutput, Math.min(maxOutput, rawCorrection));
 
         // Log telemetry for debugging
-        MatchConfig.telemetryPacket.put("Heading" , currentHeading);
-        MatchConfig.telemetryPacket.put("Correction" , headingCorrection);
+        MatchConfig.telemetryPacket.put("FixedAngle/SetPoint", Math.toDegrees(fixedHeadingRadians));
+        MatchConfig.telemetryPacket.put("FixedAngle/Heading", Math.toDegrees(currentHeading));
+        MatchConfig.telemetryPacket.put("FixedAngle/NormalizedHeading", Math.toDegrees(normalizedCurrentHeading));
+        MatchConfig.telemetryPacket.put("FixedAngle/Error", Math.toDegrees(headingPID.getPositionError()));
+        MatchConfig.telemetryPacket.put("FixedAngle/Raw Correction", rawCorrection);
+        MatchConfig.telemetryPacket.put("FixedAngle/Scaled Correction", scaledCorrection);
 
-        // Apply the calculated values to the drive system
-        driveSubsystem.setDriveStrafeTurnValues(drive , strafe , headingCorrection);
-        driveSubsystem.drive(driveSubsystem.drive , driveSubsystem.strafe , driveSubsystem.turn);
+        // Apply corrections to the drive system
+        driveSubsystem.setDriveStrafeTurnValues(drive, strafe, scaledCorrection);
+        driveSubsystem.drive(driveSubsystem.drive, driveSubsystem.strafe, driveSubsystem.turn);
     }
+
+
+
+
 
     @Override
     public void end(boolean interrupted) {
@@ -87,4 +136,5 @@ public class DriveAtFixedDegreeHeadingCommand extends CommandBase {
         // Command does not finish on its own; only stops when canceled
         return false;
     }
+
 }

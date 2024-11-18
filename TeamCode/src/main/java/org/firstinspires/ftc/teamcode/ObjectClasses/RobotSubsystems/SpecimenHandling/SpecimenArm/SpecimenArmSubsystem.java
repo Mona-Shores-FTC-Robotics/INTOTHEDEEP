@@ -33,7 +33,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double CCW_FLIP_TIME_MS = 550; //this worked at 450 for the 4 spec auto
         public double REVERSE_FLIP_TIME_MS = CCW_FLIP_TIME_MS-100; //start reversing 100 ms before we stop the energy burst
         public double CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
-        public double CW_FLIP_TIME_MS = 700;
+        public double CW_FLIP_TIME_MS = 550;
         public double CONSTANT_POWER_FOR_CW_FLIP = -1.0;
         public double ZERO_POWER_SETTLE_TIME_MS = 828;
 

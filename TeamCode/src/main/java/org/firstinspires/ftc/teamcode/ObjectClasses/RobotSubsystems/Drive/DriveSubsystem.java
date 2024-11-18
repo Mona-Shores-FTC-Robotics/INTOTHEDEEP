@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 
 import static java.lang.Math.abs;
 import android.annotation.SuppressLint;
+import android.service.autofill.FieldClassification;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -41,7 +42,7 @@ public class DriveSubsystem extends SubsystemBase {
     public static TeleopParams.PIDParams PID_PARAMS = new TeleopParams.PIDParams();
     public static TeleopParams.RampParams RAMP_PARAMS = new TeleopParams.RampParams();
 
-    private MecanumDrive mecanumDrive;
+    private static MecanumDrive mecanumDrive;
 
     public boolean fieldOrientedControl;
     public double yawOffsetDegrees;  // offset depending on alliance color
@@ -90,22 +91,27 @@ public class DriveSubsystem extends SubsystemBase {
 
     public DriveSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType) {
         // Initialize appropriate drive system based on robot type
-        switch (robotType) {
-            case INTO_THE_DEEP_19429:
-                DriveParams.configureIntoTheDeep19429RRParams();
-                mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-                DriveParams.configureIntoTheDeep19429Directions(mecanumDrive, this);
-                break;
+            switch (robotType) {
+                case INTO_THE_DEEP_19429:
+                    DriveParams.configureIntoTheDeep19429RRParams();
+                    if (MatchConfig.hasAutoRun) {
+                        mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
+                    } else mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-            case INTO_THE_DEEP_20245:
-                DriveParams.configureIntoTheDeep20245RRParams();
-                mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-                DriveParams.configureIntoTheDeep20245Directions(mecanumDrive, this);
-                break;
+                    DriveParams.configureIntoTheDeep19429Directions(mecanumDrive, this);
+                    break;
 
-        }
-        mecanumDrive.lazyImu.get().resetYaw();
-        configurePID();
+                case INTO_THE_DEEP_20245:
+                    DriveParams.configureIntoTheDeep20245RRParams();
+                    if (MatchConfig.hasAutoRun) {
+                        mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
+                    } else mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+                    DriveParams.configureIntoTheDeep20245Directions(mecanumDrive, this);
+                    break;
+
+            }
+            mecanumDrive.lazyImu.get().resetYaw();
+            configurePID();
     }
 
     public void init() {
@@ -147,7 +153,6 @@ public class DriveSubsystem extends SubsystemBase {
         } else {
             MatchConfig.offsetFromStartPoseDegrees = -90;  // -90 degrees for red side
         }
-
     }
 
 
@@ -188,7 +193,10 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void fieldOrientedControl(double y, double x) {
         // Get the robot's current heading in radians (directly from the gyro)
+
         double botHeading = mecanumDrive.pose.heading.toDouble() + Math.toRadians(MatchConfig.offsetFromStartPoseDegrees);  //this is in radians
+        MatchConfig.telemetryPacket.put("offset", MatchConfig.offsetFromStartPoseDegrees);
+        MatchConfig.telemetryPacket.put("botHeading", Math.toDegrees(botHeading));
 
         // Rotate the movement direction relative to the robot's adjusted heading
         leftXAdjusted = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);

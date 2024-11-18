@@ -18,16 +18,12 @@ public class MatchConfig {
     public static double offsetFromStartPoseDegrees;
 
     public static Pose2d endOfAutonomousPose = null;
-    public static double endOfAutonomousOffset;
-    public static double endOfAutonomousAbsoluteYawDegrees;
 
     public static ElapsedTime teleOpTimer;
     public static ElapsedTime loopTimer;
     public static ElapsedTime timestampTimer;
 
     public static TelemetryPacket telemetryPacket;
-
-    public static DriveToObservationZone currentDriveForwardAction;
 
     // Sliding window average variables
     private static final int WINDOW_SIZE = 100;

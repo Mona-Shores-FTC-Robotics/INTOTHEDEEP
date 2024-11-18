@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalAlli
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalSideOfField;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.SubsystemType.SPECIMEN_INTAKE;
 
+import android.service.autofill.FieldClassification;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -261,5 +263,6 @@ public class AutoSelector extends LinearOpMode {
 
         // Update final autonomous data
         MatchConfig.hasAutoRun=true;
+        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
     }
 }
