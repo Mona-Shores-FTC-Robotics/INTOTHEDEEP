@@ -52,7 +52,7 @@ repositories {
         url = 'https://maven.brott.dev/'
     }
     maven {
-        url = 'https://jitpack.io'
+        url = 'https://repo.dairy.foundation/releases'
     }
     maven {
         url = 'https://www.matthewo.tech/maven/'
@@ -82,4 +82,5 @@ dependencies {
     }
 
 
+    implementation "page.j5155.roadrunner:ftc-otos:0.1.0+0.1.14"
 }

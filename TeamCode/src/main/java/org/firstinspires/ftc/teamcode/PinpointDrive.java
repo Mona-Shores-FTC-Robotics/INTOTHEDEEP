@@ -9,7 +9,9 @@ import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
 
 /**
@@ -82,7 +84,7 @@ public class PinpointDrive extends MecanumDrive {
         This is recommended before you run your autonomous, as a bad initial calibration can cause
         an incorrect starting value for x, y, and heading.
          */
-//        pinpoint.recalibrateIMU();
+        //pinpoint.recalibrateIMU();
         pinpoint.resetPosAndIMU();
         // wait for pinpoint to finish calibrating
         try {
@@ -114,7 +116,30 @@ public class PinpointDrive extends MecanumDrive {
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
+
         FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
+        FlightRecorder.write("PINPOINT_RAW_POSE",new FTCPoseMessage(pinpoint.getPosition()));
+        FlightRecorder.write("PINPOINT_STATUS",pinpoint.getDeviceStatus());
+
         return pinpoint.getVelocityRR();
     }
+
+
+    // for debug logging
+    public static final class FTCPoseMessage {
+        public long timestamp;
+        public double x;
+        public double y;
+        public double heading;
+
+        public FTCPoseMessage(Pose2D pose) {
+            this.timestamp = System.nanoTime();
+            this.x = pose.getX(DistanceUnit.INCH);
+            this.y = pose.getY(DistanceUnit.INCH);
+            this.heading = pose.getHeading(AngleUnit.RADIANS);
+        }
+    }
+
+
+
 }
