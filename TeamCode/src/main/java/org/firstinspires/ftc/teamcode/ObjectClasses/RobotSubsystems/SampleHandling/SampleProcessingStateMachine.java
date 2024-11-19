@@ -95,11 +95,4 @@ public class SampleProcessingStateMachine {
         return currentSampleDetectionState;
     }
 
-    public void setOnGoodSampleDetectionState() {
-        currentSampleDetectionState=SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
-    }
-    public void setOnBadSampleDetectionState() {
-        currentSampleDetectionState=SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
-    }
-
 }

@@ -38,10 +38,9 @@ public class DriveSubsystem extends SubsystemBase {
     public static TeleopParams.PIDParams PID_PARAMS = new TeleopParams.PIDParams();
     public static TeleopParams.RampParams RAMP_PARAMS = new TeleopParams.RampParams();
 
-    private static MecanumDrive mecanumDrive;
+    protected static MecanumDrive mecanumDrive;
 
     public boolean fieldOrientedControl;
-    public double yawOffsetDegrees;  // offset depending on alliance color
 
     public double drive;
     public double strafe;
@@ -94,7 +93,7 @@ public class DriveSubsystem extends SubsystemBase {
                         mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
                     } else mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-                    DriveParams.configureIntoTheDeep19429Directions(mecanumDrive, this);
+                    DriveParams.configureIntoTheDeep19429Directions(mecanumDrive);
                     break;
 
                 case INTO_THE_DEEP_20245:
@@ -102,7 +101,7 @@ public class DriveSubsystem extends SubsystemBase {
                     if (MatchConfig.hasAutoRun) {
                         mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
                     } else mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-                    DriveParams.configureIntoTheDeep20245Directions(mecanumDrive, this);
+                    DriveParams.configureIntoTheDeep20245Directions(mecanumDrive);
                     break;
 
             }
@@ -136,11 +135,6 @@ public class DriveSubsystem extends SubsystemBase {
             lastD = PID_PARAMS.D;
             lastF = PID_PARAMS.F;
         }
-    }
-
-    public void CalculateYawOffset() {
-        // This is the offset to get to 0 degrees from the robot's current heading
-        MatchConfig.offsetFromStartPoseDegrees = -1 * Math.toDegrees(getMecanumDrive().pose.heading.toDouble());
     }
 
     public void CalculateImprovedYawOffset() {
@@ -295,13 +289,6 @@ public class DriveSubsystem extends SubsystemBase {
                 Robot.getInstance().getDriveSubsystem().getMecanumDrive().defaultAccelConstraint,
                 pose -> new Pose2dDual<>(
                         pose.position.x.unaryMinus(), pose.position.y.unaryMinus(), pose.heading.plus(Math.toRadians(180))));
-    }
-
-    public void setMotorPower(double lF, double rF, double lB, double rB) {
-        mecanumDrive.leftFront.setPower(lF);
-        mecanumDrive.rightFront.setPower(rF);
-        mecanumDrive.leftBack.setPower(lB);
-        mecanumDrive.rightBack.setPower(rB);
     }
 
     // ========== Helper/Utility Methods ==========
@@ -523,7 +510,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         @SuppressLint("DefaultLocale")
         public static void displayBasicTelemetry(Telemetry telemetry) {
-            MecanumDrive mecanumDrive = Robot.getInstance().getDriveSubsystem().mecanumDrive;
+            MecanumDrive mecanumDrive = Robot.getInstance().getDriveSubsystem().getMecanumDrive();
             telemetry.addLine()
                     .addData("Current Pose", String.format("(X: %.1f, Y: %.1f, Yaw: %.1f°)",
                             mecanumDrive.pose.position.x,

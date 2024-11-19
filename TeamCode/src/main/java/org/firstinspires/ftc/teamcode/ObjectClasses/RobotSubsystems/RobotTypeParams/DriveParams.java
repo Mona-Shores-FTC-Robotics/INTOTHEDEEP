@@ -52,7 +52,7 @@ public class DriveParams {
 
     }
 
-    public static void configureIntoTheDeep19429Directions(MecanumDrive mecanumDrive, DriveSubsystem driveSubsystem) {
+    public static void configureIntoTheDeep19429Directions(MecanumDrive mecanumDrive) {
         // Set motor directions
         mecanumDrive.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         mecanumDrive.leftBack.setDirection(DcMotorEx.Direction.REVERSE);
@@ -108,7 +108,7 @@ public class DriveParams {
     }
 
 
-    public static void configureIntoTheDeep20245Directions(MecanumDrive mecanumDrive, DriveSubsystem driveSubsystem) {
+    public static void configureIntoTheDeep20245Directions(MecanumDrive mecanumDrive) {
         // Set motor directions
         mecanumDrive.leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         mecanumDrive.leftBack.setDirection(DcMotorEx.Direction.REVERSE);

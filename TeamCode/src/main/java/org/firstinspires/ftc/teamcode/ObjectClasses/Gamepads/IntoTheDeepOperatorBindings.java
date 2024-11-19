@@ -114,7 +114,6 @@ public class IntoTheDeepOperatorBindings {
         }
     }
 
-
     private void bindSpecimenIntakeToggle(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
             SpecimenIntakeSubsystem intakeSubsystem = Robot.getInstance().getSpecimenIntakeSubsystem();
