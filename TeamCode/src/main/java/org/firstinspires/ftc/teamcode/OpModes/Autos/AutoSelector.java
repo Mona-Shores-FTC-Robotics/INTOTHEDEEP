@@ -234,7 +234,7 @@ public class AutoSelector extends LinearOpMode {
         Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
 
         //Calculate the Yaw offset based on the starting pose and save it in MatchConfig
-        Robot.getInstance().getDriveSubsystem().CalculateImprovedYawOffset();
+        Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
 
         telemetry.clearAll();
 

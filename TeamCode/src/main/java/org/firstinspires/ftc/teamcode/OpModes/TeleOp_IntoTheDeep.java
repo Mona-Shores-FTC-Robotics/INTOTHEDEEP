@@ -29,23 +29,16 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalAllianceColor;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalSideOfField;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.hasAutoRun;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.SubsystemType.SPECIMEN_INTAKE;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.ControlHubIdentifierUtil;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.IntoTheDeepDriverBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.IntoTheDeepOperatorBindings;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.GamepadHandling;
@@ -90,7 +83,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
             //After we set the start pose, use that to set the offset from the start pose for field centric driving
 //            Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
-            Robot.getInstance().getDriveSubsystem().CalculateImprovedYawOffset();
+            Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
         }
 
         // Setup Button Bindings

@@ -137,7 +137,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
     }
 
-    public void CalculateImprovedYawOffset() {
+    public void CalculateYawOffset() {
         if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
             MatchConfig.offsetFromStartPoseDegrees = 90;  // 90 degrees for blue side
         } else {
