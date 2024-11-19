@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
@@ -12,10 +14,11 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.A
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.ButtonBinding;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
-import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.ChangeClimberMotorPowerCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.ClimberSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.ReadyClimberArmCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.MoveClimberArmCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.ClimberMotorHoldPositionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.ScoreSampleAction;
@@ -40,77 +43,22 @@ public class IntoTheDeepOperatorBindings {
         operatorGamePad = gamepad;
         bindingManager = gamePadBindingManager;
 
-        //////////////////////////////////////////////////////////
-        // LEFT STICK - Y axis - Manually Move SpecimenArm      //
-        //////////////////////////////////////////////////////////
-        bindManualSpecimenArmMovement(operatorGamePad::getLeftY);
 
-        //////////////////////////////////////////////////////////
-        // RIGHT STICK - Y axis - Manually Move SampleIntake    //
-        //////////////////////////////////////////////////////////
+        bindManualSpecimenArmMovement(operatorGamePad::getLeftY);
         bindManualSampleActuatorMovement(operatorGamePad::getRightY);
 //      bindManualLiftMovement(operatorGamePad::getRightY);
-
-        //////////////////////////////////////////////////////////
-        // LEFT BUMPER - Cycle Telemetry                        //
-        //////////////////////////////////////////////////////////
         cycleTelemetry(GamepadKeys.Button.LEFT_BUMPER);
-
-        //////////////////////////////////////////////////////////
-        // A BUTTON - Sample Intake (Automated Handoff)         //
-        //////////////////////////////////////////////////////////
         bindSampleIntakeAndTransfer(GamepadKeys.Button.A);
-
-        //////////////////////////////////////////////////////////
-        // X BUTTON                                             //
-        //////////////////////////////////////////////////////////
         bindReadyForSampleScoring(GamepadKeys.Button.X);
-
-        //////////////////////////////////////////////////////////
-        // Y Button                                             //
-        //////////////////////////////////////////////////////////
         bindScoreSample(GamepadKeys.Button.Y);
 
-        //////////////////////////////////////////////////////////
-        // DPAD-UP                                              //
-        //////////////////////////////////////////////////////////
+        bindClimberMotorMovement(GamepadKeys.Button.BACK);
+        bindMoveClimberArm(GamepadKeys.Button.RIGHT_BUMPER);
+
         bindBucket(GamepadKeys.Button.DPAD_UP);
-
-        //////////////////////////////////////////////////////////
-        // DPAD-LEFT                                            //
-        //////////////////////////////////////////////////////////
         bindSampleIntakeToggle(GamepadKeys.Button.DPAD_LEFT);
-
-        //////////////////////////////////////////////////////////
-        // DPAD-RIGHT                                           //
-        //////////////////////////////////////////////////////////
         bindSpecimenIntakeToggle(GamepadKeys.Button.DPAD_RIGHT);
-        //////////////////////////////////////////////////////////
-        // DPAD-DOWN                                              //
-        //////////////////////////////////////////////////////////
         bindDumping(GamepadKeys.Button.DPAD_DOWN);
-        //////////////////////////////////////////////////////////
-        // BACK/SHARE BUTTON                                    //
-        //////////////////////////////////////////////////////////
-
-        //////////////////////////////////////////////////////////
-        // START/OPTIONS BUTTON                                 //
-        //////////////////////////////////////////////////////////
-
-//        operatorGamePad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-//                .toggleWhenPressed(
-//                        new InstantCommand(() -> {
-//                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
-//                                new ReadyClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.READY).schedule();
-//                                armIsUp=true;
-//                            }
-//                        }),
-//                        new InstantCommand(() -> {
-//                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
-//                                new ReadyClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.STOWED).schedule();
-//                                armIsUp=false;
-//                            }
-//                        }));
     }
 
     //Todo test this and see if its worth using...
@@ -326,6 +274,49 @@ public class IntoTheDeepOperatorBindings {
                     GamepadType.OPERATOR,
                     "Left Y",
                     "Manual Specimen Arm"
+            ));
+        }
+    }
+
+    private void bindClimberMotorMovement(GamepadKeys.Button button) {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.CLIMBER))
+        {
+            operatorGamePad.getGamepadButton(button)
+                    .whenPressed(new ChangeClimberMotorPowerCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberMotorStates.ROBOT_UP))
+                    .whenReleased(new ClimberMotorHoldPositionCommand((Robot.getInstance().getClimberSubsystem()))
+                    );
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Climb Robot While Pressed"
+            ));
+        }
+    }
+
+    private void bindMoveClimberArm (GamepadKeys.Button button) {
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.CLIMBER))
+        {
+            SequentialCommandGroup resetArm = new SequentialCommandGroup(
+                    new MoveClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.STOWED_STEP1),
+                    new WaitCommand(350),
+                    new MoveClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.STOWED_STEP2),
+                    new WaitCommand(150),
+                    new MoveClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.STOWED_STEP3));
+
+
+            operatorGamePad.getGamepadButton(button)
+                    .toggleWhenPressed(
+                            new MoveClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.READY),
+                            resetArm
+                    );
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Move Climber Arm"
             ));
         }
     }

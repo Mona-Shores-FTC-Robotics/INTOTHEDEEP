@@ -4,15 +4,15 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 
-public class ChangeWinchPowerCommand extends CommandBase {
+public class ChangeClimberMotorPowerCommand extends CommandBase {
 
     // The subsystem the command runs on
     private final ClimberSubsystem climberSubsystem;
 
     //declare target state
-    private final ClimberSubsystem.WinchMotorStates targetState;
+    private final ClimberSubsystem.ClimberMotorStates targetState;
 
-    public ChangeWinchPowerCommand(ClimberSubsystem subsystem, ClimberSubsystem.WinchMotorStates inputState) {
+    public ChangeClimberMotorPowerCommand(ClimberSubsystem subsystem, ClimberSubsystem.ClimberMotorStates inputState) {
         climberSubsystem = subsystem;
         targetState = inputState;
     }
@@ -20,7 +20,7 @@ public class ChangeWinchPowerCommand extends CommandBase {
     @Override
     public void initialize() {
 
-        climberSubsystem.winchMotor.setPower(targetState.getPower());
+        climberSubsystem.climberMotor.setPower(targetState.getPower());
     }
 
     //this only needs to run once to change the state of the intake motor so it can just return true
@@ -31,8 +31,8 @@ public class ChangeWinchPowerCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        MatchConfig.telemetryPacket.addLine("End Game Winch changed from" + climberSubsystem.currentWinchMotorState + " to " + targetState);
+        MatchConfig.telemetryPacket.addLine("Climber Motor changed from" + climberSubsystem.currentClimberMotorState + " to " + targetState);
         //change the current state to the target state
-        climberSubsystem.setCurrentWinchMotorState(targetState);
+        climberSubsystem.setCurrentClimberMotorState(targetState);
     }
 }
