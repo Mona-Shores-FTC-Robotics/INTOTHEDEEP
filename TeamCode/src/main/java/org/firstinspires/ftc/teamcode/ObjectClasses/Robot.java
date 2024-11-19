@@ -127,7 +127,7 @@ public class Robot {
                 if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
                         hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
                         hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
-                    sampleProcessingStateMachine = new SampleProcessingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
+                    sampleProcessingStateMachine = new SampleProcessingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem, lightingSubsystem);
                     sampleButtonHandling = new SampleButtonHandling(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
                 }
 
@@ -138,7 +138,7 @@ public class Robot {
                     specimenProcessingStateMachine = new SpecimenProcessingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
                 }
 
-
+                //SERVO for the climb is on control hub
 
                 break;
             }

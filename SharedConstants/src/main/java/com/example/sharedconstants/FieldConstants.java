@@ -96,8 +96,9 @@ public class FieldConstants {
     public static Pose2d NET_SPIKE_THREE_APPROACH = NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(-6,0), 0));
 
 
+    public static Pose2d NET_BASKET = new Pose2d(-54, -56, ANGLE_45_DEGREES);
 
-    public static Pose2d NET_BASKET = new Pose2d(-54, -54, ANGLE_45_DEGREES);
+    public static Pose2d NET_BASKET_PRE_SCORE = new Pose2d(-48, -50, ANGLE_45_DEGREES);
 
     public static Pose2d NEXT_TO_NET_ASCENT = new Pose2d(-TILE-HALF_TILE, -HALF_TILE, ANGLE_TOWARD_OBSERVATION);
     public static Pose2d NET_ASCENT = new Pose2d(-TILE, -HALF_TILE, ANGLE_TOWARD_OBSERVATION);

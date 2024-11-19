@@ -12,6 +12,7 @@ import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_PRELOAD_PUSH_ALL_AND_PICKUP_AT_TRIANGLE;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_LEAVE_PRELOAD_PUSH_AND_PICKUP_AT_TRIANGLE;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_PRELOAD_GROUND_PICKUP_AND_DUMP_AND_PICKUP_AT_TRIANGLE;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_PRELOAD_PUSH_ALL_AND_PICKUP_AT_TRIANGLE;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
@@ -46,9 +47,9 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
-    private static final RoutesToRun blueObservationRoute = OBS_SCORE_4_PRELOAD_PUSH_ALL_AND_PICKUP_AT_TRIANGLE;
-    private static final RoutesToRun redNetRoute = NET_SCORE_1_SPECIMEN_PRELOAD;
+    private static final RoutesToRun redObservationRoute = OBS_SCORE_5_PRELOAD_GROUND_PICKUP_AND_DUMP_AND_PICKUP_AT_TRIANGLE;
+    private static final RoutesToRun blueObservationRoute = OBS_SCORE_5_LEAVE_PRELOAD_PUSH_AND_PICKUP_AT_TRIANGLE;
+    private static final RoutesToRun redNetRoute = NET_SCORE_4_SPECIMEN_PRELOAD_AND_3_SAMPLES;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
     public static void main(String[] args) {

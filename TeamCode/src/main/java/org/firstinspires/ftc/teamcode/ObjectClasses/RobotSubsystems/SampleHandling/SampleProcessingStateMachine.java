@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.example.sharedconstants.FieldConstants;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
@@ -14,7 +15,9 @@ public class SampleProcessingStateMachine {
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
-    private LightingSubsystem lightingSubsystem;
+    private final LightingSubsystem
+            lightingSubsystem;
+    FieldConstants.SampleColor sampleColor;
 
     public enum SampleDetectionStates {
         ON_GOOD_SAMPLE_DETECTION,
@@ -29,17 +32,13 @@ public class SampleProcessingStateMachine {
 
     public SampleProcessingStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
                                         SampleIntakeSubsystem intakeSubsystem,
-                                        SampleLiftBucketSubsystem liftSubsystem) {
+                                        SampleLiftBucketSubsystem liftSubsystem,
+                                        LightingSubsystem lightingSubsystem) {
         this.actuatorSubsystem = actuatorSubsystem;
         this.intakeSubsystem = intakeSubsystem;
         this.liftSubsystem = liftSubsystem;
+        this.lightingSubsystem = lightingSubsystem;
         currentSampleDetectionState= SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
-
-        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.LIGHTING))
-        {
-            lightingSubsystem=Robot.getInstance().getLightingSubsystem();
-        }
-
     }
 
     public void updateSampleProcessingState() {
@@ -47,32 +46,29 @@ public class SampleProcessingStateMachine {
             case WAITING_FOR_SAMPLE_DETECTION:
                 if (intakeSubsystem.getCurrentIntakeDetectState() == SampleIntakeSubsystem.IntakeDetectState.DETECTED_GOOD_SAMPLE) {
                         currentSampleDetectionState = SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
+                        sampleColor = intakeSubsystem.getSampleDetector().getConsensusColor();
                     }
                 else if (intakeSubsystem.getCurrentIntakeDetectState() == SampleIntakeSubsystem.IntakeDetectState.DETECTED_BAD_SAMPLE)  {
                         currentSampleDetectionState = SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
-                    }
+                        sampleColor = intakeSubsystem.getSampleDetector().getConsensusColor();
+                } else
+                {
+                    lightingSubsystem.setBothLightsBlack();
+                }
                 break;
             case ON_GOOD_SAMPLE_DETECTION:
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;
-
-                if (lightingSubsystem != null) {
-
-                }
-
                 intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                 liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                 liftSubsystem.setBucketToIntakePosition();
                 actuatorSubsystem.fullyRetract();
-
-
-
-
-
+                lightingSubsystem.setGreenIndicatorColor();
                 break;
             case GETTING_READY_FOR_TRANSFER:
                 if (actuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.FULLY_RETRACTED) {
                     currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
+                    lightingSubsystem.setBothLightsSampleColor();
                     intakeSubsystem.transferSampleToBucket();
                 }
                 break;

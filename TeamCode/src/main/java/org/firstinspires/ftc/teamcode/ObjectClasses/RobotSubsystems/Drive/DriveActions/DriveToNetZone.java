@@ -56,7 +56,10 @@ public class DriveToNetZone implements Action {
 
             action = robotAdapter.getActionBuilder(currentPose)
                     .setTangent(ANGLE_TOWARD_NET)
+                    .splineToLinearHeading(FieldConstants.NET_BASKET_PRE_SCORE, ANGLE_225_DEGREES)
+                    .setReversed(true)
                     .splineToLinearHeading(FieldConstants.NET_BASKET, ANGLE_225_DEGREES).build();
+
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry
             started = true; // Ensure the action is only initialized once

@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 
 @Config
 public class SampleIntakeSubsystem extends SubsystemBase {
@@ -36,6 +37,23 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         public double LEFT_POWER_REVERSE = -1;
         public double RIGHT_POWER_REVERSE = -1;
     }
+
+    public static class IntakeParams19429 {
+        public double INTAKE_ON_POWER = -0.8;
+        public double INTAKE_REVERSE_POWER = 1;
+        public double INTAKE_OFF_POWER = 0.0;
+        public double MAX_POWER = 1.0;  // Max allowable power for intake servo
+
+        // Set a minimum proximity threshold to consider an object as "near"
+        public double PROXIMITY_THRESHOLD = 40;
+        public int COLOR_HISTORY_SIZE = 5;
+        public double TRANSFER_TIME_MS= 1000;
+        public double EJECT_TIME_MS= 800;
+
+        public double LEFT_POWER_REVERSE = 1;
+        public double RIGHT_POWER_REVERSE = 1;
+    }
+
 
     public static IntakeParams INTAKE_PARAMS = new IntakeParams();
 
@@ -109,7 +127,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
         switch (currentIntakeDetectionState) {
             case DETECTING:
-                if ((isColorSensorConnected()) && (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED))
+                if ((isColorSensorConnected()) && (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED) && Robot.getInstance().getSpecimenArmSubsystem().getCurrentState()!= SpecimenArmSubsystem.SpecimenArmStates.FLIPPING_TO_CCW)
                     if (sampleDetector.isGoodSample())
                         currentIntakeDetectionState = IntakeDetectState.DETECTED_GOOD_SAMPLE;
                     else

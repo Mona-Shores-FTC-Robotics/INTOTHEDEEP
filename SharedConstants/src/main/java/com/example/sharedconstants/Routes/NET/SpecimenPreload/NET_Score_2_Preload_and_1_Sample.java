@@ -3,6 +3,7 @@ package com.example.sharedconstants.Routes.NET.SpecimenPreload;
 import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_PRE_SCORE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_APPROACH;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
@@ -29,7 +30,7 @@ public class NET_Score_2_Preload_and_1_Sample extends NET_Score_1_Specimen_Prelo
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_225_DEGREES)
                 .afterDisp(19, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
-                .splineToConstantHeading(PoseToVector(NET_SPIKE_ONE_APPROACH), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
+                .splineToSplineHeading(NET_SPIKE_ONE_APPROACH, ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .splineToConstantHeading(PoseToVector(NET_SPIKE_ONE), ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
                 .waitSeconds(.3);
     }
@@ -37,7 +38,9 @@ public class NET_Score_2_Preload_and_1_Sample extends NET_Score_1_Specimen_Prelo
     public void scoreSampleInHighBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
-                .afterDisp(10, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+                .splineToLinearHeading(NET_BASKET_PRE_SCORE, ANGLE_225_DEGREES)
+                .stopAndAdd(robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+                .setReversed(true)
                 .splineToLinearHeading(NET_BASKET, ANGLE_225_DEGREES, slowVelocity, slowAcceleration)
                 .stopAndAdd(robotAdapter.getAction(SCORE_IN_HIGH_BASKET));
     }

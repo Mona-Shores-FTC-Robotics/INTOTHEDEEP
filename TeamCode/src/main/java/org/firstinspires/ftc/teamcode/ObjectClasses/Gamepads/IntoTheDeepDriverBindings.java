@@ -108,12 +108,12 @@ public class IntoTheDeepDriverBindings {
         //////////////////////////////////////////////////////////
         // A BUTTON - Specimen Handling (Intake and Scoring)    //
         //////////////////////////////////////////////////////////
-        bindBucketAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
+//        bindBucketAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
 
         //////////////////////////////////////////////////////////
         // y BUTTON - Reverse Specimen Intake                   //
         //////////////////////////////////////////////////////////
-        bindSpecimenAngleDriving(GamepadKeys.Trigger.RIGHT_TRIGGER);
+//        bindSpecimenAngleDriving(GamepadKeys.Trigger.RIGHT_TRIGGER);
     }
 
     private void bindSpecimenIntakeToggle(GamepadKeys.Button button) {

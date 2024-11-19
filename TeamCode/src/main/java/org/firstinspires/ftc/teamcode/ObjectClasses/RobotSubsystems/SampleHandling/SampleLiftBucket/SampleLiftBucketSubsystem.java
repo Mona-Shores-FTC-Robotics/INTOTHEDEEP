@@ -43,18 +43,55 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
         // Bucket servo params
         public double BUCKET_SCORE_POS = 0;
-        public double BUCKET_INTAKE_POS = .73;
+        public double BUCKET_INTAKE_POS = .725;
 
         // Dumper servo params
-        public double DUMPER_HOME_POS = 0.72 ;
-        public double DUMPER_PRESCORE_POS =0.75;
-        public double DUMPER_DUMP_POS = 0.85 ;
+        public double DUMPER_HOME_POS = 0.73 ;
+        public double DUMPER_PRESCORE_POS  = 0.79;
+        public double DUMPER_DUMP_POS = .98;
 
         public double UPWARD_VELOCITY = 35;     // Ticks per second (adjust as needed)
         public double DOWNWARD_VELOCITY = -1.265;  // Ticks per second (negative for downward)
         public double UPWARD_ACCELERATION = 25;    // Ticks per second squared (adjust as needed)
         public double DOWNWARD_ACCELERATION = -2; // Ticks per second squared (negative for downward)
         }
+
+    public static class SampleLiftParams19429 {
+        public double BUCKET_INCREMENT_TIME = 1.0;
+        public double KA = .001;
+        public double KV = .03;
+        public double KG = .04;
+        public double KS = 0;
+
+        public  double DUMP_TIME_MS = 800;
+        public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
+        public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
+        public double LIFT_POWER = 0.5;
+
+        public final int MAX_TARGET_TICKS = 1650;
+        public final int MIN_TARGET_TICKS = 0;
+        public double TIMEOUT_TIME_SECONDS = 3;
+        public int HOME_HEIGHT_TICKS = 0;
+        public int HIGH_BASKET_TICKS = 1200;
+        public int LOW_BASKET_TICKS = 850;
+        public int LIFT_HEIGHT_TICK_THRESHOLD = 30;
+
+        public double VEL_P=0.0000004, VEL_I=0, VEL_D=0;
+
+        // Bucket servo params
+        public double BUCKET_SCORE_POS = 0;
+        public double BUCKET_INTAKE_POS = .725;
+
+        // Dumper servo params
+        public double DUMPER_HOME_POS = 0.73 ;
+        public double DUMPER_PRESCORE_POS  = 0.79;
+        public double DUMPER_DUMP_POS = .98;
+
+        public double UPWARD_VELOCITY = 35;     // Ticks per second (adjust as needed)
+        public double DOWNWARD_VELOCITY = -1.265;  // Ticks per second (negative for downward)
+        public double UPWARD_ACCELERATION = 25;    // Ticks per second squared (adjust as needed)
+        public double DOWNWARD_ACCELERATION = -2; // Ticks per second squared (negative for downward)
+    }
 
     public enum SampleLiftStates {
         HIGH_BASKET, LOW_BASKET, LIFT_HOME, MANUAL, LOW_BASKET_DOWN;
@@ -181,8 +218,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         pidController.reset();
         pidController.setSetPoint(currentLiftState.ticks);
         setTargetTicks(currentLiftState.ticks);
-
-
 
         if (bucket != null) {
             setCurrentBucketState(BucketStates.BUCKET_INTAKE_POS);

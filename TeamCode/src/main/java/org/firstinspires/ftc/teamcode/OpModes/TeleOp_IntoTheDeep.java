@@ -119,7 +119,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
             // Read buttons
             gamepadHandling.getDriverGamepad().readButtons();
-            driverBindings.updateTriggerBindings();
+//            driverBindings.updateTriggerBindings();
 
             // Display Telemetry through the Robot's Telemetry Manager
             Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry(gamepadHandling.getBindingManager());
