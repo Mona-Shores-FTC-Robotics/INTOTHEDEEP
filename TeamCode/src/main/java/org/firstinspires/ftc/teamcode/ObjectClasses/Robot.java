@@ -107,6 +107,7 @@ public class Robot {
                 //Expansion Hub - I2C Bus 2 - specimencolorsensor
                 //Control Hub - I2C Bus XXX - pinpoint
                 //Control Hub - I2C Bus XXX - octoquad
+                //Expans. Hub - Servo Port X - blinkin
 
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
