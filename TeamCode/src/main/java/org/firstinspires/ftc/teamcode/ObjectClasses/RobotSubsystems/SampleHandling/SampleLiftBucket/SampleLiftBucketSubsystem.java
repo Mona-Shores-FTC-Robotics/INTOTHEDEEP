@@ -13,143 +13,181 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 @Config
 public class SampleLiftBucketSubsystem extends SubsystemBase {
-    // Static instance of LIFT_PARAMS
+
+    public static void configureParamsForRobotType(Robot.RobotType robotType) {
+        switch (robotType) {
+            case INTO_THE_DEEP_19429:
+                SAMPLE_LIFT_PARAMS.BUCKET_INCREMENT_TIME = 1.0;
+                SAMPLE_LIFT_PARAMS.KA = 0.001;
+                SAMPLE_LIFT_PARAMS.KV = 0.03;
+                SAMPLE_LIFT_PARAMS.KG = 0.04;
+                SAMPLE_LIFT_PARAMS.KS = 0.0;
+
+                SAMPLE_LIFT_PARAMS.DUMP_TIME_MS = 800;
+                SAMPLE_LIFT_PARAMS.SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
+                SAMPLE_LIFT_PARAMS.LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
+                SAMPLE_LIFT_PARAMS.LIFT_POWER = 0.5;
+
+                SAMPLE_LIFT_PARAMS.MAX_TARGET_TICKS = 1650;
+                SAMPLE_LIFT_PARAMS.MIN_TARGET_TICKS = 0;
+                SAMPLE_LIFT_PARAMS.TIMEOUT_TIME_SECONDS = 3.0;
+                SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS = 0;
+                SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS = 1200;
+                SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS = 850;
+                SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD = 30;
+
+                SAMPLE_LIFT_PARAMS.VEL_P = 0.0000004;
+                SAMPLE_LIFT_PARAMS.VEL_I = 0.0;
+                SAMPLE_LIFT_PARAMS.VEL_D = 0.0;
+
+                SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS = 0.0;
+                SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS = 0.725;
+
+                SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS = 0.73;
+                SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS = 0.79;
+                SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS = 0.98;
+
+                SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY = 35;
+                SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY = -1.265;
+                SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION = 25;
+                SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION = -2;
+                break;
+
+            case INTO_THE_DEEP_20245:
+                SAMPLE_LIFT_PARAMS.BUCKET_INCREMENT_TIME = 1.0;
+                SAMPLE_LIFT_PARAMS.KA = 0.001;
+                SAMPLE_LIFT_PARAMS.KV = 0.03;
+                SAMPLE_LIFT_PARAMS.KG = 0.04;
+                SAMPLE_LIFT_PARAMS.KS = 0.0;
+
+                SAMPLE_LIFT_PARAMS.DUMP_TIME_MS = 800;
+                SAMPLE_LIFT_PARAMS.SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
+                SAMPLE_LIFT_PARAMS.LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
+                SAMPLE_LIFT_PARAMS.LIFT_POWER = 0.5;
+
+                SAMPLE_LIFT_PARAMS.MAX_TARGET_TICKS = 1650;
+                SAMPLE_LIFT_PARAMS.MIN_TARGET_TICKS = 0;
+                SAMPLE_LIFT_PARAMS.TIMEOUT_TIME_SECONDS = 3.0;
+                SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS = 0;
+                SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS = 1200;
+                SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS = 850;
+                SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD = 30;
+
+                SAMPLE_LIFT_PARAMS.VEL_P = 0.0000004;
+                SAMPLE_LIFT_PARAMS.VEL_I = 0.0;
+                SAMPLE_LIFT_PARAMS.VEL_D = 0.0;
+
+                SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS = 0.0;
+                SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS = 0.725;
+
+                SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS = 0.73;
+                SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS = 0.79;
+                SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS = 0.98;
+
+                SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY = 35;
+                SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY = -1.265;
+                SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION = 25;
+                SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION = -2.01;
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown robot type: " + robotType);
+        }
+    }
+
+    public static class SampleLiftParams {
+        public double BUCKET_INCREMENT_TIME = Double.NaN;
+        public double KA = Double.NaN;
+        public double KV = Double.NaN;
+        public double KG = Double.NaN;
+        public double KS = Double.NaN;
+
+        public double DUMP_TIME_MS = Double.NaN;
+        public double SCALE_FACTOR_FOR_MANUAL_LIFT = Double.NaN;
+        public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = Double.NaN;
+        public double LIFT_POWER = Double.NaN;
+
+        public int MAX_TARGET_TICKS = -1;
+        public int MIN_TARGET_TICKS = -1;
+        public double TIMEOUT_TIME_SECONDS = Double.NaN;
+        public int HOME_HEIGHT_TICKS = -1;
+        public int HIGH_BASKET_TICKS = -1;
+        public int LOW_BASKET_TICKS = -1;
+        public int LIFT_HEIGHT_TICK_THRESHOLD = -1;
+
+        public double VEL_P = Double.NaN, VEL_I = Double.NaN, VEL_D = Double.NaN;
+
+        public double BUCKET_SCORE_POS = Double.NaN;
+        public double BUCKET_INTAKE_POS = Double.NaN;
+
+        public double DUMPER_HOME_POS = Double.NaN;
+        public double DUMPER_PRESCORE_POS = Double.NaN;
+        public double DUMPER_DUMP_POS = Double.NaN;
+
+        public double UPWARD_VELOCITY = Double.NaN;
+        public double DOWNWARD_VELOCITY = Double.NaN;
+        public double UPWARD_ACCELERATION = Double.NaN;
+        public double DOWNWARD_ACCELERATION = Double.NaN;
+    }
 
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
-    public static class SampleLiftParams {
-        public double BUCKET_INCREMENT_TIME = 1.0;
-        public double KA = .001;
-        public double KV = .03;
-        public double KG = .04;
-        public double KS = 0;
-
-        public  double DUMP_TIME_MS = 800;
-        public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
-        public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
-        public double LIFT_POWER = 0.5;
-
-        public final int MAX_TARGET_TICKS = 1650;
-        public final int MIN_TARGET_TICKS = 0;
-        public double TIMEOUT_TIME_SECONDS = 3;
-        public int HOME_HEIGHT_TICKS = 0;
-        public int HIGH_BASKET_TICKS = 1200;
-        public int LOW_BASKET_TICKS = 850;
-        public int LIFT_HEIGHT_TICK_THRESHOLD = 30;
-
-        public double VEL_P=0.0000004, VEL_I=0, VEL_D=0;
-
-        // Bucket servo params
-        public double BUCKET_SCORE_POS = 0;
-        public double BUCKET_INTAKE_POS = .725;
-
-        // Dumper servo params
-        public double DUMPER_HOME_POS = 0.73 ;
-        public double DUMPER_PRESCORE_POS  = 0.79;
-        public double DUMPER_DUMP_POS = .98;
-
-        public double UPWARD_VELOCITY = 35;     // Ticks per second (adjust as needed)
-        public double DOWNWARD_VELOCITY = -1.265;  // Ticks per second (negative for downward)
-        public double UPWARD_ACCELERATION = 25;    // Ticks per second squared (adjust as needed)
-        public double DOWNWARD_ACCELERATION = -2; // Ticks per second squared (negative for downward)
-        }
-
-    public static class SampleLiftParams19429 {
-        public double BUCKET_INCREMENT_TIME = 1.0;
-        public double KA = .001;
-        public double KV = .03;
-        public double KG = .04;
-        public double KS = 0;
-
-        public  double DUMP_TIME_MS = 800;
-        public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
-        public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
-        public double LIFT_POWER = 0.5;
-
-        public final int MAX_TARGET_TICKS = 1650;
-        public final int MIN_TARGET_TICKS = 0;
-        public double TIMEOUT_TIME_SECONDS = 3;
-        public int HOME_HEIGHT_TICKS = 0;
-        public int HIGH_BASKET_TICKS = 1200;
-        public int LOW_BASKET_TICKS = 850;
-        public int LIFT_HEIGHT_TICK_THRESHOLD = 30;
-
-        public double VEL_P=0.0000004, VEL_I=0, VEL_D=0;
-
-        // Bucket servo params
-        public double BUCKET_SCORE_POS = 0;
-        public double BUCKET_INTAKE_POS = .725;
-
-        // Dumper servo params
-        public double DUMPER_HOME_POS = 0.73 ;
-        public double DUMPER_PRESCORE_POS  = 0.79;
-        public double DUMPER_DUMP_POS = .98;
-
-        public double UPWARD_VELOCITY = 35;     // Ticks per second (adjust as needed)
-        public double DOWNWARD_VELOCITY = -1.265;  // Ticks per second (negative for downward)
-        public double UPWARD_ACCELERATION = 25;    // Ticks per second squared (adjust as needed)
-        public double DOWNWARD_ACCELERATION = -2; // Ticks per second squared (negative for downward)
-    }
 
     public enum SampleLiftStates {
         HIGH_BASKET, LOW_BASKET, LIFT_HOME, MANUAL, LOW_BASKET_DOWN;
-        public int ticks;
-        static {
 
-            HIGH_BASKET.ticks = SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS;
-            LOW_BASKET_DOWN.ticks = SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS;
-            LOW_BASKET.ticks = SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS;
-            LIFT_HOME.ticks = SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS;
-        }
-        public void setLiftHeightTicks(int t) {
-            this.ticks = t;
-        }
         public int getLiftHeightTicks() {
-            return this.ticks;
+            switch (this) {
+                case HIGH_BASKET:
+                    return SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS;
+                case LOW_BASKET:
+                    return SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS;
+                case LIFT_HOME:
+                    return  SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS;
+                default:
+                    throw new IllegalStateException("Power not defined for state: " + this);
+            }
         }
     }
 
     public enum BucketStates {
-        BUCKET_INTAKE_POS(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS),
-        BUCKET_SCORE_POS(SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS),
-        MOVING_TO_SCORE_POSITION(0),
-        MOVING_TO_INTAKE_POSITION(0),
-        MOVING_TO_PRE_SCORE_POSITION(0);
+        BUCKET_INTAKE_POS,
+        BUCKET_SCORE_POS,
+        MOVING_TO_SCORE_POSITION,
+        MOVING_TO_INTAKE_POSITION,
+        MOVING_TO_PRE_SCORE_POSITION;
 
-        public double position;
-
-        BucketStates(double position) {
-            this.position = position;
+        public double getBucketPosition() {
+            switch (this) {
+                case BUCKET_INTAKE_POS:
+                    return SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS;
+                case BUCKET_SCORE_POS:
+                    return SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS;
+                default:
+                    throw new IllegalStateException("Power not defined for state: " + this);
+            }
         }
-
-        // Dynamically update the intake power if parameters change
-        public void updateBucketPosition(double newPosition) {
-            this.position = newPosition;
-        }
-        public double getPosition(BucketStates state) {
-            return state.position;
-        }
-
     }
+
     public enum DumperStates {
-        DUMPER_HOME(SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS),
-        DUMPER_DUMP(SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS),
-        DUMPER_PRESCORE(SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS);
+        DUMPER_HOME,
+        DUMPER_DUMP,
+        DUMPER_PRESCORE;
 
-        public double position;
-
-        DumperStates(double position) {
-            this.position = position;
-        }
-        public double getPosition(DumperStates state) {
-            return state.position;
-        }
-
-        // Dynamically update the intake power if parameters change
-        public void updateDumperPosition(double newPosition) {
-            this.position = newPosition;
+        public double getDumperPosition() {
+            switch (this) {
+                case DUMPER_HOME:
+                    return SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS;
+                case DUMPER_PRESCORE:
+                    return SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS;
+                case DUMPER_DUMP:
+                    return SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS;
+                default:
+                    throw new IllegalStateException("Power not defined for state: " + this);
+            }
         }
     }
 
@@ -181,7 +219,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     private double feedforwardOutput;
     private double totalOutput;
 
-    public SampleLiftBucketSubsystem(final HardwareMap hMap, final String liftName, final String bucketName, final String dumperName) {
+    public SampleLiftBucketSubsystem(final HardwareMap hMap, final Robot.RobotType robotType, final String liftName, final String bucketName, final String dumperName) {
+        configureParamsForRobotType(robotType);
         lift = hMap.get(DcMotorEx.class, liftName);
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -205,8 +244,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         } else dumper = null;
     }
     // Overloaded constructor without color sensor
-    public SampleLiftBucketSubsystem(final HardwareMap hMap, final String liftName) {
-        this(hMap, liftName, null, null);  // Calls the main constructor with no color sensor
+    public SampleLiftBucketSubsystem(final HardwareMap hMap, Robot.RobotType robotType, final String liftName) {
+        this(hMap, robotType, liftName, null, null);  // Calls the main constructor with no color sensor
     }
 
     public void init() {
@@ -216,13 +255,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         currentLiftState = SampleLiftStates.LIFT_HOME;
         targetLiftState = SampleLiftStates.LIFT_HOME;
         pidController.reset();
-        pidController.setSetPoint(currentLiftState.ticks);
-        setTargetTicks(currentLiftState.ticks);
+        pidController.setSetPoint(currentLiftState.getLiftHeightTicks());
+        setTargetTicks(currentLiftState.getLiftHeightTicks());
 
         if (bucket != null) {
             setCurrentBucketState(BucketStates.BUCKET_INTAKE_POS);
-            currentBucketPosition=BucketStates.BUCKET_INTAKE_POS.position;
-            bucket.setPosition(BucketStates.BUCKET_INTAKE_POS.position);
+            bucket.setPosition(currentBucketState.getBucketPosition());
         }
         if (dumper != null) {
             hasDumped = false;
@@ -249,23 +287,21 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             if (currentBucketState==BucketStates.MOVING_TO_INTAKE_POSITION &&
                     currentBucketPosition >= targetBucketPosition )
             {
-                bucket.setPosition(BucketStates.BUCKET_INTAKE_POS.position);
+                bucket.setPosition(BucketStates.BUCKET_INTAKE_POS.getBucketPosition());
                 currentBucketState=BucketStates.BUCKET_INTAKE_POS;
                 movingToTarget = false;
             } else if (currentBucketState==BucketStates.MOVING_TO_SCORE_POSITION &&
                     currentBucketPosition <= targetBucketPosition)
             {
-                bucket.setPosition(BucketStates.BUCKET_SCORE_POS.position);
+                bucket.setPosition(BucketStates.BUCKET_SCORE_POS.getBucketPosition());
                 currentBucketState=BucketStates.BUCKET_SCORE_POS;
                 movingToTarget = false;
             }
-
 
         }
 
         // Update lift control
         updateLiftControl();
-
         updateLiftState();
         updateParameters();
         updateDashboardTelemetry();
@@ -326,16 +362,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 SAMPLE_LIFT_PARAMS.KG,
                 SAMPLE_LIFT_PARAMS.KV,
                 SAMPLE_LIFT_PARAMS.KA);
-
-        updateDumperParameters(DumperStates.DUMPER_HOME, SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS);
-        updateDumperParameters(DumperStates.DUMPER_DUMP, SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS);
-        updateDumperParameters(DumperStates.DUMPER_PRESCORE, SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS);
-        updateBucketParameters(BucketStates.BUCKET_INTAKE_POS, SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS);
-        updateBucketParameters(BucketStates.BUCKET_SCORE_POS, SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS);
-
-        updateLiftHeightTicks(SampleLiftStates.LIFT_HOME, SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS);
-        updateLiftHeightTicks(SampleLiftStates.HIGH_BASKET, SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS);
-        updateLiftHeightTicks(SampleLiftStates.LOW_BASKET, SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS);
     }
 
     public void setTargetTicks(int ticks) {
@@ -367,12 +393,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     public void setCurrentDumperState(DumperStates state){
         currentDumperState = state;
-        dumper.setPosition(state.position);
+        dumper.setPosition(state.getDumperPosition());
     }
 
     public void moveDumperToPreScore() {
         currentDumperState= DumperStates.DUMPER_PRESCORE;
-        dumper.setPosition(currentDumperState.position);
+        dumper.setPosition(currentDumperState.getDumperPosition());
     }
 
 
@@ -386,10 +412,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     public int getTargetTicks() {
         return targetTicks;
-    }
-
-    public SampleLiftStates getTargetLiftState() {
-        return targetLiftState;
     }
 
     public int getCurrentTicks() {
@@ -408,28 +430,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         setTargetTicks(newTargetTicks);  // Use setTargetTicks to ensure valid bounds
     }
 
-    private void updateLiftHeightTicks(SampleLiftStates liftState, int newHeightTicks) {
-        if (liftState.getLiftHeightTicks() != newHeightTicks) {
-            liftState.setLiftHeightTicks(newHeightTicks);
-        }
-    }
-
-
-    private void updateDumperParameters(DumperStates state, double position) {
-        if (state.getPosition(state) != position) {
-            state.updateDumperPosition(position);
-        }
-    }
-
-    private void updateBucketParameters(BucketStates state, double position) {
-        if (state.getPosition(state) != position) {
-            state.updateBucketPosition(position);
-        }
-    }
-
-
     public BucketStates getCurrentBucketState() { return currentBucketState;}
-    public DumperStates getCurrentDumperState() { return currentDumperState;}
 
     public void setBucketTargetPositionWithSteps(double targetPosition, int numSteps) {
         targetBucketPosition = targetPosition;
@@ -438,8 +439,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         movingToTarget = true;
         bucketTimer.reset();  // Start timing
     }
-
-
 
     // Basic telemetry display in a single line with a descriptive label
     public void displayBasicTelemetry(Telemetry telemetry) {
@@ -495,7 +494,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         MatchConfig.telemetryPacket.put("SampleLift/Power", powerLine);
     }
 
-
     public void moveLiftToHighBasket() {
         setTargetLiftState(SampleLiftStates.HIGH_BASKET);
     }
@@ -503,18 +501,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     public void moveLiftToHome() {
         setTargetLiftState(SampleLiftStates.LIFT_HOME);
     }
-
-    public void moveLiftToLowBasket() {
-        setTargetLiftState(SampleLiftStates.LOW_BASKET);
-    }
-
-    public void setDumperToHomePosition() {
-        setCurrentDumperState(DumperStates.DUMPER_HOME);
-    }
-    public void setDumperToDumpPosition() {
-        setCurrentDumperState(DumperStates.DUMPER_DUMP);
-    }
-
 
     public void setBucketToIntakePosition() {
         currentBucketState=BucketStates.MOVING_TO_INTAKE_POSITION;

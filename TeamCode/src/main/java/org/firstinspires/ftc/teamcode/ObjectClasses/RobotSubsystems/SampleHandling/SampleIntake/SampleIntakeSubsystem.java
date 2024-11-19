@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 @Config
 public class SampleIntakeSubsystem extends SubsystemBase {
 
-    public static class IntakeParams {
+    public static class SampleIntakeParams {
         public double INTAKE_ON_POWER = 0.8;
         public double INTAKE_REVERSE_POWER = -1;
         public double INTAKE_OFF_POWER = 0.0;
@@ -38,38 +38,26 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         public double RIGHT_POWER_REVERSE = -1;
     }
 
-    public static class IntakeParams19429 {
-        public double INTAKE_ON_POWER = -0.8;
-        public double INTAKE_REVERSE_POWER = 1;
-        public double INTAKE_OFF_POWER = 0.0;
-        public double MAX_POWER = 1.0;  // Max allowable power for intake servo
-
-        // Set a minimum proximity threshold to consider an object as "near"
-        public double PROXIMITY_THRESHOLD = 40;
-        public int COLOR_HISTORY_SIZE = 5;
-        public double TRANSFER_TIME_MS= 1000;
-        public double EJECT_TIME_MS= 800;
-
-        public double LEFT_POWER_REVERSE = 1;
-        public double RIGHT_POWER_REVERSE = 1;
-    }
-
-
-    public static IntakeParams INTAKE_PARAMS = new IntakeParams();
+    public static SampleIntakeParams SAMPLE_INTAKE_PARAMS = new SampleIntakeParams();
 
     public enum SampleIntakeStates {
-        REVERSING_INTAKE_TO_EJECT(INTAKE_PARAMS.INTAKE_REVERSE_POWER),
-        REVERSING_INTAKE_TO_TRANSFER(INTAKE_PARAMS.INTAKE_REVERSE_POWER),
-        INTAKE_ON(INTAKE_PARAMS.INTAKE_ON_POWER),
-        INTAKE_REVERSE(INTAKE_PARAMS.INTAKE_REVERSE_POWER),
-        INTAKE_OFF(INTAKE_PARAMS.INTAKE_OFF_POWER);
-        public double power;
-        SampleIntakeStates(double power) {
-            this.power = power;
-        }
-        // Dynamically update the intake power if parameters change
-        public void updateIntakePower(double newPower) {
-            this.power = newPower;
+        REVERSING_INTAKE_TO_EJECT,
+        REVERSING_INTAKE_TO_TRANSFER,
+        INTAKE_ON,
+        INTAKE_REVERSE,
+        INTAKE_OFF;
+
+        public double getIntakePower() {
+            switch (this) {
+                case INTAKE_ON:
+                    return SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER;
+                case INTAKE_REVERSE:
+                    return SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER;
+                case INTAKE_OFF:
+                    return SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER;
+                default:
+                    throw new IllegalStateException("Power not defined for state: " + this);
+            }
         }
     }
 
@@ -94,28 +82,29 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     private IntakeDetectState currentIntakeDetectionState;
 
     // Constructor with color sensor
-    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoL, final String intakeServoR, final String colorSensorName) {
+    public SampleIntakeSubsystem(final HardwareMap hMap, Robot.RobotType robotType,  final String intakeServoL, final String intakeServoR, final String colorSensorName) {
+        configureParamsForRobotType(robotType);
         sampleIntakeLeft = hMap.get(CRServo.class, intakeServoL);
         sampleIntakeRight = hMap.get(CRServo.class, intakeServoR);
 
         colorSensor = colorSensorName != null ? hMap.get(RevColorSensorV3.class, colorSensorName) : null;
 
         if (colorSensor != null) {
-            sampleDetector = new SampleDetector(colorSensor, INTAKE_PARAMS.PROXIMITY_THRESHOLD, INTAKE_PARAMS.COLOR_HISTORY_SIZE);
+            sampleDetector = new SampleDetector(colorSensor, SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD, SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE);
         } else {
             sampleDetector = null; // no detector if sensor is unavailable;
         }
     }
 
     // Overloaded constructor without color sensor
-    public SampleIntakeSubsystem(final HardwareMap hMap, final String intakeServoL, final String intakeServoR) {
-        this(hMap, intakeServoL, intakeServoR, null);  // Calls the main constructor with no color sensor
+    public SampleIntakeSubsystem(final HardwareMap hMap, Robot.RobotType robotType, final String intakeServoL, final String intakeServoR) {
+        this(hMap, robotType, intakeServoL, intakeServoR, null);  // Calls the main constructor with no color sensor
     }
 
     // Initialize intake servo
     public void init() {
         setCurrentState(SampleIntakeStates.INTAKE_OFF);  // Set default state to off
-        currentPower = INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
+        currentPower = SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
         sampleProcessingStateMachine = Robot.getInstance().getSampleProcessingStateMachine();
         currentIntakeDetectionState=IntakeDetectState.DETECTING;
     }
@@ -141,19 +130,18 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                 }
                 break;
         }
-        updateParameters();
         updateDashboardTelemetry();
     }
 
     private void updateIntakeStateMachine() {
         switch (currentSampleIntakeState) {
             case REVERSING_INTAKE_TO_TRANSFER:
-                if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.TRANSFER_TIME_MS) {
+                if (sampleIntakeTimer.milliseconds() >= SAMPLE_INTAKE_PARAMS.TRANSFER_TIME_MS) {
                     setCurrentState(SampleIntakeStates.INTAKE_OFF);
                 }
                 break;
             case REVERSING_INTAKE_TO_EJECT:
-                if (sampleIntakeTimer.milliseconds() >= INTAKE_PARAMS.EJECT_TIME_MS) {
+                if (sampleIntakeTimer.milliseconds() >= SAMPLE_INTAKE_PARAMS.EJECT_TIME_MS) {
                     setCurrentState(SampleIntakeStates.INTAKE_OFF);
                 }
                 break;
@@ -177,7 +165,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     // Set servo power, ensuring it's within limits
     private void setPower(double power) {
-        currentPower = Range.clip(power, -INTAKE_PARAMS.MAX_POWER, INTAKE_PARAMS.MAX_POWER);  // Clip power to safe range
+        currentPower = Range.clip(power, - SAMPLE_INTAKE_PARAMS.MAX_POWER, SAMPLE_INTAKE_PARAMS.MAX_POWER);  // Clip power to safe range
         sampleIntakeLeft.setPower(currentPower);  // Apply the clipped power
         sampleIntakeRight.setPower(-currentPower);  // Apply the clipped power
     }
@@ -192,39 +180,30 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public void setCurrentState(SampleIntakeStates state) {
         currentSampleIntakeState = state;
         if (state == SampleIntakeStates.REVERSING_INTAKE_TO_TRANSFER) {
-            setPower(INTAKE_PARAMS.LEFT_POWER_REVERSE, INTAKE_PARAMS.RIGHT_POWER_REVERSE);
-        } else setPower(state.power);
+            setPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE);
+        } else setPower(state.getIntakePower());
     }
 
     // Set the current intake state and update power
     public void turnOffIntake() {
         SampleIntakeStates intakeOffState = SampleIntakeStates.INTAKE_OFF;
-        setPower(intakeOffState.power);
+        setPower(intakeOffState.getIntakePower());
     }
 
     public void turnOnIntake() {
         SampleIntakeStates intakeOnState = SampleIntakeStates.INTAKE_ON;
-        setPower(intakeOnState.power);
+        setPower(intakeOnState.getIntakePower());
     }
 
     public void reverseIntake() {
         SampleIntakeStates intakeReverseState = SampleIntakeStates.INTAKE_REVERSE;
-        setPower(intakeReverseState.power);
+        setPower(intakeReverseState.getIntakePower());
     }
 
     // Getters for telemetry use or other purposes
     public SampleIntakeStates getCurrentState() {
         return currentSampleIntakeState;
     }
-
-    // Update intake parameters dynamically (called in periodic)
-    private void updateParameters() {
-        // Update the power for each state dynamically from dashboard changes
-        SampleIntakeStates.INTAKE_ON.updateIntakePower(INTAKE_PARAMS.INTAKE_ON_POWER);
-        SampleIntakeStates.INTAKE_REVERSE.updateIntakePower(INTAKE_PARAMS.INTAKE_REVERSE_POWER);
-        SampleIntakeStates.INTAKE_OFF.updateIntakePower(INTAKE_PARAMS.INTAKE_OFF_POWER);
-    }
-
     public SampleDetector getSampleDetector() {
         return sampleDetector;
     }
@@ -296,4 +275,34 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         return currentIntakeDetectionState;
     }
 
+
+
+    public static void configureParamsForRobotType(Robot.RobotType robotType) {
+        switch (robotType) {
+            case INTO_THE_DEEP_19429:
+                SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER = 0.8;
+                SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER = -1.0;
+                SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
+                SAMPLE_INTAKE_PARAMS.MAX_POWER = 1.0;
+                SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD = 40.0;
+                SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE = 5;
+                SAMPLE_INTAKE_PARAMS.TRANSFER_TIME_MS = 1000.0;
+                SAMPLE_INTAKE_PARAMS.EJECT_TIME_MS = 800.0;
+                break;
+
+            case INTO_THE_DEEP_20245:
+                SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER = 0.8;
+                SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER = -1.0;
+                SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
+                SAMPLE_INTAKE_PARAMS.MAX_POWER = 1.0;
+                SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD = 40.0;
+                SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE = 5;
+                SAMPLE_INTAKE_PARAMS.TRANSFER_TIME_MS = 1000.0;
+                SAMPLE_INTAKE_PARAMS.EJECT_TIME_MS = 801.0;
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown robot type: " + robotType);
+        }
+    }
 }

@@ -1,13 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.DriveForwardFromBasketAndBringLiftDown;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
@@ -22,8 +16,6 @@ public class SampleButtonHandling {
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
 
-    private boolean driveAwayTriggered = false; // Flag to track if drive-away action should be triggered
-    private ElapsedTime driveAwayTimer = new ElapsedTime(); // Timer for drive-away delay
     // Constructor
     public SampleButtonHandling(SampleLinearActuatorSubsystem actuatorSubsystem,
                                 SampleIntakeSubsystem intakeSubsystem,
@@ -54,49 +46,6 @@ public class SampleButtonHandling {
             }
     }
 
-
-    //This got implemented with Actions/ActionCommands so this probably can be deleted
-    public void onScoreButtonPress() {
-        switch (liftSubsystem.getCurrentLiftState()) {
-            case LIFT_HOME:
-                if (actuatorSubsystem.isFullyRetracted()) {  // Assuming this returns true when retracted
-                    liftSubsystem.hasDumped = false;
-                    liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.HIGH_BASKET);
-                    liftSubsystem.setBucketToScorePosition();
-                }
-                break;
-            case HIGH_BASKET:
-                if (!liftSubsystem.hasDumped) {
-                    liftSubsystem.dumpSampleInBucket();
-                    driveAwayTriggered = false;
-                }else if (!driveAwayTriggered)
-                {
-                    executeDriveAway();
-                    driveAwayTimer.reset();
-                } else if (driveAwayTimer.seconds() >= 3) {
-                    // Start timer for drive-away delay
-                    onMoveSampleBucketButtonPress();
-                    liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
-                }
-                break;
-            case MANUAL:
-            default:
-                liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
-                liftSubsystem.setCurrentBucketState(SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS);
-                liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
-        }
-    }
-
-    // Method to turn the intake off
-    public void setIntakeOff() {
-        intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
-    }
-
-    // Method to reverse the intake
-    public void setIntakeReverse() {
-        intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE);
-    }
-
     public void onMoveSampleBucketButtonPress() {
         SampleLiftBucketSubsystem.BucketStates currentState = liftSubsystem.getCurrentBucketState();
         if (currentState == SampleLiftBucketSubsystem.BucketStates.BUCKET_INTAKE_POS) {
@@ -104,16 +53,6 @@ public class SampleButtonHandling {
         } else {
             liftSubsystem.setBucketToIntakePosition();
         }
-    }
-
-    public void executeDriveAway() {
-        // Implement the logic to drive the robot backward a small distance.
-        // Example:
-        Set<Subsystem> requirements = new HashSet<>();
-        requirements.add(Robot.getInstance().getDriveSubsystem());
-        Command driveForwardCommand = new ActionCommand(new DriveForwardFromBasketAndBringLiftDown(10),requirements);
-        driveForwardCommand.schedule();
-        driveAwayTriggered=true;
     }
 
 }

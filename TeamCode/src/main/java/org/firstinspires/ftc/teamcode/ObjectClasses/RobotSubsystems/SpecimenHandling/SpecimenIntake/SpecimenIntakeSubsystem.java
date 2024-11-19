@@ -9,7 +9,6 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
@@ -21,28 +20,34 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GameP
 public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     public static class SpecimenIntakeParams {
-        public double INTAKE_ON_POWER = -1.0;
-        public double INTAKE_REVERSE_POWER = 1.0;
-        public double INTAKE_OFF_POWER = 0.0;
-        public double MAX_POWER = 1.0;  // Max allowable power for intake servo
-        public double PROXIMITY_THRESHOLD_IN_MM = 30;
-        public int HISTORY_SIZE = 6;
+        public double INTAKE_ON_POWER = Double.NaN;
+        public double INTAKE_REVERSE_POWER = Double.NaN;
+        public double INTAKE_OFF_POWER = Double.NaN;
+        public double MAX_POWER = Double.NaN;  // Max allowable power for intake servo
+        public double PROXIMITY_THRESHOLD_IN_MM = Double.NaN;
+        public int HISTORY_SIZE = -1;
     }
 
     public static SpecimenIntakeParams SPECIMEN_INTAKE_PARAMS = new SpecimenIntakeParams();
 
     public enum SpecimenIntakeStates {
-        INTAKE_ON(SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER),
-        INTAKE_REVERSE(SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER),
-        INTAKE_OFF(SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER);
-        public double power;
-        SpecimenIntakeStates(double power) {
-            this.power = power;
+        INTAKE_ON,
+        INTAKE_REVERSE,
+        INTAKE_OFF;
+
+        public double getIntakePower() {
+            switch (this) {
+                case INTAKE_ON:
+                    return SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER;
+                case INTAKE_REVERSE:
+                    return SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER;
+                case INTAKE_OFF:
+                    return SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER;
+                default:
+                    throw new IllegalStateException("Angle not defined for state: " + this);
+            }
         }
-        // Dynamically update the intake power if parameters change
-        public void updateIntakePower(double newPower) {
-            this.power = newPower;
-        }
+
     }
 
     private final CRServo specimenIntake;  // Continuous rotation servo
@@ -52,7 +57,9 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     private final SpecimenDetector specimenDetector;
     // Constructor with color sensor
-    public SpecimenIntakeSubsystem(final HardwareMap hMap, final String intakeServo, final String colorSensorName) {
+    public SpecimenIntakeSubsystem(final HardwareMap hMap,final Robot.RobotType robotType, final String intakeServo, final String colorSensorName) {
+        configureParamsForRobotType(robotType);
+
         specimenIntake = hMap.get(CRServo.class, intakeServo);
         // Nullable color sensor
         RevColorSensorV3 colorSensor = colorSensorName != null ? hMap.get(RevColorSensorV3.class , colorSensorName) : null;
@@ -64,8 +71,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     }
 
     // Overloaded constructor without color sensor
-    public SpecimenIntakeSubsystem(final HardwareMap hMap, final String intakeServo ) {
-        this(hMap, intakeServo, null);  // Calls the main constructor with no color sensor
+    public SpecimenIntakeSubsystem(final HardwareMap hMap, Robot.RobotType robotType, final String intakeServo ) {
+        this(hMap, robotType, intakeServo, null);  // Calls the main constructor with no color sensor
     }
 
     // Initialize intake servo
@@ -80,7 +87,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         if (specimenDetector != null)
         {
             // Update the detection state via the detector
-
             DetectionState specimenDetectionState = specimenDetector.updateDetection();
             switch (specimenDetectionState) {
                 case JUST_DETECTED:
@@ -96,7 +102,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                     break;
             }
         }
-        updateParameters();
         updateDashboardTelemetry();
     }
 
@@ -114,7 +119,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     // Set the current intake state and update power
     public void setCurrentState(SpecimenIntakeStates state) {
         currentState = state;
-        setPower(state.power);
+        setPower(state.getIntakePower());
     }
 
     // Set servo power, ensuring it's within limits
@@ -125,25 +130,17 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     public void turnOnIntake() {
         currentState = SpecimenIntakeStates.INTAKE_ON;
-        setPower(currentState.power);
+        setPower(currentState.getIntakePower());
     }
 
     public void turnOffIntake() {
         currentState = SpecimenIntakeStates.INTAKE_OFF;
-        setPower(currentState.power);
+        setPower(currentState.getIntakePower());
     }
 
     public void reverseIntake() {
         currentState = SpecimenIntakeStates.INTAKE_REVERSE;
-        setPower(currentState.power);
-    }
-
-    // Update intake parameters dynamically (called in periodic)
-    private void updateParameters() {
-        // Update the power for each state dynamically from dashboard changes
-        SpecimenIntakeStates.INTAKE_ON.updateIntakePower(SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER);
-        SpecimenIntakeStates.INTAKE_REVERSE.updateIntakePower(SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER);
-        SpecimenIntakeStates.INTAKE_OFF.updateIntakePower(SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER);
+        setPower(currentState.getIntakePower());
     }
 
     public SpecimenDetector getSpecimenDetector() {
@@ -210,4 +207,32 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     public boolean isNotReversing() {
         return currentState != SpecimenIntakeStates.INTAKE_REVERSE;
     }
+
+
+
+    public static void configureParamsForRobotType(Robot.RobotType robotType) {
+        switch (robotType) {
+            case INTO_THE_DEEP_19429:
+                SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = -1.0;
+                SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
+                SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
+                SPECIMEN_INTAKE_PARAMS.MAX_POWER = 1.0;
+                SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 30;
+                SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 5;
+                break;
+
+            case INTO_THE_DEEP_20245:
+                SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = -0.8;
+                SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 0.8;
+                SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
+                SPECIMEN_INTAKE_PARAMS.MAX_POWER = 0.8;
+                SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 25;
+                SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 5;
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown robot type: " + robotType);
+        }
+    }
+
 }

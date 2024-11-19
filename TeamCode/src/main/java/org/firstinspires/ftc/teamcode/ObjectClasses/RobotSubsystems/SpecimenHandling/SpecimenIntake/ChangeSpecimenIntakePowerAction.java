@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -9,9 +11,6 @@ import com.acmerobotics.roadrunner.Action;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 public class ChangeSpecimenIntakePowerAction implements Action {
-
-    // The subsystem the action runs on
-    private SpecimenIntakeSubsystem specimenIntakeSubsystem;
 
     // Target state for the intake motor
     private final SpecimenIntakeSubsystem.SpecimenIntakeStates targetState;
@@ -25,7 +24,8 @@ public class ChangeSpecimenIntakePowerAction implements Action {
 
     // Initialization method
     public void init() {
-        specimenIntakeSubsystem = Robot.getInstance().getSpecimenIntakeSubsystem();
+        // The subsystem the action runs on
+        SpecimenIntakeSubsystem specimenIntakeSubsystem = Robot.getInstance().getSpecimenIntakeSubsystem();
         // Set the intake motor power based on the target state
         specimenIntakeSubsystem.setCurrentState(targetState);
     }
@@ -53,11 +53,12 @@ public class ChangeSpecimenIntakePowerAction implements Action {
     }
 
     // Method to handle end of the action
+    @SuppressLint("DefaultLocale")
     public void end(TelemetryPacket p) {
         hasNotInit=true;
         // Telemetry feedback to show state change completion
         p.addLine(String.format("Specimen Intake Power set to %s (Power: %.2f)",
-                targetState.toString(), targetState.power));
+                targetState.toString(), targetState.getIntakePower()));
 
         // Send the telemetry packet to FtcDashboard
         FtcDashboard.getInstance().sendTelemetryPacket(p);

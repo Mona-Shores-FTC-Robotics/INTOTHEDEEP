@@ -115,19 +115,19 @@ public class Robot {
                 specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, robotType, "specimenarm");
                 registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
 
-                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
+                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, robotType, "samplelinearactuator");
                 registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
 
-                sampleLiftBucketSubsystem = new SampleLiftBucketSubsystem(hardwareMap, "samplelift", "samplebucket", "sampledumper");
+                sampleLiftBucketSubsystem = new SampleLiftBucketSubsystem(hardwareMap, robotType, "samplelift", "samplebucket", "sampledumper");
                 registerSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET, sampleLiftBucketSubsystem);
 
-                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
+                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, robotType, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
                 registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
-                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake","specimencolorsensor");
+                specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, robotType,"specimenintake","specimencolorsensor");
                 registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
 
-                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkin");
+                lightingSubsystem = new LightingSubsystem(hardwareMap, robotType, "blinkin");
                 registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
 
                 if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
@@ -141,7 +141,7 @@ public class Robot {
                         hasSubsystem(SubsystemType.SPECIMEN_ARM) &&
                                 hasSubsystem(SubsystemType.SPECIMEN_INTAKE)) {
                     specimenButtonHandling = new SpecimenButtonHandling(specimenIntakeSubsystem, specimenArmSubsystem);
-                    specimenProcessingStateMachine = new SpecimenProcessingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
+                    specimenProcessingStateMachine = new SpecimenProcessingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem, lightingSubsystem);
                 }
 
                 break;

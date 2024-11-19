@@ -14,9 +14,7 @@ public class SampleProcessingStateMachine {
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
-    private final LightingSubsystem
-            lightingSubsystem;
-    FieldConstants.SampleColor sampleColor;
+    private final LightingSubsystem lightingSubsystem;
 
     public enum SampleDetectionStates {
         ON_GOOD_SAMPLE_DETECTION,
@@ -45,25 +43,22 @@ public class SampleProcessingStateMachine {
             case WAITING_FOR_SAMPLE_DETECTION:
                 if (intakeSubsystem.getCurrentIntakeDetectState() == SampleIntakeSubsystem.IntakeDetectState.DETECTED_GOOD_SAMPLE) {
                         currentSampleDetectionState = SampleDetectionStates.ON_GOOD_SAMPLE_DETECTION;
-                        sampleColor = intakeSubsystem.getSampleDetector().getConsensusColor();
-                    }
+                }
                 else if (intakeSubsystem.getCurrentIntakeDetectState() == SampleIntakeSubsystem.IntakeDetectState.DETECTED_BAD_SAMPLE)  {
                         currentSampleDetectionState = SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
-                        sampleColor = intakeSubsystem.getSampleDetector().getConsensusColor();
-                } else
-                {
-                    lightingSubsystem.setLightBlack();
                 }
                 break;
             case ON_GOOD_SAMPLE_DETECTION:
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;
+                lightingSubsystem.setGoodSampleIndicator();
                 intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                 liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                 liftSubsystem.setBucketToIntakePosition();
                 actuatorSubsystem.fullyRetract();
-                lightingSubsystem.setGreenIndicatorColor();
+                lightingSubsystem.setGoodSampleIndicator();
                 break;
+
             case GETTING_READY_FOR_TRANSFER:
                 if (actuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.FULLY_RETRACTED) {
                     currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
@@ -77,17 +72,18 @@ public class SampleProcessingStateMachine {
                 }
                 break;
             case ON_BAD_SAMPLE_DETECTED:
+                lightingSubsystem.setBadSampleWarningColor();
                 currentSampleDetectionState = SampleDetectionStates.EJECTING_BAD_SAMPLE;
                 intakeSubsystem.ejectBadSample();
                 break;
             case EJECTING_BAD_SAMPLE:
                 if (intakeSubsystem.getCurrentState() == SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
                     currentSampleDetectionState = SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
+                    lightingSubsystem.setLightBlack();
                     //Presumably we want to grab another sample from the submersible...
                     actuatorSubsystem.partiallyRetractAndIntakeOn();
                 }
                 break;
-
         }
     }
 

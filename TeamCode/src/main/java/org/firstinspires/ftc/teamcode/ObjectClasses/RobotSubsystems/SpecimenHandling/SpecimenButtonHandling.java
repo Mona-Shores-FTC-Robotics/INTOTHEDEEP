@@ -16,14 +16,6 @@ public class SpecimenButtonHandling {
 
     public void onSpecimenHandleButtonPress() {
         switch (armSubsystem.getCurrentState()) {
-            default:
-            case ZERO_POWER_AT_CCW_ARM_HOME:
-            case CCW_ARM_HOME:
-                armSubsystem.setTargetAngle(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
-                if (!intakeSubsystem.getSpecimenDetector().haveSpecimen()) {
-                    intakeSubsystem.setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
-                }
-                break;
             case SPECIMEN_PICKUP:
                 //It should automatically move out of this state, but it shouldn't hurt to have this here in case our detection doesn't work
                 armSubsystem.flipCWFast();
@@ -32,6 +24,14 @@ public class SpecimenButtonHandling {
             case CW_ARM_HOME:
             case ZERO_POWER_AT_CW_ARM_HOME:
                 armSubsystem.flipCCWFast();
+                break;
+            case ZERO_POWER_AT_CCW_ARM_HOME:
+            case CCW_ARM_HOME:
+            default:
+                armSubsystem.setTargetAngle(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
+                if (!intakeSubsystem.getSpecimenDetector().haveSpecimen()) {
+                    intakeSubsystem.setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
+                }
                 break;
         }
     }

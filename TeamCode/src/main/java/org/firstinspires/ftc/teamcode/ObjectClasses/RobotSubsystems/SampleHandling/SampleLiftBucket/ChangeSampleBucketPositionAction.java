@@ -12,9 +12,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 
 public class ChangeSampleBucketPositionAction implements Action {
 
-    // The subsystem the action runs on
-    private SampleLiftBucketSubsystem sampleLiftBucketSubsystem;
-
     // Target state for the intake motor
     private final SampleLiftBucketSubsystem.BucketStates targetState;
 
@@ -27,9 +24,10 @@ public class ChangeSampleBucketPositionAction implements Action {
 
     // Initialization method
     public void init() {
-        sampleLiftBucketSubsystem = Robot.getInstance().getSampleLiftBucketSubsystem();
+        // The subsystem the action runs on
+        SampleLiftBucketSubsystem sampleLiftBucketSubsystem = Robot.getInstance().getSampleLiftBucketSubsystem();
         // Set the intake motor power based on the target state
-        sampleLiftBucketSubsystem.setBucketTargetPositionWithSteps(targetState.position, 15);
+        sampleLiftBucketSubsystem.setBucketTargetPositionWithSteps(targetState.getBucketPosition(), 15);
     }
 
     @Override

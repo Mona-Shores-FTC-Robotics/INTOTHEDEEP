@@ -99,6 +99,13 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         MatchConfig.loopTimer.reset();
 
         MatchConfig.telemetryPacket = new TelemetryPacket();
+
+        //Turn the lights off to start
+        if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.LIGHTING))
+        {
+            Robot.getInstance().getLightingSubsystem().setLightBlack();
+        }
+
         while (opModeIsActive())
         {
             // Add the loop time to the sliding window average

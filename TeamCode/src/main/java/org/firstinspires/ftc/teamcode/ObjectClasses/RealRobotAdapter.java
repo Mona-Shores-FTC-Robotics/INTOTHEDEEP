@@ -140,7 +140,8 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
                         return new SequentialAction(
                                 new InstantAction(robot.getSpecimenArmSubsystem()::flipCCWFast),
-                                new InstantAction(robot.getSpecimenIntakeSubsystem()::disablePreloadMode)
+                                new InstantAction(robot.getSpecimenIntakeSubsystem()::disablePreloadMode),
+                                new InstantAction(robot.getLightingSubsystem()::setLightBlack)
                         );
                     } else return problem();
 
