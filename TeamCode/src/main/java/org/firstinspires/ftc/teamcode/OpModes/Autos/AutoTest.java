@@ -74,7 +74,7 @@ public class AutoTest extends LinearOpMode {
 
             //Handle Lighting During Init
             if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.LIGHTING)) {
-                Robot.getInstance().getLightingSubsystem().updateLightsBasedOnAllianceColorAndSide(finalAllianceColor , finalSideOfField);
+                Robot.getInstance().getLightingSubsystem().updateLightBasedOnPreloadPresenceAndAllianceColorAndSideOfField(finalAllianceColor , finalSideOfField);
             }
 
             telemetry.update();

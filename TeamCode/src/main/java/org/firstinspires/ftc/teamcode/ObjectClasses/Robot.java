@@ -84,44 +84,49 @@ public class Robot {
             case INTO_THE_DEEP_19429:
             case INTO_THE_DEEP_20245: {
 
+                //Motors
                 //Control Hub - Motor Port 0 - leftBack
                 //Control Hub - Motor Port 1 - leftFront
                 //Control Hub - Motor Port 2 - rightBack
                 //Control Hub - Motor Port 3 - rightFront
-                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
-                registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
 
-                //Expansion Hub - Motor Port 0 - specimenarm
-                specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, "specimenarm");
-                registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
-
-                //Expansion Hub - Port 1 - samplelinearactuator
-                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
-                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
-
-                //Expansion Hub - Motor Port 2 - samplelift
-                //Control Hub - Servo Port 2 - samplebucket
-                //Control Hub - Servo Port 3 - sampledumper
-                sampleLiftBucketSubsystem = new SampleLiftBucketSubsystem(hardwareMap, "samplelift", "samplebucket", "sampledumper");
-                registerSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET, sampleLiftBucketSubsystem);
-
-                //Expansion Hub - Port 3 - climber
+                //Expans. Hub - Motor Port 0 - specimenarm
+                //Expans. Hub - Motor Port 1 - samplelinearactuator
+                //Expans. Hub - Motor Port 2 - samplelift
+                //Expans. Hub - Motor Port 3 - climber
 
                 //Control Hub - Servo Port 0 - sampleintakeright
                 //Control Hub - Servo Port 1 - sampleintakeleft
+                //Control Hub - Servo Port 2 - samplebucket
+                //Control Hub - Servo Port 3 - sampledumper
+                //Control Hub - Servo Port 4 - specimenintake
+                //Control Hub - Servo Port 5 - climbservo
+
+                //TODO fix these
                 //Control Hub - I2C Bus 1 - samplecolorsensor
+                //Expansion Hub - I2C Bus 2 - specimencolorsensor
+                //Control Hub - I2C Bus XXX - pinpoint
+                //Control Hub - I2C Bus XXX - octoquad
+
+                mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
+                registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
+
+                specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, robotType, "specimenarm");
+                registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
+
+                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, "samplelinearactuator");
+                registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
+
+                sampleLiftBucketSubsystem = new SampleLiftBucketSubsystem(hardwareMap, "samplelift", "samplebucket", "sampledumper");
+                registerSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET, sampleLiftBucketSubsystem);
+
                 sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
                 registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
-                //Control Hub - Servo Port 4 - specimenintake
-                //Expansion Hub - I2C Bus 2 - specimencolorsensor
                 specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, "specimenintake","specimencolorsensor");
                 registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
 
-
-                //Expansion Hub - Servo Port 1 - blinkinleft
-                //Expansion Hub - Servo Port 2 - blinkinright
-                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkinfront", "blinkinback");
+                lightingSubsystem = new LightingSubsystem(hardwareMap, "blinkin");
                 registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
 
                 if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
@@ -137,8 +142,6 @@ public class Robot {
                     specimenButtonHandling = new SpecimenButtonHandling(specimenIntakeSubsystem, specimenArmSubsystem);
                     specimenProcessingStateMachine = new SpecimenProcessingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem);
                 }
-
-                //SERVO for the climb is on control hub
 
                 break;
             }
@@ -170,7 +173,6 @@ public class Robot {
     // This method can be called to register subsystems
     public void registerSubsystem(SubsystemType type, Subsystem subsystem) {
         CommandScheduler.getInstance().registerSubsystem(subsystem);
-
         subsystemMap.put(type, subsystem);
         availableSubsystems.add(type);
         activeOpMode.telemetry.addLine("Registered subsystem: " + subsystem);

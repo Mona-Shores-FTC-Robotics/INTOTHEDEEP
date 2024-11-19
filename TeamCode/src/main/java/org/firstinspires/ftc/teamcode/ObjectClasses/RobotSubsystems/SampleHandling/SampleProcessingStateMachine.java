@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 import com.acmerobotics.dashboard.config.Config;
 import com.example.sharedconstants.FieldConstants;
 
-import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
@@ -53,7 +52,7 @@ public class SampleProcessingStateMachine {
                         sampleColor = intakeSubsystem.getSampleDetector().getConsensusColor();
                 } else
                 {
-                    lightingSubsystem.setBothLightsBlack();
+                    lightingSubsystem.setLightBlack();
                 }
                 break;
             case ON_GOOD_SAMPLE_DETECTION:
@@ -68,7 +67,7 @@ public class SampleProcessingStateMachine {
             case GETTING_READY_FOR_TRANSFER:
                 if (actuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.FULLY_RETRACTED) {
                     currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
-                    lightingSubsystem.setBothLightsSampleColor();
+                    lightingSubsystem.setLightToSampleColor();
                     intakeSubsystem.transferSampleToBucket();
                 }
                 break;

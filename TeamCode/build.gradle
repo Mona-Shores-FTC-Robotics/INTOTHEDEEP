@@ -74,13 +74,10 @@ dependencies {
     implementation "com.acmerobotics.roadrunner:core:1.0.0"
     implementation "com.acmerobotics.roadrunner:actions:1.0.0"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
-    implementation "com.github.jdhs-ftc:road-runner-ftc-otos:8e83c17ff7"
     implementation 'io.github.classgraph:classgraph:4.8.149' // Check for the latest version
     implementation 'org.team11260:fast-load:0.1.2'
     implementation ('org.reflections:reflections:0.10.2'){
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
-
-
     implementation "page.j5155.roadrunner:ftc-otos:0.1.0+0.1.14"
 }

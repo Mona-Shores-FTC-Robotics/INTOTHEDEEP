@@ -4,8 +4,6 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalAlli
 import static org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig.finalSideOfField;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.Robot.SubsystemType.SPECIMEN_INTAKE;
 
-import android.service.autofill.FieldClassification;
-
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -13,18 +11,12 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.DoNothing;
-import com.example.sharedconstants.Routes.NET.NET_Score5_SamplePreload;
 import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_4_Preload_and_3_Samples;
-import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample;
-import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples;
-import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_All_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle;
-import com.example.sharedconstants.Routes.OBS.OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle;
-import com.example.sharedconstants.Routes.OBS.OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -161,7 +153,7 @@ public class AutoSelector extends LinearOpMode {
 
             //Handle Lighting During Init
             if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.LIGHTING)) {
-                Robot.getInstance().getLightingSubsystem().updateLightsBasedOnAllianceColorAndSide(finalAllianceColor , finalSideOfField);
+                Robot.getInstance().getLightingSubsystem().updateLightBasedOnPreloadPresenceAndAllianceColorAndSideOfField(finalAllianceColor , finalSideOfField);
             }
 
             telemetry.update();

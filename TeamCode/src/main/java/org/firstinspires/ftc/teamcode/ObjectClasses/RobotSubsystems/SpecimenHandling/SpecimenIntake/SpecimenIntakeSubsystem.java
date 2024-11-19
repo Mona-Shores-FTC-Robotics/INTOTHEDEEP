@@ -8,13 +8,11 @@ import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState;
@@ -22,10 +20,7 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GameP
 @Config
 public class SpecimenIntakeSubsystem extends SubsystemBase {
 
-
-
     public static class SpecimenIntakeParams {
-        public double  SLOW_REVERSE_DELAY_TIME_MS = 1500;
         public double INTAKE_ON_POWER = -1.0;
         public double INTAKE_REVERSE_POWER = 1.0;
         public double INTAKE_OFF_POWER = 0.0;
@@ -51,7 +46,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     }
 
     private final CRServo specimenIntake;  // Continuous rotation servo
-    private final RevColorSensorV3 colorSensor;  // Nullable color sensor
     private SpecimenIntakeStates currentState;
     private double currentPower;
     private Boolean preloadModeActive;
@@ -60,9 +54,10 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     // Constructor with color sensor
     public SpecimenIntakeSubsystem(final HardwareMap hMap, final String intakeServo, final String colorSensorName) {
         specimenIntake = hMap.get(CRServo.class, intakeServo);
-        colorSensor = colorSensorName != null ? hMap.get(RevColorSensorV3.class, colorSensorName) : null;
+        // Nullable color sensor
+        RevColorSensorV3 colorSensor = colorSensorName != null ? hMap.get(RevColorSensorV3.class , colorSensorName) : null;
         if (colorSensor != null) {
-            specimenDetector = new SpecimenDetector(colorSensor, SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM, SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE);
+            specimenDetector = new SpecimenDetector(colorSensor , SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM, SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE);
         } else {
             specimenDetector = null; // no detector if sensor is unavailable;
         }
@@ -212,4 +207,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         }
     }
 
+    public boolean isNotReversing() {
+        return currentState != SpecimenIntakeStates.INTAKE_REVERSE;
+    }
 }

@@ -96,6 +96,7 @@ public class IntoTheDeepOperatorBindings {
 
     }
 
+    //Todo test this and see if its worth using...
     private void bindFlipArmToAngle(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
         {
