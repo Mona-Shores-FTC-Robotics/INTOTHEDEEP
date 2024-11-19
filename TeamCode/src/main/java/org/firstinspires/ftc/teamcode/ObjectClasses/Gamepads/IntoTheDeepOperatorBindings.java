@@ -12,7 +12,10 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.A
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.ButtonBinding;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
+import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.ClimberSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.ReadyClimberArmCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.ScoreSampleAction;
@@ -94,6 +97,20 @@ public class IntoTheDeepOperatorBindings {
         // START/OPTIONS BUTTON                                 //
         //////////////////////////////////////////////////////////
 
+//        operatorGamePad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                .toggleWhenPressed(
+//                        new InstantCommand(() -> {
+//                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
+//                                new ReadyClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.READY).schedule();
+//                                armIsUp=true;
+//                            }
+//                        }),
+//                        new InstantCommand(() -> {
+//                            if (MatchConfig.teleOpTimer.seconds() > END_GAME_TIME) {
+//                                new ReadyClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.STOWED).schedule();
+//                                armIsUp=false;
+//                            }
+//                        }));
     }
 
     //Todo test this and see if its worth using...
