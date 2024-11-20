@@ -14,126 +14,78 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 
 @Config
 public class SampleLiftBucketSubsystem extends SubsystemBase {
 
-    public static void configureParamsForRobotType(Robot.RobotType robotType) {
-        switch (robotType) {
-            case INTO_THE_DEEP_19429:
-                SAMPLE_LIFT_PARAMS.BUCKET_INCREMENT_TIME = 1.0;
-                SAMPLE_LIFT_PARAMS.KA = .0095;
-                SAMPLE_LIFT_PARAMS.KV = .004;
-                SAMPLE_LIFT_PARAMS.KG = 0.04;
-                SAMPLE_LIFT_PARAMS.KS = 0.0;
+    public static class SampleLiftParams extends ConfigurableParameters {
+        public double BUCKET_INCREMENT_TIME, KA, KV, KG, KS;
+        public double DUMP_TIME_MS, SCALE_FACTOR_FOR_MANUAL_LIFT, LIFT_DEAD_ZONE_FOR_MANUAL_LIFT, LIFT_POWER;
+        public int MAX_TARGET_TICKS, MIN_TARGET_TICKS, HOME_HEIGHT_TICKS, HIGH_BASKET_TICKS, LOW_BASKET_TICKS, LIFT_HEIGHT_TICK_THRESHOLD;
+        public double TIMEOUT_TIME_SECONDS, VEL_P, VEL_I, VEL_D;
+        public double BUCKET_SCORE_POS, BUCKET_INTAKE_POS;
+        public double DUMPER_HOME_POS, DUMPER_PRESCORE_POS, DUMPER_DUMP_POS;
+        public double UPWARD_VELOCITY, DOWNWARD_VELOCITY, UPWARD_ACCELERATION, DOWNWARD_ACCELERATION;
 
-                SAMPLE_LIFT_PARAMS.DUMP_TIME_MS = 800;
-                SAMPLE_LIFT_PARAMS.SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
-                SAMPLE_LIFT_PARAMS.LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
-                SAMPLE_LIFT_PARAMS.LIFT_POWER = 0.5;
+        @Override
+        public void loadDefaultsForRobotType(Robot.RobotType robotType) {
+            if (haveRobotSpecificParametersBeenLoaded()) return; // Skip reloading if already customized
 
-                SAMPLE_LIFT_PARAMS.MAX_TARGET_TICKS = 1650;
-                SAMPLE_LIFT_PARAMS.MIN_TARGET_TICKS = 0;
-                SAMPLE_LIFT_PARAMS.TIMEOUT_TIME_SECONDS = 3.0;
-                SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS = 0;
-                SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS = 1200;
-                SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS = 850;
-                SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD = 30;
+            switch (robotType) {
+                case INTO_THE_DEEP_19429:
 
-                SAMPLE_LIFT_PARAMS.VEL_P = 0.0001;
-                SAMPLE_LIFT_PARAMS.VEL_I = 0.0;
-                SAMPLE_LIFT_PARAMS.VEL_D = 0.0;
+                    // Lift Parameters
+                    KA = 0.0095;    KV = 0.004;    KG = 0.04;    KS = 0.0;
+                    VEL_P = 0.0001;    VEL_I = 0.0;    VEL_D = 0.0;
 
-                SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS = 0.0;
-                SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS = .92;
+                    LIFT_POWER = 0.5;
+                    TIMEOUT_TIME_SECONDS = 3.0;
+                    MAX_TARGET_TICKS = 1150;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 30;
+                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1100;   LOW_BASKET_TICKS = 850;
+                    SCALE_FACTOR_FOR_MANUAL_LIFT = 50;    LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
 
-                SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS = 0.73;
-                SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS = 0.79;
-                SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS = 0.98;
+                    UPWARD_VELOCITY = 35;    DOWNWARD_VELOCITY = -1.265;    UPWARD_ACCELERATION = 25;    DOWNWARD_ACCELERATION = -2.0;
 
-                SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY = 35;
-                SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY = -1.265;
-                SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION = 25;
-                SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION = -2;
-                break;
+                    // Bucket Servo Positions
+                    BUCKET_SCORE_POS = 0.0;    BUCKET_INTAKE_POS = 0.92;
+                    BUCKET_INCREMENT_TIME = 1.0;
 
-            case INTO_THE_DEEP_20245:
-                SAMPLE_LIFT_PARAMS.BUCKET_INCREMENT_TIME = 1.0;
-                SAMPLE_LIFT_PARAMS.KA = 0;
-                SAMPLE_LIFT_PARAMS.KV = 0.03;
-                SAMPLE_LIFT_PARAMS.KG = 0;
-                SAMPLE_LIFT_PARAMS.KS = 0;
+                    // Dumper Positions
+                    DUMPER_HOME_POS = 0.73;    DUMPER_PRESCORE_POS = 0.79;    DUMPER_DUMP_POS = 0.98;
+                    DUMP_TIME_MS = 800;
 
-                SAMPLE_LIFT_PARAMS.DUMP_TIME_MS = 800;
-                SAMPLE_LIFT_PARAMS.SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
-                SAMPLE_LIFT_PARAMS.LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
-                SAMPLE_LIFT_PARAMS.LIFT_POWER = 0.5;
+                    break;
 
-                SAMPLE_LIFT_PARAMS.MAX_TARGET_TICKS = 1650;
-                SAMPLE_LIFT_PARAMS.MIN_TARGET_TICKS = 0;
-                SAMPLE_LIFT_PARAMS.TIMEOUT_TIME_SECONDS = 3.0;
-                SAMPLE_LIFT_PARAMS.HOME_HEIGHT_TICKS = 0;
-                SAMPLE_LIFT_PARAMS.HIGH_BASKET_TICKS = 1200;
-                SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS = 850;
-                SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD = 30;
+                case INTO_THE_DEEP_20245:
 
-                SAMPLE_LIFT_PARAMS.VEL_P = 0.0075;
-                SAMPLE_LIFT_PARAMS.VEL_I = 0.0;
-                SAMPLE_LIFT_PARAMS.VEL_D = 0.0;
+                    // Feedforward Coefficients
+                    KA = 0.0;    KV = 0.03;    KG = 0.0;    KS = 0.0;
+                    VEL_P = 0.0075;    VEL_I = 0.0;    VEL_D = 0.0;
 
-                SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS = 0.0;
-                SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS = 0.725;
+                    // Lift Parameters
+                    LIFT_POWER = 0.5;
+                    TIMEOUT_TIME_SECONDS = 3.0;
+                    SCALE_FACTOR_FOR_MANUAL_LIFT = 50;    LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
+                    MAX_TARGET_TICKS = 1650;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 30;
+                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1200;   LOW_BASKET_TICKS = 850;
+                    UPWARD_VELOCITY = 35;    DOWNWARD_VELOCITY = -1.265;    UPWARD_ACCELERATION = 25;    DOWNWARD_ACCELERATION = -2.01;
 
-                SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS = 0.73;
-                SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS = 0.79;
-                SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS = 0.98;
+                    // Bucket Positions
+                    BUCKET_SCORE_POS = 0.0;    BUCKET_INTAKE_POS = 0.725;
+                    // Timing and Increment
+                    BUCKET_INCREMENT_TIME = 1.0;
 
-                SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY = 35;
-                SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY = -1.265;
-                SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION = 25;
-                SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION = -2.01;
-                break;
+                    // Dumper Positions
+                    DUMPER_HOME_POS = 0.73;    DUMPER_PRESCORE_POS = 0.79;    DUMPER_DUMP_POS = 0.98;
+                    DUMP_TIME_MS = 800;
 
-            default:
-                throw new IllegalArgumentException("Unknown robot type: " + robotType);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown robot type: " + robotType);
+            }
+            markRobotSpecificParametersLoaded(); // Flag parameters as customized
         }
-    }
-
-    public static class SampleLiftParams {
-        public double BUCKET_INCREMENT_TIME = 1.0;
-        public double KA = 0.001;
-        public double KV = 0.03;
-        public double KG = 0.04;
-        public double KS = 0.0;
-
-        public double DUMP_TIME_MS = 800;
-        public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
-        public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
-        public double LIFT_POWER = 0.5;
-
-        public int MAX_TARGET_TICKS = 1125;
-        public int MIN_TARGET_TICKS = 0;
-        public double TIMEOUT_TIME_SECONDS = 3.0;
-        public int HOME_HEIGHT_TICKS = 0;
-        public int HIGH_BASKET_TICKS = 1100;
-        public int LOW_BASKET_TICKS = 850;
-        public int LIFT_HEIGHT_TICK_THRESHOLD = 30;
-
-        public double VEL_P = 0.0000004;
-        public double VEL_I = 0.0;
-        public double VEL_D = 0.0;
-
-        public double BUCKET_SCORE_POS = 0.0;
-        public double BUCKET_INTAKE_POS = .92;
-
-        public double DUMPER_HOME_POS = 0.73;
-        public double DUMPER_PRESCORE_POS = 0.79;
-        public double DUMPER_DUMP_POS = 0.98;
-
-        public double UPWARD_VELOCITY = 35;
-        public double DOWNWARD_VELOCITY = -1.265;
-        public double UPWARD_ACCELERATION = 25;
-        public double DOWNWARD_ACCELERATION = -2;
     }
 
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
@@ -221,8 +173,18 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     private double feedforwardOutput;
     private double totalOutput;
 
+    // Cache for current parameters to detect changes
+    private double currentVelP = SAMPLE_LIFT_PARAMS.VEL_P;
+    private double currentVelI = SAMPLE_LIFT_PARAMS.VEL_I;
+    private double currentVelD = SAMPLE_LIFT_PARAMS.VEL_D;
+
+    private double currentKs = SAMPLE_LIFT_PARAMS.KS;
+    private double currentKg = SAMPLE_LIFT_PARAMS.KG;
+    private double currentKv = SAMPLE_LIFT_PARAMS.KV;
+    private double currentKa = SAMPLE_LIFT_PARAMS.KA;
+
     public SampleLiftBucketSubsystem(final HardwareMap hMap, final Robot.RobotType robotType, final String liftName, final String bucketName, final String dumperName) {
-//        configureParamsForRobotType(robotType);
+        SAMPLE_LIFT_PARAMS.loadDefaultsForRobotType(robotType);
         lift = hMap.get(DcMotorEx.class, liftName);
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -355,15 +317,40 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
 
     // **updateLiftPIDs() Method**
-    public void updateParameters() {
-        // Update PID coefficients if they change
-        pidController.setPID(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D);
 
-        elevatorFeedforward = new ElevatorFeedforward(
-                SAMPLE_LIFT_PARAMS.KS,
-                SAMPLE_LIFT_PARAMS.KG,
-                SAMPLE_LIFT_PARAMS.KV,
-                SAMPLE_LIFT_PARAMS.KA);
+    public void updateParameters() {
+        // Update PID coefficients only if they change
+        if (currentVelP != SAMPLE_LIFT_PARAMS.VEL_P ||
+                currentVelI != SAMPLE_LIFT_PARAMS.VEL_I ||
+                currentVelD != SAMPLE_LIFT_PARAMS.VEL_D) {
+
+            pidController.setPID(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D);
+
+            // Update cache
+            currentVelP = SAMPLE_LIFT_PARAMS.VEL_P;
+            currentVelI = SAMPLE_LIFT_PARAMS.VEL_I;
+            currentVelD = SAMPLE_LIFT_PARAMS.VEL_D;
+        }
+
+        // Update feedforward parameters only if they change
+        if (currentKs != SAMPLE_LIFT_PARAMS.KS ||
+                currentKg != SAMPLE_LIFT_PARAMS.KG ||
+                currentKv != SAMPLE_LIFT_PARAMS.KV ||
+                currentKa != SAMPLE_LIFT_PARAMS.KA) {
+
+            elevatorFeedforward = new ElevatorFeedforward(
+                    SAMPLE_LIFT_PARAMS.KS,
+                    SAMPLE_LIFT_PARAMS.KG,
+                    SAMPLE_LIFT_PARAMS.KV,
+                    SAMPLE_LIFT_PARAMS.KA
+            );
+
+            // Update cache
+            currentKs = SAMPLE_LIFT_PARAMS.KS;
+            currentKg = SAMPLE_LIFT_PARAMS.KG;
+            currentKv = SAMPLE_LIFT_PARAMS.KV;
+            currentKa = SAMPLE_LIFT_PARAMS.KA;
+        }
     }
 
     public void setTargetTicks(int ticks) {

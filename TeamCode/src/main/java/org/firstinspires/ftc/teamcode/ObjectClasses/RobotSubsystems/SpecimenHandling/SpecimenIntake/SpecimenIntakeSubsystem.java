@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState;
@@ -19,13 +20,41 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GameP
 @Config
 public class SpecimenIntakeSubsystem extends SubsystemBase {
 
-    public static class SpecimenIntakeParams {
+    public static class SpecimenIntakeParams extends ConfigurableParameters {
         public double INTAKE_ON_POWER = Double.NaN;
         public double INTAKE_REVERSE_POWER = Double.NaN;
         public double INTAKE_OFF_POWER = Double.NaN;
         public double MAX_POWER = Double.NaN;  // Max allowable power for intake servo
         public double PROXIMITY_THRESHOLD_IN_MM = Double.NaN;
         public int HISTORY_SIZE = -1;
+
+        @Override
+        public void loadDefaultsForRobotType(Robot.RobotType robotType) {
+            if (haveRobotSpecificParametersBeenLoaded()) return;
+            switch (robotType) {
+                case INTO_THE_DEEP_19429:
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = -1.0;
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
+                    SPECIMEN_INTAKE_PARAMS.MAX_POWER = 1.0;
+                    SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 30;
+                    SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 5;
+                    break;
+
+                case INTO_THE_DEEP_20245:
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = -0.8;
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 0.8;
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
+                    SPECIMEN_INTAKE_PARAMS.MAX_POWER = 0.8;
+                    SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 25;
+                    SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 5;
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown robot type: " + robotType);
+            }
+            markRobotSpecificParametersLoaded();
+        }
     }
 
     public static SpecimenIntakeParams SPECIMEN_INTAKE_PARAMS = new SpecimenIntakeParams();
@@ -58,7 +87,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     private final SpecimenDetector specimenDetector;
     // Constructor with color sensor
     public SpecimenIntakeSubsystem(final HardwareMap hMap,final Robot.RobotType robotType, final String intakeServo, final String colorSensorName) {
-        configureParamsForRobotType(robotType);
+        SPECIMEN_INTAKE_PARAMS.loadDefaultsForRobotType(robotType);
 
         specimenIntake = hMap.get(CRServo.class, intakeServo);
         // Nullable color sensor
@@ -206,33 +235,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     public boolean isNotReversing() {
         return currentState != SpecimenIntakeStates.INTAKE_REVERSE;
-    }
-
-
-
-    public static void configureParamsForRobotType(Robot.RobotType robotType) {
-        switch (robotType) {
-            case INTO_THE_DEEP_19429:
-                SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = -1.0;
-                SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
-                SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
-                SPECIMEN_INTAKE_PARAMS.MAX_POWER = 1.0;
-                SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 30;
-                SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 5;
-                break;
-
-            case INTO_THE_DEEP_20245:
-                SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = -0.8;
-                SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 0.8;
-                SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
-                SPECIMEN_INTAKE_PARAMS.MAX_POWER = 0.8;
-                SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 25;
-                SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 5;
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown robot type: " + robotType);
-        }
     }
 
 }

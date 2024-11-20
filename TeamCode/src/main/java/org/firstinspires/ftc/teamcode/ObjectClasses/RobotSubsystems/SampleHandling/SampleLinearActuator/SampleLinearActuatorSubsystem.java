@@ -12,44 +12,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
-
-    public static void configureParamsForRobotType(Robot.RobotType robotType) {
-        switch (robotType) {
-            case INTO_THE_DEEP_19429:
-                ACTUATOR_PARAMS.MANUAL_MOVEMENT_SCALAR = 0.8;
-                ACTUATOR_PARAMS.NORMAL_POWER = 0.7;
-                ACTUATOR_PARAMS.POWER_FOR_SLOW_DEPLOYMENT = 0.4;
-                ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.1;
-
-                ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS = 600;
-                ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 300;
-                ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
-                ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
-                break;
-
-            case INTO_THE_DEEP_20245:
-                ACTUATOR_PARAMS.MANUAL_MOVEMENT_SCALAR = 0.8;
-                ACTUATOR_PARAMS.NORMAL_POWER = 0.7;
-                ACTUATOR_PARAMS.POWER_FOR_SLOW_DEPLOYMENT = 0.4;
-                ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.1;
-
-                ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS = 600;
-                ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 300;
-                ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
-                ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown robot type: " + robotType);
-        }
-    }
-
-    public static class ActuatorParams {
+    public static class ActuatorParams extends ConfigurableParameters {
         public double MANUAL_MOVEMENT_SCALAR = Double.NaN;
         public double NORMAL_POWER = Double.NaN;
         public double POWER_FOR_SLOW_DEPLOYMENT = Double.NaN;
@@ -59,6 +28,41 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         public double PARTIAL_DEPLOYMENT_TIME_MS = Double.NaN;
         public double FULL_RETRACTION_TIME_MS = Double.NaN;
         public double PARTIAL_RETRACTION_TIME_MS = Double.NaN;
+
+        @Override
+        public void loadDefaultsForRobotType(Robot.RobotType robotType) {
+            if (haveRobotSpecificParametersBeenLoaded()) return;
+
+            switch (robotType) {
+                case INTO_THE_DEEP_19429:
+                    ACTUATOR_PARAMS.MANUAL_MOVEMENT_SCALAR = 0.8;
+                    ACTUATOR_PARAMS.NORMAL_POWER = 0.7;
+                    ACTUATOR_PARAMS.POWER_FOR_SLOW_DEPLOYMENT = 0.4;
+                    ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.1;
+
+                    ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS = 600;
+                    ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 300;
+                    ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
+                    ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
+                    break;
+
+                case INTO_THE_DEEP_20245:
+                    ACTUATOR_PARAMS.MANUAL_MOVEMENT_SCALAR = 0.8;
+                    ACTUATOR_PARAMS.NORMAL_POWER = 0.7;
+                    ACTUATOR_PARAMS.POWER_FOR_SLOW_DEPLOYMENT = 0.4;
+                    ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.1;
+
+                    ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS = 600;
+                    ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 300;
+                    ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
+                    ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown robot type: " + robotType);
+            }
+            markRobotSpecificParametersLoaded();
+        }
     }
 
     public static ActuatorParams ACTUATOR_PARAMS = new ActuatorParams();
@@ -88,7 +92,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     // Constructor with limit switch
     public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType, String actuatorMotorName, String limitSwitchName) {
-        configureParamsForRobotType(robotType);
+        ACTUATOR_PARAMS.loadDefaultsForRobotType(robotType);
         sampleActuator = hardwareMap.get(DcMotorEx.class, actuatorMotorName);
         sampleActuator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         sampleActuator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

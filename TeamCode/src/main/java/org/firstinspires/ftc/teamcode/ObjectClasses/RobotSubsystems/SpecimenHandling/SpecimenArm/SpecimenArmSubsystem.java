@@ -20,12 +20,13 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 @Config
 public class SpecimenArmSubsystem extends SubsystemBase {
 
-    public static class SpecimenArmParams {
+    public static class SpecimenArmParams extends ConfigurableParameters {
         // Flip parameters
         public double CCW_FLIP_TIME_MS = Double.NaN;
         public double REVERSE_FLIP_TIME_MS = Double.NaN;
@@ -63,6 +64,101 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double RAMP_UP_TIME_MILLISECONDS =  Double.NaN;
         public double TIMEOUT_TIME_SECONDS = Double.NaN;
         public double ENCODER_OFFSET = Double.NaN;
+
+        @Override
+        public void loadDefaultsForRobotType(Robot.RobotType robotType) {
+            if (haveRobotSpecificParametersBeenLoaded()) return;
+
+            switch (robotType) {
+                case INTO_THE_DEEP_19429:
+                    // Flip parameters
+                    SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 300;
+                    SPECIMEN_ARM_PARAMS.REVERSE_FLIP_TIME_MS = SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS - 100;
+                    SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
+                    SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 500;
+                    SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP = - 1.0;
+                    SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS = 828;
+
+                    // GamePad parameters
+                    SPECIMEN_ARM_PARAMS.STICK_SCALE_FACTOR = 5;
+                    SPECIMEN_ARM_PARAMS.DEAD_ZONE = 0.05;
+
+                    // PID parameters
+                    SPECIMEN_ARM_PARAMS.P = 0.0158;
+                    SPECIMEN_ARM_PARAMS.I = 0.05;
+                    SPECIMEN_ARM_PARAMS.D = 0.001;
+                    SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
+
+                    // Arm Feedforward parameters
+                    SPECIMEN_ARM_PARAMS.kS = 0;
+                    SPECIMEN_ARM_PARAMS.kCos = 0.135;
+                    SPECIMEN_ARM_PARAMS.kV = 0;
+                    SPECIMEN_ARM_PARAMS.kA = 0;
+
+                    // Maximum Power
+                    SPECIMEN_ARM_PARAMS.MAX_POWER = 1.0;
+
+                    // Preset Angles
+                    SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
+                    SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
+                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
+                    SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
+
+                    // Motion Profile Parameters
+                    SPECIMEN_ARM_PARAMS.RAMP_UP_TIME_MILLISECONDS = 250;
+                    SPECIMEN_ARM_PARAMS.TIMEOUT_TIME_SECONDS = 1.5;
+
+                    // Encoder Offset
+                    SPECIMEN_ARM_PARAMS.ENCODER_OFFSET = 123.28;
+                    break;
+
+                case INTO_THE_DEEP_20245:
+                    // Flip parameters
+                    SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 549;
+                    SPECIMEN_ARM_PARAMS.REVERSE_FLIP_TIME_MS = SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS - 100;
+                    SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
+                    SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 550;
+                    SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP = - 1.0;
+                    SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS = 828;
+
+                    // GamePad parameters
+                    SPECIMEN_ARM_PARAMS.STICK_SCALE_FACTOR = 5;
+                    SPECIMEN_ARM_PARAMS.DEAD_ZONE = 0.05;
+
+                    // PID parameters
+                    SPECIMEN_ARM_PARAMS.P = 0.0158;
+                    SPECIMEN_ARM_PARAMS.I = 0.05;
+                    SPECIMEN_ARM_PARAMS.D = 0.001;
+                    SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
+
+                    // Arm Feedforward parameters
+                    SPECIMEN_ARM_PARAMS.kS = 0;
+                    SPECIMEN_ARM_PARAMS.kCos = 0.135;
+                    SPECIMEN_ARM_PARAMS.kV = 0;
+                    SPECIMEN_ARM_PARAMS.kA = 0;
+
+                    // Maximum Power
+                    SPECIMEN_ARM_PARAMS.MAX_POWER = 1.0;
+
+                    // Preset Angles
+                    SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
+                    SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
+                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
+                    SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
+
+                    // Motion Profile Parameters
+                    SPECIMEN_ARM_PARAMS.RAMP_UP_TIME_MILLISECONDS = 250;
+                    SPECIMEN_ARM_PARAMS.TIMEOUT_TIME_SECONDS = 1.5;
+
+                    // Encoder Offset
+                    SPECIMEN_ARM_PARAMS.ENCODER_OFFSET = 123.28;
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown robot type: " + robotType);
+            }
+            markRobotSpecificParametersLoaded();
+        }
     }
 
     public enum SpecimenArmStates {
@@ -138,7 +234,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
     public SpecimenArmSubsystem(final HardwareMap hMap , Robot.RobotType robotType , final String name) {
         // Initialize parameters based on robot type
-        configureParamsForRobotType(robotType); // Configure parameters for this robot type
+        SPECIMEN_ARM_PARAMS.loadDefaultsForRobotType(robotType); // Configure parameters for this robot type
 
         arm = hMap.get(DcMotorEx.class , name);
         arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
@@ -455,97 +551,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         MatchConfig.telemetryPacket.put("SpecimenArm/angles/Target Arm Angle" , String.format("%.2f" , targetAngleDegrees));
 
         MatchConfig.telemetryPacket.put("SpecimenArm/Current Arm Velocity" , String.format("%.2f" , currentVelocity));
-    }
-
-    public static void configureParamsForRobotType(Robot.RobotType robotType) {
-        switch (robotType) {
-            case INTO_THE_DEEP_19429:
-                // Flip parameters
-                SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 300;
-                SPECIMEN_ARM_PARAMS.REVERSE_FLIP_TIME_MS = SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS - 100;
-                SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
-                SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 500;
-                SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP = - 1.0;
-                SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS = 828;
-
-                // GamePad parameters
-                SPECIMEN_ARM_PARAMS.STICK_SCALE_FACTOR = 5;
-                SPECIMEN_ARM_PARAMS.DEAD_ZONE = 0.05;
-
-                // PID parameters
-                SPECIMEN_ARM_PARAMS.P = 0.0158;
-                SPECIMEN_ARM_PARAMS.I = 0.05;
-                SPECIMEN_ARM_PARAMS.D = 0.001;
-                SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
-
-                // Arm Feedforward parameters
-                SPECIMEN_ARM_PARAMS.kS = 0;
-                SPECIMEN_ARM_PARAMS.kCos = 0.135;
-                SPECIMEN_ARM_PARAMS.kV = 0;
-                SPECIMEN_ARM_PARAMS.kA = 0;
-
-                // Maximum Power
-                SPECIMEN_ARM_PARAMS.MAX_POWER = 1.0;
-
-                // Preset Angles
-                SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
-                SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
-                SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
-                SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
-
-                // Motion Profile Parameters
-                SPECIMEN_ARM_PARAMS.RAMP_UP_TIME_MILLISECONDS = 250;
-                SPECIMEN_ARM_PARAMS.TIMEOUT_TIME_SECONDS = 1.5;
-
-                // Encoder Offset
-                SPECIMEN_ARM_PARAMS.ENCODER_OFFSET = 123.28;
-                break;
-
-            case INTO_THE_DEEP_20245:
-                // Flip parameters
-                SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 549;
-                SPECIMEN_ARM_PARAMS.REVERSE_FLIP_TIME_MS = SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS - 100;
-                SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
-                SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 550;
-                SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP = - 1.0;
-                SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS = 828;
-
-                // GamePad parameters
-                SPECIMEN_ARM_PARAMS.STICK_SCALE_FACTOR = 5;
-                SPECIMEN_ARM_PARAMS.DEAD_ZONE = 0.05;
-
-                // PID parameters
-                SPECIMEN_ARM_PARAMS.P = 0.0158;
-                SPECIMEN_ARM_PARAMS.I = 0.05;
-                SPECIMEN_ARM_PARAMS.D = 0.001;
-                SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
-
-                // Arm Feedforward parameters
-                SPECIMEN_ARM_PARAMS.kS = 0;
-                SPECIMEN_ARM_PARAMS.kCos = 0.135;
-                SPECIMEN_ARM_PARAMS.kV = 0;
-                SPECIMEN_ARM_PARAMS.kA = 0;
-
-                // Maximum Power
-                SPECIMEN_ARM_PARAMS.MAX_POWER = 1.0;
-
-                // Preset Angles
-                SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
-                SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
-                SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
-                SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
-
-                // Motion Profile Parameters
-                SPECIMEN_ARM_PARAMS.RAMP_UP_TIME_MILLISECONDS = 250;
-                SPECIMEN_ARM_PARAMS.TIMEOUT_TIME_SECONDS = 1.5;
-
-                // Encoder Offset
-                SPECIMEN_ARM_PARAMS.ENCODER_OFFSET = 123.28;
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown robot type: " + robotType);
-        }
     }
 }
 

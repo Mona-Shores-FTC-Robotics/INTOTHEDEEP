@@ -9,58 +9,63 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 
 @Config
 public class ClimberSubsystem extends SubsystemBase {
 
-    public static void configureParamsForRobotType(Robot.RobotType robotType) {
-        switch (robotType) {
-            case INTO_THE_DEEP_19429:
-                CLIMBER_PARAMS.CLIMBER_ARM_STARTING_STATE = ClimberArmStates.STOWED;
-                CLIMBER_PARAMS.CLIMBER_MOTOR_STARTING_STATE = ClimberMotorStates.OFF;
 
-                CLIMBER_PARAMS.READY_POSITION = 0;
-                CLIMBER_PARAMS.STOWED_STEP1_VALUE = .6;
-                CLIMBER_PARAMS.STOWED_STEP2_VALUE = .53;
-                CLIMBER_PARAMS.STOWED_STEP3_VALUE = .5;
-                CLIMBER_PARAMS.STOWED_POSITION = 1;
-
-                CLIMBER_PARAMS.ROBOT_DOWN_POWER = -0.8;
-                CLIMBER_PARAMS.ROBOT_UP_POWER = 0.8;
-                break;
-
-            case INTO_THE_DEEP_20245:
-                CLIMBER_PARAMS.CLIMBER_ARM_STARTING_STATE = ClimberArmStates.STOWED;
-                CLIMBER_PARAMS.CLIMBER_MOTOR_STARTING_STATE = ClimberMotorStates.OFF;
-
-                CLIMBER_PARAMS.READY_POSITION = .7;
-                CLIMBER_PARAMS.STOWED_STEP1_VALUE = .6;
-                CLIMBER_PARAMS.STOWED_STEP2_VALUE = .53;
-                CLIMBER_PARAMS.STOWED_STEP3_VALUE = .5;
-                CLIMBER_PARAMS.STOWED_POSITION = .48;
-
-                CLIMBER_PARAMS.ROBOT_DOWN_POWER = -0.8;
-                CLIMBER_PARAMS.ROBOT_UP_POWER = 0.8;
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown robot type: " + robotType);
-        }
-    }
-
-    public static class ClimberParameters {
+    public static class ClimberParameters extends ConfigurableParameters {
 
         public ClimberArmStates CLIMBER_ARM_STARTING_STATE;
         public ClimberMotorStates CLIMBER_MOTOR_STARTING_STATE;
 
-        public double READY_POSITION = 0;
-        public double STOWED_STEP1_VALUE = .6;
-        public double STOWED_STEP2_VALUE = .53;
-        public double STOWED_STEP3_VALUE = .5;
-        public double STOWED_POSITION = 1;
+        public double READY_POSITION;
+        public double STOWED_STEP1_VALUE;
+        public double STOWED_STEP2_VALUE;
+        public double STOWED_STEP3_VALUE;
+        public double STOWED_POSITION;
 
-        public double ROBOT_DOWN_POWER = -0.8;
-        public double ROBOT_UP_POWER = 0.8;
+        public double ROBOT_DOWN_POWER;
+        public double ROBOT_UP_POWER;
+
+        @Override
+        public void loadDefaultsForRobotType(Robot.RobotType robotType) {
+            if (haveRobotSpecificParametersBeenLoaded()) return;
+            switch (robotType) {
+                case INTO_THE_DEEP_19429:
+                    CLIMBER_ARM_STARTING_STATE = ClimberArmStates.STOWED;
+                    CLIMBER_MOTOR_STARTING_STATE = ClimberMotorStates.OFF;
+
+                    READY_POSITION = 0;
+                    STOWED_STEP1_VALUE = .6;
+                    STOWED_STEP2_VALUE = .53;
+                    STOWED_STEP3_VALUE = .5;
+                    STOWED_POSITION = 1;
+
+                    ROBOT_DOWN_POWER = -0.8;
+                    ROBOT_UP_POWER = 0.8;
+                    break;
+
+                case INTO_THE_DEEP_20245:
+                    CLIMBER_ARM_STARTING_STATE = ClimberArmStates.STOWED;
+                    CLIMBER_MOTOR_STARTING_STATE = ClimberMotorStates.OFF;
+
+                    READY_POSITION = .7;
+                    STOWED_STEP1_VALUE = .6;
+                    STOWED_STEP2_VALUE = .53;
+                    STOWED_STEP3_VALUE = .5;
+                    STOWED_POSITION = .48;
+
+                    ROBOT_DOWN_POWER = -0.8;
+                    ROBOT_UP_POWER = 0.8;
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown robot type: " + robotType);
+            }
+            markRobotSpecificParametersLoaded();
+        }
     }
 
     public static ClimberParameters CLIMBER_PARAMS = new ClimberParameters();
@@ -121,7 +126,7 @@ public class ClimberSubsystem extends SubsystemBase {
     public ClimberArmStates getCurrentClimberArmState() {return currentClimberArmState;}
 
     public ClimberSubsystem(final HardwareMap hMap, Robot.RobotType robotType, final String climberArmName, final String climberMotorName) {
-        configureParamsForRobotType(robotType);
+        CLIMBER_PARAMS.loadDefaultsForRobotType(robotType);
         climberArm = hMap.servo.get(climberArmName);
         climberMotor = hMap.get(DcMotorEx.class, climberMotorName);
     }

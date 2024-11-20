@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState;
+
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
@@ -22,55 +24,57 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 @Config
 public class SampleIntakeSubsystem extends SubsystemBase {
 
-
-    public static void configureParamsForRobotType(Robot.RobotType robotType) {
-        switch (robotType) {
-            case INTO_THE_DEEP_19429:
-                SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER = -0.8;
-                SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
-                SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
-                SAMPLE_INTAKE_PARAMS.MAX_POWER = 1.0;
-                SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD = 40.0;
-                SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE = 5;
-                SAMPLE_INTAKE_PARAMS.TRANSFER_TIME_MS = 1000.0;
-                SAMPLE_INTAKE_PARAMS.EJECT_TIME_MS = 800.0;
-                SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE = 1;
-                SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE = 1;
-                break;
-
-            case INTO_THE_DEEP_20245:
-                SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER = -0.8;
-                SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
-                SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
-                SAMPLE_INTAKE_PARAMS.MAX_POWER = -1.0;
-                SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD = 40.0;
-                SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE = 5;
-                SAMPLE_INTAKE_PARAMS.TRANSFER_TIME_MS = 1000.0;
-                SAMPLE_INTAKE_PARAMS.EJECT_TIME_MS = 801.0;
-                SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE = 1;
-                SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE = 1;
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown robot type: " + robotType);
-        }
-    }
-
-
-    public static class SampleIntakeParams {
-        public double INTAKE_ON_POWER = 0.8;
-        public double INTAKE_REVERSE_POWER = -1;
-        public double INTAKE_OFF_POWER = 0.0;
-        public double MAX_POWER = 1.0;  // Max allowable power for intake servo
+    public static class SampleIntakeParams extends ConfigurableParameters {
+        public double INTAKE_ON_POWER;
+        public double INTAKE_REVERSE_POWER;
+        public double INTAKE_OFF_POWER;
+        public double MAX_POWER;  // Max allowable power for intake servo
 
         // Set a minimum proximity threshold to consider an object as "near"
-        public double PROXIMITY_THRESHOLD = 40;
-        public int COLOR_HISTORY_SIZE = 5;
-        public double TRANSFER_TIME_MS= 1000;
-        public double EJECT_TIME_MS= 800;
+        public double PROXIMITY_THRESHOLD;
+        public int COLOR_HISTORY_SIZE;
+        public double TRANSFER_TIME_MS;
+        public double EJECT_TIME_MS;
 
-        public double LEFT_POWER_REVERSE = -1;
-        public double RIGHT_POWER_REVERSE = -1;
+        public double LEFT_POWER_REVERSE;
+        public double RIGHT_POWER_REVERSE;
+
+        @Override
+        public void loadDefaultsForRobotType(Robot.RobotType robotType) {
+            if (haveRobotSpecificParametersBeenLoaded()) return; // Skip reloading if already customized
+
+            switch (robotType) {
+                case INTO_THE_DEEP_19429:
+                    INTAKE_ON_POWER = -0.8;
+                    INTAKE_REVERSE_POWER = 1.0;
+                    INTAKE_OFF_POWER = 0.0;
+                    MAX_POWER = 1.0;
+                    PROXIMITY_THRESHOLD = 40.0;
+                    COLOR_HISTORY_SIZE = 5;
+                    TRANSFER_TIME_MS = 1000.0;
+                    EJECT_TIME_MS = 800.0;
+                    LEFT_POWER_REVERSE = 1;
+                    RIGHT_POWER_REVERSE = 1;
+                    break;
+
+                case INTO_THE_DEEP_20245:
+                    INTAKE_ON_POWER = -0.8;
+                    INTAKE_REVERSE_POWER = 1.0;
+                    INTAKE_OFF_POWER = 0.0;
+                    MAX_POWER = -1.0;
+                    PROXIMITY_THRESHOLD = 40.0;
+                    COLOR_HISTORY_SIZE = 5;
+                    TRANSFER_TIME_MS = 1000.0;
+                    EJECT_TIME_MS = 801.0;
+                    LEFT_POWER_REVERSE = 1;
+                    RIGHT_POWER_REVERSE = 1;
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown robot type: " + robotType);
+            }
+            markRobotSpecificParametersLoaded(); // Flag parameters as customized
+        }
     }
 
     public static SampleIntakeParams SAMPLE_INTAKE_PARAMS = new SampleIntakeParams();
@@ -118,7 +122,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     // Constructor with color sensor
     public SampleIntakeSubsystem(final HardwareMap hMap, Robot.RobotType robotType,  final String intakeServoL, final String intakeServoR, final String colorSensorName) {
-        configureParamsForRobotType(robotType);
+        SAMPLE_INTAKE_PARAMS.loadDefaultsForRobotType(robotType);
         sampleIntakeLeft = hMap.get(CRServo.class, intakeServoL);
         sampleIntakeRight = hMap.get(CRServo.class, intakeServoR);
 

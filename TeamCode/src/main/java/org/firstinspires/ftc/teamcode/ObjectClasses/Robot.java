@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -147,6 +148,8 @@ public class Robot {
                     specimenButtonHandling = new SpecimenButtonHandling(specimenIntakeSubsystem, specimenArmSubsystem);
                     specimenProcessingStateMachine = new SpecimenProcessingStateMachine(specimenIntakeSubsystem, specimenArmSubsystem, lightingSubsystem);
                 }
+
+                FtcDashboard.getInstance().updateConfig();
 
                 break;
             }
