@@ -233,6 +233,7 @@ public class DriverStationTelemetryManager {
                         : 0 // Default value if not in TELEOP mode
         ));
         telemetry.addLine()
+                .addData("Robot Type", MatchConfig.finalRobotType)
                 .addData("Alliance Color", MatchConfig.finalAllianceColor)
                 .addData("Side of Field", MatchConfig.finalSideOfField);
     }

@@ -18,7 +18,7 @@ public class DriveParams {
         // drive model parameters
         MecanumDrive.PARAMS.inPerTick = 1;
         MecanumDrive.PARAMS.lateralInPerTick = 0.7145464020405548;
-        MecanumDrive.PARAMS.trackWidthTicks = 12.355448896269676;
+        MecanumDrive.PARAMS.trackWidthTicks = 11.5;
 
         // feedforward parameters (in tick units)
         MecanumDrive.PARAMS.kS = 1.1949887108295525;

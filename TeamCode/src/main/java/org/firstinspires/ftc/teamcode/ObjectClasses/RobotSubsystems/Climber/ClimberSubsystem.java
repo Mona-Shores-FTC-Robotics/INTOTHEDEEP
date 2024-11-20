@@ -19,11 +19,11 @@ public class ClimberSubsystem extends SubsystemBase {
                 CLIMBER_PARAMS.CLIMBER_ARM_STARTING_STATE = ClimberArmStates.STOWED;
                 CLIMBER_PARAMS.CLIMBER_MOTOR_STARTING_STATE = ClimberMotorStates.OFF;
 
-                CLIMBER_PARAMS.READY_POSITION = .7;
+                CLIMBER_PARAMS.READY_POSITION = 0;
                 CLIMBER_PARAMS.STOWED_STEP1_VALUE = .6;
                 CLIMBER_PARAMS.STOWED_STEP2_VALUE = .53;
                 CLIMBER_PARAMS.STOWED_STEP3_VALUE = .5;
-                CLIMBER_PARAMS.STOWED_POSITION = .48;
+                CLIMBER_PARAMS.STOWED_POSITION = 1;
 
                 CLIMBER_PARAMS.ROBOT_DOWN_POWER = -0.8;
                 CLIMBER_PARAMS.ROBOT_UP_POWER = 0.8;
@@ -53,14 +53,14 @@ public class ClimberSubsystem extends SubsystemBase {
         public ClimberArmStates CLIMBER_ARM_STARTING_STATE;
         public ClimberMotorStates CLIMBER_MOTOR_STARTING_STATE;
 
-        public double STOWED_STEP1_VALUE;
-        public double STOWED_STEP2_VALUE;
-        public double STOWED_STEP3_VALUE;
-        public double READY_POSITION;
-        public double STOWED_POSITION;
+        public double READY_POSITION = 0;
+        public double STOWED_STEP1_VALUE = .6;
+        public double STOWED_STEP2_VALUE = .53;
+        public double STOWED_STEP3_VALUE = .5;
+        public double STOWED_POSITION = 1;
 
-        public double ROBOT_DOWN_POWER;
-        public double ROBOT_UP_POWER;
+        public double ROBOT_DOWN_POWER = -0.8;
+        public double ROBOT_UP_POWER = 0.8;
     }
 
     public static ClimberParameters CLIMBER_PARAMS = new ClimberParameters();
@@ -127,8 +127,8 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void init() {
-        climberMotorInit();
-        climberArmInit();
+//        climberMotorInit();
+//        climberArmInit();
     }
 
     private void climberArmInit() {

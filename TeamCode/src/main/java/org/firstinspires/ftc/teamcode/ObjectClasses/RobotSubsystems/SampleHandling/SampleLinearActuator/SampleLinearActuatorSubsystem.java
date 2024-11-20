@@ -61,7 +61,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         public double PARTIAL_RETRACTION_TIME_MS = Double.NaN;
     }
 
-
     public static ActuatorParams ACTUATOR_PARAMS = new ActuatorParams();
 
     public enum SampleActuatorStates {

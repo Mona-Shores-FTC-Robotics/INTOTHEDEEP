@@ -43,22 +43,24 @@ public class IntoTheDeepOperatorBindings {
         operatorGamePad = gamepad;
         bindingManager = gamePadBindingManager;
 
-
         bindManualSpecimenArmMovement(operatorGamePad::getLeftY);
         bindManualSampleActuatorMovement(operatorGamePad::getRightY);
-//      bindManualLiftMovement(operatorGamePad::getRightY);
-        cycleTelemetry(GamepadKeys.Button.LEFT_BUMPER);
+
         bindSampleIntakeAndTransfer(GamepadKeys.Button.A);
         bindReadyForSampleScoring(GamepadKeys.Button.X);
         bindScoreSample(GamepadKeys.Button.Y);
 
-        bindClimberMotorMovement(GamepadKeys.Button.BACK);
-        bindMoveClimberArm(GamepadKeys.Button.RIGHT_BUMPER);
+        bindClimberMotorMovement(GamepadKeys.Button.RIGHT_BUMPER);
+
+        bindMoveClimberArm(GamepadKeys.Button.LEFT_BUMPER);
+        cycleTelemetry(GamepadKeys.Button.BACK);
 
         bindBucket(GamepadKeys.Button.DPAD_UP);
         bindSampleIntakeToggle(GamepadKeys.Button.DPAD_LEFT);
         bindSpecimenIntakeToggle(GamepadKeys.Button.DPAD_RIGHT);
         bindDumping(GamepadKeys.Button.DPAD_DOWN);
+
+        //bindManualLiftMovement(operatorGamePad::getRightY);
     }
 
     //Todo test this and see if its worth using...

@@ -103,10 +103,11 @@ public class Robot {
                 //Control Hub - Servo Port 5 - climbservo
 
                 //TODO fix these
+                //Control Hub - I2C Bus 0 - octoquad
                 //Control Hub - I2C Bus 1 - samplecolorsensor
-                //Expansion Hub - I2C Bus 2 - specimencolorsensor
-                //Control Hub - I2C Bus XXX - pinpoint
-                //Control Hub - I2C Bus XXX - octoquad
+                //Control Hub - I2C Bus 2 - pinpoint
+                //Control Hub - I2C Bus 3 - specimencolorsensor
+
                 //Expans. Hub - Servo Port X - blinkin
 
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);

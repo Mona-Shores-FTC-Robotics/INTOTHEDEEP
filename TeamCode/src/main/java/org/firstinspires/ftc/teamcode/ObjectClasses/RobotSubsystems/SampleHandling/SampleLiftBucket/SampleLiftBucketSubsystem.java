@@ -22,8 +22,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         switch (robotType) {
             case INTO_THE_DEEP_19429:
                 SAMPLE_LIFT_PARAMS.BUCKET_INCREMENT_TIME = 1.0;
-                SAMPLE_LIFT_PARAMS.KA = 0.001;
-                SAMPLE_LIFT_PARAMS.KV = 0.03;
+                SAMPLE_LIFT_PARAMS.KA = .0095;
+                SAMPLE_LIFT_PARAMS.KV = .004;
                 SAMPLE_LIFT_PARAMS.KG = 0.04;
                 SAMPLE_LIFT_PARAMS.KS = 0.0;
 
@@ -40,12 +40,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS = 850;
                 SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD = 30;
 
-                SAMPLE_LIFT_PARAMS.VEL_P = 0.0000004;
+                SAMPLE_LIFT_PARAMS.VEL_P = 0.0001;
                 SAMPLE_LIFT_PARAMS.VEL_I = 0.0;
                 SAMPLE_LIFT_PARAMS.VEL_D = 0.0;
 
                 SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS = 0.0;
-                SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS = 0.725;
+                SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS = .92;
 
                 SAMPLE_LIFT_PARAMS.DUMPER_HOME_POS = 0.73;
                 SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS = 0.79;
@@ -59,10 +59,10 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
             case INTO_THE_DEEP_20245:
                 SAMPLE_LIFT_PARAMS.BUCKET_INCREMENT_TIME = 1.0;
-                SAMPLE_LIFT_PARAMS.KA = 0.001;
+                SAMPLE_LIFT_PARAMS.KA = 0;
                 SAMPLE_LIFT_PARAMS.KV = 0.03;
-                SAMPLE_LIFT_PARAMS.KG = 0.04;
-                SAMPLE_LIFT_PARAMS.KS = 0.0;
+                SAMPLE_LIFT_PARAMS.KG = 0;
+                SAMPLE_LIFT_PARAMS.KS = 0;
 
                 SAMPLE_LIFT_PARAMS.DUMP_TIME_MS = 800;
                 SAMPLE_LIFT_PARAMS.SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
@@ -77,7 +77,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 SAMPLE_LIFT_PARAMS.LOW_BASKET_TICKS = 850;
                 SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD = 30;
 
-                SAMPLE_LIFT_PARAMS.VEL_P = 0.0000004;
+                SAMPLE_LIFT_PARAMS.VEL_P = 0.0075;
                 SAMPLE_LIFT_PARAMS.VEL_I = 0.0;
                 SAMPLE_LIFT_PARAMS.VEL_D = 0.0;
 
@@ -100,38 +100,40 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
 
     public static class SampleLiftParams {
-        public double BUCKET_INCREMENT_TIME = Double.NaN;
-        public double KA = Double.NaN;
-        public double KV = Double.NaN;
-        public double KG = Double.NaN;
-        public double KS = Double.NaN;
+        public double BUCKET_INCREMENT_TIME = 1.0;
+        public double KA = 0.001;
+        public double KV = 0.03;
+        public double KG = 0.04;
+        public double KS = 0.0;
 
-        public double DUMP_TIME_MS = Double.NaN;
-        public double SCALE_FACTOR_FOR_MANUAL_LIFT = Double.NaN;
-        public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = Double.NaN;
-        public double LIFT_POWER = Double.NaN;
+        public double DUMP_TIME_MS = 800;
+        public double SCALE_FACTOR_FOR_MANUAL_LIFT = 50;
+        public double LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
+        public double LIFT_POWER = 0.5;
 
-        public int MAX_TARGET_TICKS = -1;
-        public int MIN_TARGET_TICKS = -1;
-        public double TIMEOUT_TIME_SECONDS = Double.NaN;
-        public int HOME_HEIGHT_TICKS = -1;
-        public int HIGH_BASKET_TICKS = -1;
-        public int LOW_BASKET_TICKS = -1;
-        public int LIFT_HEIGHT_TICK_THRESHOLD = -1;
+        public int MAX_TARGET_TICKS = 1125;
+        public int MIN_TARGET_TICKS = 0;
+        public double TIMEOUT_TIME_SECONDS = 3.0;
+        public int HOME_HEIGHT_TICKS = 0;
+        public int HIGH_BASKET_TICKS = 1100;
+        public int LOW_BASKET_TICKS = 850;
+        public int LIFT_HEIGHT_TICK_THRESHOLD = 30;
 
-        public double VEL_P = Double.NaN, VEL_I = Double.NaN, VEL_D = Double.NaN;
+        public double VEL_P = 0.0000004;
+        public double VEL_I = 0.0;
+        public double VEL_D = 0.0;
 
-        public double BUCKET_SCORE_POS = Double.NaN;
-        public double BUCKET_INTAKE_POS = Double.NaN;
+        public double BUCKET_SCORE_POS = 0.0;
+        public double BUCKET_INTAKE_POS = .92;
 
-        public double DUMPER_HOME_POS = Double.NaN;
-        public double DUMPER_PRESCORE_POS = Double.NaN;
-        public double DUMPER_DUMP_POS = Double.NaN;
+        public double DUMPER_HOME_POS = 0.73;
+        public double DUMPER_PRESCORE_POS = 0.79;
+        public double DUMPER_DUMP_POS = 0.98;
 
-        public double UPWARD_VELOCITY = Double.NaN;
-        public double DOWNWARD_VELOCITY = Double.NaN;
-        public double UPWARD_ACCELERATION = Double.NaN;
-        public double DOWNWARD_ACCELERATION = Double.NaN;
+        public double UPWARD_VELOCITY = 35;
+        public double DOWNWARD_VELOCITY = -1.265;
+        public double UPWARD_ACCELERATION = 25;
+        public double DOWNWARD_ACCELERATION = -2;
     }
 
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
@@ -220,7 +222,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     private double totalOutput;
 
     public SampleLiftBucketSubsystem(final HardwareMap hMap, final Robot.RobotType robotType, final String liftName, final String bucketName, final String dumperName) {
-        configureParamsForRobotType(robotType);
+//        configureParamsForRobotType(robotType);
         lift = hMap.get(DcMotorEx.class, liftName);
         lift.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

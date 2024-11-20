@@ -78,8 +78,10 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double getArmAngle() {
             switch (this) {
                 case CCW_ARM_HOME:
+                case ZERO_POWER_AT_CCW_ARM_HOME:
                     return SPECIMEN_ARM_PARAMS.CCW_HOME;
                 case CW_ARM_HOME:
+                case ZERO_POWER_AT_CW_ARM_HOME:
                     return SPECIMEN_ARM_PARAMS.CW_HOME;
                 case SPECIMEN_PICKUP:
                     return SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE;
@@ -459,10 +461,10 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         switch (robotType) {
             case INTO_THE_DEEP_19429:
                 // Flip parameters
-                SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 550;
+                SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 300;
                 SPECIMEN_ARM_PARAMS.REVERSE_FLIP_TIME_MS = SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS - 100;
                 SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
-                SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 550;
+                SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 500;
                 SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP = - 1.0;
                 SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS = 828;
 
@@ -486,7 +488,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                 SPECIMEN_ARM_PARAMS.MAX_POWER = 1.0;
 
                 // Preset Angles
-                SPECIMEN_ARM_PARAMS.CCW_HOME = 245.69;
+                SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
                 SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
                 SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
                 SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
@@ -528,7 +530,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                 SPECIMEN_ARM_PARAMS.MAX_POWER = 1.0;
 
                 // Preset Angles
-                SPECIMEN_ARM_PARAMS.CCW_HOME = 245.69;
+                SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
                 SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
                 SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
                 SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;

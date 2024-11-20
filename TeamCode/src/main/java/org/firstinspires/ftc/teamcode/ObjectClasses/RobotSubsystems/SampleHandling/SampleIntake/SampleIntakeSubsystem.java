@@ -22,6 +22,41 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 @Config
 public class SampleIntakeSubsystem extends SubsystemBase {
 
+
+    public static void configureParamsForRobotType(Robot.RobotType robotType) {
+        switch (robotType) {
+            case INTO_THE_DEEP_19429:
+                SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER = -0.8;
+                SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
+                SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
+                SAMPLE_INTAKE_PARAMS.MAX_POWER = 1.0;
+                SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD = 40.0;
+                SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE = 5;
+                SAMPLE_INTAKE_PARAMS.TRANSFER_TIME_MS = 1000.0;
+                SAMPLE_INTAKE_PARAMS.EJECT_TIME_MS = 800.0;
+                SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE = 1;
+                SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE = 1;
+                break;
+
+            case INTO_THE_DEEP_20245:
+                SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER = -0.8;
+                SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
+                SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
+                SAMPLE_INTAKE_PARAMS.MAX_POWER = -1.0;
+                SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD = 40.0;
+                SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE = 5;
+                SAMPLE_INTAKE_PARAMS.TRANSFER_TIME_MS = 1000.0;
+                SAMPLE_INTAKE_PARAMS.EJECT_TIME_MS = 801.0;
+                SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE = 1;
+                SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE = 1;
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown robot type: " + robotType);
+        }
+    }
+
+
     public static class SampleIntakeParams {
         public double INTAKE_ON_POWER = 0.8;
         public double INTAKE_REVERSE_POWER = -1;
@@ -277,32 +312,4 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
 
 
-    public static void configureParamsForRobotType(Robot.RobotType robotType) {
-        switch (robotType) {
-            case INTO_THE_DEEP_19429:
-                SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER = 0.8;
-                SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER = -1.0;
-                SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
-                SAMPLE_INTAKE_PARAMS.MAX_POWER = 1.0;
-                SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD = 40.0;
-                SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE = 5;
-                SAMPLE_INTAKE_PARAMS.TRANSFER_TIME_MS = 1000.0;
-                SAMPLE_INTAKE_PARAMS.EJECT_TIME_MS = 800.0;
-                break;
-
-            case INTO_THE_DEEP_20245:
-                SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER = 0.8;
-                SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER = -1.0;
-                SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
-                SAMPLE_INTAKE_PARAMS.MAX_POWER = 1.0;
-                SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD = 40.0;
-                SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE = 5;
-                SAMPLE_INTAKE_PARAMS.TRANSFER_TIME_MS = 1000.0;
-                SAMPLE_INTAKE_PARAMS.EJECT_TIME_MS = 801.0;
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown robot type: " + robotType);
-        }
-    }
 }
