@@ -34,7 +34,7 @@ public class DefaultSampleLinearActuatorCommand extends CommandBase {
 
             // Check direction and control intake accordingly
             if (actuatorInput > 0) {  // Forward movement
-                sampleIntakeSubsystem.turnOffIntake();  // Turn on intake
+                sampleIntakeSubsystem.turnOnIntake();  // Turn on intake
             } else if (actuatorInput < 0) {  // Backward movement
                 sampleIntakeSubsystem.turnOnIntake();  // Turn off intake
             }
