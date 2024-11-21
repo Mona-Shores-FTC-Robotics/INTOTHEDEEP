@@ -14,6 +14,7 @@ import com.example.sharedconstants.RobotAdapter;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.BetterPrepareAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.DriveForwardFromBasketAndBringLiftDown;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.ScoreSampleAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
@@ -128,7 +129,9 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        return new MoveSampleLiftAction(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
+                        return new SequentialAction(
+                                new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToIntakePosition),
+                                new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHome));
                     } else return problem();
 
                 case MOVE_PRELOAD_SPECIMEN_TO_CW_HOME:
@@ -151,16 +154,17 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        return new BetterPrepareAction(-12);
-
-
+                        return new  SequentialAction(
+                                        new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHighBasket),
+                                        new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveDumperToPreScore),
+                                        new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToScorePosition));
                     } else return problem();
 
                 case SCORE_IN_HIGH_BASKET:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        return new ScoreSampleAction();
+                        return new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::dumpSampleInBucket);
                     } else return problem();
 
 

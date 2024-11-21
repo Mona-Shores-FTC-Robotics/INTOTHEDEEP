@@ -6,6 +6,8 @@ import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_1_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_2_SAMPLE_PRELOAD;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_3_SAMPLE_PRELOAD;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SPECIMEN_PRELOAD_AND_3_SAMPLES;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
 
@@ -16,6 +18,8 @@ import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeLightRed;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_1_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_2_Sample_Preload;
+import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_3_Sample_Preload;
+import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_All_And_Pickup_At_Triangle;
@@ -45,7 +49,7 @@ public class MeepMeepTesting {
 
     private static final RoutesToRun redObservationRoute = OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
     private static final RoutesToRun blueObservationRoute = OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
-    private static final RoutesToRun redNetRoute = NET_SCORE_2_SAMPLE_PRELOAD;
+    private static final RoutesToRun redNetRoute = NET_SCORE_4_SAMPLE_PRELOAD;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
     public static void main(String[] args) {
@@ -206,6 +210,10 @@ public class MeepMeepTesting {
                 return new NET_Score_1_Sample_Preload(adapter);
             case NET_SCORE_2_SAMPLE_PRELOAD:
                 return new NET_Score_2_Sample_Preload(adapter);
+            case NET_SCORE_3_SAMPLE_PRELOAD:
+                return new NET_Score_3_Sample_Preload(adapter);
+            case NET_SCORE_4_SAMPLE_PRELOAD:
+                return new NET_Score_4_Sample_Preload(adapter);
 
             case DO_NOTHING:
             default:

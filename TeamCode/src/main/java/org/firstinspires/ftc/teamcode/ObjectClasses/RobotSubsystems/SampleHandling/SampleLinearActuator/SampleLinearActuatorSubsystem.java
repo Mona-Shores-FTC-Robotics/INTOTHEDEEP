@@ -36,12 +36,12 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
                     ACTUATOR_PARAMS.MANUAL_MOVEMENT_SCALAR = 0.8;
-                    ACTUATOR_PARAMS.NORMAL_POWER = 0.7;
+                    ACTUATOR_PARAMS.NORMAL_POWER = 1.0;
                     ACTUATOR_PARAMS.POWER_FOR_SLOW_DEPLOYMENT = 0.4;
                     ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.1;
 
                     ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS = 600;
-                    ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 300;
+                    ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 225;
                     ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
                     ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
                     break;

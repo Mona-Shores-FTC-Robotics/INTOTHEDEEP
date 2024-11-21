@@ -13,6 +13,7 @@ import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.DoNothing;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_1_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_2_Sample_Preload;
+import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_3_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
@@ -55,7 +56,11 @@ public class AutoSelector extends LinearOpMode {
 //        netRoute.buildRoute();
 //        netRouteList.add(netRoute);
 
-        netRoute = new NET_Score_2_Sample_Preload(robotAdapter);
+//        netRoute = new NET_Score_2_Sample_Preload(robotAdapter);
+//        netRoute.buildRoute();
+//        netRouteList.add(netRoute);
+
+        netRoute = new NET_Score_3_Sample_Preload(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 

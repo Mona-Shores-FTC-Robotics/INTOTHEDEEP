@@ -37,8 +37,6 @@ public class NET_Score_1_Specimen_Preload extends Routes {
 
 
     public void buildRoute() {
-
-
         scoreNetSpecimenPreload(CHAMBER_SLOT_SEVEN_ROTATED);
         netBotRoute= netTrajectoryActionBuilder.build();
     }
@@ -63,8 +61,5 @@ public class NET_Score_1_Specimen_Preload extends Routes {
                 .splineToSplineHeading(chamberSlot, chamberSlot.heading.toDouble(), preloadSlowVelocity, preloadSlowAcceleration)
                 .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
                 .waitSeconds(.2);
-
-
-
     }
 }
