@@ -35,24 +35,24 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
 
-                    // Lift Parameters
-                    KA = 0.0095;    KV = 0.004;    KG = 0.04;    KS = 0.0;
-                    VEL_P = 0.0001;    VEL_I = 0.0;    VEL_D = 0.0;
+                    // Feedforward Coefficients
+                    KA = 0.0010;    KV = 0.002;    KG = 0.043;    KS = 0.0025;
+                    VEL_P = 0.00009;    VEL_I = 0.025;    VEL_D = .000025;
 
                     LIFT_POWER = 0.5;
                     TIMEOUT_TIME_SECONDS = 3.0;
-                    MAX_TARGET_TICKS = 1150;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 30;
-                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1100;   LOW_BASKET_TICKS = 850;
+                    MAX_TARGET_TICKS = 1130;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 10;
+                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1115;   LOW_BASKET_TICKS = 850;
                     SCALE_FACTOR_FOR_MANUAL_LIFT = 50;    LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
 
-                    UPWARD_VELOCITY = 35;    DOWNWARD_VELOCITY = -1.265;    UPWARD_ACCELERATION = 25;    DOWNWARD_ACCELERATION = -2.0;
+                    UPWARD_VELOCITY = 180;    DOWNWARD_VELOCITY = 5;    UPWARD_ACCELERATION = 120;    DOWNWARD_ACCELERATION = 2;
 
                     // Bucket Servo Positions
-                    BUCKET_SCORE_POS = 0.0;    BUCKET_INTAKE_POS = 0.92;
+                    BUCKET_SCORE_POS = 0.0;    BUCKET_INTAKE_POS = 0.93;
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.73;    DUMPER_PRESCORE_POS = 0.79;    DUMPER_DUMP_POS = 0.98;
+                    DUMPER_HOME_POS = 0.69;    DUMPER_PRESCORE_POS = 0.79;    DUMPER_DUMP_POS = 0.98;
                     DUMP_TIME_MS = 800;
 
                     break;
@@ -60,8 +60,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 case INTO_THE_DEEP_20245:
 
                     // Feedforward Coefficients
-                    KA = 0.0;    KV = 0.03;    KG = 0.0;    KS = 0.0;
-                    VEL_P = 0.0075;    VEL_I = 0.0;    VEL_D = 0.0;
+                    KA = 0.0025;    KV = 0.025;    KG = 0.035;    KS = 0.0025;
+                    VEL_P = 0.005;    VEL_I = 0.0;    VEL_D = 0.0;
 
                     // Lift Parameters
                     LIFT_POWER = 0.5;
@@ -282,20 +282,20 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         double desiredVelocity;
         double desiredAcceleration;
         // Determine desired velocity and acceleration based on threshold
-        if (Math.abs(positionDifference) > SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD) {
+        if (Math.abs(positionDifference) > SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD)
+        {
             if (positionDifference > 0) {
                 // Moving up
-                desiredVelocity = SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY;
-                desiredAcceleration = SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION;
+                desiredVelocity = SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY;        // Positive value
+                desiredAcceleration = SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION; // Positive value
             } else {
                 // Moving down
-                desiredVelocity = SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY;
-                desiredAcceleration = SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION;
+                desiredVelocity = -SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY;        // Negative value
+                desiredAcceleration = -SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION; // Negative value
             }
         } else {
-            // Holding position
-            desiredVelocity = 0;
-            desiredAcceleration = 0;
+            desiredVelocity=0;
+            desiredAcceleration=0;
         }
 
         // Calculate the feedforward output

@@ -41,7 +41,7 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
 
     private static final double PRELOAD_VELOCITY_OVERRIDE = 24;
     private static final double PRELOAD_ACCELERATION_OVERRIDE = 24;
-    private static final double PRELOAD_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+    private static final double PRELOAD_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(600);
 
     private static final double PRELOAD_SLOW_VELOCITY_OVERRIDE = 18;
     private static final double PRELOAD_SLOW_ACCELERATION_OVERRIDE = 18;
@@ -65,7 +65,7 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
         obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(FieldConstants.OBS_START_POSE)
                 .setTangent(ANGLE_TOWARD_BLUE)
                 .afterDisp(2, robotAdapter.getAction(MOVE_PRELOAD_SPECIMEN_TO_CW_HOME))
-                .splineToSplineHeading(chamberSlot.plus(new Twist2d(new Vector2d(-8,0), 0)), chamberSlot.heading.toDouble(), preloadVelocity, preloadAcceleration)
+                .splineToSplineHeading(chamberSlot.plus(new Twist2d(new Vector2d(-10,0), 0)), chamberSlot.heading.toDouble(), preloadVelocity, preloadAcceleration)
                 .splineToSplineHeading(chamberSlot, chamberSlot.heading.toDouble(), preloadSlowVelocity, preloadSlowAcceleration)
                 .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
                 .waitSeconds(.2);

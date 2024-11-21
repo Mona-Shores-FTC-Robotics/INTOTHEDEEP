@@ -77,6 +77,8 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             sleep(10);
         }
 
+        telemetry.addData("hasAutoRun", hasAutoRun);
+
             //todo can we make this contingent on an auto being run or not? Anything else we should think about based on if an auto was run?
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE) && !hasAutoRun) {
             //set the starting location of the robot on the field
@@ -105,7 +107,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         {
             Robot.getInstance().getLightingSubsystem().setLightBlack();
         }
-
+        MatchConfig.telemetryPacket.put("hasAutoRun", hasAutoRun);
         while (opModeIsActive())
         {
             // Add the loop time to the sliding window average

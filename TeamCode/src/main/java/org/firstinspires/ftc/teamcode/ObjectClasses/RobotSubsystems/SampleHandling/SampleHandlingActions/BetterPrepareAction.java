@@ -1,20 +1,16 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions;
+package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions;
 
-import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
-import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static java.lang.Math.PI;
 
 import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.FieldConstants;
@@ -24,32 +20,21 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 
-import java.util.Arrays;
-import java.util.Set;
-
-public class DriveToObservationZone implements Action {
+public class BetterPrepareAction implements Action {
     private final DriveSubsystem driveSubsystem;
     private boolean started;
     private boolean cancelled;
     private Action action;// Flag to indicate if the action has been cancelled
-
-    // Velocity and acceleration overrides
-    public static final double VELOCITY_OVERRIDE = 45;
-    public static final double ACCELERATION_OVERRIDE = 45;
-    public static final double ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
+    private final double distance;
 
     // Shared constraints for all routes
-    public static VelConstraint velConstraint;
-    public static AccelConstraint accelConstraint;
+    public static VelConstraint slowVelocity;
+    public static AccelConstraint slowAcceleration;
 
-    public DriveToObservationZone() {
+    public BetterPrepareAction(double distance) {
         this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
-        this.started = false;
-        this.cancelled = false; // Initialize the cancellation flag
-    }
+        this.distance = distance;
 
-    public DriveToObservationZone(double inches) {
-        this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
         this.started = false;
         this.cancelled = false; // Initialize the cancellation flag
     }
@@ -63,13 +48,6 @@ public class DriveToObservationZone implements Action {
         }
 
         if (!started) {
-
-            velConstraint = new MinVelConstraint(Arrays.asList(
-                    new TranslationalVelConstraint(VELOCITY_OVERRIDE),
-                    new AngularVelConstraint(ANGULAR_VELOCITY_OVERRIDE)
-            ));
-            accelConstraint = new ProfileAccelConstraint(- ACCELERATION_OVERRIDE, ACCELERATION_OVERRIDE);
-
             RealRobotAdapter robotAdapter = new RealRobotAdapter();
             Pose2d currentPose = driveSubsystem.getMecanumDrive().pose;
 
@@ -77,14 +55,22 @@ public class DriveToObservationZone implements Action {
                 currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log()+PI);
             }
 
+            double heading = currentPose.heading.log();
+            double offsetX = distance * Math.cos(heading);
+            double offsetY = distance * Math.sin(heading);
+
+            Vector2d targetVector = new Vector2d(
+                    currentPose.position.x + offsetX,
+                    currentPose.position.y + offsetY);
+
             action = robotAdapter.getActionBuilder(currentPose)
-                    .setTangent(ANGLE_TOWARD_OBSERVATION)
-                    .afterTime(.8, new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::gotoPickupAngle))
-                    .afterTime(.8, new InstantAction(Robot.getInstance().getSpecimenIntakeSubsystem()::turnOnIntake))
-                    .splineToLinearHeading(FieldConstants.OBS_TRIANGLE_APPROACH, ANGLE_TOWARD_RED)
+                    .stopAndAdd(new  SequentialAction(
+                            new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHighBasket),
+                            new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveDumperToPreScore),
+                            new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToScorePosition)))
+                    .waitSeconds(3)
                     .setReversed(true)
-                    .splineToLinearHeading(FieldConstants.OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED)
-                    .build();
+                    .splineToConstantHeading(targetVector, Math.toRadians(180)+currentPose.heading.log()).build();
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry
             started = true; // Ensure the action is only initialized once

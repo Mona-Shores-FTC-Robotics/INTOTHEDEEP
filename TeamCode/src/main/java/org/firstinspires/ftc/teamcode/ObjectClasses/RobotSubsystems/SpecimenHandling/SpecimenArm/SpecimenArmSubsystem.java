@@ -85,8 +85,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
                     // PID parameters
                     SPECIMEN_ARM_PARAMS.P = 0.0158;
-                    SPECIMEN_ARM_PARAMS.I = 0.05;
-                    SPECIMEN_ARM_PARAMS.D = 0.001;
+                    SPECIMEN_ARM_PARAMS.I = 0.03;
+                    SPECIMEN_ARM_PARAMS.D = 0;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
                     // Arm Feedforward parameters
@@ -101,7 +101,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // Preset Angles
                     SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
-                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
+                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 215;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
 
                     // Motion Profile Parameters
@@ -114,7 +114,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
                 case INTO_THE_DEEP_20245:
                     // Flip parameters
-                    SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 549;
+                    SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 300;
                     SPECIMEN_ARM_PARAMS.REVERSE_FLIP_TIME_MS = SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS - 100;
                     SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
                     SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 550;

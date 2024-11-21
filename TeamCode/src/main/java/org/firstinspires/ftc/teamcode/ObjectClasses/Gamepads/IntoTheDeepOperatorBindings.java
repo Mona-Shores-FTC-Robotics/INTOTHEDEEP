@@ -19,7 +19,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.Chan
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.MoveClimberArmCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.ClimberMotorHoldPositionCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.SimpleDriveForward;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.BetterPrepareAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.ScoreSampleAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
@@ -50,9 +52,10 @@ public class IntoTheDeepOperatorBindings {
         bindReadyForSampleScoring(GamepadKeys.Button.X);
         bindScoreSample(GamepadKeys.Button.Y);
 
-        bindClimberMotorMovement(GamepadKeys.Button.RIGHT_BUMPER);
+//        bindClimberMotorMovement(GamepadKeys.Button.RIGHT_BUMPER);
+        bindCombinedSampleScoreAction(GamepadKeys.Button.RIGHT_BUMPER);
 
-        bindMoveClimberArm(GamepadKeys.Button.LEFT_BUMPER);
+//        bindMoveClimberArm(GamepadKeys.Button.LEFT_BUMPER);
         cycleTelemetry(GamepadKeys.Button.BACK);
 
         bindBucket(GamepadKeys.Button.DPAD_UP);
@@ -165,6 +168,8 @@ public class IntoTheDeepOperatorBindings {
         ));
     }
 
+
+
     private void bindReadyForSampleScoring(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
             Set<Subsystem> requirements = new HashSet<>();
@@ -173,7 +178,7 @@ public class IntoTheDeepOperatorBindings {
             Command prepareToScoreSample = new ActionCommand(new PrepareToScoreInHighBasketAction(),requirements);
 
             operatorGamePad.getGamepadButton(button)
-                    .whenPressed(prepareToScoreSample);
+                    .whenPressed( prepareToScoreSample);
 
             // Register button binding
             bindingManager.registerBinding(new ButtonBinding(
@@ -189,6 +194,7 @@ public class IntoTheDeepOperatorBindings {
             Set<Subsystem> requirements = new HashSet<>();
             requirements.add(Robot.getInstance().getSampleLiftBucketSubsystem());
             requirements.add(Robot.getInstance().getDriveSubsystem());
+
 
             operatorGamePad.getGamepadButton(button)
                     .whenPressed(() -> {
@@ -207,6 +213,33 @@ public class IntoTheDeepOperatorBindings {
             ));
         }
     }
+
+
+    private void bindCombinedSampleScoreAction(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            Set<Subsystem> requirements = new HashSet<>();
+
+            Command prepareToScoreSample = new ActionCommand(new BetterPrepareAction(10),requirements);
+
+            operatorGamePad.getGamepadButton(button)
+                    .whenPressed( prepareToScoreSample)
+                    .whenReleased(()-> {
+                        // Define a new SequentialAction each time the button is pressed
+                        ScoreSampleAction ScoreSampleAction = new ScoreSampleAction();
+                        // Wrap the SequentialAction in an ActionCommand and schedule it
+                        Command scoreSample = new ActionCommand(ScoreSampleAction, requirements);
+                        scoreSample.schedule();
+                    });
+
+            // Register button binding for debugging or tracking purposes
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Press (raise and drive), Release (score and drive)"
+            ));
+        }
+    }
+
 
 
     private void bindSampleIntakeAndTransfer(GamepadKeys.Button button) {

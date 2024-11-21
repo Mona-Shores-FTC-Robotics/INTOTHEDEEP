@@ -26,7 +26,6 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     public static class SampleIntakeParams extends ConfigurableParameters {
         public double INTAKE_ON_POWER;
-        public double INTAKE_REVERSE_POWER;
         public double INTAKE_OFF_POWER;
         public double MAX_POWER;  // Max allowable power for intake servo
 
@@ -46,20 +45,18 @@ public class SampleIntakeSubsystem extends SubsystemBase {
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
                     INTAKE_ON_POWER = -0.8;
-                    INTAKE_REVERSE_POWER = 1.0;
                     INTAKE_OFF_POWER = 0.0;
                     MAX_POWER = 1.0;
                     PROXIMITY_THRESHOLD = 40.0;
                     COLOR_HISTORY_SIZE = 5;
                     TRANSFER_TIME_MS = 1000.0;
                     EJECT_TIME_MS = 800.0;
-                    LEFT_POWER_REVERSE = 1;
-                    RIGHT_POWER_REVERSE = 1;
+                    LEFT_POWER_REVERSE = .21;
+                    RIGHT_POWER_REVERSE = .21;
                     break;
 
                 case INTO_THE_DEEP_20245:
                     INTAKE_ON_POWER = -0.8;
-                    INTAKE_REVERSE_POWER = 1.0;
                     INTAKE_OFF_POWER = 0.0;
                     MAX_POWER = -1.0;
                     PROXIMITY_THRESHOLD = 40.0;
@@ -88,10 +85,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
         public double getIntakePower() {
             switch (this) {
+                case INTAKE_REVERSE:
+                    return SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE;
                 case INTAKE_ON:
                     return SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER;
-                case INTAKE_REVERSE:
-                    return SAMPLE_INTAKE_PARAMS.INTAKE_REVERSE_POWER;
                 case INTAKE_OFF:
                     return SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER;
                 default:
@@ -150,12 +147,9 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateIntakeStateMachine();
-        sampleProcessingStateMachine.updateSampleProcessingState();
-
         switch (currentIntakeDetectionState) {
             case DETECTING:
-                if ((isColorSensorConnected()) && (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED) && Robot.getInstance().getSpecimenArmSubsystem().getCurrentState()!= SpecimenArmSubsystem.SpecimenArmStates.FLIPPING_TO_CCW)
+                if ((isColorSensorConnected()) && (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED))
                     if (sampleDetector.isGoodSample())
                         currentIntakeDetectionState = IntakeDetectState.DETECTED_GOOD_SAMPLE;
                     else
@@ -163,12 +157,14 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                 break;
             case DETECTED_BAD_SAMPLE:
             case DETECTED_GOOD_SAMPLE:
-                if (sampleProcessingStateMachine.getCurrentSampleDetectionState()== SampleProcessingStateMachine.SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION) {
+                if (sampleProcessingStateMachine.getCurrentSampleDetectionState() == SampleProcessingStateMachine.SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION) {
                     sampleDetector.clearDetectionState();
                     currentIntakeDetectionState = IntakeDetectState.DETECTING;
                 }
                 break;
         }
+        updateIntakeStateMachine();
+        sampleProcessingStateMachine.updateSampleProcessingState();
         updateDashboardTelemetry();
     }
 
@@ -220,7 +216,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         currentSampleIntakeState = state;
         if (state == SampleIntakeStates.REVERSING_INTAKE_TO_TRANSFER) {
             setPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE);
-        } else setPower(state.getIntakePower());
+        } else if (state == SampleIntakeStates.REVERSING_INTAKE_TO_EJECT) {
+            setPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE);
+        }
+        else setPower(state.getIntakePower());
     }
 
     // Set the current intake state and update power
@@ -236,7 +235,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     public void reverseIntake() {
         SampleIntakeStates intakeReverseState = SampleIntakeStates.INTAKE_REVERSE;
-        setPower(intakeReverseState.getIntakePower());
+        setPower(intakeReverseState.getIntakePower(), intakeReverseState.getIntakePower());
     }
 
     // Getters for telemetry use or other purposes

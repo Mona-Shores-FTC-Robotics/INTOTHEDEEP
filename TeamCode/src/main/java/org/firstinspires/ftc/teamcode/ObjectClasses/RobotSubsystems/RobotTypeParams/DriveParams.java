@@ -17,27 +17,27 @@ public class DriveParams {
 
         // drive model parameters
         MecanumDrive.PARAMS.inPerTick = 1;
-        MecanumDrive.PARAMS.lateralInPerTick = 0.6591503480757255;
+        MecanumDrive.PARAMS.lateralInPerTick = 0.6282148904063195;
         MecanumDrive.PARAMS.trackWidthTicks = 11.6;
 
         // feedforward parameters (in tick units)
-        MecanumDrive.PARAMS.kS = 1.3124635507784173;
-        MecanumDrive.PARAMS.kV = 0.12755896485170928;
+        MecanumDrive.PARAMS.kS = 1.342005378418436;
+        MecanumDrive.PARAMS.kV = 0.12820421878128316;
         MecanumDrive.PARAMS.kA = 0.03;
 
         // path profile parameters (in inches)
-        MecanumDrive.PARAMS.maxWheelVel = 28;
-        MecanumDrive.PARAMS.minProfileAccel = -28;
-        MecanumDrive.PARAMS.maxProfileAccel = 28;
+        MecanumDrive.PARAMS.maxWheelVel = 29;
+        MecanumDrive.PARAMS.minProfileAccel = -29;
+        MecanumDrive.PARAMS.maxProfileAccel = 29;
 
         // turn profile parameters (in radians)
-        MecanumDrive.PARAMS.maxAngVel = Math.PI*2.5; // shared with path
-        MecanumDrive.PARAMS.maxAngAccel = Math.PI*2.5;
+        MecanumDrive.PARAMS.maxAngVel = Math.toRadians(360);; // shared with path
+        MecanumDrive.PARAMS.maxAngAccel = Math.toRadians(360);;
 
         // path controller gains
-        MecanumDrive.PARAMS.axialGain = 12;
-        MecanumDrive.PARAMS.lateralGain = 12;
-        MecanumDrive.PARAMS.headingGain = 12; // shared with turn
+        MecanumDrive.PARAMS.axialGain = 8;
+        MecanumDrive.PARAMS.lateralGain = 10;
+        MecanumDrive.PARAMS.headingGain = 8; // shared with turn
 
         MecanumDrive.PARAMS.axialVelGain = 0;
         MecanumDrive.PARAMS.lateralVelGain = 0;
@@ -90,8 +90,8 @@ public class DriveParams {
         MecanumDrive.PARAMS.maxProfileAccel = 28;
 
         // Turn profile parameters (in radians)
-        MecanumDrive.PARAMS.maxAngVel = Math.PI*2; // shared with path//
-        MecanumDrive.PARAMS.maxAngAccel = Math.PI*2; // shared with path
+        MecanumDrive.PARAMS.maxAngVel = Math.toRadians(360);; // shared with path//
+        MecanumDrive.PARAMS.maxAngAccel = Math.toRadians(360);; // shared with path
 
         // Path controller gains
         MecanumDrive.PARAMS.axialGain = 8.0;
