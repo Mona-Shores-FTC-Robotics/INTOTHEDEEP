@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHan
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP;
 
 import android.annotation.SuppressLint;
 
@@ -58,6 +59,9 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double CCW_HOME = Double.NaN;
         public double CCW_FLIP_ARM_TARGET_ANGLE = Double.NaN;
         public double SPECIMEN_PICKUP_ANGLE = Double.NaN;
+        private double DEFAULT_PICKUP_ANGLE;
+        private double MAX_PICKUP_ANGLE_ADJUSTMENT;
+
         public double CW_HOME = Double.NaN;
 
         // Motion Profile Parameters
@@ -103,6 +107,9 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
                     SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 215;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
+
+                    DEFAULT_PICKUP_ANGLE = SPECIMEN_PICKUP_ANGLE;
+                    MAX_PICKUP_ANGLE_ADJUSTMENT=10;
 
                     // Motion Profile Parameters
                     SPECIMEN_ARM_PARAMS.RAMP_UP_TIME_MILLISECONDS = 250;
@@ -388,6 +395,28 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     public void gotoPickupAngle() {
         setCurrentState(SpecimenArmStates.SPECIMEN_PICKUP);
     }
+
+    public void increasePickupAngle() {
+        if (currentState == SPECIMEN_PICKUP) {
+            // Check if the adjustment is within the allowed range
+            if (SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE < SPECIMEN_ARM_PARAMS.DEFAULT_PICKUP_ANGLE + SPECIMEN_ARM_PARAMS.MAX_PICKUP_ANGLE_ADJUSTMENT) {
+                SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE += .5;
+                setCurrentState(SPECIMEN_PICKUP);
+            }
+        }
+    }
+
+    public void decreasePickupAngle() {
+        if (currentState == SPECIMEN_PICKUP) {
+            // Check if the adjustment is within the allowed range
+            if (SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE > SPECIMEN_ARM_PARAMS.DEFAULT_PICKUP_ANGLE - SPECIMEN_ARM_PARAMS.MAX_PICKUP_ANGLE_ADJUSTMENT) {
+                SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE -= .5;
+                setCurrentState(SPECIMEN_PICKUP);
+            }
+        }
+    }
+
+
 
     public void setManualTargetAngle(double armInput) {
         // Calculate the change in angle based on input and scale factor

@@ -377,7 +377,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
     public void updateTriggerBindings() {
-        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+        if (fixedBucketScoreAngleTrigger!=null && fixedSpecimenScoreAngleTrigger!=null) {
             // Toggle 45/225 mode (left trigger)
             toggleTriggerCommand(fixedBucketScoreAngleTrigger, driveTo45or225, isBucketAngleCommandActive);
             isBucketAngleCommandActive = CommandScheduler.getInstance().isScheduled(driveTo45or225);

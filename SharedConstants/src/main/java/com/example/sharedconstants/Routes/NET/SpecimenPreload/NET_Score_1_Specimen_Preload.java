@@ -1,4 +1,4 @@
-package com.example.sharedconstants.Routes.NET;
+package com.example.sharedconstants.Routes.NET.SpecimenPreload;
 
 import static com.example.sharedconstants.FieldConstants.*;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;

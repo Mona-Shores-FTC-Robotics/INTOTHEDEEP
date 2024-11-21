@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
@@ -19,8 +20,11 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
-
+@Config
 public class BetterPrepareAction implements Action {
+
+    public static double DELAY_TIME_TO_DRIVE_FORWARD=1;
+
     private final DriveSubsystem driveSubsystem;
     private boolean started;
     private boolean cancelled;
@@ -68,7 +72,7 @@ public class BetterPrepareAction implements Action {
                             new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHighBasket),
                             new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveDumperToPreScore),
                             new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToScorePosition)))
-                    .waitSeconds(3)
+                    .waitSeconds(DELAY_TIME_TO_DRIVE_FORWARD)
                     .setReversed(true)
                     .splineToConstantHeading(targetVector, Math.toRadians(180)+currentPose.heading.log()).build();
 

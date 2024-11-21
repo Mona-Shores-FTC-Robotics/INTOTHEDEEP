@@ -1,4 +1,4 @@
-package com.example.sharedconstants.Routes.NET;
+package com.example.sharedconstants.Routes.NET.SpecimenPreload;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;

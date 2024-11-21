@@ -48,7 +48,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 @TeleOp(name="TeleOp_IntoTheDeep")
 public class TeleOp_IntoTheDeep extends LinearOpMode
 {
-    private IntoTheDeepDriverBindings driverBindings;
 
     @Override
     public void runOpMode()
@@ -90,8 +89,8 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
         // Setup Button Bindings
         // Example for avoiding duplicate bindings
-        driverBindings = new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad(), gamepadHandling.getBindingManager());
-        new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad(), gamepadHandling.getBindingManager());
+        IntoTheDeepDriverBindings driverBindings = new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad(), gamepadHandling.getBindingManager());
+        IntoTheDeepOperatorBindings operatorBindings = new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad(), gamepadHandling.getBindingManager());
 
         //Start the TeleOp Timer
         MatchConfig.teleOpTimer = new ElapsedTime();
@@ -121,7 +120,9 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
             // Read buttons
             gamepadHandling.getDriverGamepad().readButtons();
-//            driverBindings.updateTriggerBindings();
+            driverBindings.updateTriggerBindings();
+            operatorBindings.updateTriggerBindings();
+
 
             // Display Telemetry through the Robot's Telemetry Manager
             Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry(gamepadHandling.getBindingManager());

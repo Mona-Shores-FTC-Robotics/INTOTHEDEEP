@@ -41,7 +41,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
                     LIFT_POWER = 0.5;
                     TIMEOUT_TIME_SECONDS = 3.0;
-                    MAX_TARGET_TICKS = 1130;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 10;
+                    MAX_TARGET_TICKS = 1135;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 15;
                     HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1115;   LOW_BASKET_TICKS = 850;
                     SCALE_FACTOR_FOR_MANUAL_LIFT = 50;    LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
 

@@ -11,7 +11,9 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.DoNothing;
-import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
+import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_1_Sample_Preload;
+import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_2_Sample_Preload;
+import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_4_Preload_and_3_Samples;
@@ -49,25 +51,33 @@ public class AutoSelector extends LinearOpMode {
         List<Routes> netRouteList = new ArrayList<>();
         robotAdapter.setAllianceColor(allianceColor);
 
-        // Tested 11-15-24
-        netRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
+//        netRoute = new NET_Score_1_Sample_Preload(robotAdapter);
+//        netRoute.buildRoute();
+//        netRouteList.add(netRoute);
+
+        netRoute = new NET_Score_2_Sample_Preload(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
         // Tested 11-15-24
-        netRoute = new NET_Score_2_Preload_and_1_Sample(robotAdapter);
-        netRoute.buildRoute();
-        netRouteList.add(netRoute);
+//        netRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
+//        netRoute.buildRoute();
+//        netRouteList.add(netRoute);
 
         // Tested 11-15-24
-        netRoute = new NET_Score_3_Preload_and_2_Samples(robotAdapter);
-        netRoute.buildRoute();
-        netRouteList.add(netRoute);
+//        netRoute = new NET_Score_2_Preload_and_1_Sample(robotAdapter);
+//        netRoute.buildRoute();
+//        netRouteList.add(netRoute);
+
+        // Tested 11-15-24
+//        netRoute = new NET_Score_3_Preload_and_2_Samples(robotAdapter);
+//        netRoute.buildRoute();
+//        netRouteList.add(netRoute);
 
         // Same as the last one but Scores more points.
-        netRoute = new NET_Score_4_Preload_and_3_Samples(robotAdapter);
-        netRoute.buildRoute();
-        netRouteList.add(netRoute); // Tristan + Landon likes
+//        netRoute = new NET_Score_4_Preload_and_3_Samples(robotAdapter);
+//        netRoute.buildRoute();
+//        netRouteList.add(netRoute); // Tristan + Landon likes
 
         return netRouteList;
     }
@@ -133,6 +143,12 @@ public class AutoSelector extends LinearOpMode {
         robotAdapter = new RealRobotAdapter();
 
         buildRoutes();
+
+        //Guess what side of field we are on to make setup easier
+        if (Robot.getInstance().getSpecimenIntakeSubsystem().getSpecimenDetector().haveSpecimen())
+        {
+            finalSideOfField = FieldConstants.SideOfField.OBSERVATION;
+        } else finalSideOfField = FieldConstants.SideOfField.NET;
 
         // Perform route selection during init
         while (opModeInInit()) {

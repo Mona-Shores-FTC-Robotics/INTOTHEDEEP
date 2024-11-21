@@ -9,7 +9,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.NET.NET_Score_1_Specimen_Preload;
+import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -57,6 +57,12 @@ public class AutoTest extends LinearOpMode {
         redObsRoute.buildRoute();
         redNetRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
         redNetRoute.buildRoute();
+
+        //Guess what side of field we are on to make setup easier
+        if (Robot.getInstance().getSpecimenIntakeSubsystem().getSpecimenDetector().haveSpecimen())
+        {
+            finalSideOfField = FieldConstants.SideOfField.OBSERVATION;
+        } else finalSideOfField = FieldConstants.SideOfField.NET;
 
         while (opModeInInit()) {
             // Allow driver to override/lock the vision
