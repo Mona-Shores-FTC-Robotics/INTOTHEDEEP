@@ -53,12 +53,12 @@ public class GamepadHandling {
     }
 
     public int cycleThroughRoutes(List<Routes> routes, int currentIndex) {
-        if (driverGamepad.wasJustPressed(GamepadKeys.Button.X)) {
+        if (operatorGamepad.wasJustPressed(GamepadKeys.Button.X)) {
             currentIndex--;
             if (currentIndex < 0) {
                 currentIndex = routes.size() - 1;
             }
-        } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.A)) {
+        } else if (operatorGamepad.wasJustPressed(GamepadKeys.Button.A)) {
             currentIndex++;
             if (currentIndex >= routes.size()) {
                 currentIndex = 0;

@@ -69,7 +69,7 @@ public class FieldConstants {
     //Chamber Slot Poses
     public static Pose2d CHAMBER_SLOT_ONE_PRELOAD = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH-8, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(QUARTER_TILE-2, -TILE-HALF_ROBOT_LENGTH+3, ANGLE_TOWARD_BLUE);
-    public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+.3), 0));
     public static Pose2d CHAMBER_SLOT_THREE = CHAMBER_SLOT_TWO.plus(new Twist2d(new Vector2d(0, SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_FOUR = CHAMBER_SLOT_THREE.plus(new Twist2d(new Vector2d(0, SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_FIVE = CHAMBER_SLOT_FOUR.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
@@ -125,13 +125,13 @@ public class FieldConstants {
     public static Pose2d RIGHT_OF_CHAMBER =  new Pose2d(TILE+HALF_TILE+1, -TILE-4, ANGLE_TOWARD_BLUE);
 
     public static Pose2d OBS_BEHIND_SPIKE_ONE = new Pose2d(2*TILE-5, -HALF_TILE-2, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_SPIKE_ONE = new Pose2d(2*TILE+2, -TILE, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_DELIVER_SPIKE_ONE = new Pose2d(2*TILE+2, -2*TILE-2, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_SPIKE_ONE = new Pose2d(2*TILE+4, -TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_DELIVER_SPIKE_ONE = new Pose2d(2*TILE+4, -2*TILE-4, ANGLE_TOWARD_BLUE);
 
 
     public static Pose2d OBS_BEHIND_SPIKE_TWO = new Pose2d(2*TILE+QUARTER_TILE+2, -HALF_TILE-3, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH+1, -TILE, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_DELIVER_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH+1, -TILE-HALF_TILE-QUARTER_TILE-2, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH+1.2, -TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_DELIVER_SPIKE_TWO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH+1.2, -TILE-HALF_TILE-QUARTER_TILE-4, ANGLE_TOWARD_BLUE);
 
     public static Pose2d OBS_BEHIND_SPIKE_THREE = new Pose2d(3*TILE-HALF_ROBOT_WIDTH-QUARTER_TILE+1, -HALF_TILE-3, ANGLE_TOWARD_BLUE);
     public static Pose2d OBS_SPIKE_THREE = new Pose2d(3*TILE-HALF_ROBOT_WIDTH+.5, -TILE, ANGLE_TOWARD_BLUE);

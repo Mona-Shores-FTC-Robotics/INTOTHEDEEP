@@ -11,15 +11,9 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.DoNothing;
-import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_1_Sample_Preload;
-import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_2_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_3_Sample_Preload;
-import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_1_Specimen_Preload;
-import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preload_and_1_Sample;
-import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
-import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_4_Preload_and_3_Samples;
+import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
-import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -107,7 +101,15 @@ public class AutoSelector extends LinearOpMode {
         //Most Reasonable Auto (~25 velocity/acceleration)
         //Scores preload Specimen, pushes 2 spikes to Human player, and then picks three specimens up from human player and scores them
         //This assumes our partner did NOT take one of the Human Player starting specimens
-        obsRoute = new OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle(robotAdapter);
+//        obsRoute = new OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
+
+//        obsRoute = new OBS_Score4_SPECTACULAR(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
+//
+        obsRoute = new OBS_Score4_Fruitport(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
@@ -118,13 +120,13 @@ public class AutoSelector extends LinearOpMode {
 //        obsRoute.buildRoute();
 //        obsRouteList.add(obsRoute);
 
-        obsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
-
-        obsRoute = new DoNothing(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
+//        obsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
+//
+//        obsRoute = new DoNothing(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
 
 
         return obsRouteList;

@@ -4,19 +4,8 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_1_SAMPLE_PRELOAD;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_1_SPECIMEN_PRELOAD;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_2_SAMPLE_PRELOAD;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_2_SPECIMEN_PRELOAD_AND_1_SAMPLE;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_3_SAMPLE_PRELOAD;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_3_SPECIMEN_PRELOAD_AND_2_SAMPLES;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SPECIMEN_PRELOAD_AND_3_SAMPLES;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_SPECIMEN_PRELOAD_AND_3_SAMPLES_AND_1_HUMAN_PLAYER_SAMPLE;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_NO_PRELOAD;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_SPECTACULAR;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_SPECTACULAR_WITH_STOPS;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkRed;
@@ -32,6 +21,7 @@ import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preloa
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_NO_PRELOAD_SPECTACULAR;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_All_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_SPECTACULAR;
+import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport;
 import com.example.sharedconstants.Routes.OBS.OBS_Score5_Preload_Ground_Pickup_And_Dump_And_Pickup_At_Triangle;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.DoNothing;
@@ -56,7 +46,7 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_SCORE_4_NO_PRELOAD;
+    private static final RoutesToRun redObservationRoute = OBS_SCORE_4_SPECTACULAR_WITH_STOPS;
     private static final RoutesToRun blueObservationRoute = redObservationRoute;
     private static final RoutesToRun redNetRoute = NET_SCORE_4_SPECIMEN_PRELOAD_AND_3_SAMPLES;
     private static final RoutesToRun blueNetRoute = redNetRoute;
@@ -191,6 +181,9 @@ public class MeepMeepTesting {
 
             case NET_SCORE_5_SAMPLE_PRELOAD:
                 return new NET_Score5_SamplePreload(adapter);
+
+            case OBS_SCORE_4_SPECTACULAR_WITH_STOPS:
+                return new OBS_Score4_Fruitport(adapter);
 
 
             case OBS_SCORE_4_SPECTACULAR:

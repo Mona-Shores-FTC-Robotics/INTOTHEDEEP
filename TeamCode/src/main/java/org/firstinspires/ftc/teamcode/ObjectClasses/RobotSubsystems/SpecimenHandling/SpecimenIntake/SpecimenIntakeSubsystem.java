@@ -47,7 +47,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                     SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
                     SPECIMEN_INTAKE_PARAMS.MAX_POWER = 0.8;
                     SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 25;
-                    SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 5;
+                    SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 4;
                     break;
 
                 default:

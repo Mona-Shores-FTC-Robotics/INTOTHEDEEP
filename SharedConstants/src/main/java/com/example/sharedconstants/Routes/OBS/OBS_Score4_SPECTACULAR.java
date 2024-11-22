@@ -35,12 +35,12 @@ import java.util.Arrays;
 
 public class OBS_Score4_SPECTACULAR extends OBS_Score_1_Specimen_Preload {
 
-    private static final double OBS_FAST_VELOCITY_OVERRIDE = 27.5;
-    private static final double OBS_FAST_ACCELERATION_OVERRIDE = 27.5;
+    private static final double OBS_FAST_VELOCITY_OVERRIDE = 26.5;
+    private static final double OBS_FAST_ACCELERATION_OVERRIDE = 26.5;
     private static final double OBS_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
-    private static final double OBS_VELOCITY_OVERRIDE = 27.5;
-    private static final double OBS_ACCELERATION_OVERRIDE = 27.5;
+    private static final double OBS_VELOCITY_OVERRIDE = 26.5;
+    private static final double OBS_ACCELERATION_OVERRIDE = 26.5;
     private static final double OBS_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
     private static final double OBS_SLOW_VELOCITY_OVERRIDE = 20;
