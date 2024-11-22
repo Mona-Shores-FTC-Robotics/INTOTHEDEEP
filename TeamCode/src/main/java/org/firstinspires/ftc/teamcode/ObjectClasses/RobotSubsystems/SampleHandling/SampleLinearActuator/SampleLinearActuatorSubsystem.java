@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
@@ -88,10 +89,14 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     private DigitalChannel retractedLimitSwitch;
     int currentTicks;
 
+
+
+    private Servo sampleIntakeFlipperServo;
+
     ElapsedTime actuatorTimer = new ElapsedTime();
 
     // Constructor with limit switch
-    public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType, String actuatorMotorName, String limitSwitchName) {
+    public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType, String actuatorMotorName, String sampleIntakeFlipperServoName) {
         ACTUATOR_PARAMS.loadDefaultsForRobotType(robotType);
         sampleActuator = hardwareMap.get(DcMotorEx.class, actuatorMotorName);
         sampleActuator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -99,17 +104,13 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         sampleActuator.setDirection(DcMotorEx.Direction.FORWARD);
         sampleActuator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         currentState = SampleActuatorStates.FULLY_RETRACTED;
+        sampleIntakeFlipperServo=hardwareMap.get(Servo.class,sampleIntakeFlipperServoName);
 
         // Initialize the limit switch if the name is provided
-        if (limitSwitchName != null && !limitSwitchName.isEmpty()) {
-            retractedLimitSwitch = hardwareMap.get(DigitalChannel.class, limitSwitchName);
-            retractedLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
-        }
-    }
-
-    // Constructor without limit switch
-    public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType, String actuatorMotorName) {
-        this(hardwareMap, robotType, actuatorMotorName, null);  // Calls the main constructor with no limit switch name
+//        if (limitSwitchName != null && !limitSwitchName.isEmpty()) {
+//            retractedLimitSwitch = hardwareMap.get(DigitalChannel.class, limitSwitchName);
+//            retractedLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
+//        }
     }
 
     // Initialize actuator motor with encoders and PID configuration
@@ -117,6 +118,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         // Initialize the current and target states to retracted
         currentState = SampleActuatorStates.FULLY_RETRACTED;
         sampleActuator.setPower(0);
+
     }
 
     @Override
@@ -133,12 +135,12 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     setCurrentState(SampleActuatorStates.PARTIALLY_DEPLOYED);
                 }
                 break;
-            case FULLY_DEPLOYING:
-                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS) {
-                    stopActuator();
-                    setCurrentState(SampleActuatorStates.FULLY_DEPLOYED);
-                }
-                break;
+//            case FULLY_DEPLOYING:
+//                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS) {
+//                    stopActuator();
+//                    setCurrentState(SampleActuatorStates.FULLY_DEPLOYED);
+//                }
+//                break;
             case PARTIALLY_RETRACTING_AFTER_EJECTING:
                 if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS) {
                     stopActuator();
@@ -263,4 +265,14 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         telemetry.addData("Sample Actuator Current Position Ticks", currentTicks);
         telemetry.addData("Sample Actuator Motor Power", currentPower);
     }
+
+    // Verbose telemetry display
+    public void flipSampleIntakeUp() {
+        sampleIntakeFlipperServo.setPosition(0);
+
+    }
+    public void flipSampleIntakeDown() {
+        sampleIntakeFlipperServo.setPosition(1);
+    }
+
 }

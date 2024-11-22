@@ -74,7 +74,7 @@ public class GamepadHandling {
             telemetry.addData("Side Locked" , finalSideOfField);
             telemetry.addLine("Press B to unlock settings");
 
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
+            if (operatorGamepad.wasJustPressed(GamepadKeys.Button.B)) {
                 LockedSettingsFlag = false;  // Unlock settings
             }
         } else {
@@ -93,22 +93,22 @@ public class GamepadHandling {
             telemetry.addLine();
 
             // Handle locking
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.B)) {
+            if (operatorGamepad.wasJustPressed(GamepadKeys.Button.B)) {
                 LockedSettingsFlag = true;  // Lock settings
             }
 
             // Allow the driver to disable manual override
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.X)) {
+            if (operatorGamepad.wasJustPressed(GamepadKeys.Button.X)) {
                 manualOverrideFlag = false;  // Revert to sensor-based updates
             }
 
             // Allow override for alliance color
             telemetry.addLine("Alliance Color (DPAD-UP/DOWN)");
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+            if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 finalAllianceColor = AllianceColor.BLUE;
                 finalOpponentColor = AllianceColor.RED;
                 manualOverrideFlag = true;  // Mark as manually overridden
-            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+            } else if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 finalAllianceColor = AllianceColor.RED;
                 finalOpponentColor = AllianceColor.BLUE;
                 manualOverrideFlag = true;  // Mark as manually overridden
@@ -116,10 +116,10 @@ public class GamepadHandling {
 
             // Allow override for side of the field
             telemetry.addLine("Side of Field (DPAD-LEFT/RIGHT)");
-            if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+            if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 finalSideOfField = SideOfField.NET;
                 manualOverrideFlag = true;  // Mark as manually overridden
-            } else if (driverGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+            } else if (operatorGamepad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 finalSideOfField = SideOfField.OBSERVATION;
                 manualOverrideFlag = true;  // Mark as manually
             }

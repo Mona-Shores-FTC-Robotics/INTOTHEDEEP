@@ -5,8 +5,11 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_1_SAMPLE_PRELOAD;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_1_SPECIMEN_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_2_SAMPLE_PRELOAD;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_2_SPECIMEN_PRELOAD_AND_1_SAMPLE;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_3_SAMPLE_PRELOAD;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_3_SPECIMEN_PRELOAD_AND_2_SAMPLES;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SPECIMEN_PRELOAD_AND_3_SAMPLES;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
@@ -49,7 +52,7 @@ public class MeepMeepTesting {
 
     private static final RoutesToRun redObservationRoute = OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
     private static final RoutesToRun blueObservationRoute = OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
-    private static final RoutesToRun redNetRoute = NET_SCORE_4_SAMPLE_PRELOAD;
+    private static final RoutesToRun redNetRoute = NET_SCORE_2_SAMPLE_PRELOAD;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
     public static void main(String[] args) {

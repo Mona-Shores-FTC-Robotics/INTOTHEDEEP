@@ -1,10 +1,11 @@
 package com.example.sharedconstants.Routes.NET.SamplePreload;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_160_DEGREES;
+import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET;
-import static com.example.sharedconstants.FieldConstants.NET_BASKET_PRE_SCORE;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT;
 import static com.example.sharedconstants.FieldConstants.NET_START_POSE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_ACTUATOR_RETRACT;
@@ -51,17 +52,13 @@ public class NET_Score_1_Sample_Preload extends Routes {
         netTrajectoryActionBuilder = robotAdapter.getActionBuilder(NET_START_POSE)
                 .setTangent(ANGLE_160_DEGREES)
                 .afterDisp(10, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
-                .splineToSplineHeading(NET_BASKET_PRE_SCORE, ANGLE_TOWARD_NET, preloadVelocity, preloadAcceleration);
+                .splineToLinearHeading(NET_BASKET_ALIGNMENT, ANGLE_225_DEGREES, preloadVelocity, preloadAcceleration)
+                .splineToSplineHeading(NET_BASKET, ANGLE_225_DEGREES, preloadVelocity, preloadAcceleration);
     }
 
     public void scoreSampleInHighBasket(){
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
-                .setReversed(true)
-                .afterDisp(0, robotAdapter.getAction(SAMPLE_ACTUATOR_RETRACT))
-                .splineToLinearHeading(NET_BASKET, Math.toRadians(180)+NET_BASKET_PRE_SCORE.heading.log())
                 .stopAndAdd(robotAdapter.getAction(SCORE_IN_HIGH_BASKET))
-                .waitSeconds(.65)
-                .afterDisp(6, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
-                .splineToLinearHeading(NET_BASKET_PRE_SCORE, ANGLE_45_DEGREES);
+                .waitSeconds(.5);
     }
 }

@@ -29,11 +29,13 @@ public class SampleButtonHandling {
             switch (actuatorSubsystem.getCurrentState()) {
                 case FULLY_RETRACTED:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
+                    actuatorSubsystem.flipSampleIntakeDown();
                     actuatorSubsystem.partiallyDeploy();
                     break;
                 case PARTIALLY_DEPLOYED:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-                    actuatorSubsystem.fullyDeploy();
+                    actuatorSubsystem.flipSampleIntakeUp();
+                    actuatorSubsystem.fullyRetract();
                     break;
                 case MANUAL:
                 case UNKNOWN:

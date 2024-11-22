@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.AnalogBinding;
@@ -27,6 +28,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.DefaultSpecimenArmWithMotionProfileCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
@@ -49,6 +51,7 @@ public class IntoTheDeepOperatorBindings {
         operatorGamePad = gamepad;
         bindingManager = gamePadBindingManager;
 
+        //Main Controls
         DepolySampleIntake(GamepadKeys.Button.A);
         BucketScoreSequence(GamepadKeys.Button.X);
         ManualLinearActuator(operatorGamePad::getRightY);
@@ -64,6 +67,8 @@ public class IntoTheDeepOperatorBindings {
         bindDecreasePickupAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
         bindIncreasePickupAngle(GamepadKeys.Trigger.RIGHT_TRIGGER);
 
+        bindSampleIntakeFlipper(GamepadKeys.Button.START);
+
         //Telemetry Cycling
         cycleTelemetry(GamepadKeys.Button.BACK);
 
@@ -72,6 +77,24 @@ public class IntoTheDeepOperatorBindings {
 //        bindReadyForSampleScoring(GamepadKeys.Button.X);
 //        bindScoreSample(GamepadKeys.Button.Y);
 
+    }
+
+    private void bindSampleIntakeFlipper(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
+        {
+            SampleLinearActuatorSubsystem linearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();
+            Command  flipSampleIntakeDown = new InstantCommand(linearActuatorSubsystem::flipSampleIntakeDown);
+            Command  flipSampleIntakeUp = new InstantCommand(linearActuatorSubsystem::flipSampleIntakeUp);
+            operatorGamePad.getGamepadButton(button)
+                    .toggleWhenPressed(flipSampleIntakeDown, flipSampleIntakeUp);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Flip Arm To Angle"
+            ));
+        }
     }
 
     //Todo test this and see if its worth using...

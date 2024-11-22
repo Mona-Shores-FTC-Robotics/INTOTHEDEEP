@@ -109,7 +109,7 @@ public class Robot {
                 //Control Hub - I2C Bus 2 - pinpoint
                 //Control Hub - I2C Bus 3 - specimencolorsensor
 
-                //Expans. Hub - Servo Port X - blinkin
+                //Expans. Hub - Servo Port 1 - blinkin
 
                 mecanumDriveSubsystem = new DriveSubsystem(hardwareMap, robotType);
                 registerSubsystem(SubsystemType.DRIVE, mecanumDriveSubsystem);
@@ -117,7 +117,7 @@ public class Robot {
                 specimenArmSubsystem = new SpecimenArmSubsystem(hardwareMap, robotType, "specimenarm");
                 registerSubsystem(SubsystemType.SPECIMEN_ARM, specimenArmSubsystem);
 
-                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, robotType, "samplelinearactuator");
+                sampleLinearActuatorSubsystem = new SampleLinearActuatorSubsystem(hardwareMap, robotType, "samplelinearactuator","sampleintakeflipper");
                 registerSubsystem(SubsystemType.SAMPLE_ACTUATOR, sampleLinearActuatorSubsystem);
 
                 sampleLiftBucketSubsystem = new SampleLiftBucketSubsystem(hardwareMap, robotType, "samplelift", "samplebucket", "sampledumper");
