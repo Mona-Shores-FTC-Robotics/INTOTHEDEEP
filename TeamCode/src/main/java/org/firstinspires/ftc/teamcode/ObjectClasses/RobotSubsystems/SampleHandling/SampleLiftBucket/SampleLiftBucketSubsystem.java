@@ -72,12 +72,13 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     UPWARD_VELOCITY = 35;    DOWNWARD_VELOCITY = -1.265;    UPWARD_ACCELERATION = 25;    DOWNWARD_ACCELERATION = -2.01;
 
                     // Bucket Positions
-                    BUCKET_SCORE_POS = 0.0;    BUCKET_INTAKE_POS = 0.725;
+                    BUCKET_SCORE_POS = .3;    BUCKET_INTAKE_POS = 0.9;
+
                     // Timing and Increment
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.73;    DUMPER_PRESCORE_POS = 0.79;    DUMPER_DUMP_POS = 0.98;
+                    DUMPER_HOME_POS = 0.67;    DUMPER_PRESCORE_POS = 0.72;    DUMPER_DUMP_POS = 0.98;
                     DUMP_TIME_MS = 800;
 
                     break;
@@ -89,6 +90,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
 
     public static SampleLiftParams SAMPLE_LIFT_PARAMS = new SampleLiftParams();
+
 
     public enum SampleLiftStates {
         HIGH_BASKET, LOW_BASKET, LIFT_HOME, MANUAL, LOW_BASKET_DOWN;
@@ -195,7 +197,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 SAMPLE_LIFT_PARAMS.KG,
                 SAMPLE_LIFT_PARAMS.KV,
                 SAMPLE_LIFT_PARAMS.KA);
-
+//todo manual lift has to also raise bucket arm
         pidController = new PIDController(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D);
         currentLiftState = SampleLiftStates.LIFT_HOME;
 

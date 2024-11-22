@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.ftccommon.configuration.EditPortListSpinnerActivity;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -20,6 +21,9 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     public static class ActuatorParams extends ConfigurableParameters {
+        public double FLIP_UP_POSITION;
+        public double FLIP_DOWN_POSITION;
+        public double FLIP_UP_DELAY_TIME_MS;
         public double MANUAL_MOVEMENT_SCALAR = Double.NaN;
         public double NORMAL_POWER = Double.NaN;
         public double POWER_FOR_SLOW_DEPLOYMENT = Double.NaN;
@@ -42,9 +46,12 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.1;
 
                     ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS = 600;
-                    ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 225;
+                    ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 140;
                     ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
                     ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
+                    FLIP_UP_DELAY_TIME_MS = 750;
+                    FLIP_UP_POSITION= 1.0;
+                    FLIP_DOWN_POSITION =0.0;
                     break;
 
                 case INTO_THE_DEEP_20245:
@@ -54,9 +61,13 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION = 0.1;
 
                     ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS = 600;
-                    ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 300;
+                    ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 175;
                     ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
                     ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
+
+                    FLIP_UP_DELAY_TIME_MS = 1000;
+                    FLIP_UP_POSITION= 1.0;
+                    FLIP_DOWN_POSITION =0.0;
                     break;
 
                 default:
@@ -76,8 +87,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
         PARTIALLY_DEPLOYING,
         PARTIALLY_DEPLOYED,
-        FULLY_DEPLOYING,
-        FULLY_DEPLOYED,
+
+        WAITING_FOR_FLIP_UP,
 
         MANUAL,
         UNKNOWN
@@ -94,6 +105,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     private Servo sampleIntakeFlipperServo;
 
     ElapsedTime actuatorTimer = new ElapsedTime();
+    ElapsedTime flipUpTimer = new ElapsedTime();
 
     // Constructor with limit switch
     public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType, String actuatorMotorName, String sampleIntakeFlipperServoName) {
@@ -129,18 +141,19 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
         switch (currentState)
         {
+            case WAITING_FOR_FLIP_UP:
+                if (flipUpTimer.milliseconds()>= ACTUATOR_PARAMS.FLIP_UP_DELAY_TIME_MS)
+                {
+                    fullyRetract();
+                }
+                break;
             case PARTIALLY_DEPLOYING:
                 if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS) {
                     stopActuator();
                     setCurrentState(SampleActuatorStates.PARTIALLY_DEPLOYED);
                 }
                 break;
-//            case FULLY_DEPLOYING:
-//                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS) {
-//                    stopActuator();
-//                    setCurrentState(SampleActuatorStates.FULLY_DEPLOYED);
-//                }
-//                break;
+
             case PARTIALLY_RETRACTING_AFTER_EJECTING:
                 if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS) {
                     stopActuator();
@@ -157,7 +170,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                 }
                 break;
             case PARTIALLY_DEPLOYED:
-            case FULLY_DEPLOYED:
             case FULLY_RETRACTED:
             case MANUAL:
             case UNKNOWN:
@@ -187,11 +199,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         actuatorTimer.reset();
     }
 
-    public void fullyDeploy() {
-        currentState=SampleActuatorStates.FULLY_DEPLOYING;
-        runWithoutEncodersForwardSlowly();
-        actuatorTimer.reset();
-    }
 
 
     // Method to power the motor on in one direction without encoders
@@ -267,12 +274,13 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     }
 
     // Verbose telemetry display
-    public void flipSampleIntakeUp() {
-        sampleIntakeFlipperServo.setPosition(0);
-
+    public void flipSampleIntakeUpAndRetract() {
+        currentState=SampleActuatorStates.WAITING_FOR_FLIP_UP;
+        flipUpTimer.reset(); // once this timer hits a timer then do the retract in the periodic
+        sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_UP_POSITION);
     }
     public void flipSampleIntakeDown() {
-        sampleIntakeFlipperServo.setPosition(1);
+        sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_DOWN_POSITION);
     }
 
 }

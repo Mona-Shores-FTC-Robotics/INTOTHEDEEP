@@ -33,12 +33,12 @@ public class OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle extends OBS_Scor
 
     //Scored 4 Specimens on 11/17/24  8 times
 
-    private static final double OBS_FAST_VELOCITY_OVERRIDE = 29;
-    private static final double OBS_FAST_ACCELERATION_OVERRIDE = 29;
+    private static final double OBS_FAST_VELOCITY_OVERRIDE = 28;
+    private static final double OBS_FAST_ACCELERATION_OVERRIDE = 28;
     private static final double OBS_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
-    private static final double OBS_VELOCITY_OVERRIDE = 28;
-    private static final double OBS_ACCELERATION_OVERRIDE = 28;
+    private static final double OBS_VELOCITY_OVERRIDE = 27.5;
+    private static final double OBS_ACCELERATION_OVERRIDE = 27.5;
     private static final double OBS_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
     private static final double OBS_SLOW_VELOCITY_OVERRIDE = 10;
@@ -79,7 +79,8 @@ public class OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle extends OBS_Scor
                 .splineToConstantHeading(PoseToVector(RIGHT_OF_CHAMBER), ANGLE_TOWARD_BLUE, obsVelocity, obsAcceleration)
                 .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_ONE), Math.toRadians(350), obsFastVelocity, obsFastAcceleration)
                 .splineToConstantHeading(PoseToVector(OBS_SPIKE_ONE),ANGLE_TOWARD_RED , obsFastVelocity, obsFastAcceleration)
-                .splineToConstantHeading(PoseToVector(OBS_DELIVER_SPIKE_ONE), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration);
+                .splineToConstantHeading(PoseToVector(OBS_DELIVER_SPIKE_ONE), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
+                .splineToConstantHeading(PoseToVector(RIGHT_OF_CHAMBER), ANGLE_TOWARD_BLUE, obsVelocity, obsAcceleration);
     }
 
     public void pushSecondNeutralSpecimen() {

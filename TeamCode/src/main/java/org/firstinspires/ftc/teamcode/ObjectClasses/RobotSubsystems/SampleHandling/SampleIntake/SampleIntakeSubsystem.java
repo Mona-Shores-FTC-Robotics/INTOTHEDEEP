@@ -37,6 +37,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
         public double LEFT_POWER_REVERSE;
         public double RIGHT_POWER_REVERSE;
+        public double FULL_SPEED_REVERSE;
+
 
         @Override
         public void loadDefaultsForRobotType(Robot.RobotType robotType) {
@@ -53,18 +55,20 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     EJECT_TIME_MS = 800.0;
                     LEFT_POWER_REVERSE = .4;
                     RIGHT_POWER_REVERSE = .4;
+                    FULL_SPEED_REVERSE = 1;
                     break;
 
                 case INTO_THE_DEEP_20245:
                     INTAKE_ON_POWER = -0.8;
-                    INTAKE_OFF_POWER = 0.0;
-                    MAX_POWER = -1.0;
-                    PROXIMITY_THRESHOLD = 40.0;
+                    INTAKE_OFF_POWER = 0;
+                    MAX_POWER = 1.0;
+                    PROXIMITY_THRESHOLD = 40;
                     COLOR_HISTORY_SIZE = 5;
-                    TRANSFER_TIME_MS = 1000.0;
+                    TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 801.0;
-                    LEFT_POWER_REVERSE = 1;
-                    RIGHT_POWER_REVERSE = 1;
+                    LEFT_POWER_REVERSE = .4;
+                    RIGHT_POWER_REVERSE = .4;
+                    FULL_SPEED_REVERSE = 1;
                     break;
 
                 default:
@@ -150,10 +154,13 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         switch (currentIntakeDetectionState) {
             case DETECTING:
                 if ((isColorSensorConnected()) && (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED))
+
                     if (sampleDetector.isGoodSample())
                         currentIntakeDetectionState = IntakeDetectState.DETECTED_GOOD_SAMPLE;
-                    else
-                        currentIntakeDetectionState = IntakeDetectState.DETECTED_BAD_SAMPLE;
+                    else if (sampleDetector.isUnknown())
+                    {
+                        //do nothing
+                    } else currentIntakeDetectionState = IntakeDetectState.DETECTED_BAD_SAMPLE;
                 break;
             case DETECTED_BAD_SAMPLE:
             case DETECTED_GOOD_SAMPLE:

@@ -94,7 +94,7 @@ public class Robot {
                 //Expans. Hub - Motor Port 0 - specimenarm
                 //Expans. Hub - Motor Port 1 - samplelinearactuator
                 //Expans. Hub - Motor Port 2 - samplelift
-                //Expans. Hub - Motor Port 3 - climber
+                //Expans. Hub - Motor Port 3 - climbermotor
 
                 //Control Hub - Servo Port 0 - sampleintakeright
                 //Control Hub - Servo Port 1 - sampleintakeleft

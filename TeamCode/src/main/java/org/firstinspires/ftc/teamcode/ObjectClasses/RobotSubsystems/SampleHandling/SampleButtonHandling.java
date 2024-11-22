@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Config
 public class SampleButtonHandling {
@@ -32,19 +29,19 @@ public class SampleButtonHandling {
                     actuatorSubsystem.flipSampleIntakeDown();
                     actuatorSubsystem.partiallyDeploy();
                     break;
+
                 case PARTIALLY_DEPLOYED:
-                    intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-                    actuatorSubsystem.flipSampleIntakeUp();
-                    actuatorSubsystem.fullyRetract();
-                    break;
                 case MANUAL:
                 case UNKNOWN:
                 case FULLY_RETRACTING:
                 case PARTIALLY_DEPLOYING:
-                case FULLY_DEPLOYING:
                 default:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
-                    actuatorSubsystem.fullyRetract();
+                    actuatorSubsystem.flipSampleIntakeUpAndRetract();
+                    break;
+
+
+
             }
     }
 

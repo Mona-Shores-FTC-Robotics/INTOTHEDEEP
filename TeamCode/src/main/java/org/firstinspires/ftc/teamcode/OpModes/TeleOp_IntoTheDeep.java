@@ -68,6 +68,7 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
         while (opModeInInit()) {
             gamepadHandling.getDriverGamepad().readButtons();
+            gamepadHandling.getOperatorGamepad().readButtons();
 
             // Allow driver to override and lock alliance color and side
             gamepadHandling.SelectAllianceAndSide(telemetry);

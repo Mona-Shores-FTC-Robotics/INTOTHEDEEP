@@ -67,6 +67,7 @@ public class AutoTest extends LinearOpMode {
         while (opModeInInit()) {
             // Allow driver to override/lock the vision
             gamepadHandling.getDriverGamepad().readButtons();
+            gamepadHandling.getOperatorGamepad().readButtons();
 
             // Monitor preload: respects locked state
             if (Robot.getInstance().hasSubsystem(SPECIMEN_INTAKE)) {

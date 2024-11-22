@@ -9,7 +9,6 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.AnalogBinding;
@@ -59,7 +58,7 @@ public class IntoTheDeepOperatorBindings {
 //        bindMoveClimberArm(GamepadKeys.Button.LEFT_BUMPER);
 
         //Manual controls for when things aren't working right
-        ManualLift(operatorGamePad::getLeftX);
+        ManualLift(operatorGamePad::getLeftY);
         MoveBucketServoArm(GamepadKeys.Button.DPAD_UP);
         ReverseSampleIntakeToggle(GamepadKeys.Button.DPAD_LEFT);
         ReverseSpecimenIntakeToggle(GamepadKeys.Button.DPAD_RIGHT);
@@ -84,7 +83,7 @@ public class IntoTheDeepOperatorBindings {
         {
             SampleLinearActuatorSubsystem linearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();
             Command  flipSampleIntakeDown = new InstantCommand(linearActuatorSubsystem::flipSampleIntakeDown);
-            Command  flipSampleIntakeUp = new InstantCommand(linearActuatorSubsystem::flipSampleIntakeUp);
+            Command  flipSampleIntakeUp = new InstantCommand(linearActuatorSubsystem::flipSampleIntakeUpAndRetract);
             operatorGamePad.getGamepadButton(button)
                     .toggleWhenPressed(flipSampleIntakeDown, flipSampleIntakeUp);
 
