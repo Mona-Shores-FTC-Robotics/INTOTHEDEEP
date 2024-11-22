@@ -76,26 +76,26 @@ public class SpecimenArmSubsystem extends SubsystemBase {
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
                     // Flip parameters
-                    SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 300;
+                    SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 380;
                     SPECIMEN_ARM_PARAMS.REVERSE_FLIP_TIME_MS = SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS - 100;
                     SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
-                    SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 500;
+                    SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 550;
                     SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP = - 1.0;
-                    SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS = 828;
+                    SPECIMEN_ARM_PARAMS.ZERO_POWER_SETTLE_TIME_MS = 550;
 
                     // GamePad parameters
                     SPECIMEN_ARM_PARAMS.STICK_SCALE_FACTOR = 5;
                     SPECIMEN_ARM_PARAMS.DEAD_ZONE = 0.05;
 
                     // PID parameters
-                    SPECIMEN_ARM_PARAMS.P = 0.0158;
-                    SPECIMEN_ARM_PARAMS.I = 0.03;
-                    SPECIMEN_ARM_PARAMS.D = 0;
+                    SPECIMEN_ARM_PARAMS.P = 0.0044;
+                    SPECIMEN_ARM_PARAMS.I = .015;
+                    SPECIMEN_ARM_PARAMS.D = .0001;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
                     // Arm Feedforward parameters
                     SPECIMEN_ARM_PARAMS.kS = 0;
-                    SPECIMEN_ARM_PARAMS.kCos = 0.135;
+                    SPECIMEN_ARM_PARAMS.kCos = 0.2;
                     SPECIMEN_ARM_PARAMS.kV = 0;
                     SPECIMEN_ARM_PARAMS.kA = 0;
 
@@ -105,7 +105,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // Preset Angles
                     SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
-                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 215;
+                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
 
                     DEFAULT_PICKUP_ANGLE = SPECIMEN_PICKUP_ANGLE;
@@ -397,16 +397,20 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     }
 
     public void increasePickupAngle() {
+        MatchConfig.telemetryPacket.put("increase", currentState);
         if (currentState == SPECIMEN_PICKUP) {
             // Check if the adjustment is within the allowed range
             if (SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE < SPECIMEN_ARM_PARAMS.DEFAULT_PICKUP_ANGLE + SPECIMEN_ARM_PARAMS.MAX_PICKUP_ANGLE_ADJUSTMENT) {
                 SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE += .5;
                 setCurrentState(SPECIMEN_PICKUP);
+
             }
         }
     }
 
     public void decreasePickupAngle() {
+        MatchConfig.telemetryPacket.put("decrease", currentState);
+
         if (currentState == SPECIMEN_PICKUP) {
             // Check if the adjustment is within the allowed range
             if (SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE > SPECIMEN_ARM_PARAMS.DEFAULT_PICKUP_ANGLE - SPECIMEN_ARM_PARAMS.MAX_PICKUP_ANGLE_ADJUSTMENT) {

@@ -121,6 +121,8 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
             // Read buttons
             gamepadHandling.getDriverGamepad().readButtons();
+            gamepadHandling.getOperatorGamepad().readButtons();
+
             driverBindings.updateTriggerBindings();
             operatorBindings.updateTriggerBindings();
 
