@@ -77,10 +77,9 @@ public class OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle extends OBS_Scor
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
                 .splineToConstantHeading(PoseToVector(RIGHT_OF_CHAMBER), ANGLE_TOWARD_BLUE, obsVelocity, obsAcceleration)
-                .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_ONE), Math.toRadians(350), obsFastVelocity, obsFastAcceleration)
-                .splineToConstantHeading(PoseToVector(OBS_SPIKE_ONE),ANGLE_TOWARD_RED , obsFastVelocity, obsFastAcceleration)
-                .splineToConstantHeading(PoseToVector(OBS_DELIVER_SPIKE_ONE), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
-                .splineToConstantHeading(PoseToVector(RIGHT_OF_CHAMBER), ANGLE_TOWARD_BLUE, obsVelocity, obsAcceleration);
+                .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_ONE), Math.toRadians(350), obsVelocity, obsFastAcceleration)
+                .splineToConstantHeading(PoseToVector(OBS_SPIKE_ONE),ANGLE_TOWARD_RED , obsVelocity, obsFastAcceleration)
+                .splineToConstantHeading(PoseToVector(OBS_DELIVER_SPIKE_ONE), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration);
     }
 
     public void pushSecondNeutralSpecimen() {
