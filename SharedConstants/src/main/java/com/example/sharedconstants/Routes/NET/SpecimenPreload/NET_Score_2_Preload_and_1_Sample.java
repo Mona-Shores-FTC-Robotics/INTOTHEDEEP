@@ -3,6 +3,7 @@ package com.example.sharedconstants.Routes.NET.SpecimenPreload;
 import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_APPROACH;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
@@ -41,7 +42,8 @@ public class NET_Score_2_Preload_and_1_Sample extends NET_Score_1_Specimen_Prelo
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
                 .afterDisp(10, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
-                .splineToLinearHeading(NET_BASKET, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToSplineHeading(NET_BASKET_ALIGNMENT, ANGLE_225_DEGREES)
+                .splineToSplineHeading(NET_BASKET, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
     }
 
     public void scoreSampleInHighBasket(){

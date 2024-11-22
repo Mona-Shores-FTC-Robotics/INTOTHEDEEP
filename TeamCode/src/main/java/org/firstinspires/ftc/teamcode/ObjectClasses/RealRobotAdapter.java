@@ -198,7 +198,18 @@ public class RealRobotAdapter implements RobotAdapter {
                                 robot.getSpecimenIntakeSubsystem().getSpecimenDetector()::haveSpecimen
                         );
                         return new SequentialAction(redoSupplier.get(), redoSupplier.get(), redoSupplier.get());
+
                     } else return problem();
+ //               TODO  make this sudo code work
+//                case LEVEL_1_ASCENT:
+//                    if (robot.hasSubsystem(Robot.SubsystemType.CLIMBER)){
+//                        Supplier<Action> actionSupplier = () -> new ConditionalAction(
+//                        new NullAction(),
+//                        robot.getClimberSubsystem().getCurrentClimberArmState()::
+//
+//
+//                        );
+//                    }
 
 //            case INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT:
 //                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))

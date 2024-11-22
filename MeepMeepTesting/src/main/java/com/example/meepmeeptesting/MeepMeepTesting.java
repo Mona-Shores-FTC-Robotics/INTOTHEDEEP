@@ -52,7 +52,7 @@ public class MeepMeepTesting {
 
     private static final RoutesToRun redObservationRoute = OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
     private static final RoutesToRun blueObservationRoute = OBS_SCORE_4_PRELOAD_PUSH_TWO_AND_PICKUP_AT_TRIANGLE;
-    private static final RoutesToRun redNetRoute = NET_SCORE_2_SAMPLE_PRELOAD;
+    private static final RoutesToRun redNetRoute = NET_SCORE_4_SAMPLE_PRELOAD;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
     public static void main(String[] args) {

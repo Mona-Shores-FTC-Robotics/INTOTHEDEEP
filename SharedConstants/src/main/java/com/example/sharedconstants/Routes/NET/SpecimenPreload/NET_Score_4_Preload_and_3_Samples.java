@@ -7,6 +7,7 @@ import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.NET_ASCENT;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE_APPROACH;
 import static com.example.sharedconstants.FieldConstants.NEXT_TO_NET_ASCENT;
@@ -48,7 +49,8 @@ public class NET_Score_4_Preload_and_3_Samples extends NET_Score_3_Preload_and_2
     void moveFromNeutralSample3ToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
-                .splineToLinearHeading(NET_BASKET, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToSplineHeading(NET_BASKET_ALIGNMENT, ANGLE_225_DEGREES)
+                .splineToSplineHeading(NET_BASKET, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
     }
 
     private void travelToAscentZone() {

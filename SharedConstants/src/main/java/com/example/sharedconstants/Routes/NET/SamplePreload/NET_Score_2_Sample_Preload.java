@@ -34,7 +34,7 @@ public class NET_Score_2_Sample_Preload extends NET_Score_1_Sample_Preload {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_45_DEGREES)
                 .afterDisp(3, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
-                .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
+                .afterDisp(24, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .splineToLinearHeading(NET_SPIKE_ONE_APPROACH, ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration);
     }
 
@@ -48,8 +48,6 @@ public class NET_Score_2_Sample_Preload extends NET_Score_1_Sample_Preload {
                 .setReversed(true)
                 .afterDisp(10, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT, ANGLE_225_DEGREES)
-
-                .splineToSplineHeading(NET_BASKET, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
-    }
+                .splineToSplineHeading(NET_BASKET, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);    }
 
 }
