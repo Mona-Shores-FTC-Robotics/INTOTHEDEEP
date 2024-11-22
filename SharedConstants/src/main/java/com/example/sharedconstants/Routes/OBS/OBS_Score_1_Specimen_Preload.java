@@ -39,8 +39,8 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
-    private static final double PRELOAD_VELOCITY_OVERRIDE = 24;
-    private static final double PRELOAD_ACCELERATION_OVERRIDE = 24;
+    private static final double PRELOAD_VELOCITY_OVERRIDE = 27;
+    private static final double PRELOAD_ACCELERATION_OVERRIDE = 27;
     private static final double PRELOAD_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(600);
 
     private static final double PRELOAD_SLOW_VELOCITY_OVERRIDE = 18;

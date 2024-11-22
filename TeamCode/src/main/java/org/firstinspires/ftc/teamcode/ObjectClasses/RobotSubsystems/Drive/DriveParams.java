@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.RobotTypeParams;
+package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
@@ -18,7 +18,7 @@ public class DriveParams {
         // drive model parameters
         MecanumDrive.PARAMS.inPerTick = 1;
         MecanumDrive.PARAMS.lateralInPerTick = 0.6282148904063195;
-        MecanumDrive.PARAMS.trackWidthTicks = 11.6;
+        MecanumDrive.PARAMS.trackWidthTicks = 11.5;
 
         // feedforward parameters (in tick units)
         MecanumDrive.PARAMS.kS = 1.342005378418436;
@@ -77,7 +77,7 @@ public class DriveParams {
         // Drive model parameters
         MecanumDrive.PARAMS.inPerTick = 1; // SparkFun OTOS Note: you can probably leave this at 1
         MecanumDrive.PARAMS.lateralInPerTick = 0.5986580181755985;
-        MecanumDrive.PARAMS.trackWidthTicks = 12.734772672832092;
+        MecanumDrive.PARAMS.trackWidthTicks = 11.5;
 
         // Feedforward parameters (in tick units)
         MecanumDrive.PARAMS.kS = 1.5603878434857292;
