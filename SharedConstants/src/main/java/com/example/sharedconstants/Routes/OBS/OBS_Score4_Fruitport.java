@@ -112,7 +112,8 @@ public class OBS_Score4_Fruitport extends OBS_Score_1_Specimen_Preload {
                 .afterDisp(6, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_APPROACH), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
                 .setReversed(true)
-                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration);
+                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration)
+                .waitSeconds(.2);
     }
 
     public void pickupSpecimenFromTriangleComingFromSecondSpike() {
@@ -122,7 +123,8 @@ public class OBS_Score4_Fruitport extends OBS_Score_1_Specimen_Preload {
                 .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_APPROACH), ANGLE_TOWARD_RED, hairpinVelocity, hairpinAcceleration)
                 .stopAndAdd(new NullAction())
                 .setReversed(true)
-                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration);
+                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration)
+                .waitSeconds(.2);
     }
 
 
