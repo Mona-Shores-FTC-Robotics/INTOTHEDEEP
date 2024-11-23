@@ -25,8 +25,8 @@ public abstract class Routes {
     public static final double SLOW_ACCELERATION_OVERRIDE = 5;
     public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
 
-    public static final double NORMAL_VELOCITY_OVERRIDE = 19;
-    public static final double NORMAL_ACCELERATION_OVERRIDE = 19;
+    public static final double NORMAL_VELOCITY_OVERRIDE = 23;
+    public static final double NORMAL_ACCELERATION_OVERRIDE = 23;
     public static final double NORMAL_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
 
     public static final double FAST_VELOCITY_OVERRIDE = 30;

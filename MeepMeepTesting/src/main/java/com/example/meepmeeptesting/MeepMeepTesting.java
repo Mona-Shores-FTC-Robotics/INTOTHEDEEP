@@ -52,7 +52,7 @@ public class MeepMeepTesting {
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(600);
+        MeepMeep meepMeep = new MeepMeep(1200);
         String filePath = "intothedeep2.png";  // Customize the field background
         try {
             Image img = ImageIO.read(new File(filePath));
