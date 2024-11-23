@@ -49,7 +49,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 140;
                     ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
                     ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
-                    FLIP_UP_DELAY_TIME_MS = 750;
+                    FLIP_UP_DELAY_TIME_MS = 250;
                     FLIP_UP_POSITION= 1.0;
                     FLIP_DOWN_POSITION =0.0;
                     break;

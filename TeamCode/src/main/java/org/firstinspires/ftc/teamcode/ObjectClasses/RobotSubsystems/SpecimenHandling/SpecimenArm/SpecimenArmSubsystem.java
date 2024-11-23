@@ -76,7 +76,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
                     // Flip parameters
-                    SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 380;
+                    SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS = 575;
                     SPECIMEN_ARM_PARAMS.REVERSE_FLIP_TIME_MS = SPECIMEN_ARM_PARAMS.CCW_FLIP_TIME_MS - 100;
                     SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CCW_FLIP = 1.0;
                     SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS = 550;

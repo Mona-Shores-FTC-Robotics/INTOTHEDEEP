@@ -77,8 +77,6 @@ public class DriveSubsystem extends SubsystemBase {
         // Enum needs to be static or a top-level class for it to work smoothly with older JDK versions.
         public enum DriveMode {
             SPEED_CONTROL,
-            RR_SET_DRIVE_POWER,
-            POWER_WITH_ENCODERS,
             POWER_WITHOUT_ENCODERS
         }
     }
@@ -340,8 +338,6 @@ public class DriveSubsystem extends SubsystemBase {
         if (currentMode != lastDriveMode) {
             switch (currentMode) {
                 case SPEED_CONTROL:
-                case RR_SET_DRIVE_POWER:
-                case POWER_WITH_ENCODERS:
                     setMotorsRunUsingEncoder();
                     break;
 
@@ -360,11 +356,7 @@ public class DriveSubsystem extends SubsystemBase {
                 mecanumDriveSpeedControl(drive, strafe, turn);
                 break;
 
-            case RR_SET_DRIVE_POWER:
-                rrDriveControl(drive, strafe, turn);
-                break;
 
-            case POWER_WITH_ENCODERS:
             case POWER_WITHOUT_ENCODERS:
                 mecanumDrivePowerControl(drive, strafe, turn);
                 break;
