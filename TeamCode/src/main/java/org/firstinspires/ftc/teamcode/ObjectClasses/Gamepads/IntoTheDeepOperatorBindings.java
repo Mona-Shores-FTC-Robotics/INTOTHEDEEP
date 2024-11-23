@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
@@ -392,8 +393,11 @@ public class IntoTheDeepOperatorBindings {
 
 
     private void bindIncreasePickupAngle(GamepadKeys.Trigger trigger) {
-        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-            increasePickupAngleTriggerReader = new TriggerReader(operatorGamePad, trigger, 0.5);
+        if(Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
+        {
+            //See teleop centerstage code - can't figure out how to make binding declarative
+            Trigger triggerDown = new Trigger(() -> operatorGamePad.getTrigger(trigger) > 0.3);
+            triggerDown.whenActive(new InstantCommand(robot.getSpecimenArmSubsystem()::increasePickupAngle));
 
             // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
@@ -405,31 +409,18 @@ public class IntoTheDeepOperatorBindings {
     }
 
     private void bindDecreasePickupAngle(GamepadKeys.Trigger trigger) {
-        if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
-            decreasePickupAngleTriggerReader = new TriggerReader(operatorGamePad, trigger, 0.5);
+        if(Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
+        {
+        //See teleop centerstage code - can't figure out how to make binding declarative
+        Trigger leftTriggerDown = new Trigger(() -> operatorGamePad.getTrigger(trigger) > 0.3);
+        leftTriggerDown.whenActive(new InstantCommand(robot.getSpecimenArmSubsystem()::decreasePickupAngle));
 
-            // Register for debugging/telemetry
+        // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
                     GamepadType.OPERATOR,
                     Collections.singletonList(trigger.name()),
                     "Decrease Pickup Angle"
             ));
-        }
-    }
-
-    public void updateTriggerBindings() {
-        if (decreasePickupAngleTriggerReader!=null && increasePickupAngleTriggerReader!=null) {
-            // Toggle 45/225 mode (left trigger)
-            Command increasePickupAngle  = new InstantCommand(robot.getSpecimenArmSubsystem()::increasePickupAngle, robot.getSpecimenArmSubsystem());
-            Command decreasePickupAngle  = new InstantCommand(robot.getSpecimenArmSubsystem()::decreasePickupAngle, robot.getSpecimenArmSubsystem());
-            if (decreasePickupAngleTriggerReader.wasJustPressed())
-            {
-                decreasePickupAngle.schedule();
-            }
-            if (increasePickupAngleTriggerReader.wasJustPressed())
-            {
-                increasePickupAngle.schedule();
-            }
         }
     }
 }

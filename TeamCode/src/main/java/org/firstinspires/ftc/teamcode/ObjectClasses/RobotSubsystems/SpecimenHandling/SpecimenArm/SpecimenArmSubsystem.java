@@ -105,7 +105,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // Preset Angles
                     SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
-                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
+                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 214;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
 
                     DEFAULT_PICKUP_ANGLE = SPECIMEN_PICKUP_ANGLE;
@@ -134,13 +134,13 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
                     // PID parameters
                     SPECIMEN_ARM_PARAMS.P = 0.0044;
-                    SPECIMEN_ARM_PARAMS.I = .019;
-                    SPECIMEN_ARM_PARAMS.D = .0001;
+                    SPECIMEN_ARM_PARAMS.I = .03;
+                    SPECIMEN_ARM_PARAMS.D = 0.0001;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
                     // Arm Feedforward parameters
                     SPECIMEN_ARM_PARAMS.kS = 0;
-                    SPECIMEN_ARM_PARAMS.kCos = 0.221;
+                    SPECIMEN_ARM_PARAMS.kCos = 0.2;
                     SPECIMEN_ARM_PARAMS.kV = 0;
                     SPECIMEN_ARM_PARAMS.kA = 0;
 
@@ -150,7 +150,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // Preset Angles
                     SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
-                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221.0;
+                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 221;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
 
                     // Motion Profile Parameters

@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.DoNothing;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_3_Sample_Preload;
+import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
@@ -54,7 +55,7 @@ public class AutoSelector extends LinearOpMode {
 //        netRoute.buildRoute();
 //        netRouteList.add(netRoute);
 
-        netRoute = new NET_Score_3_Sample_Preload(robotAdapter);
+        netRoute = new NET_Score_4_Sample_Preload(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
@@ -152,10 +153,9 @@ public class AutoSelector extends LinearOpMode {
         buildRoutes();
 
         //Guess what side of field we are on to make setup easier
-        if (Robot.getInstance().getSpecimenIntakeSubsystem().getSpecimenDetector().haveSpecimen())
-        {
-            finalSideOfField = FieldConstants.SideOfField.OBSERVATION;
-        } else finalSideOfField = FieldConstants.SideOfField.NET;
+
+
+        finalSideOfField = FieldConstants.SideOfField.OBSERVATION;
 
         // Perform route selection during init
         while (opModeInInit()) {
@@ -169,6 +169,7 @@ public class AutoSelector extends LinearOpMode {
                         .getSpecimenIntakeSubsystem()
                         .monitorSpecimenPreload(robotAdapter , gamepadHandling.LockedSettingsFlag , gamepadHandling.manualOverrideFlag);
             }
+
 
             // Allow driver to override and lock alliance color and side
             gamepadHandling.SelectAllianceAndSide(telemetry);

@@ -21,8 +21,8 @@ import java.util.Arrays;
 public abstract class Routes {
 
     // Velocity and acceleration overrides
-    public static final double SLOW_VELOCITY_OVERRIDE = 10;
-    public static final double SLOW_ACCELERATION_OVERRIDE = 10;
+    public static final double SLOW_VELOCITY_OVERRIDE = 5;
+    public static final double SLOW_ACCELERATION_OVERRIDE = 5;
     public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
 
     public static final double NORMAL_VELOCITY_OVERRIDE = 19;

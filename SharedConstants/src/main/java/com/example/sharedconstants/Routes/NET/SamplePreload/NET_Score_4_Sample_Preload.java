@@ -7,10 +7,13 @@ import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.NET_ASCENT;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT_AUTO;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE_APPROACH;
 import static com.example.sharedconstants.FieldConstants.NEXT_TO_NET_ASCENT;
+import static com.example.sharedconstants.RobotAdapter.ActionType.FLIP_UP_AND_RETRACT;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
+import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
 
 import com.example.sharedconstants.RobotAdapter;
@@ -42,12 +45,17 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
     private void pickupNeutralSample3() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_TOWARD_BLUE)
-                .splineToLinearHeading(NET_SPIKE_THREE, ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration);
+                .splineToLinearHeading(NET_SPIKE_THREE, ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
+                .waitSeconds(1.5);
+
     }
 
     void moveFromNeutralSample3ToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
+                .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+                .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
+                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
                 .splineToLinearHeading(NET_BASKET, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
 

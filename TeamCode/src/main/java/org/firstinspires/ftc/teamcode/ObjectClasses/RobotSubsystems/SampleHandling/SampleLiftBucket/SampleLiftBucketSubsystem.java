@@ -5,7 +5,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ElevatorFeedforward;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -37,7 +39,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
                     // Feedforward Coefficients
                     KA = 0.0010;    KV = 0.002;    KG = 0.043;    KS = 0.0025;
-                    VEL_P = 0.00009;    VEL_I = 0.025;    VEL_D = .000025;
+                    VEL_P = 0.00009;    VEL_I = 0.05;    VEL_D = .000025;
 
                     LIFT_POWER = 0.5;
                     TIMEOUT_TIME_SECONDS = 3.0;
@@ -48,11 +50,11 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     UPWARD_VELOCITY = 180;    DOWNWARD_VELOCITY = 5;    UPWARD_ACCELERATION = 120;    DOWNWARD_ACCELERATION = 2;
 
                     // Bucket Servo Positions
-                    BUCKET_SCORE_POS = 0.0;    BUCKET_INTAKE_POS = 0.93;
+                    BUCKET_SCORE_POS = .32;    BUCKET_INTAKE_POS = .85;
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.69;    DUMPER_PRESCORE_POS = 0.79;    DUMPER_DUMP_POS = 0.98;
+                    DUMPER_HOME_POS = 0.678;    DUMPER_PRESCORE_POS = 0.74;    DUMPER_DUMP_POS = 0.98;
                     DUMP_TIME_MS = 800;
 
                     break;
@@ -60,25 +62,25 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 case INTO_THE_DEEP_20245:
 
                     // Feedforward Coefficients
-                    KA = 0.0025;    KV = 0.025;    KG = 0.035;    KS = 0.0025;
-                    VEL_P = 0.005;    VEL_I = 0.0;    VEL_D = 0.0;
+                    KA = 0;    KV = 0;    KG = .045;    KS = 0;
+                    VEL_P = .001;    VEL_I = .095;    VEL_D = 0.0;
 
                     // Lift Parameters
                     LIFT_POWER = 0.5;
                     TIMEOUT_TIME_SECONDS = 3.0;
                     SCALE_FACTOR_FOR_MANUAL_LIFT = 50;    LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
-                    MAX_TARGET_TICKS = 1650;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 30;
-                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1200;   LOW_BASKET_TICKS = 850;
-                    UPWARD_VELOCITY = 35;    DOWNWARD_VELOCITY = -1.265;    UPWARD_ACCELERATION = 25;    DOWNWARD_ACCELERATION = -2.01;
+                    MAX_TARGET_TICKS = 1150;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 15;
+                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1125;   LOW_BASKET_TICKS = 850;
+                    UPWARD_VELOCITY = 5;    DOWNWARD_VELOCITY = -18;    UPWARD_ACCELERATION = 2;    DOWNWARD_ACCELERATION = -1;
 
                     // Bucket Positions
-                    BUCKET_SCORE_POS = .3;    BUCKET_INTAKE_POS = 0.9;
+                    BUCKET_SCORE_POS = 0.2;    BUCKET_INTAKE_POS = .775;
 
                     // Timing and Increment
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.67;    DUMPER_PRESCORE_POS = 0.72;    DUMPER_DUMP_POS = 0.98;
+                    DUMPER_HOME_POS = 0.75;    DUMPER_PRESCORE_POS = .81;    DUMPER_DUMP_POS = 0.98;
                     DUMP_TIME_MS = 800;
 
                     break;
@@ -281,20 +283,17 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
         // Calculate position difference
         int positionDifference = targetTicks - currentTicks;
-        double desiredVelocity;
-        double desiredAcceleration;
+        double desiredVelocity = 0;
+        double desiredAcceleration= 0;
         // Determine desired velocity and acceleration based on threshold
-        if (Math.abs(positionDifference) > SAMPLE_LIFT_PARAMS.LIFT_HEIGHT_TICK_THRESHOLD)
+        if (targetLiftState==SampleLiftStates.LIFT_HOME) {
+            // Moving up
+            desiredVelocity = -SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY;        // Negative value
+            desiredAcceleration = -SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION; // Negative value
+        } else if (targetLiftState==SampleLiftStates.HIGH_BASKET)
         {
-            if (positionDifference > 0) {
-                // Moving up
-                desiredVelocity = SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY;        // Positive value
-                desiredAcceleration = SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION; // Positive value
-            } else {
-                // Moving down
-                desiredVelocity = -SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY;        // Negative value
-                desiredAcceleration = -SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION; // Negative value
-            }
+            desiredVelocity = SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY;        // Positive value
+            desiredAcceleration = SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION; // Positive value
         } else {
             desiredVelocity=0;
             desiredAcceleration=0;

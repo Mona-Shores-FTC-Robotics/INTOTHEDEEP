@@ -71,9 +71,9 @@ public class FieldConstants {
     public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(QUARTER_TILE-2, -TILE-HALF_ROBOT_LENGTH+3, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+.3), 0));
     public static Pose2d CHAMBER_SLOT_THREE = CHAMBER_SLOT_TWO.plus(new Twist2d(new Vector2d(0, SAMPLE_WIDTH), 0));
-    public static Pose2d CHAMBER_SLOT_FOUR = CHAMBER_SLOT_THREE.plus(new Twist2d(new Vector2d(0, SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_FOUR = CHAMBER_SLOT_THREE.plus(new Twist2d(new Vector2d(0, SAMPLE_WIDTH+.3), 0));
     public static Pose2d CHAMBER_SLOT_FIVE = CHAMBER_SLOT_FOUR.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
-    public static Pose2d CHAMBER_SLOT_SIX = CHAMBER_SLOT_FIVE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
+    public static Pose2d CHAMBER_SLOT_SIX = CHAMBER_SLOT_FIVE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+.3), 0));
     public static Pose2d CHAMBER_SLOT_SEVEN = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_SEVEN_ROTATED = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), Math.toRadians(5)));
 
@@ -86,7 +86,7 @@ public class FieldConstants {
     public static Pose2d NET_START_POSE = new Pose2d(HALF_ROBOT_LENGTH-TILE,  -HALF_FIELD + HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
     public static Pose2d NET_DO_NOTHING = new Pose2d(NET_START_POSE.position.plus(new Vector2d(0, 0.01)), ANGLE_TOWARD_BLUE);
 
-    public static Pose2d NET_SPIKE_ONE = new Pose2d(-2*TILE+HALF_ROBOT_WIDTH-2*SAMPLE_WIDTH,-TILE-HALF_ROBOT_LENGTH-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d NET_SPIKE_ONE = new Pose2d(-2*TILE+HALF_ROBOT_WIDTH-2*SAMPLE_WIDTH+1,-TILE-HALF_ROBOT_LENGTH-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d NET_SPIKE_ONE_APPROACH = NET_SPIKE_ONE.plus(new Twist2d(new Vector2d(-6,0), 0));
 
     public static Pose2d NET_SPIKE_TWO = new Pose2d(-2*TILE+HALF_ROBOT_WIDTH-SAMPLE_WIDTH-HALF_TILE,-TILE-HALF_ROBOT_LENGTH-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
@@ -97,7 +97,12 @@ public class FieldConstants {
 
     public static Pose2d NET_BASKET = new Pose2d(-58, -62, ANGLE_45_DEGREES);
     public static Pose2d NET_BASKET_PRE_SCORE = new Pose2d(NET_BASKET.position.x+15, NET_BASKET.position.y+15, ANGLE_45_DEGREES); //-48 -52
-    public static Pose2d NET_BASKET_ALIGNMENT = new Pose2d(-54, -58, ANGLE_45_DEGREES);
+    public static Pose2d NET_BASKET_DRIVE_TO_NET = new Pose2d(NET_BASKET.position.x+5, NET_BASKET.position.y+5, Math.toRadians(55)); //-48 -52
+
+    public static Pose2d NET_BASKET_AUTO = new Pose2d(-58, -62, Math.toRadians(55)); //-48 -52
+    public static Pose2d NET_BASKET_ALIGNMENT_AUTO = new Pose2d(NET_BASKET_AUTO.position.x+5, NET_BASKET_AUTO.position.y+5, Math.toRadians(55)); //-48 -52
+
+
 
     public static Pose2d NEXT_TO_NET_ASCENT = new Pose2d(-TILE-HALF_TILE, -HALF_TILE, ANGLE_TOWARD_OBSERVATION);
     public static Pose2d NET_ASCENT = new Pose2d(-TILE, -HALF_TILE, ANGLE_TOWARD_OBSERVATION);

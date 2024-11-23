@@ -4,8 +4,8 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SPECIMEN_PRELOAD_AND_3_SAMPLES;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_SPECTACULAR_WITH_STOPS;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SAMPLE_PRELOAD;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkRed;
@@ -46,9 +46,9 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_SCORE_4_SPECTACULAR_WITH_STOPS;
+    private static final RoutesToRun redObservationRoute = OBS_SCORE_4_FRUITPORT;
     private static final RoutesToRun blueObservationRoute = redObservationRoute;
-    private static final RoutesToRun redNetRoute = NET_SCORE_4_SPECIMEN_PRELOAD_AND_3_SAMPLES;
+    private static final RoutesToRun redNetRoute = NET_SCORE_4_SAMPLE_PRELOAD;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
     public static void main(String[] args) {
@@ -182,7 +182,7 @@ public class MeepMeepTesting {
             case NET_SCORE_5_SAMPLE_PRELOAD:
                 return new NET_Score5_SamplePreload(adapter);
 
-            case OBS_SCORE_4_SPECTACULAR_WITH_STOPS:
+            case OBS_SCORE_4_FRUITPORT:
                 return new OBS_Score4_Fruitport(adapter);
 
 

@@ -1,15 +1,10 @@
 package com.example.sharedconstants.Routes.NET.SamplePreload;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_160_DEGREES;
-import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
-import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
-import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
-import static com.example.sharedconstants.FieldConstants.NET_BASKET;
-import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT_AUTO;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_AUTO;
 import static com.example.sharedconstants.FieldConstants.NET_START_POSE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
-import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_ACTUATOR_RETRACT;
-import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_HIGH_BASKET;
 
 import com.acmerobotics.roadrunner.AccelConstraint;
@@ -52,8 +47,8 @@ public class NET_Score_1_Sample_Preload extends Routes {
         netTrajectoryActionBuilder = robotAdapter.getActionBuilder(NET_START_POSE)
                 .setTangent(ANGLE_160_DEGREES)
                 .afterDisp(10, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
-                .splineToLinearHeading(NET_BASKET_ALIGNMENT, ANGLE_225_DEGREES, preloadVelocity, preloadAcceleration)
-                .splineToSplineHeading(NET_BASKET, ANGLE_225_DEGREES, preloadVelocity, preloadAcceleration);
+                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, Math.toRadians(235), preloadVelocity, preloadAcceleration)
+                .splineToSplineHeading(NET_BASKET_AUTO, Math.toRadians(235), preloadVelocity, preloadAcceleration);
     }
 
     public void scoreSampleInHighBasket(){

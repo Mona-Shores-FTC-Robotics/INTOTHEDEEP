@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 
+import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.NullAction;
@@ -172,11 +174,10 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {
                         return  new ParallelAction(
-                                        new SequentialAction(
-                                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy)
-                                                ),
-                                        new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON)
-                        );
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy),
+                                new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON),
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::flipSampleIntakeDown)
+                                );
                     } else return problem();
 
                 case GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL:
@@ -216,10 +217,19 @@ public class RealRobotAdapter implements RobotAdapter {
 //                        );
 //                    } else return problem();
 
-                case SAMPLE_ACTUATOR_RETRACT:
+//                case SAMPLE_ACTUATOR_RETRACT:
+//                    try {
+//                        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
+//                         return new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract);
+//                        }
+//                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+//                    }
+
+                case FLIP_UP_AND_RETRACT:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
-                     return new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract);
-                    }
+                        return new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::flipSampleIntakeUpAndRetract);
+                    } else return problem();
 
                 case DUMP_SAMPLE_IN_OBSERVATION_ZONE:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET))

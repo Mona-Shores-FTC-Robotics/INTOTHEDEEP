@@ -4,9 +4,13 @@ import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT_AUTO;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_AUTO;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_TWO;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_TWO_APPROACH;
+import static com.example.sharedconstants.RobotAdapter.ActionType.FLIP_UP_AND_RETRACT;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
+import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
 
 import com.example.sharedconstants.RobotAdapter;
@@ -35,12 +39,17 @@ public class NET_Score_3_Sample_Preload extends NET_Score_2_Sample_Preload {
 
     private void pickupNeutralSample2() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
-                .splineToSplineHeading(NET_SPIKE_TWO, ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration);
+                .splineToSplineHeading(NET_SPIKE_TWO, ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
+                .waitSeconds(1.5);
+
     }
 
     void moveFromNeutralSample2ToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
-                .splineToLinearHeading(NET_BASKET, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+                .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
+                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
 }

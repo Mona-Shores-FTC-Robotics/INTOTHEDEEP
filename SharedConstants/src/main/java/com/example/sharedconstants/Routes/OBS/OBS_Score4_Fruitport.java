@@ -101,14 +101,14 @@ public class OBS_Score4_Fruitport extends OBS_Score_1_Specimen_Preload {
 
     public void scoreOnHighChamberFromTriangle(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setTangent(ANGLE_115_DEGREES)
-                .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_115_DEGREES, obsVelocity, obsAcceleration)
+                .setReversed(false)
+                .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE, obsVelocity, obsAcceleration)
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));
     }
 
     public void pickupSpecimenFromTriangle() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setTangent(ANGLE_315_DEGREES)
+                .setReversed(true)
                 .afterDisp(6, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_APPROACH), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
                 .setReversed(true)
@@ -128,7 +128,7 @@ public class OBS_Score4_Fruitport extends OBS_Score_1_Specimen_Preload {
 
     private void driveToPark() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setTangent(ANGLE_315_DEGREES)
+                .setReversed(true)
                 .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsVelocity, obsAcceleration);
 
     }

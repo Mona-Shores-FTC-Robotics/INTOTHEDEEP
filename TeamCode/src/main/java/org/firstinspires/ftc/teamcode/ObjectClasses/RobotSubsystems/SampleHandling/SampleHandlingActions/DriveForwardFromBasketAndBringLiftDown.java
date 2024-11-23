@@ -65,7 +65,7 @@ public class DriveForwardFromBasketAndBringLiftDown implements Action {
 
             action = robotAdapter.getActionBuilder(currentPose)
                     .setReversed(false)
-                    .afterDisp(2,
+                    .afterDisp(4,
                             new SequentialAction(
                                 new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToIntakePosition),
                                 new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHome)
