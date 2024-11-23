@@ -11,10 +11,12 @@ import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT_AU
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE_APPROACH;
 import static com.example.sharedconstants.FieldConstants.NEXT_TO_NET_ASCENT;
+import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.FLIP_UP_AND_RETRACT;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_HIGH_BASKET;
 
 import com.example.sharedconstants.RobotAdapter;
 
@@ -28,7 +30,8 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
         moveToNeutralSample3();
         pickupNeutralSample3();
         moveFromNeutralSample3ToBasket();
-        scoreSampleInHighBasket();
+//        scoreSampleInHighBasket();
+        scoreSampleLow();
         travelToAscentZone();
 
         netBotRoute = netTrajectoryActionBuilder.build();
@@ -44,6 +47,7 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
 
     private void pickupNeutralSample3() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
+                .waitSeconds(.3) //give lift time to come down
                 .setTangent(ANGLE_TOWARD_BLUE)
                 .splineToLinearHeading(NET_SPIKE_THREE, ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
                 .waitSeconds(1.5);
@@ -53,7 +57,7 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
     void moveFromNeutralSample3ToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
-                .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+//                .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
                 .splineToLinearHeading(NET_BASKET, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
@@ -65,6 +69,12 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
                 .splineToLinearHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration);
                 //TODO add arm movements to achieve level 1 ascend
 
+    }
+
+    public void scoreSampleLow(){
+        netTrajectoryActionBuilder = netTrajectoryActionBuilder
+                .stopAndAdd(robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE))
+                .waitSeconds(.5);
     }
 
 }

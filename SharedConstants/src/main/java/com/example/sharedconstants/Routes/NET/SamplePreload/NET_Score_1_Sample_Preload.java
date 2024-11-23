@@ -27,8 +27,8 @@ public class NET_Score_1_Sample_Preload extends Routes {
         super(robotAdapter);
     }
 
-    private static final double PRELOAD_VELOCITY_OVERRIDE = 24;
-    private static final double PRELOAD_ACCELERATION_OVERRIDE = 24;
+    private static final double PRELOAD_VELOCITY_OVERRIDE = 26;
+    private static final double PRELOAD_ACCELERATION_OVERRIDE = 26;
     private static final double PRELOAD_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
     public void buildRoute() {
@@ -48,7 +48,7 @@ public class NET_Score_1_Sample_Preload extends Routes {
                 .setTangent(ANGLE_160_DEGREES)
                 .afterDisp(10, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, Math.toRadians(235), preloadVelocity, preloadAcceleration)
-                .splineToSplineHeading(NET_BASKET_AUTO, Math.toRadians(235), preloadVelocity, preloadAcceleration);
+                .splineToLinearHeading(NET_BASKET_AUTO, Math.toRadians(235), preloadVelocity, preloadAcceleration);
     }
 
     public void scoreSampleInHighBasket(){
@@ -56,4 +56,6 @@ public class NET_Score_1_Sample_Preload extends Routes {
                 .stopAndAdd(robotAdapter.getAction(SCORE_IN_HIGH_BASKET))
                 .waitSeconds(.5);
     }
+
+
 }

@@ -41,6 +41,7 @@ public class NET_Score_2_Sample_Preload extends NET_Score_1_Sample_Preload {
 
     private void pickupNeutralSample1() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
+                .waitSeconds(.3) //give lift time to come down
                 .splineToSplineHeading(NET_SPIKE_ONE, ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
                 .waitSeconds(1.5);
     }
