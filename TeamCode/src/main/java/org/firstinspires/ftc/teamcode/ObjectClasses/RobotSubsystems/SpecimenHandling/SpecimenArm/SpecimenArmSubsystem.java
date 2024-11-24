@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Speci
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
@@ -23,6 +24,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenArmPowerMessage;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenArmStateMessage;
 
 @Config
 public class SpecimenArmSubsystem extends SubsystemBase {
@@ -374,6 +377,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
         updateParameters();
         updateDashboardTelemetry();
+        FlightRecorder.write("SPECIMEN_ARM_STATE", new SpecimenArmStateMessage(currentAngleDegrees, currentVelocity, currentState));
+        FlightRecorder.write("SPECIMEN_ARM_POWER", new SpecimenArmPowerMessage(pidPower , feedforwardPower , clippedPower));
     }
 
     public void flipCCWFast() {

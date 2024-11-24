@@ -2,12 +2,11 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 
 import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ElevatorFeedforward;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,6 +16,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleBucketServoArmMessage;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleDumperMessage;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleLiftMessage;
 
 @Config
 public class SampleLiftBucketSubsystem extends SubsystemBase {
@@ -271,6 +273,11 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         // Update lift control
         updateLiftControl();
         updateLiftState();
+
+        FlightRecorder.write("SAMPLE_DUMPER", new SampleDumperMessage(currentDumperState));
+        FlightRecorder.write("SAMPLE_BUCKET_ARM", new SampleBucketServoArmMessage(currentBucketState));
+        FlightRecorder.write("SAMPLE_LIFT", new SampleLiftMessage(currentLiftState));
+
         updateParameters();
         updateDashboardTelemetry();
     }

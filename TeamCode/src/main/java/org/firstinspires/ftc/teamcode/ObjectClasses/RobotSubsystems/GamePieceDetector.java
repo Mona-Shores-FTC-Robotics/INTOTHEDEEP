@@ -4,7 +4,6 @@ import static com.example.sharedconstants.FieldConstants.SampleColor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -14,7 +13,8 @@ public abstract class GamePieceDetector {
     public enum DetectionState {
         NOT_DETECTED,
         JUST_DETECTED,
-        STILL_DETECTED
+        STILL_DETECTED,
+        SENSOR_DISCONNECTED
     }
 
     protected final RevColorSensorV3 sensor;
@@ -130,7 +130,7 @@ public abstract class GamePieceDetector {
     }
 
     protected boolean haveGamePiece() {
-        return (detectionState==DetectionState.JUST_DETECTED || detectionState==DetectionState.STILL_DETECTED);
+        return (detectionState== DetectionState.JUST_DETECTED || detectionState== DetectionState.STILL_DETECTED);
     }
 
 }

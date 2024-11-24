@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.example.sharedconstants.FieldConstants;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleProcessingStateMachineMessage;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenArmPowerMessage;
 
 @Config
 public class SampleProcessingStateMachine {
@@ -39,6 +42,7 @@ public class SampleProcessingStateMachine {
     }
 
     public void updateSampleProcessingState() {
+        FlightRecorder.write("SAMPLE_PROCESSING_STATE_MACHINE", new SampleProcessingStateMachineMessage(currentSampleDetectionState));
         switch (currentSampleDetectionState) {
             case WAITING_FOR_SAMPLE_DETECTION:
                 if (intakeSubsystem.getCurrentIntakeDetectState() == SampleIntakeSubsystem.IntakeDetectState.DETECTED_GOOD_SAMPLE) {
@@ -90,5 +94,4 @@ public class SampleProcessingStateMachine {
     public SampleDetectionStates getCurrentSampleDetectionState() {
         return currentSampleDetectionState;
     }
-
 }

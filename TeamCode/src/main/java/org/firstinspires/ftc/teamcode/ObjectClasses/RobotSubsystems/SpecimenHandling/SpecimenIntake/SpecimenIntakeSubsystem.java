@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHan
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.GamePieceDetectorMessage;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenIntakeMessage;
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState;
 
@@ -76,7 +79,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                     throw new IllegalStateException("Angle not defined for state: " + this);
             }
         }
-
     }
 
     private final CRServo specimenIntake;  // Continuous rotation servo
@@ -113,8 +115,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (specimenDetector != null)
-        {
+        //todo this needs the same treatment as the sample intake/sample detector so we only detect once then move through states until we start detecting again
+        if (specimenDetector != null) {
             // Update the detection state via the detector
             DetectionState specimenDetectionState = specimenDetector.updateDetection();
             switch (specimenDetectionState) {
@@ -130,8 +132,10 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                 case NOT_DETECTED:
                     break;
             }
+            FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(specimenDetectionState, specimenDetector.getConsensusProximity(), specimenDetector.getConsensusColor()));
         }
         updateDashboardTelemetry();
+        FlightRecorder.write("SPECIMEN_INTAKE_STATE" , new SpecimenIntakeMessage(currentState, currentPower));
     }
 
     public void handleSpecimenPickup() {

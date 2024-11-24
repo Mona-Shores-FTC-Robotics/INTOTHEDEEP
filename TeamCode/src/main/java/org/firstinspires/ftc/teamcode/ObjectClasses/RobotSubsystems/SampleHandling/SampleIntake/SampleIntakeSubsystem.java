@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import android.annotation.SuppressLint;
 
+import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -19,7 +21,8 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GameP
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.GamePieceDetectorMessage;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleIntakeMessage;
 
 @Config
 public class SampleIntakeSubsystem extends SubsystemBase {
@@ -153,14 +156,16 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public void periodic() {
         switch (currentIntakeDetectionState) {
             case DETECTING:
-                if ((isColorSensorConnected()) && (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED))
-
-                    if (sampleDetector.isGoodSample())
-                        currentIntakeDetectionState = IntakeDetectState.DETECTED_GOOD_SAMPLE;
-                    else if (sampleDetector.isUnknown())
-                    {
-                        //do nothing
-                    } else currentIntakeDetectionState = IntakeDetectState.DETECTED_BAD_SAMPLE;
+                if (!isColorSensorConnected()) {
+                    //record that the specimen detector is disconnected in the log
+                    FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(SampleDetector.DetectionState.SENSOR_DISCONNECTED,-1 , FieldConstants.SampleColor.UNKNOWN));
+                    break;
+                }
+                if (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED){
+                    if (sampleDetector.isGoodSample()) currentIntakeDetectionState = IntakeDetectState.DETECTED_GOOD_SAMPLE;
+                    else if (sampleDetector.isBadSample()) currentIntakeDetectionState = IntakeDetectState.DETECTED_BAD_SAMPLE;
+                }
+                FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(sampleDetector.getDetectionState() , sampleDetector.getConsensusProximity() , sampleDetector.getConsensusColor()));
                 break;
             case DETECTED_BAD_SAMPLE:
             case DETECTED_GOOD_SAMPLE:
@@ -193,6 +198,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                 //do nothing
                 break;
         }
+        FlightRecorder.write("SAMPLE_INTAKE_STATE" , new SampleIntakeMessage(currentSampleIntakeState , currentPower));
     }
 
     public void transferSampleToBucket() {
