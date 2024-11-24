@@ -38,7 +38,6 @@ public class IntoTheDeepDriverBindings {
     GamePadBindingManager bindingManager;
     DriveToObservationZone driveToObservationZoneAction;
     DriveToNetZone driveToNetZoneAction;
-    DriveToChamber driveToChamberAction;
     DriveForwardAndBack driveForwardAndBack;
     public Command driveTo90OrMinus90;
     public Command driveTo45or225;
@@ -48,33 +47,35 @@ public class IntoTheDeepDriverBindings {
     private boolean isBucketAngleCommandActive = false; // Track if 45/225 mode is active
     private boolean isSpecimenAngleCommandActive = false; // Track if -90/90 mode is active
 
-
     public IntoTheDeepDriverBindings(GamepadEx gamePad , GamePadBindingManager gamePadBindingManager) {
         robot = Robot.getInstance();
         driverGamePad = gamePad;
         bindingManager = gamePadBindingManager;
 
+        //Main Controls
         bindDefaultDriving(driverGamePad::getLeftY , driverGamePad::getLeftX , (driverGamePad::getRightX));
-        cycleTelemetry(GamepadKeys.Button.LEFT_BUMPER);
+        bindSpecimenArmIntakeAndScore(GamepadKeys.Button.A);
         bindSlowMode(GamepadKeys.Button.RIGHT_BUMPER);
-        cycleDriveMode(GamepadKeys.Button.DPAD_UP);
-        resetGyro(GamepadKeys.Button.DPAD_DOWN);
-        toggleFieldOrientedControl(GamepadKeys.Button.START);
         driveToNetZone(GamepadKeys.Button.X);
         driveToObservationZone(GamepadKeys.Button.B);
-        bindSpecimenArmIntakeAndScore(GamepadKeys.Button.A);
 
+        //Operator also has the ability to do this
+        //todo should this be removed?
         bindSpecimenIntakeToggle(GamepadKeys.Button.Y);
 
+        //Buttons for if things go wrong
+        //todo can we make this only reset the position if its held down for a moment?
+        resetGyro(GamepadKeys.Button.DPAD_DOWN);
 
-        //////////////////////////////////////////////////////////
-        // A BUTTON - Specimen Handling (Intake and Scoring)    //
-        //////////////////////////////////////////////////////////
+        // Configuration Options
+        cycleTelemetry(GamepadKeys.Button.LEFT_BUMPER);
+        cycleDriveMode(GamepadKeys.Button.DPAD_UP);
+        //todo should we switch this to the OPTIONS button so we don't risk accidentally pressing when setting controller on driver station?
+        toggleFieldOrientedControl(GamepadKeys.Button.START);
+
+        //Drive Angle restriction
+        //todo should these be implemented as just buttons to set the orientation of the robot to a fixed angle without anything else?
 //        bindBucketAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
-
-        //////////////////////////////////////////////////////////
-        // y BUTTON - Reverse Specimen Intake                   //
-        //////////////////////////////////////////////////////////
 //        bindSpecimenAngleDriving(GamepadKeys.Trigger.RIGHT_TRIGGER);
     }
 
@@ -301,6 +302,8 @@ public class IntoTheDeepDriverBindings {
             ));
         }
     }
+
+    //todo is this worth working on?
     private void bindBucketAngle(GamepadKeys.Trigger trigger) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             driveTo45or225 = new DriveAtFixedDegreeHeadingCommand(
@@ -320,6 +323,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
+    //todo is this worth working on?
     private void bindSpecimenAngleDriving(GamepadKeys.Trigger trigger) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             driveTo90OrMinus90 = new DriveAtFixedDegreeHeadingCommand(

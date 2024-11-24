@@ -499,6 +499,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         setTargetLiftState(SampleLiftStates.LIFT_HOME);
     }
 
+    //todo consider adjusting the bucket servo arm goes down/up to help with auto?
     public void setBucketToIntakePosition() {
         currentBucketState=BucketStates.MOVING_TO_INTAKE_POSITION;
         setBucketTargetPositionWithSteps(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS, 35);
