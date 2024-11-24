@@ -269,7 +269,7 @@ public class IntoTheDeepOperatorBindings {
         }
     }
 
-    //todo can we get this implemented for climbing quickly?
+    //todo can we get this implemented for climbing?
     private void bindMoveClimberArm (GamepadKeys.Button button) {
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.CLIMBER))
         {

@@ -12,6 +12,9 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
+
+//todo can we add @Config to this and adjust the points in the dashboard to help with debugging quickly?
+//todo talk to programming mentors about fast loading - see https://gist.github.com/MatthewOates36/1e38452236dc9f145c3a6b2addfb418f
 public class FieldConstants {
     public enum AllianceColor {BLUE, RED}
     public enum SampleColor {BLUE, YELLOW, RED, UNKNOWN, NO_SAMPLE}

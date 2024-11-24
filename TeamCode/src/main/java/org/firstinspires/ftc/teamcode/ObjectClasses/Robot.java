@@ -103,7 +103,6 @@ public class Robot {
                 //Control Hub - Servo Port 4 - specimenintake
                 //Control Hub - Servo Port 5 - climbservo
 
-                //TODO fix these
                 //Control Hub - I2C Bus 0 - octoquad
                 //Control Hub - I2C Bus 1 - samplecolorsensor
                 //Control Hub - I2C Bus 2 - pinpoint

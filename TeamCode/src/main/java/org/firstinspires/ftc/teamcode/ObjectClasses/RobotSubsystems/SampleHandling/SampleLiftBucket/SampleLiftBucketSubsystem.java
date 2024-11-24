@@ -201,7 +201,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 SAMPLE_LIFT_PARAMS.KG,
                 SAMPLE_LIFT_PARAMS.KV,
                 SAMPLE_LIFT_PARAMS.KA);
-//todo manual lift has to also raise bucket arm
+
         pidController = new PIDController(SAMPLE_LIFT_PARAMS.VEL_P, SAMPLE_LIFT_PARAMS.VEL_I, SAMPLE_LIFT_PARAMS.VEL_D);
         currentLiftState = SampleLiftStates.LIFT_HOME;
 
@@ -416,6 +416,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     }
 
     // Add a method to handle manual input for the lift
+    //todo how do we make the manual lift control also move the bucket servo arm effectively?
     public void setManualTargetState(double liftInput) {
         targetLiftState = SampleLiftStates.MANUAL;
         // Calculate the new target ticks based on input
@@ -499,7 +500,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         setTargetLiftState(SampleLiftStates.LIFT_HOME);
     }
 
-    //todo consider adjusting the bucket servo arm goes down/up to help with auto?
+    //todo consider adjusting how fast bucket servo arm goes down/up to help with net side auto?
     public void setBucketToIntakePosition() {
         currentBucketState=BucketStates.MOVING_TO_INTAKE_POSITION;
         setBucketTargetPositionWithSteps(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS, 35);
