@@ -71,7 +71,9 @@ public class OBS_Score4_Fruitport extends OBS_Score_1_Specimen_Preload {
         SetupConstraints();
         pushFirstNeutralSpecimen();
         pushSecondNeutralSpecimen();
+        //todo can we just push the third specimen and see how it goes? how much faster do we have to go to do this, even if we can't score it? How about to score it? Look at that cyBug video
         pickupSpecimenFromTriangleComingFromSecondSpike();
+        //todo is there a way we could effectively push the hanging samples as we come in so we can always hang near the right sight of the chamber?
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_THREE);
         pickupSpecimenFromTriangle();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE);
@@ -106,6 +108,7 @@ public class OBS_Score4_Fruitport extends OBS_Score_1_Specimen_Preload {
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));
     }
 
+    //todo split this into a drive to Triangle from Chamber and pickupSpecimen so that we only have 1 place to change the pickup from wall stuff?
     public void pickupSpecimenFromTriangle() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
@@ -113,6 +116,7 @@ public class OBS_Score4_Fruitport extends OBS_Score_1_Specimen_Preload {
                 .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_APPROACH), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
                 .setReversed(true)
                 .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration)
+                //todo could we pick up faster by having an easier detection threshold (are we looking at proximity and color right now?)
                 .waitSeconds(.2);
     }
 

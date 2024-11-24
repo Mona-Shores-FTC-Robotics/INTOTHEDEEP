@@ -70,6 +70,7 @@ public class FieldConstants {
     public static double ANGLE_340_DEGREES = Math.toRadians(340);
 
     //Chamber Slot Poses
+    //todo need to revisit these poses for the chamber slots
     public static Pose2d CHAMBER_SLOT_ONE_PRELOAD = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH-8, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_ONE = new Pose2d(QUARTER_TILE-2, -TILE-HALF_ROBOT_LENGTH+3, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_TWO = CHAMBER_SLOT_ONE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+.3), 0));
@@ -79,7 +80,6 @@ public class FieldConstants {
     public static Pose2d CHAMBER_SLOT_SIX = CHAMBER_SLOT_FIVE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH+.3), 0));
     public static Pose2d CHAMBER_SLOT_SEVEN = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_SEVEN_ROTATED = CHAMBER_SLOT_SIX.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), Math.toRadians(5)));
-
     public static Pose2d CHAMBER_SLOT_EIGHT = CHAMBER_SLOT_SEVEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_NINE = CHAMBER_SLOT_EIGHT.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
     public static Pose2d CHAMBER_SLOT_TEN = CHAMBER_SLOT_NINE.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));

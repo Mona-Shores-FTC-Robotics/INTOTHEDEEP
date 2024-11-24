@@ -35,6 +35,7 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
     }
 
     public void buildRoute() {
+        //todo it looks to me like we are not matching the pose correctly in the x axis with the slot - some testing is needed here with our parameters.
         scoreObservationPreload(CHAMBER_SLOT_ONE);
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
