@@ -40,6 +40,7 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
+    //todo what if we tested putting a high velocity but putting limits on acceleration. See https://rr.brott.dev/docs/v1-0/guides/variable-constraints/
     private static final double PRELOAD_VELOCITY_OVERRIDE = 27;
     private static final double PRELOAD_ACCELERATION_OVERRIDE = 27;
     private static final double PRELOAD_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(600);
