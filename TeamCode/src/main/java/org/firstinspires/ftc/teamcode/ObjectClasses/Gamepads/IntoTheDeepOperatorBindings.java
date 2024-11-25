@@ -172,6 +172,8 @@ public class IntoTheDeepOperatorBindings {
 
     //todo consider taking all movement out of this sequence now that our dumper gets high enough to get over the edge of the basket.
     //todo Is it possible to have a lid on the entire dumper so that when you flip it, it only comes out if you flip it 180 degrees from its howe position and comes out the top? That way we could be further away and we could lift it sooner without risking it falling out?
+
+    //todo if we decide to leave the driving in, we might need to make this an actual command so that there is no control by the driver while the command is being executed. Something about the requirements doesn't work right.
     private void SampleScoreSequence(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
             Set<Subsystem> requirements = new HashSet<>();

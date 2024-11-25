@@ -34,6 +34,10 @@ public class ActionCommand implements Command {
         return finished;
     }
 
+
+    //todo see https://rr.brott.dev/docs/v1-0/guides/ftclib-commands/ we probably need to cover the scenario where BetterPrepareAction is cancelled (due to the driver driving?) to stop the motors -
+    //  I'm guessing this has something to do with why we had a couple of times where the robot did strange things while the lift was up
+
     @Override
     public void end(boolean interrupted) {
         if (interrupted && action instanceof DriveToObservationZone) {
