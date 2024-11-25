@@ -41,15 +41,18 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
     }
 
     //todo what if we tested putting a high velocity but putting limits on acceleration. See https://rr.brott.dev/docs/v1-0/guides/variable-constraints/
+
+
     private static final double PRELOAD_VELOCITY_OVERRIDE = 27;
     private static final double PRELOAD_ACCELERATION_OVERRIDE = 27;
     private static final double PRELOAD_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(600);
 
-    private static final double PRELOAD_SLOW_VELOCITY_OVERRIDE = 18;
-    private static final double PRELOAD_SLOW_ACCELERATION_OVERRIDE = 18;
+    private static final double PRELOAD_SLOW_VELOCITY_OVERRIDE = 40;
+    private static final double PRELOAD_SLOW_ACCELERATION_OVERRIDE = 40;
     private static final double PRELOAD_SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
 
     public void scoreObservationPreload(Pose2d chamberSlot) {
+
 
         VelConstraint preloadVelocity = new MinVelConstraint(Arrays.asList(
                 new TranslationalVelConstraint(PRELOAD_VELOCITY_OVERRIDE),
@@ -63,12 +66,21 @@ public class OBS_Score_1_Specimen_Preload extends Routes {
         ));
         AccelConstraint preloadSlowAcceleration = new ProfileAccelConstraint(- PRELOAD_SLOW_ACCELERATION_OVERRIDE, PRELOAD_SLOW_ACCELERATION_OVERRIDE);
 
+        //todo what if we tried the "custom constraints" https://rr.brott.dev/docs/v1-0/guides/variable-constraints/.
+        // we could potentially make a box of slow down near the alliance wall and near the chamber
+//        VelConstraint custom = (robotPose, _path, _disp) -> {
+//            if (robotPose.position.x.value() > -34) {
+//                return 1;
+//            } else {
+//                return 50;
+//            }
+//        };
 
         obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(FieldConstants.OBS_START_POSE)
                 .setTangent(ANGLE_TOWARD_BLUE)
                 .afterDisp(2, robotAdapter.getAction(MOVE_PRELOAD_SPECIMEN_TO_CW_HOME))
                 .splineToSplineHeading(chamberSlot.plus(new Twist2d(new Vector2d(-10,0), 0)), chamberSlot.heading.toDouble(), preloadVelocity, preloadAcceleration)
-                .splineToSplineHeading(chamberSlot, chamberSlot.heading.toDouble(), preloadSlowVelocity, preloadSlowAcceleration)
+                .splineToSplineHeading(chamberSlot, chamberSlot.heading.toDouble(), preloadVelocity, preloadSlowAcceleration)
                 .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
                 .waitSeconds(.2);
     }
