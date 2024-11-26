@@ -30,8 +30,8 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
         moveToNeutralSample3();
         pickupNeutralSample3();
         moveFromNeutralSample3ToBasket();
-//        scoreSampleInHighBasket();
-        scoreSampleLow();
+        scoreSampleInHighBasket();
+//        scoreSampleLow();
         travelToAscentZone();
 
         netBotRoute = netTrajectoryActionBuilder.build();
@@ -47,17 +47,17 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
 
     private void pickupNeutralSample3() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
-                .waitSeconds(.3) //give lift time to come down
+                .waitSeconds(.2) //give lift time to come down
                 .setTangent(ANGLE_TOWARD_BLUE)
                 .splineToLinearHeading(NET_SPIKE_THREE, ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
-                .waitSeconds(1.5);
+                .waitSeconds(.75);
 
     }
 
     void moveFromNeutralSample3ToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
-//                .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+                .afterDisp(3, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
                 .splineToLinearHeading(NET_BASKET, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
@@ -68,7 +68,6 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
                 .splineToLinearHeading(NEXT_TO_NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration)
                 .splineToLinearHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration);
                 //TODO add arm movements to achieve level 1 ascend
-
     }
 
     public void scoreSampleLow(){

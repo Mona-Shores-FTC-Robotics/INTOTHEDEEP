@@ -13,6 +13,7 @@ import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.DoNothing;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_3_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
+import com.example.sharedconstants.Routes.OBS.OBS_SQUARE_AUTO;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
@@ -26,6 +27,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.AutonomousPeriodicAction;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,6 +113,10 @@ public class AutoSelector extends LinearOpMode {
 //        obsRouteList.add(obsRoute);
 //
         obsRoute = new OBS_Score4_Fruitport(robotAdapter);
+        obsRoute.buildRoute();
+        obsRouteList.add(obsRoute);
+
+        obsRoute = new OBS_SQUARE_AUTO(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
@@ -256,7 +262,10 @@ public class AutoSelector extends LinearOpMode {
         Action selectedRouteAction = selectedRoute.getRouteAction(MatchConfig.finalSideOfField);
 
         //Set the starting location of the robot on the field
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
+//        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
+
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.AUTO_TEST_POSE;
+
 
         //Calculate the Yaw offset based on the starting pose and save it in MatchConfig
         Robot.getInstance().getDriveSubsystem().CalculateYawOffset();

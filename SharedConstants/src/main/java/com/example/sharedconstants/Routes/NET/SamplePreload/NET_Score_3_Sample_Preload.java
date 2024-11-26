@@ -39,16 +39,15 @@ public class NET_Score_3_Sample_Preload extends NET_Score_2_Sample_Preload {
 
     private void pickupNeutralSample2() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
-                .waitSeconds(.3) //give lift time to come down
+                .waitSeconds(.2) //give lift time to come down
                 .splineToSplineHeading(NET_SPIKE_TWO, ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
-                .waitSeconds(1.5);
-
+                .waitSeconds(.75);
     }
 
     void moveFromNeutralSample2ToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
-                .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+                .afterDisp(3, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
                 .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);

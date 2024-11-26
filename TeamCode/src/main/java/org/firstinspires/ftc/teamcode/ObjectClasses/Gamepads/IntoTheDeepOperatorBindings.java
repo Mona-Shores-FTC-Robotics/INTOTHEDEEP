@@ -178,12 +178,11 @@ public class IntoTheDeepOperatorBindings {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
             Set<Subsystem> requirements = new HashSet<>();
             requirements.add(Robot.getInstance().getSampleLiftBucketSubsystem());
-            requirements.add(Robot.getInstance().getDriveSubsystem());
 
             operatorGamePad.getGamepadButton(button)
                     .whenPressed(()->
                     {
-                        BetterPrepareAction betterPrepareAction = new BetterPrepareAction(-10);
+                        BetterPrepareAction betterPrepareAction = new BetterPrepareAction();
                         Command prepareToScoreSampleCommand = new ActionCommand(betterPrepareAction,requirements);
                         prepareToScoreSampleCommand.schedule();
                     })

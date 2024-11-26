@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.FieldConstants;
@@ -48,30 +49,12 @@ public class DriveForwardFromBasketAndBringLiftDown implements Action {
         }
 
         if (!started) {
-            RealRobotAdapter robotAdapter = new RealRobotAdapter();
-            Pose2d currentPose = driveSubsystem.getMecanumDrive().pose;
-
-            if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
-                currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log()+PI);
-            }
-
-            double heading = currentPose.heading.log();
-            double offsetX = distance * Math.cos(heading);
-            double offsetY = distance * Math.sin(heading);
-
-            Vector2d targetVector = new Vector2d(
-                    currentPose.position.x + offsetX,
-                    currentPose.position.y + offsetY);
-
-            action = robotAdapter.getActionBuilder(currentPose)
-                    .setReversed(false)
-                    .afterDisp(4,
-                            new SequentialAction(
+            action = new SequentialAction(
                                 new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToIntakePosition),
+                                new SleepAction(.5),
                                 new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHome)
-                            )
-                    )
-                    .splineToConstantHeading(targetVector, Math.toRadians(180)+currentPose.heading.log()).build();
+                            );
+
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry
             started = true; // Ensure the action is only initialized once
@@ -83,10 +66,6 @@ public class DriveForwardFromBasketAndBringLiftDown implements Action {
         if (!isRunning) {
             reset(); // Reset the state when the action completes
         }
-
-        telemetryPacket.put("x", driveSubsystem.getMecanumDrive().pose.position.x);
-        telemetryPacket.put("y", driveSubsystem.getMecanumDrive().pose.position.y);
-        telemetryPacket.put("heading (deg)", Math.toDegrees(driveSubsystem.getMecanumDrive().pose.heading.log()));
         return isRunning;
     }
 

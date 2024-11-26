@@ -21,7 +21,7 @@ public final class TuningOpModes {
     public static final Class<?> DRIVE_CLASS = PinpointDrive.class; // change to your drive class i.e. PinpointDrive if using pinpoint
 
     public static final String GROUP = "quickstart";
-    public static final boolean DISABLED = true;
+    public static final boolean DISABLED = false;
 
     private TuningOpModes() {}
 

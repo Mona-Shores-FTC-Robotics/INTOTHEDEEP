@@ -148,6 +148,12 @@ public class FieldConstants {
     public static Pose2d SPIKE_1_GROUND_PICKUP =  new Pose2d(2*TILE+HALF_TILE-EIGHTH_TILE-2, -TILE-4-HALF_ROBOT_LENGTH-QUARTER_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d SPIKE_2_GROUND_PICKUP =  new Pose2d(TILE+HALF_TILE+1+TILE+EIGHTH_TILE-1, -TILE-4-HALF_ROBOT_LENGTH-QUARTER_TILE, ANGLE_TOWARD_BLUE);
 
+
+    public static Pose2d AUTO_TEST_POSE = new Pose2d(-2*TILE,  -2*TILE, ANGLE_TOWARD_BLUE);
+
+
+
+
     public static Pose2d rotate(Pose2d pose) {
         return new Pose2d(-pose.position.x, -pose.position.y, pose.heading.plus(Math.toRadians(180)).log());
     }
