@@ -13,8 +13,8 @@ import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWO;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_TWO;
-import static com.example.sharedconstants.FieldConstants.OBS_CORNER_APPROACH;
-import static com.example.sharedconstants.FieldConstants.OBS_CORNER_PICKUP;
+import static com.example.sharedconstants.FieldConstants.OBS_CORNER_APPROACH_ALLIANCE_WALL;
+import static com.example.sharedconstants.FieldConstants.OBS_CORNER_PICKUP_ALLIANCE_WALL;
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_TWO;
@@ -128,9 +128,9 @@ public class OBS_Score4_NO_PRELOAD_SPECTACULAR extends Routes {
     public void pickupSpecimenFromCorner() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .afterDisp(5, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
-                .splineToConstantHeading(PoseToVector(OBS_CORNER_APPROACH), ANGLE_TOWARD_RED, obsFastVelocity, obsFastAcceleration)
+                .splineToConstantHeading(PoseToVector(OBS_CORNER_APPROACH_ALLIANCE_WALL), ANGLE_TOWARD_RED, obsFastVelocity, obsFastAcceleration)
                 .setReversed(true)
-                .splineToLinearHeading(OBS_CORNER_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration);
+                .splineToLinearHeading(OBS_CORNER_PICKUP_ALLIANCE_WALL , ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration);
     }
 
 

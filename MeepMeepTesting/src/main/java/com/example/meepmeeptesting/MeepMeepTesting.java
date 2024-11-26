@@ -5,7 +5,8 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
 import static com.example.sharedconstants.RoutesToRun.DO_NOTHING;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SAMPLE_PRELOAD;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_REDO;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkRed;
@@ -21,7 +22,7 @@ import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preloa
 import com.example.sharedconstants.Routes.OBS.OBS_SQUARE_AUTO;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_NO_PRELOAD_SPECTACULAR;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_All_And_Pickup_At_Triangle;
-import com.example.sharedconstants.Routes.OBS.OBS_Score4_SPECTACULAR;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Redo;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport;
 import com.example.sharedconstants.Routes.OBS.OBS_Score5_Preload_Ground_Pickup_And_Dump_And_Pickup_At_Triangle;
 import com.example.sharedconstants.RobotAdapter;
@@ -47,8 +48,8 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = RoutesToRun.OBS_SQUARE_AUTO;
-    private static final RoutesToRun blueObservationRoute = redObservationRoute;
+    private static final RoutesToRun redObservationRoute = OBS_SCORE_5_REDO;
+    private static final RoutesToRun blueObservationRoute = OBS_SCORE_5_REDO;
     private static final RoutesToRun redNetRoute = DO_NOTHING;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 
@@ -187,8 +188,8 @@ public class MeepMeepTesting {
                 return new OBS_Score4_Fruitport(adapter);
 
 
-            case OBS_SCORE_4_SPECTACULAR:
-                return new OBS_Score4_SPECTACULAR(adapter);
+            case OBS_SCORE_5_REDO:
+                return new OBS_Score5_Redo(adapter);
 
             case OBS_SCORE_4_NO_PRELOAD:
                 return new OBS_Score4_NO_PRELOAD_SPECTACULAR(adapter);

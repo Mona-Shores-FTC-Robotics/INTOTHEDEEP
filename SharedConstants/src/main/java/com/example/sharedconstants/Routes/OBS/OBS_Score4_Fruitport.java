@@ -71,15 +71,15 @@ public class OBS_Score4_Fruitport extends OBS_Score_1_Specimen_Preload {
         SetupConstraints();
         pushFirstNeutralSpecimen();
         pushSecondNeutralSpecimen();
-        //todo can we just push the third specimen and see how it goes? how much faster do we have to go to do this, even if we can't score it? How about to score it? Look at that cyBug video
-        pickupSpecimenFromTriangleComingFromSecondSpike();
-        //todo is there a way we could effectively push the hanging samples as we come in so we can always hang near the right sight of the chamber?
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_THREE);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_SEVEN);
-        driveToPark();
+//        //todo can we just push the third specimen and see how it goes? how much faster do we have to go to do this, even if we can't score it? How about to score it? Look at that cyBug video
+//        pickupSpecimenFromTriangleComingFromSecondSpike();
+//        //todo is there a way we could effectively push the hanging samples as we come in so we can always hang near the right sight of the chamber?
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_THREE);
+//        pickupSpecimenFromTriangle();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE);
+//        pickupSpecimenFromTriangle();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_SEVEN);
+//        driveToPark();
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
