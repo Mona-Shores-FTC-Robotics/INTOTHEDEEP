@@ -54,7 +54,7 @@ public class FieldConstants {
     public static double SAMPLE_LENGTH = 4;
     public static double HALF_SAMPLE_LENGTH = SAMPLE_LENGTH/2.0;
 
-    public static double PICKUP_ROOM = 3.0;
+    public static double PICKUP_ROOM = 2.2;
 
     public static double ANGLE_TOWARD_OBSERVATION = Math.toRadians(0);
     public static double ANGLE_30_DEGREES = Math.toRadians(30);
@@ -88,7 +88,7 @@ public class FieldConstants {
 
     public static double CHAMBER_SPACER = 1.48;
 
-    public static Pose2d CHAMBER_SLOT_ONE_REDO = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH+.1, ANGLE_TOWARD_BLUE);
+    public static Pose2d CHAMBER_SLOT_ONE_REDO = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH+1, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_TWO_REDO = CHAMBER_SLOT_ONE_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_THREE_REDO = CHAMBER_SLOT_TWO_REDO.plus(new Twist2d(new Vector2d(0, CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_FOUR_REDO = CHAMBER_SLOT_THREE_REDO.plus(new Twist2d(new Vector2d(0, CHAMBER_SPACER), 0));
@@ -161,6 +161,9 @@ public class FieldConstants {
     public static Pose2d OBS_CORNER_PICKUP_AUDIENCE_WALL = new Pose2d(3*TILE-HALF_ROBOT_LENGTH+PICKUP_ROOM,-3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_NET);
 
 
+
+    public static Pose2d OBS_TRIANGLE_APPROACH_REDO = new Pose2d(TILE+HALF_TILE,-3*TILE+HALF_ROBOT_LENGTH+6*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_TRIANGLE_PICKUP_REDO = new Pose2d(TILE+HALF_TILE, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_BLUE);
 
 
     public static Pose2d RIGHT_OF_CHAMBER =  new Pose2d(TILE+HALF_TILE+1, -TILE-4, ANGLE_TOWARD_BLUE);

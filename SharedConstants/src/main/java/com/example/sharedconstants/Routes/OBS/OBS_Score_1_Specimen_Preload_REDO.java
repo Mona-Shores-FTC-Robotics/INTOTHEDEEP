@@ -38,44 +38,53 @@ public class OBS_Score_1_Specimen_Preload_REDO extends Routes {
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
-    private static final double OBS_VELOCITY_OVERRIDE = 55;
-    private static final double OBS_SLOW_VELOCITY_OVERRIDE = 22;
-    private static final double OBS_VERY_SLOW_VELOCITY_OVERRIDE = 10;
+    private static final double OBS_FAST_VELOCITY_OVERRIDE = 55;
+    private static final double OBS_FAST_ACCELERATION_OVERRIDE = 55;
+    private static final double OBS_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+
+    private static final double OBS_VELOCITY_OVERRIDE = 35;
+    private static final double OBS_ACCELERATION_OVERRIDE = 35;
+    private static final double OBS_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+
+    private static final double OBS_SLOW_VELOCITY_OVERRIDE = 10;
+    private static final double OBS_SLOW_ACCELERATION_OVERRIDE = 10;
+    private static final double OBS_SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
+
+    public static VelConstraint obsFastVelocity;
+    public static AccelConstraint obsFastAcceleration;
 
     public static VelConstraint obsVelocity;
+    public static AccelConstraint obsAcceleration;
+
+    public static VelConstraint obsSlowVelocity;
+    public static AccelConstraint obsSlowAcceleration;
 
     public void SetupConstraints() {
-        obsVelocity = (robotPose , _path , _disp) -> {
-            // Extract X and Y values for readability
-            double x = robotPose.position.x.value();
-            double y = robotPose.position.y.value();
+        obsVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(OBS_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(OBS_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        obsAcceleration = new ProfileAccelConstraint(-OBS_ACCELERATION_OVERRIDE, OBS_ACCELERATION_OVERRIDE);
 
-            //Check if we are close to the chamber and should slow down
-            if (x > - HALF_TILE && x < HALF_TILE) {
-                //Check Red Side Chamber
-                if (y > - TILE - HALF_TILE && y < - HALF_TILE ||
-                        //Check Blue Side Chamber
-                        (y < TILE + HALF_TILE && y > HALF_TILE)) {
-                    return OBS_SLOW_VELOCITY_OVERRIDE; // Override constraint
-                }
+        obsFastVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(OBS_FAST_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(OBS_FAST_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        obsFastAcceleration = new ProfileAccelConstraint(-OBS_FAST_ACCELERATION_OVERRIDE, OBS_FAST_ACCELERATION_OVERRIDE);
 
-                //Check if near Red Observation Zone
-            } else if (y < - 2 * TILE - QUARTER_TILE-.5 && x > TILE+HALF_TILE-2 ||
-                    //Check if near Blue Observation Zone
-                    (y > 2 * TILE + QUARTER_TILE+.5 && x < - TILE-HALF_TILE+2)) {
-                return OBS_VERY_SLOW_VELOCITY_OVERRIDE; // Override constraint
-            }
-            return OBS_VELOCITY_OVERRIDE; // Default constraint
-        };
+        obsSlowVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(OBS_SLOW_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(OBS_SLOW_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        obsSlowAcceleration = new ProfileAccelConstraint(-OBS_SLOW_ACCELERATION_OVERRIDE, OBS_SLOW_ACCELERATION_OVERRIDE);
     }
-
 
     public void scoreObservationPreload(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(FieldConstants.OBS_START_POSE)
                 .setTangent(ANGLE_TOWARD_BLUE)
                 .afterDisp(2, robotAdapter.getAction(MOVE_PRELOAD_SPECIMEN_TO_CW_HOME))
-                .splineToSplineHeading(chamberSlot.plus(new Twist2d(new Vector2d(-10,0), 0)), chamberSlot.heading.toDouble(), obsVelocity)
-                .splineToConstantHeading(PoseToVector(chamberSlot), chamberSlot.heading.toDouble(), obsVelocity)
+                .splineToSplineHeading(chamberSlot.plus(new Twist2d(new Vector2d(-10,0), 0)), chamberSlot.heading.toDouble(), obsFastVelocity)
+                .splineToConstantHeading(PoseToVector(chamberSlot), chamberSlot.heading.toDouble(), obsSlowVelocity)
                 //todo this sequence might be able to be sped up
                 .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
                 .waitSeconds(.2);

@@ -301,7 +301,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         public static class StickParams {
             public double DEAD_ZONE = 0.1;
-            public double DRIVE_SPEED_FACTOR = 0.82;
+            public double DRIVE_SPEED_FACTOR = 0.7;
             public double STRAFE_SPEED_FACTOR = 1.0;
             public double TURN_SPEED_FACTOR = 1.0;
             public double SLOW_MODE_FACTOR = 0.5; // Reduce speed by 50% in slow mode
@@ -315,7 +315,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
 
         public static class PIDParams {
-            public double P = 0;
+            public double P = 6;
             public double D = 0;
             public double I = 0;
             public double F = 8;

@@ -7,6 +7,7 @@ import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION
 import static com.example.sharedconstants.RoutesToRun.DO_NOTHING;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_REDO;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_REDO_LINETO;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkRed;
@@ -32,6 +33,7 @@ import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_4_Preloa
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Redo_LINE_TO;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
@@ -48,7 +50,7 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_SCORE_5_REDO;
+    private static final RoutesToRun redObservationRoute = OBS_SCORE_5_REDO_LINETO;
     private static final RoutesToRun blueObservationRoute = OBS_SCORE_5_REDO;
     private static final RoutesToRun redNetRoute = DO_NOTHING;
     private static final RoutesToRun blueNetRoute = redNetRoute;
@@ -190,6 +192,9 @@ public class MeepMeepTesting {
 
             case OBS_SCORE_5_REDO:
                 return new OBS_Score5_Redo(adapter);
+
+            case OBS_SCORE_5_REDO_LINETO:
+                return new OBS_Score5_Redo_LINE_TO(adapter);
 
             case OBS_SCORE_4_NO_PRELOAD:
                 return new OBS_Score4_NO_PRELOAD_SPECTACULAR(adapter);

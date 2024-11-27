@@ -16,6 +16,7 @@ import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_P
 import com.example.sharedconstants.Routes.OBS.OBS_SQUARE_AUTO;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport;
 import com.example.sharedconstants.Routes.OBS.OBS_Score5_Redo;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Redo_LINE_TO;
 import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -124,6 +125,11 @@ public class AutoSelector extends LinearOpMode {
         obsRoute = new OBS_Score5_Redo(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
+
+        obsRoute = new OBS_Score5_Redo_LINE_TO(robotAdapter);
+        obsRoute.buildRoute();
+        obsRouteList.add(obsRoute);
+
 
         //Next Most Reasonable Auto (~30 velocity/acceleration)
         //Scores preload Specimen, pushes 3 spikes to Human player, and then picks three specimens up from human player and scores them
@@ -267,10 +273,7 @@ public class AutoSelector extends LinearOpMode {
         Action selectedRouteAction = selectedRoute.getRouteAction(MatchConfig.finalSideOfField);
 
         //Set the starting location of the robot on the field
-//        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
-
-        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.AUTO_TEST_POSE;
-
+        Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
 
         //Calculate the Yaw offset based on the starting pose and save it in MatchConfig
         Robot.getInstance().getDriveSubsystem().CalculateYawOffset();

@@ -137,7 +137,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
                     // PID parameters
                     SPECIMEN_ARM_PARAMS.P = 0.0044;
-                    SPECIMEN_ARM_PARAMS.I = .03;
+                    SPECIMEN_ARM_PARAMS.I = 0.10;
                     SPECIMEN_ARM_PARAMS.D = 0.0001;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
