@@ -17,7 +17,7 @@ public class MatchConfig {
 
     public static double offsetFromStartPoseDegrees;
 
-    public static Pose2d endOfAutonomousPose = null;
+//    public static Pose2d endOfAutonomousPose = null;
 
     public static ElapsedTime teleOpTimer;
     public static ElapsedTime loopTimer;

@@ -55,11 +55,14 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
-        // Create the robot
-        Robot.createInstance(this);
+        // Can we just skip making a new robot if the auto did run?
+        if (!hasAutoRun) {
+            // Create the robot
+            Robot.createInstance(this);
 
-        // Initialize the robot
-        Robot.getInstance().init(Robot.OpModeType.TELEOP);
+            // Initialize the robot
+            Robot.getInstance().init(Robot.OpModeType.TELEOP);
+        }
 
         //Initialize the Game-pads
         GamepadHandling gamepadHandling = new GamepadHandling(this);
@@ -89,7 +92,6 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         }
 
         // Setup Button Bindings
-        // Example for avoiding duplicate bindings
         IntoTheDeepDriverBindings driverBindings = new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad(), gamepadHandling.getBindingManager());
         IntoTheDeepOperatorBindings operatorBindings = new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad(), gamepadHandling.getBindingManager());
 
@@ -123,8 +125,8 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             gamepadHandling.getDriverGamepad().readButtons();
             gamepadHandling.getOperatorGamepad().readButtons();
 
+            //todo can we delete this?
             driverBindings.updateTriggerBindings();
-
 
             // Display Telemetry through the Robot's Telemetry Manager
             Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry(gamepadHandling.getBindingManager());

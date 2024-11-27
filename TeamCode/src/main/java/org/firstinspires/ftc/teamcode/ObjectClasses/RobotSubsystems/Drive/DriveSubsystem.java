@@ -69,7 +69,6 @@ public class DriveSubsystem extends SubsystemBase {
     private double prevLeftBackTargetSpeed = 0;
     private double prevRightBackTargetSpeed = 0;
 
-
     @Config
     public static class DriveModeConfig {
         public static DriveMode selectedDriveMode = DriveMode.SPEED_CONTROL;
@@ -86,21 +85,15 @@ public class DriveSubsystem extends SubsystemBase {
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
                     DriveParams.configureIntoTheDeep19429RRParams();
-                    if (MatchConfig.hasAutoRun) {
-                        mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
-                    } else mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-
+                    mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                     DriveParams.configureIntoTheDeep19429Directions(mecanumDrive);
                     break;
 
                 case INTO_THE_DEEP_20245:
                     DriveParams.configureIntoTheDeep20245RRParams();
-                    if (MatchConfig.hasAutoRun) {
-                        mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
-                    } else mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+                    mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
                     DriveParams.configureIntoTheDeep20245Directions(mecanumDrive);
                     break;
-
             }
             mecanumDrive.lazyImu.get().resetYaw();
             configurePID();

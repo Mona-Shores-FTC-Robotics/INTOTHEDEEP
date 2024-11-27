@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions;
 
+import static com.example.sharedconstants.FieldConstants.ANGLE_315_DEGREES;
+import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
+import static com.example.sharedconstants.FieldConstants.OBS_CORNER_APPROACH_AUDIENCE_WALL;
+import static com.example.sharedconstants.FieldConstants.OBS_CORNER_PICKUP_AUDIENCE_WALL;
 import static java.lang.Math.PI;
 
 import androidx.annotation.NonNull;
@@ -17,12 +21,16 @@ import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.example.sharedconstants.FieldConstants;
+import com.example.sharedconstants.RobotAdapter;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
+import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenArmStateMessage;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -36,19 +44,19 @@ public class DriveToObservationZone implements Action {
     // Velocity and acceleration overrides
     public static final double VELOCITY_OVERRIDE = 45;
     public static final double ACCELERATION_OVERRIDE = 45;
-    public static final double ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
+    public static final double ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+
+    // Velocity and acceleration overrides
+    public static final double VELOCITY_SLOW_OVERRIDE = 10;
+    public static final double ACCELERATION_SLOW_OVERRIDE = 20;
 
     // Shared constraints for all routes
     public static VelConstraint velConstraint;
     public static AccelConstraint accelConstraint;
+    public static VelConstraint velSlowConstraint;
+    public static AccelConstraint accelSlowConstraint;
 
     public DriveToObservationZone() {
-        this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
-        this.started = false;
-        this.cancelled = false; // Initialize the cancellation flag
-    }
-
-    public DriveToObservationZone(double inches) {
         this.driveSubsystem = Robot.getInstance().getDriveSubsystem();
         this.started = false;
         this.cancelled = false; // Initialize the cancellation flag
@@ -70,6 +78,12 @@ public class DriveToObservationZone implements Action {
             ));
             accelConstraint = new ProfileAccelConstraint(- ACCELERATION_OVERRIDE, ACCELERATION_OVERRIDE);
 
+            velSlowConstraint = new MinVelConstraint(Arrays.asList(
+                    new TranslationalVelConstraint(VELOCITY_SLOW_OVERRIDE),
+                    new AngularVelConstraint(ANGULAR_VELOCITY_OVERRIDE)
+            ));
+            accelSlowConstraint = new ProfileAccelConstraint(-ACCELERATION_SLOW_OVERRIDE, ACCELERATION_SLOW_OVERRIDE);
+
             RealRobotAdapter robotAdapter = new RealRobotAdapter();
             Pose2d currentPose = driveSubsystem.getMecanumDrive().pose;
 
@@ -78,12 +92,12 @@ public class DriveToObservationZone implements Action {
             }
 
             action = robotAdapter.getActionBuilder(currentPose)
-                    .setTangent(ANGLE_TOWARD_OBSERVATION)
+                    .setReversed(true)
                     .afterTime(.8, new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::gotoPickupAngle))
                     .afterTime(.8, new InstantAction(Robot.getInstance().getSpecimenIntakeSubsystem()::turnOnIntake))
-                    .splineToLinearHeading(FieldConstants.OBS_TRIANGLE_APPROACH, ANGLE_TOWARD_RED)
+                    .splineToLinearHeading(FieldConstants.OBS_CORNER_APPROACH_AUDIENCE_WALL, ANGLE_315_DEGREES, velConstraint, accelConstraint)
                     .setReversed(true)
-                    .splineToLinearHeading(FieldConstants.OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED)
+                    .splineToLinearHeading(FieldConstants.OBS_CORNER_PICKUP_AUDIENCE_WALL, ANGLE_TOWARD_OBSERVATION, velSlowConstraint, accelSlowConstraint)
                     .build();
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry
@@ -96,10 +110,6 @@ public class DriveToObservationZone implements Action {
         if (!isRunning) {
             reset(); // Reset the state when the action completes
         }
-
-        telemetryPacket.put("x", driveSubsystem.getMecanumDrive().pose.position.x);
-        telemetryPacket.put("y", driveSubsystem.getMecanumDrive().pose.position.y);
-        telemetryPacket.put("heading (deg)", Math.toDegrees(driveSubsystem.getMecanumDrive().pose.heading.log()));
         return isRunning;
     }
 

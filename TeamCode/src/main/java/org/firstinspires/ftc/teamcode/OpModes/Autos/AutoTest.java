@@ -117,10 +117,8 @@ public class AutoTest extends LinearOpMode {
         );
         MatchConfig.loopTimer = new ElapsedTime();
         MatchConfig.loopTimer.reset();
-        Actions.runBlocking(parallelAction);
-
         MatchConfig.hasAutoRun=true;
-        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+        Actions.runBlocking(parallelAction);
     }
 
     public Routes selectRoute() {

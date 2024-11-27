@@ -255,10 +255,11 @@ public class AutoSelector extends LinearOpMode {
         MatchConfig.timestampTimer = new ElapsedTime();
         MatchConfig.timestampTimer.reset();
 
+        //Set that we ran the auto here in case it crashes during the middle of autonomous or we stop early
+        MatchConfig.hasAutoRun=true;
         Actions.runBlocking(parallelAction);
 
         // Update final autonomous data
-        MatchConfig.hasAutoRun=true;
-        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+//        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
     }
 }
