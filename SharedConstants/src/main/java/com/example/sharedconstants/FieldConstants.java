@@ -38,6 +38,16 @@ public class FieldConstants {
         return baseStartPose;
     }
 
+    public static Pose2d getResetCornerPose(AllianceColor allianceColor) {
+        Pose2d baseStartPose= OBS_CORNER_RESET_POSE;
+        //  Flip for blue alliance
+        if ( allianceColor== AllianceColor.BLUE) {
+            baseStartPose = rotate(baseStartPose);  // Rotate the pose 180 degrees for blue alliance
+        }
+        return baseStartPose;
+    }
+
+
     public static double HALF_FIELD = 70.5;
     public static double TILE = 23.5;
     public static double HALF_TILE = TILE/2;
@@ -162,6 +172,7 @@ public class FieldConstants {
     public static Pose2d OBS_TRIANGLE_APPROACH_REDO = new Pose2d(2*TILE-HALF_ROBOT_WIDTH+2,-3*TILE+HALF_ROBOT_LENGTH+5*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
     public static Pose2d OBS_TRIANGLE_PICKUP_REDO = new Pose2d(2*TILE-HALF_ROBOT_WIDTH+2, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_BLUE);
 
+    public static Pose2d OBS_CORNER_RESET_POSE = new Pose2d(3*TILE-HALF_ROBOT_LENGTH,-3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_NET);
 
 
     public static Pose2d OBS_TRIANGLE_APPROACH_TILE_SEAM = new Pose2d(2*TILE-HALF_ROBOT_WIDTH+2,-3*TILE+HALF_ROBOT_LENGTH+5*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
