@@ -10,14 +10,13 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
-import com.example.sharedconstants.Routes.DoNothing;
-import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_3_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
-import com.example.sharedconstants.Routes.OBS.OBS_SQUARE_AUTO;
+import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
+import com.example.sharedconstants.Routes.OBS.OBS_Score4_PickupAtCorner;
+import com.example.sharedconstants.Routes.OBS.OBS_Score4_PickupAtTileSeam;
+import com.example.sharedconstants.Routes.OBS.OBS_Score4_PickupAtTriangleTip;
+import com.example.sharedconstants.Routes.OBS.Old.OBS_SQUARE_AUTO;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport;
-import com.example.sharedconstants.Routes.OBS.OBS_Score5_Redo;
-import com.example.sharedconstants.Routes.OBS.OBS_Score5_Redo_LINE_TO;
-import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -29,7 +28,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.ActionsAndCommands.AutonomousPeriodicAction;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,61 +89,25 @@ public class AutoSelector extends LinearOpMode {
         List<Routes> obsRouteList = new ArrayList<>();
         robotAdapter.setAllianceColor(allianceColor);
 
-        //Best Auto but needs high speeds (~50 velocity/acceleration)
-        //This would just leave a preload sample by our robot for the NET bot to score and then score all 5 specimens
-//        obsRoute = new OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-
-        //Superb auto, but needs high speeds (~50 velocity/acceleration)
-        //Scores preload Specimen, pushes 3 spikes to Human player, and then picks four specimens up from human player and scores them
-//        obsRoute = new OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-
-        //Most Reasonable Auto (~25 velocity/acceleration)
-        //Scores preload Specimen, pushes 2 spikes to Human player, and then picks three specimens up from human player and scores them
-        //This assumes our partner did NOT take one of the Human Player starting specimens
-//        obsRoute = new OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-
-//        obsRoute = new OBS_Score4_SPECTACULAR(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-//
         obsRoute = new OBS_Score4_Fruitport(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
-        obsRoute = new OBS_SQUARE_AUTO(robotAdapter);
+        obsRoute = new OBS_Score4_Fruitport_Improved(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
-        obsRoute = new OBS_Score5_Redo(robotAdapter);
+        obsRoute = new OBS_Score4_PickupAtCorner(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
-        obsRoute = new OBS_Score5_Redo_LINE_TO(robotAdapter);
+        obsRoute = new OBS_Score4_PickupAtTileSeam(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
-
-        //Next Most Reasonable Auto (~30 velocity/acceleration)
-        //Scores preload Specimen, pushes 3 spikes to Human player, and then picks three specimens up from human player and scores them
-        //This assumes our partner took one of the Human Player starting specimens
-//        obsRoute = new OBS_Score4_Preload_Push_All_And_Pickup_At_Triangle(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-
-//        obsRoute = new OBS_Score_1_Specimen_Preload(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-//
-//        obsRoute = new DoNothing(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-
+        obsRoute = new OBS_Score4_PickupAtTriangleTip(robotAdapter);
+        obsRoute.buildRoute();
+        obsRouteList.add(obsRoute);
 
         return obsRouteList;
     }

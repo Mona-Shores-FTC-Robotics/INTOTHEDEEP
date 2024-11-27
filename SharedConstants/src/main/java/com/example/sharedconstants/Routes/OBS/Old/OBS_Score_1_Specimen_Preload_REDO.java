@@ -1,13 +1,8 @@
-package com.example.sharedconstants.Routes.OBS;
+package com.example.sharedconstants.Routes.OBS.Old;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE_REDO;
-import static com.example.sharedconstants.FieldConstants.HALF_TILE;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
-import static com.example.sharedconstants.FieldConstants.QUARTER_TILE;
-import static com.example.sharedconstants.FieldConstants.THREE_QUARTER_TILE;
-import static com.example.sharedconstants.FieldConstants.TILE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.MOVE_PRELOAD_SPECIMEN_TO_CW_HOME;
 

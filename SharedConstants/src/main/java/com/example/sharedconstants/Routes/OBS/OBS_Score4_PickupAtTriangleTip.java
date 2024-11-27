@@ -1,69 +1,106 @@
 package com.example.sharedconstants.Routes.OBS;
 
-import static com.example.sharedconstants.FieldConstants.ANGLE_115_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_135_DEGREES;
-import static com.example.sharedconstants.FieldConstants.ANGLE_315_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_340_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FIVE;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FIVE_REDO;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_NINE_REDO;
+import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE_REDO;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_SEVEN_REDO;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_THREE;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_THREE_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_ONE_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_THREE_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_TWO_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_CORNER_APPROACH_ALLIANCE_WALL;
 import static com.example.sharedconstants.FieldConstants.OBS_CORNER_PICKUP_ALLIANCE_WALL;
-import static com.example.sharedconstants.FieldConstants.OBS_CORNER_PICKUP_AUDIENCE_WALL;
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_ONE_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_THREE_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_TWO_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_ONE_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_TWO_REDO;
-import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_APPROACH;
+import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_APPROACH_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_PICKUP;
+import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_PICKUP_REDO;
+import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_TIP_APPROACH;
+import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_TIP_PICKUP;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static com.example.sharedconstants.FieldConstants.RIGHT_OF_CHAMBER_REDO;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
+import static com.example.sharedconstants.RobotAdapter.ActionType.MOVE_PRELOAD_SPECIMEN_TO_CW_HOME;
 
+import com.acmerobotics.roadrunner.AccelConstraint;
+import com.acmerobotics.roadrunner.AngularVelConstraint;
+import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
+import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
+import com.example.sharedconstants.Routes.Routes;
 
-public class OBS_Score5_Redo extends OBS_Score_1_Specimen_Preload_REDO {
+import java.util.Arrays;
 
-    public OBS_Score5_Redo(RobotAdapter robotAdapter) {
+public class OBS_Score4_PickupAtTriangleTip extends Routes {
+
+    public OBS_Score4_PickupAtTriangleTip(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
     public void buildRoute(){
-        super.buildRoute();
+        SetupConstraints();
+        scoreObservationPreload(CHAMBER_SLOT_ONE_REDO);
         pushFirstNeutralSpecimen();
         pushSecondNeutralSpecimen();
         pushThirdNeutralSpecimen();
-        pickupSpecimenFromCornerAllianceWall();
+        pickupSpecimenFromTriangleTip();
         scoreOnHighChamberFromCorner(CHAMBER_SLOT_THREE_REDO);
-        pickupSpecimenFromTriangle();
+        pickupSpecimenFromTriangleTip();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE_REDO);
-        pickupSpecimenFromTriangle();
+        pickupSpecimenFromTriangleTip();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_SEVEN_REDO);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_NINE_REDO);
         driveToPark();
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
-    private void pickupSpecimenFromCornerAllianceWall() {
-        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .setReversed(true)
-                .afterDisp(0, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
-                .splineToConstantHeading(PoseToVector(OBS_CORNER_APPROACH_ALLIANCE_WALL), ANGLE_TOWARD_RED, obsFastVelocity)
-                .setReversed(true)
-                .splineToConstantHeading(PoseToVector(OBS_CORNER_PICKUP_ALLIANCE_WALL), ANGLE_TOWARD_RED, obsSlowVelocity)
-                .waitSeconds(.125);
+    private static final double OBS_FAST_VELOCITY_OVERRIDE = 55;
+    private static final double OBS_FAST_ACCELERATION_OVERRIDE = 55;
+    private static final double OBS_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+
+    private static final double OBS_SLOW_VELOCITY_OVERRIDE = 7;
+    private static final double OBS_SLOW_ACCELERATION_OVERRIDE = 7;
+    private static final double OBS_SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(90);
+
+    public static VelConstraint obsFastVelocity;
+    public static AccelConstraint obsFastAcceleration;
+
+    public static VelConstraint obsSlowVelocity;
+    public static AccelConstraint obsSlowAcceleration;
+
+    public void SetupConstraints() {
+        obsFastVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(OBS_FAST_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(OBS_FAST_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        obsFastAcceleration = new ProfileAccelConstraint(-OBS_FAST_ACCELERATION_OVERRIDE, OBS_FAST_ACCELERATION_OVERRIDE);
+
+        obsSlowVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(OBS_SLOW_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(OBS_SLOW_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        obsSlowAcceleration = new ProfileAccelConstraint(-OBS_SLOW_ACCELERATION_OVERRIDE, OBS_SLOW_ACCELERATION_OVERRIDE);
+    }
+
+    public void scoreObservationPreload(Pose2d chamberSlot) {
+        obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(FieldConstants.OBS_START_POSE)
+                .setTangent(ANGLE_TOWARD_BLUE)
+                .afterDisp(2, robotAdapter.getAction(MOVE_PRELOAD_SPECIMEN_TO_CW_HOME))
+                .splineToSplineHeading(chamberSlot.plus(new Twist2d(new Vector2d(-10,0), 0)), chamberSlot.heading.toDouble(), obsFastVelocity)
+                .splineToConstantHeading(PoseToVector(chamberSlot), chamberSlot.heading.toDouble(), obsSlowVelocity)
+                .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
+                .waitSeconds(.15);
     }
 
     public void pushFirstNeutralSpecimen() {
@@ -89,6 +126,7 @@ public class OBS_Score5_Redo extends OBS_Score_1_Specimen_Preload_REDO {
     private void pushThirdNeutralSpecimen() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_THREE_REDO), ANGLE_TOWARD_OBSERVATION, obsFastVelocity)
+                .waitSeconds(.01)
                 .setReversed(true)
                 .splineToConstantHeading(PoseToVector(OBS_DELIVER_SPIKE_THREE_REDO),ANGLE_TOWARD_RED, obsFastVelocity);
     }
@@ -98,6 +136,7 @@ public class OBS_Score5_Redo extends OBS_Score_1_Specimen_Preload_REDO {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(false)
                 .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(0,-5)), ANGLE_TOWARD_BLUE, obsFastVelocity)
+                .waitSeconds(.01)
                 .setReversed(false)
                 .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE, obsSlowVelocity)
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));
@@ -107,27 +146,28 @@ public class OBS_Score5_Redo extends OBS_Score_1_Specimen_Preload_REDO {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(false)
                 .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(0,-5)), ANGLE_TOWARD_BLUE, obsFastVelocity)
+                .waitSeconds(.01)
                 .setReversed(false)
                 .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE, obsSlowVelocity)
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));
     }
 
 
-    public void pickupSpecimenFromTriangle() {
+    public void pickupSpecimenFromTriangleTip() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
-                .afterDisp(6, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
+                .afterDisp(1, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
+                .splineToLinearHeading(OBS_TRIANGLE_TIP_APPROACH, ANGLE_TOWARD_RED, obsFastVelocity)
+                .waitSeconds(.01)
                 .setReversed(true)
-                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, obsFastVelocity)
-                .setReversed(true)
-                .splineToLinearHeading(OBS_TRIANGLE_APPROACH, ANGLE_TOWARD_RED, obsSlowVelocity)
-                .waitSeconds(.125);
+                .splineToLinearHeading(OBS_TRIANGLE_TIP_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity)
+                .waitSeconds(.15);
     }
 
     private void driveToPark() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(PoseToVector(OBS_TRIANGLE_PICKUP), ANGLE_135_DEGREES), ANGLE_340_DEGREES, obsFastVelocity);
+                .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_TIP_PICKUP), ANGLE_TOWARD_RED, obsFastVelocity);
     }
 }
 
