@@ -11,6 +11,7 @@ import java.util.Queue;
 public abstract class GamePieceDetector {
 
     public enum DetectionState {
+        DETECTING,
         NOT_DETECTED,
         JUST_DETECTED,
         STILL_DETECTED,
@@ -33,10 +34,10 @@ public abstract class GamePieceDetector {
 
     public DetectionState updateDetection() {
         boolean proximityStable = updateProximity();
-        boolean colorStable = updateColorIfRequired();
+        boolean colorStable = updateColor();
 
         // Detection is valid if proximity is stable and, if required, color is stable
-        if (proximityStable && colorStable) {
+        if (proximityStable) {
             if (detectionState == DetectionState.NOT_DETECTED) {
                 detectionState = DetectionState.JUST_DETECTED;
             } else {
@@ -76,7 +77,7 @@ public abstract class GamePieceDetector {
         return true;
     }
 
-    protected boolean updateColorIfRequired() {
+    protected boolean updateColor() {
         SampleColor color = getRawDetectedColor();
 
         if (colorHistory.size() >= getColorHistorySize()) {

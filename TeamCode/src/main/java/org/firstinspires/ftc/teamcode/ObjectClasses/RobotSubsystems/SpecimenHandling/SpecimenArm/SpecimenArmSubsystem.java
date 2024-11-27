@@ -344,9 +344,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     arm.setPower(0);
                     setCurrentState(SpecimenArmStates.ZERO_POWER_AT_CCW_ARM_HOME);
                     zeroPowerTimer.reset();
-                    if (!Robot.getInstance().getSpecimenIntakeSubsystem().getSpecimenDetector().haveSpecimen()){
-                        Robot.getInstance().getLightingSubsystem().setLightBlack();
-                    } else    Robot.getInstance().getLightingSubsystem().setProblemColor();
                 }
                 break;
 

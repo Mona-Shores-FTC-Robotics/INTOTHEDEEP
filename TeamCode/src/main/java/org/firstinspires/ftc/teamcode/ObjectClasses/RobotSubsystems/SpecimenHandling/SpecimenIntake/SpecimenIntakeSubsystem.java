@@ -14,11 +14,16 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenDetector;
 import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.GamePieceDetectorMessage;
 import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenIntakeMessage;
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDetector.DetectionState.DETECTING;
 
 @Config
 public class SpecimenIntakeSubsystem extends SubsystemBase {
@@ -29,14 +34,14 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         public double INTAKE_OFF_POWER = Double.NaN;
         public double MAX_POWER = Double.NaN;  // Max allowable power for intake servo
         public double PROXIMITY_THRESHOLD_IN_MM = Double.NaN;
-        public int HISTORY_SIZE = -1;
+        public int HISTORY_SIZE = - 1;
 
         @Override
         public void loadDefaultsForRobotType(Robot.RobotType robotType) {
             if (haveRobotSpecificParametersBeenLoaded()) return;
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
-                    SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = -1.0;
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = - 1.0;
                     SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
                     SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
                     SPECIMEN_INTAKE_PARAMS.MAX_POWER = 1.0;
@@ -45,7 +50,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                     break;
 
                 case INTO_THE_DEEP_20245:
-                    SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = -0.8;
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = - 0.8;
                     SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 0.8;
                     SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
                     SPECIMEN_INTAKE_PARAMS.MAX_POWER = 0.8;
@@ -81,29 +86,38 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         }
     }
 
+    public enum SpecimenIntakeDetectState {
+        DETECTING,
+        DETECTED,
+        WAITING_FOR_SPECIMEN_DELIVERY
+    }
+
     private final CRServo specimenIntake;  // Continuous rotation servo
     private SpecimenIntakeStates currentState;
     private double currentPower;
     private Boolean preloadModeActive;
 
+    private SpecimenIntakeDetectState currentSpecimenIntakeDetectionState;
+    private final RevColorSensorV3 colorSensor;
     private final SpecimenDetector specimenDetector;
+
     // Constructor with color sensor
-    public SpecimenIntakeSubsystem(final HardwareMap hMap,final Robot.RobotType robotType, final String intakeServo, final String colorSensorName) {
+    public SpecimenIntakeSubsystem(final HardwareMap hMap , final Robot.RobotType robotType , final String intakeServo , final String colorSensorName) {
         SPECIMEN_INTAKE_PARAMS.loadDefaultsForRobotType(robotType);
 
-        specimenIntake = hMap.get(CRServo.class, intakeServo);
+        specimenIntake = hMap.get(CRServo.class , intakeServo);
         // Nullable color sensor
-        RevColorSensorV3 colorSensor = colorSensorName != null ? hMap.get(RevColorSensorV3.class , colorSensorName) : null;
+        colorSensor = colorSensorName != null ? hMap.get(RevColorSensorV3.class , colorSensorName) : null;
         if (colorSensor != null) {
-            specimenDetector = new SpecimenDetector(colorSensor , SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM, SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE);
+            specimenDetector = new SpecimenDetector(colorSensor , SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM , SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE);
         } else {
             specimenDetector = null; // no detector if sensor is unavailable;
         }
     }
 
     // Overloaded constructor without color sensor
-    public SpecimenIntakeSubsystem(final HardwareMap hMap, Robot.RobotType robotType, final String intakeServo ) {
-        this(hMap, robotType, intakeServo, null);  // Calls the main constructor with no color sensor
+    public SpecimenIntakeSubsystem(final HardwareMap hMap , Robot.RobotType robotType , final String intakeServo) {
+        this(hMap , robotType , intakeServo , null);  // Calls the main constructor with no color sensor
     }
 
     // Initialize intake servo
@@ -111,34 +125,60 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         preloadModeActive = Robot.getInstance().getOpModeType() == Robot.OpModeType.AUTO;
         setCurrentState(SpecimenIntakeStates.INTAKE_OFF);  // Set default state to off
         currentPower = SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
+        currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTING;
     }
 
     @Override
     public void periodic() {
-        Robot.getInstance().getSimpleLogger().addData("Periodic of Specimen Intake");
-        Robot.getInstance().getSimpleLogger().addData(currentState);
-        //todo this needs the same treatment as the sample intake/sample detector so we only detect once then move through states until we start detecting again
-        if (specimenDetector != null) {
-            // Update the detection state via the detector
-            DetectionState specimenDetectionState = specimenDetector.updateDetection();
-            Robot.getInstance().getSimpleLogger().addData(specimenDetectionState);
-            switch (specimenDetectionState) {
-                case JUST_DETECTED:
-                    handleSpecimenPickup();  // Trigger pickup behavior if specimen was just detected
+        switch (currentSpecimenIntakeDetectionState) {
+            case DETECTING: {
+                if (!isColorSensorConnected()) {
+                    //record that the specimen detector is disconnected in the log
+                    FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(SpecimenDetector.DetectionState.SENSOR_DISCONNECTED , - 1 , FieldConstants.SampleColor.UNKNOWN));
                     break;
-
-                case STILL_DETECTED:
-                    // Optionally, handle logic if specimen is still detected, if needed
-                    //Todo could we check if there is a high current on the arm and release the specimen if there is?
-                    break;
-
-                case NOT_DETECTED:
-                    break;
+                }
+                if (specimenDetector.updateDetection() == DetectionState.JUST_DETECTED) {
+                    currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTED;
+                    Robot.getInstance().getLightingSubsystem().setGoodSampleIndicator();
+                } else
+                {
+                    //Set the lights off because we should no longer have a piece
+                    Robot.getInstance().getLightingSubsystem().setLightBlack();
+                }
+                FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(specimenDetector.getDetectionState() , specimenDetector.getConsensusProximity() , specimenDetector.getConsensusColor()));
+                break;
             }
-            FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(specimenDetectionState, specimenDetector.getConsensusProximity(), specimenDetector.getConsensusColor()));
+            case DETECTED:
+                handleSpecimenPickup();  // Trigger pickup behavior if specimen was just detected
+                currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.WAITING_FOR_SPECIMEN_DELIVERY;
+                break;
+
+            case WAITING_FOR_SPECIMEN_DELIVERY:
+            {
+                if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
+                {
+                    //If The arm has gone back to CCW_Arm Home or Pickup then we know we have delivered a specimen and should start detecting again
+                    SpecimenArmSubsystem.SpecimenArmStates currentArmState = Robot.getInstance().getSpecimenArmSubsystem().getCurrentState();
+                    if (currentArmState == SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME ||
+                            currentArmState == SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP
+                            ) {
+                        currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTING;
+                    }
+                }
+                break;
+            }
         }
+        FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(specimenDetector.getDetectionState(), specimenDetector.getConsensusProximity() , specimenDetector.getConsensusColor()));
         updateDashboardTelemetry();
         FlightRecorder.write("SPECIMEN_INTAKE_STATE" , new SpecimenIntakeMessage(currentState, currentPower));
+
+        //Simple Logging
+        Robot.getInstance().getSimpleLogger().addData("Periodic of Specimen Intake");
+        Robot.getInstance().getSimpleLogger().addData(currentState);
+        Robot.getInstance().getSimpleLogger().addData(specimenDetector.getDetectionState());
+        Robot.getInstance().getSimpleLogger().addData(specimenDetector.getConsensusProximity());
+        Robot.getInstance().getSimpleLogger().addData(specimenDetector.getConsensusColor());
+        Robot.getInstance().getSimpleLogger().addData(currentSpecimenIntakeDetectionState);
         Robot.getInstance().getSimpleLogger().update();
     }
 
@@ -243,6 +283,23 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     public boolean isNotReversing() {
         return currentState != SpecimenIntakeStates.INTAKE_REVERSE;
+    }
+
+
+    private boolean isColorSensorConnected() {
+        try {
+            if (colorSensor != null && specimenDetector != null) {
+                String connectionInfo = colorSensor.getConnectionInfo();
+                MatchConfig.telemetryPacket.put("Color Sensor Connection Info", connectionInfo);
+
+                // Validate connection info
+                return connectionInfo != null && connectionInfo.toLowerCase().contains("bus");
+            }
+        } catch (Exception e) {
+            // If an exception occurs, the sensor might be disconnected or unresponsive
+            MatchConfig.telemetryPacket.put("Color Sensor Error", "Disconnected or Inaccessible");
+        }
+        return false; // Return false if null or an exception is caught
     }
 
 }
