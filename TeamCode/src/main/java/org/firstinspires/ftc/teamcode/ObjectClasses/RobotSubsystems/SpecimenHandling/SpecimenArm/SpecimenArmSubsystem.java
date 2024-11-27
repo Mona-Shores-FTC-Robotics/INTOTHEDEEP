@@ -285,6 +285,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+
         // Retrieve current position from the encoder
         OctoQuad.EncoderDataBlock encoderDataBlock = new OctoQuad.EncoderDataBlock();
         octoquad.readAllEncoderData(encoderDataBlock);

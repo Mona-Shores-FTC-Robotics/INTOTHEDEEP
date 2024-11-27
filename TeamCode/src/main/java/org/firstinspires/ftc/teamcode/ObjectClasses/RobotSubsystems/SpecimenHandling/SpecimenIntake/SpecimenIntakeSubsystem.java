@@ -115,10 +115,13 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Robot.getInstance().getSimpleLogger().addData("Periodic of Specimen Intake");
+        Robot.getInstance().getSimpleLogger().addData(currentState);
         //todo this needs the same treatment as the sample intake/sample detector so we only detect once then move through states until we start detecting again
         if (specimenDetector != null) {
             // Update the detection state via the detector
             DetectionState specimenDetectionState = specimenDetector.updateDetection();
+            Robot.getInstance().getSimpleLogger().addData(specimenDetectionState);
             switch (specimenDetectionState) {
                 case JUST_DETECTED:
                     handleSpecimenPickup();  // Trigger pickup behavior if specimen was just detected
@@ -136,6 +139,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         }
         updateDashboardTelemetry();
         FlightRecorder.write("SPECIMEN_INTAKE_STATE" , new SpecimenIntakeMessage(currentState, currentPower));
+        Robot.getInstance().getSimpleLogger().update();
     }
 
     public void handleSpecimenPickup() {
