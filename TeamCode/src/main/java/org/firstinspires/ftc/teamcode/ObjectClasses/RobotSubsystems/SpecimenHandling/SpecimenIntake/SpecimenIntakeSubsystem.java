@@ -88,7 +88,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     public enum SpecimenIntakeDetectState {
         DETECTING,
-        DETECTED,
         WAITING_FOR_SPECIMEN_DELIVERY
     }
 
@@ -138,7 +137,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                     break;
                 }
                 if (specimenDetector.updateDetection() == DetectionState.JUST_DETECTED) {
-                    currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTED;
+                    handleSpecimenPickup();  // Trigger pickup behavior if specimen was just detected
+                    currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.WAITING_FOR_SPECIMEN_DELIVERY;
                     Robot.getInstance().getLightingSubsystem().setGoodSampleIndicator();
                 } else
                 {
@@ -148,10 +148,6 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                 FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(specimenDetector.getDetectionState() , specimenDetector.getConsensusProximity() , specimenDetector.getConsensusColor()));
                 break;
             }
-            case DETECTED:
-                handleSpecimenPickup();  // Trigger pickup behavior if specimen was just detected
-                currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.WAITING_FOR_SPECIMEN_DELIVERY;
-                break;
 
             case WAITING_FOR_SPECIMEN_DELIVERY:
             {
@@ -159,9 +155,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                 {
                     //If The arm has gone back to CCW_Arm Home or Pickup then we know we have delivered a specimen and should start detecting again
                     SpecimenArmSubsystem.SpecimenArmStates currentArmState = Robot.getInstance().getSpecimenArmSubsystem().getCurrentState();
-                    if (currentArmState == SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME ||
-                            currentArmState == SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP
-                            ) {
+                    if (currentArmState == SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME) {
+                        specimenDetector.clearDetectionState();
                         currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTING;
                     }
                 }
