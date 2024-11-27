@@ -76,4 +76,5 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
     implementation "page.j5155.roadrunner:ftc-otos:0.1.0+0.1.14"
+    implementation project(':HOMAR-FTC-Library')
 }
