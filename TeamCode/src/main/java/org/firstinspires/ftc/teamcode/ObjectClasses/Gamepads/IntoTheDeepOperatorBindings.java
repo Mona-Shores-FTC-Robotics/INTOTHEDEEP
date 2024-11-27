@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleTwister.SampleTwisterSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
@@ -47,9 +47,8 @@ public class IntoTheDeepOperatorBindings {
 
         //Main Controls
         DeploySampleIntake(GamepadKeys.Button.A);
-
-
         SampleScoreSequence(GamepadKeys.Button.X);
+        SampleTwister(GamepadKeys.Button.B);
         ManualLinearActuator(operatorGamePad::getRightY);
 //        bindClimberMotorMovement(GamepadKeys.Button.RIGHT_BUMPER);
 //        bindMoveClimberArm(GamepadKeys.Button.LEFT_BUMPER);
@@ -66,6 +65,24 @@ public class IntoTheDeepOperatorBindings {
         //Telemetry Cycling
         cycleTelemetry(GamepadKeys.Button.BACK);
 
+    }
+
+    private void SampleTwister(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_TWISTER)) {
+            SampleTwisterSubsystem sampleTwisterSubsystem = Robot.getInstance().getSampleTiwsterSubsystem();
+            Command faceInwards = new InstantCommand(sampleTwisterSubsystem::setTwisterServoFaceInward);
+            Command faceOutwards = new InstantCommand(sampleTwisterSubsystem::setTwisterServoFaceOutwards);
+
+            operatorGamePad.getGamepadButton(button)
+                    .toggleWhenPressed(faceInwards, faceOutwards);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Twist"
+            ));
+        }
     }
 
     //Todo test this and see if its worth using...

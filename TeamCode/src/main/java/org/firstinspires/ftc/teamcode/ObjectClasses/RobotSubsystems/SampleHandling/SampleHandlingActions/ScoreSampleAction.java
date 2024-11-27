@@ -20,7 +20,7 @@ public class ScoreSampleAction implements Action {
         // Define the sequence of actions within the constructor
         actionSequence = new SequentialAction(
                 new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::dumpSampleInBucket),
-                new SleepAction(.65),
+                new SleepAction(1.1),
                 new DriveForwardFromBasketAndBringLiftDown(10),
                 new InstantAction(Robot.getInstance().getLightingSubsystem()::setLightBlack)
         );

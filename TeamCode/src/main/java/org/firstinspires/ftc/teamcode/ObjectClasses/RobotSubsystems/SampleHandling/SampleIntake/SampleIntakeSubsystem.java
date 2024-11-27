@@ -103,9 +103,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
             }
         }
     }
+    private CRServo sampleIntakeSolo;  // Continuous rotation servo
 
-    private final CRServo sampleIntakeLeft;  // Continuous rotation servo
-    private final CRServo sampleIntakeRight;  // Continuous rotation servo
+    private CRServo sampleIntakeLeft;  // Continuous rotation servo
+    private CRServo sampleIntakeRight;  // Continuous rotation servo
 
     private final RevColorSensorV3 colorSensor;  // Nullable color sensor
     private SampleIntakeStates currentSampleIntakeState;
@@ -127,8 +128,14 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     // Constructor with color sensor
     public SampleIntakeSubsystem(final HardwareMap hMap, Robot.RobotType robotType,  final String intakeServoL, final String intakeServoR, final String colorSensorName) {
         SAMPLE_INTAKE_PARAMS.loadDefaultsForRobotType(robotType);
-        sampleIntakeLeft = hMap.get(CRServo.class, intakeServoL);
-        sampleIntakeRight = hMap.get(CRServo.class, intakeServoR);
+
+        if (intakeServoR!=null) {
+            sampleIntakeLeft = hMap.get(CRServo.class, intakeServoL);
+            sampleIntakeRight = hMap.get(CRServo.class, intakeServoR);
+        } else
+        {
+            sampleIntakeSolo = hMap.get(CRServo.class, intakeServoL);
+        }
 
         colorSensor = colorSensorName != null ? hMap.get(RevColorSensorV3.class, colorSensorName) : null;
 
@@ -139,9 +146,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         }
     }
 
+
     // Overloaded constructor without color sensor
-    public SampleIntakeSubsystem(final HardwareMap hMap, Robot.RobotType robotType, final String intakeServoL, final String intakeServoR) {
-        this(hMap, robotType, intakeServoL, intakeServoR, null);  // Calls the main constructor with no color sensor
+    public SampleIntakeSubsystem(final HardwareMap hMap, Robot.RobotType robotType, final String intakeServo, final String colorSensorName) {
+        this(hMap, robotType, intakeServo, null, colorSensorName);  // Calls the main constructor with no color sensor
     }
 
     // Initialize intake servo
@@ -218,6 +226,11 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         sampleIntakeRight.setPower(-currentPower);  // Apply the clipped power
     }
 
+    private void setSoloPower(double power) {
+        currentPower = Range.clip(power, - SAMPLE_INTAKE_PARAMS.MAX_POWER, SAMPLE_INTAKE_PARAMS.MAX_POWER);  // Clip power to safe range
+        sampleIntakeSolo.setPower(currentPower);  // Apply the clipped power
+    }
+
     // Set servo power, ensuring it's within limits
     private void setPower(double powerLeft, double powerRight) {
         sampleIntakeLeft.setPower(powerLeft);  // Apply the clipped power
@@ -228,27 +241,54 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public void setCurrentState(SampleIntakeStates state) {
         currentSampleIntakeState = state;
         if (state == SampleIntakeStates.REVERSING_INTAKE_TO_TRANSFER) {
-            setPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE);
+            if (sampleIntakeRight == null) {
+                setSoloPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE);
+            } else {
+                setPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE);
+            }
         } else if (state == SampleIntakeStates.REVERSING_INTAKE_TO_EJECT) {
-            setPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE);
+            if (sampleIntakeRight == null) {
+                setSoloPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE);
+            } else {
+                setPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE);
+            }
+        } else {
+
+            if (sampleIntakeRight == null) {
+                setSoloPower(state.getIntakePower());
+            } else {
+                setPower(state.getIntakePower());
+            }
         }
-        else setPower(state.getIntakePower());
     }
+
 
     // Set the current intake state and update power
     public void turnOffIntake() {
         SampleIntakeStates intakeOffState = SampleIntakeStates.INTAKE_OFF;
-        setPower(intakeOffState.getIntakePower());
+        if (sampleIntakeRight == null) {
+            setSoloPower(intakeOffState.getIntakePower());
+        } else {
+            setPower(intakeOffState.getIntakePower());
+        }
     }
 
     public void turnOnIntake() {
         SampleIntakeStates intakeOnState = SampleIntakeStates.INTAKE_ON;
-        setPower(intakeOnState.getIntakePower());
+        if (sampleIntakeRight == null) {
+            setSoloPower(intakeOnState.getIntakePower());
+        } else {
+            setPower(intakeOnState.getIntakePower());
+        }
     }
 
     public void reverseIntake() {
         SampleIntakeStates intakeReverseState = SampleIntakeStates.INTAKE_REVERSE;
-        setPower(intakeReverseState.getIntakePower(), intakeReverseState.getIntakePower());
+        if (sampleIntakeRight == null) {
+            setSoloPower(intakeReverseState.getIntakePower());
+        } else {
+            setPower(intakeReverseState.getIntakePower(), intakeReverseState.getIntakePower());
+        }
     }
 
     // Getters for telemetry use or other purposes
@@ -325,7 +365,4 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public IntakeDetectState getCurrentIntakeDetectState() {
         return currentIntakeDetectionState;
     }
-
-
-
 }

@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Deprecated.Vision.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleTwister.SampleTwisterSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenProcessingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
@@ -35,6 +36,8 @@ public class Robot {
     public RobotType robotType;
     public OpModeType opModeType;
 
+
+
     public enum RobotType {
         INTO_THE_DEEP_19429,
         INTO_THE_DEEP_20245,
@@ -53,6 +56,7 @@ public class Robot {
     //Specimen Subsystems
     private static SpecimenArmSubsystem specimenArmSubsystem;
     private static SpecimenIntakeSubsystem specimenIntakeSubsystem;
+    private static SampleTwisterSubsystem sampleTwisterSubsytem;
 
     private static ClimberSubsystem climberSubsystem;
     private static VisionSubsystem visionSubsystem;
@@ -64,7 +68,7 @@ public class Robot {
     private static LightingSubsystem lightingSubsystem;
 
     public enum SubsystemType {
-        DRIVE, SAMPLE_INTAKE, SAMPLE_LIFT_BUCKET, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION, SAMPLE_ACTUATOR, LIGHTING
+        DRIVE, SAMPLE_INTAKE, SAMPLE_LIFT_BUCKET, SPECIMEN_INTAKE, SPECIMEN_ARM, CLIMBER, VISION, SAMPLE_ACTUATOR, SAMPLE_TWISTER, LIGHTING
     }
 
     // Use an EnumSet for tracking available subsystems
@@ -122,11 +126,17 @@ public class Robot {
                 sampleLiftBucketSubsystem = new SampleLiftBucketSubsystem(hardwareMap, robotType, "samplelift", "samplebucket", "sampledumper");
                 registerSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET, sampleLiftBucketSubsystem);
 
-                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, robotType, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
+//                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, robotType, "sampleintakeleft", "sampleintakeright","samplecolorsensor");
+//                registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
+
+                sampleIntakeSubsystem = new SampleIntakeSubsystem(hardwareMap, robotType, "sampleIntake","samplecolorsensor");
                 registerSubsystem(SubsystemType.SAMPLE_INTAKE, sampleIntakeSubsystem);
 
                 specimenIntakeSubsystem = new SpecimenIntakeSubsystem(hardwareMap, robotType,"specimenintake","specimencolorsensor");
                 registerSubsystem(SubsystemType.SPECIMEN_INTAKE, specimenIntakeSubsystem);
+
+                sampleTwisterSubsytem = new SampleTwisterSubsystem(hardwareMap, robotType, "twister");
+                registerSubsystem(SubsystemType.SAMPLE_TWISTER, sampleTwisterSubsytem);
 
                 climberSubsystem = new ClimberSubsystem(hardwareMap, robotType, "climberservo", "climbermotor");
                 registerSubsystem(SubsystemType.CLIMBER, climberSubsystem);
@@ -242,7 +252,9 @@ public class Robot {
     public SpecimenProcessingStateMachine getSpecimenDetectionStateMachine(){return specimenProcessingStateMachine;}
     public SampleProcessingStateMachine getSampleProcessingStateMachine(){return sampleProcessingStateMachine;}
 
-
+    public SampleTwisterSubsystem getSampleTiwsterSubsystem() {
+        return sampleTwisterSubsytem;
+    }
     public LightingSubsystem getLightingSubsystem() {return lightingSubsystem;}
 
     public static RobotType getPreviousRobotType(RobotType currentType) {
