@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load CSV data
-data = pd.read_csv("auto.csv")
+data = pd.read_csv("a.csv")
 
 # Drop columns with mostly missing values
 data = data.dropna(axis=1, how='all')

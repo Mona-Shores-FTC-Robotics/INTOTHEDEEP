@@ -8,6 +8,8 @@ import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.LogFile;
+import com.acmerobotics.roadrunner.ftc.MessageSchema;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
@@ -242,6 +244,9 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     private final OctoQuad octoquad;
     private final int armEncoderChannel = 4; // Specify the Octoquad channel for the arm encoder
 
+    MessageSchema paramsSchema;
+
+
     public SpecimenArmSubsystem(final HardwareMap hMap , Robot.RobotType robotType , final String name) {
         // Initialize parameters based on robot type
         SPECIMEN_ARM_PARAMS.loadDefaultsForRobotType(robotType); // Configure parameters for this robot type
@@ -281,6 +286,9 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         currentAngleDegrees = SPECIMEN_ARM_PARAMS.CCW_HOME;
         targetAngleDegrees = SPECIMEN_ARM_PARAMS.CCW_HOME;
         pidController.setSetPoint(targetAngleDegrees);
+
+
+        FlightRecorder.write("SpecimenArmParamsSchema", LogFile.schemaOfClass(SpecimenArmSubsystem.SpecimenArmParams.class));
     }
 
     @Override
