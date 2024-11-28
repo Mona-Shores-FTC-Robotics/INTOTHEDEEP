@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleTwister.SampleTwisterSubsystem;
 
 @Config
 public class SampleButtonHandling {
@@ -12,21 +14,25 @@ public class SampleButtonHandling {
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
+    private final SampleTwisterSubsystem twisterSubsystem;
 
     // Constructor
     public SampleButtonHandling(SampleLinearActuatorSubsystem actuatorSubsystem,
                                 SampleIntakeSubsystem intakeSubsystem,
-                                SampleLiftBucketSubsystem liftSubsystem) {
+                                SampleLiftBucketSubsystem liftSubsystem,
+                                SampleTwisterSubsystem twisterSubsystem) {
         this.actuatorSubsystem = actuatorSubsystem;
         this.intakeSubsystem = intakeSubsystem;
         this.liftSubsystem = liftSubsystem;
+        this.twisterSubsystem = twisterSubsystem;
     }
 
     public void onIntakeButtonPress() {
             switch (actuatorSubsystem.getCurrentState()) {
                 case FULLY_RETRACTED:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-                    actuatorSubsystem.flipSampleIntakeDown();
+                    twisterSubsystem.setTwisterServoFaceOutwards();
+                    actuatorSubsystem.setFlipperTargetPositionWithSteps(SampleLinearActuatorSubsystem.ACTUATOR_PARAMS.FLIP_DOWN_POSITION, 20);
                     actuatorSubsystem.partiallyDeploy();
                     break;
 

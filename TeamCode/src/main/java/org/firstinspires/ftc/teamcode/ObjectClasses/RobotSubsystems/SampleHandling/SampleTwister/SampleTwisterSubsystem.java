@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Configurable
 public class SampleTwisterSubsystem extends SubsystemBase {
 
     public static class SampleTwisterParams extends ConfigurableParameters {
+        public double TWISTER_FACE_DUMP;
         public double TWISTER_FACE_OUTWARDS;
         public double TWISTER_FACE_INWARDS;
 
@@ -22,8 +23,9 @@ public class SampleTwisterSubsystem extends SubsystemBase {
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
                 case INTO_THE_DEEP_20245:
-                    TWISTER_FACE_INWARDS = .4;
-                    TWISTER_FACE_OUTWARDS = .6;
+                    TWISTER_FACE_INWARDS = 1.0;
+                    TWISTER_FACE_OUTWARDS = .41;
+                    TWISTER_FACE_DUMP = .61;
                     break;
 
                 default:
@@ -37,7 +39,7 @@ public class SampleTwisterSubsystem extends SubsystemBase {
 
     public enum SampleTwisterStates {
         FACE_INWARDS,
-        FACE_OUTWARDS;
+        FACE_OUTWARDS, FACE_DUMP_SIDE;
 
         public double getTwisterPosition() {
             switch (this) {
@@ -45,6 +47,8 @@ public class SampleTwisterSubsystem extends SubsystemBase {
                     return SAMPLE_TWISTER_PARAMS.TWISTER_FACE_INWARDS;
                 case FACE_OUTWARDS:
                     return SAMPLE_TWISTER_PARAMS.TWISTER_FACE_OUTWARDS;
+                case FACE_DUMP_SIDE:
+                    return SAMPLE_TWISTER_PARAMS.TWISTER_FACE_DUMP;
                 default:
                     throw new IllegalStateException("Power not defined for state: " + this);
             }
@@ -84,6 +88,11 @@ public class SampleTwisterSubsystem extends SubsystemBase {
     // Set the current intake state and update power
     public void setTwisterServoFaceOutwards() {
         SampleTwisterStates intakeOffState = SampleTwisterStates.FACE_OUTWARDS;
+        sampleTwister.setPosition(intakeOffState.getTwisterPosition());
+    }
+    // Set the current intake state and update power
+    public void setTwisterServoDumpToSide() {
+        SampleTwisterStates intakeOffState = SampleTwisterStates.FACE_DUMP_SIDE;
         sampleTwister.setPosition(intakeOffState.getTwisterPosition());
     }
 }

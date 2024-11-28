@@ -56,8 +56,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     COLOR_HISTORY_SIZE = 5;
                     TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 800.0;
-                    LEFT_POWER_REVERSE = .4;
-                    RIGHT_POWER_REVERSE = .4;
+                    LEFT_POWER_REVERSE = 1.0;
+                    RIGHT_POWER_REVERSE = 1.0;
                     FULL_SPEED_REVERSE = 1;
                     break;
 
@@ -69,8 +69,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     COLOR_HISTORY_SIZE = 5;
                     TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 801.0;
-                    LEFT_POWER_REVERSE = .4;
-                    RIGHT_POWER_REVERSE = .4;
+                    LEFT_POWER_REVERSE = 1.0;
+                    RIGHT_POWER_REVERSE = 1.0;
                     FULL_SPEED_REVERSE = 1;
                     break;
 
@@ -162,6 +162,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        DetectionState detectionState = sampleDetector.updateDetection();
         switch (currentIntakeDetectionState) {
             case DETECTING:
                 if (!isColorSensorConnected()) {
@@ -169,7 +170,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(SampleDetector.DetectionState.SENSOR_DISCONNECTED,-1 , FieldConstants.SampleColor.UNKNOWN));
                     break;
                 }
-                if (sampleDetector.updateDetection() == DetectionState.JUST_DETECTED){
+                if (detectionState == DetectionState.JUST_DETECTED){
                     if (sampleDetector.isGoodSample()) currentIntakeDetectionState = IntakeDetectState.DETECTED_GOOD_SAMPLE;
                     else if (sampleDetector.isBadSample()) currentIntakeDetectionState = IntakeDetectState.DETECTED_BAD_SAMPLE;
                 }

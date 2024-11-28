@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.Lig
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleTwister.SampleTwisterSubsystem;
 import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleProcessingStateMachineMessage;
 import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenArmPowerMessage;
 
@@ -18,6 +19,7 @@ public class SampleProcessingStateMachine {
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
     private final LightingSubsystem lightingSubsystem;
+    private final SampleTwisterSubsystem sampleTwisterSubsystem;
 
     public enum SampleDetectionStates {
         ON_GOOD_SAMPLE_DETECTION,
@@ -33,11 +35,13 @@ public class SampleProcessingStateMachine {
     public SampleProcessingStateMachine(SampleLinearActuatorSubsystem actuatorSubsystem,
                                         SampleIntakeSubsystem intakeSubsystem,
                                         SampleLiftBucketSubsystem liftSubsystem,
+                                        SampleTwisterSubsystem sampleTwisterSubsystem,
                                         LightingSubsystem lightingSubsystem) {
         this.actuatorSubsystem = actuatorSubsystem;
         this.intakeSubsystem = intakeSubsystem;
         this.liftSubsystem = liftSubsystem;
         this.lightingSubsystem = lightingSubsystem;
+        this.sampleTwisterSubsystem = sampleTwisterSubsystem;
         currentSampleDetectionState= SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
     }
 
@@ -60,6 +64,7 @@ public class SampleProcessingStateMachine {
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                 liftSubsystem.setBucketToIntakePosition();
                 actuatorSubsystem.flipSampleIntakeUpAndRetract();
+                sampleTwisterSubsystem.setTwisterServoFaceInward();
                 lightingSubsystem.setGoodSampleIndicator();
                 break;
 
@@ -78,6 +83,7 @@ public class SampleProcessingStateMachine {
             case ON_BAD_SAMPLE_DETECTED:
                 lightingSubsystem.setBadSampleWarningColor();
                 currentSampleDetectionState = SampleDetectionStates.EJECTING_BAD_SAMPLE;
+                sampleTwisterSubsystem.setTwisterServoDumpToSide();
                 intakeSubsystem.ejectBadSample();
                 break;
             case EJECTING_BAD_SAMPLE:
@@ -85,11 +91,16 @@ public class SampleProcessingStateMachine {
                     currentSampleDetectionState = SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
                     lightingSubsystem.setLightBlack();
                     //Presumably we want to grab another sample from the submersible...
-                    actuatorSubsystem.partiallyRetractAndIntakeOn();
+                    sampleTwisterSubsystem.setTwisterServoFaceOutwards();
+                    intakeSubsystem.turnOnIntake();
                 }
                 break;
         }
+        //todo please make sure transition between manual and auto pick up is okay
+        // check on speeds
+        // hit A make sure we turn around when we retract and spit out, what about a blue?
     }
+
 
     public SampleDetectionStates getCurrentSampleDetectionState() {
         return currentSampleDetectionState;

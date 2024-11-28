@@ -15,11 +15,13 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     public static class ActuatorParams extends ConfigurableParameters {
+        public double FLIP_UP_INCREMENT_TIME =1.0 ;
         public double FLIP_UP_POSITION;
         public double FLIP_DOWN_POSITION;
         public double FLIP_UP_DELAY_TIME_MS;
@@ -49,8 +51,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
                     ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
                     FLIP_UP_DELAY_TIME_MS = 250;
-                    FLIP_UP_POSITION= 1.0;
-                    FLIP_DOWN_POSITION =0.0;
+                    FLIP_UP_POSITION= .4;
+                    FLIP_DOWN_POSITION =0.7;
                     break;
 
                 case INTO_THE_DEEP_20245:
@@ -65,8 +67,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
 
                     FLIP_UP_DELAY_TIME_MS = 250;
-                    FLIP_UP_POSITION= 1.0;
-                    FLIP_DOWN_POSITION =0.0;
+                    FLIP_UP_POSITION= .4;
+                    FLIP_DOWN_POSITION =0.7;
                     break;
 
                 default:
@@ -106,6 +108,12 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     ElapsedTime actuatorTimer = new ElapsedTime();
     ElapsedTime flipUpTimer = new ElapsedTime();
 
+    private double targetFlipperPosition;
+    private double currentFlipperPosition;
+    private double flipperStepIncrement;
+    private boolean movingToTarget = false;
+    ElapsedTime flipUpIncrementTimer = new ElapsedTime();
+
     // Constructor with limit switch
     public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType, String actuatorMotorName, String sampleIntakeFlipperServoName) {
         ACTUATOR_PARAMS.loadDefaultsForRobotType(robotType);
@@ -137,6 +145,19 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         // Cache the current actuator position and target ticks
         currentTicks = sampleActuator.getCurrentPosition();
         currentPower = sampleActuator.getPower();
+
+        // Handle bucket movement
+        if (movingToTarget && flipUpIncrementTimer.milliseconds() > ACTUATOR_PARAMS.FLIP_UP_INCREMENT_TIME) { // Adjust delay as needed
+            currentFlipperPosition += flipperStepIncrement;
+            sampleIntakeFlipperServo.setPosition(currentFlipperPosition);
+            flipUpIncrementTimer.reset();
+
+            if (currentFlipperPosition >= targetFlipperPosition )
+            {
+                sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_DOWN_POSITION);
+                movingToTarget = false;
+            }
+        }
 
         switch (currentState)
         {
@@ -280,6 +301,18 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     }
     public void flipSampleIntakeDown() {
         sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_DOWN_POSITION);
+    }
+
+    public void flipSampleIntakeUp() {
+        sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_UP_POSITION);
+    }
+
+    public void setFlipperTargetPositionWithSteps(double targetPosition, int numSteps) {
+        targetFlipperPosition = targetPosition;
+        currentFlipperPosition = sampleIntakeFlipperServo.getPosition();  // Starting position
+        flipperStepIncrement = (targetFlipperPosition - currentFlipperPosition) / numSteps;
+        movingToTarget = true;
+        flipUpIncrementTimer.reset();  // Start timing
     }
 
 }

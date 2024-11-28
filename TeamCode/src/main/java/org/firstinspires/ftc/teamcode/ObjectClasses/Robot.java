@@ -147,8 +147,8 @@ public class Robot {
                 if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&
                         hasSubsystem(SubsystemType.SAMPLE_INTAKE) &&
                         hasSubsystem(SubsystemType.SAMPLE_ACTUATOR)) {
-                    sampleProcessingStateMachine = new SampleProcessingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem, lightingSubsystem);
-                    sampleButtonHandling = new SampleButtonHandling(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem);
+                    sampleProcessingStateMachine = new SampleProcessingStateMachine(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem, sampleTwisterSubsytem, lightingSubsystem);
+                    sampleButtonHandling = new SampleButtonHandling(sampleLinearActuatorSubsystem, sampleIntakeSubsystem, sampleLiftBucketSubsystem, sampleTwisterSubsytem);
                 }
 
                 if (
