@@ -35,9 +35,9 @@ public class DriveParams {
         MecanumDrive.PARAMS.maxAngAccel = Math.toRadians(360);;
 
         // path controller gains
-        MecanumDrive.PARAMS.axialGain = 8;
-        MecanumDrive.PARAMS.lateralGain = 10;
-        MecanumDrive.PARAMS.headingGain = 8; // shared with turn
+        MecanumDrive.PARAMS.axialGain = 13;
+        MecanumDrive.PARAMS.lateralGain = 11;
+        MecanumDrive.PARAMS.headingGain = 9; // shared with turn
 
         MecanumDrive.PARAMS.axialVelGain = 0;
         MecanumDrive.PARAMS.lateralVelGain = 0;

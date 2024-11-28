@@ -1,6 +1,7 @@
 package com.example.sharedconstants.Routes.OBS;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
+import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FIVE;
@@ -88,10 +89,13 @@ public class OBS_Score4_Fruitport_Improved extends OBS_Score_1_Specimen_Preload 
         scoreObservationPreload(CHAMBER_SLOT_ONE_REDO);
         pushFirstNeutralSpecimen();
         pushSecondNeutralSpecimen();
-        pickupSpecimenFromTriangleComingFromSecondSpike();
+        driveToTriangleApproachFromSecondSpike();
+        pickupSpecimenFromTriangle();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_THREE_REDO);
+        driveToTriangleApproachFromChamber();
         pickupSpecimenFromTriangle();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE_REDO);
+        driveToTriangleApproachFromChamber();
         pickupSpecimenFromTriangle();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_SEVEN_REDO);
         driveToPark();
@@ -103,7 +107,7 @@ public class OBS_Score4_Fruitport_Improved extends OBS_Score_1_Specimen_Preload 
                 .setTangent(ANGLE_TOWARD_BLUE)
                 .afterDisp(2, robotAdapter.getAction(MOVE_PRELOAD_SPECIMEN_TO_CW_HOME))
                 .splineToLinearHeading(chamberSlot.plus(new Twist2d(new Vector2d(-7,0), 0)), chamberSlot.heading.toDouble(), obsVelocity)
-                .waitSeconds(.01)
+                .stopAndAdd(new NullAction())
                 .splineToConstantHeading(PoseToVector(chamberSlot), chamberSlot.heading.toDouble(), obsSlowVelocity)
                 .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
                 .waitSeconds(.15);
@@ -115,7 +119,7 @@ public class OBS_Score4_Fruitport_Improved extends OBS_Score_1_Specimen_Preload 
                 .splineToConstantHeading(PoseToVector(RIGHT_OF_CHAMBER_REDO), ANGLE_TOWARD_BLUE, obsFastVelocity)
                 .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_ONE_REDO),ANGLE_TOWARD_OBSERVATION, obsFastVelocity)
                 .setReversed(true)
-                .splineTo(PoseToVector(OBS_DELIVER_SPIKE_ONE_REDO),ANGLE_TOWARD_RED, obsFastVelocity)
+                .lineToY(OBS_DELIVER_SPIKE_ONE_REDO.position.y, obsFastVelocity)
                 .setReversed(false)
                 .splineToConstantHeading(PoseToVector(OBS_SPIKE_ONE_REDO),ANGLE_TOWARD_BLUE, obsFastVelocity);
     }
@@ -124,39 +128,41 @@ public class OBS_Score4_Fruitport_Improved extends OBS_Score_1_Specimen_Preload 
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .splineToConstantHeading(PoseToVector(OBS_BEHIND_SPIKE_TWO_REDO), ANGLE_TOWARD_OBSERVATION, obsFastVelocity)
                 .setReversed(true)
-                .splineToConstantHeading(PoseToVector(OBS_DELIVER_SPIKE_TWO_REDO),ANGLE_TOWARD_RED, obsFastVelocity);
+                .lineToY(OBS_DELIVER_SPIKE_TWO_REDO.position.y, obsFastVelocity);
     }
 
     public void scoreOnHighChamberFromTriangle(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(0,-7)), chamberSlot.heading.toDouble(), obsVelocity)
-                .waitSeconds(.01)
+                .stopAndAdd(new NullAction())
                 .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE, obsSlowVelocity, obsSlowAcceleration)
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));
+    }
+
+    public void driveToTriangleApproachFromChamber()
+    {
+        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+                .setReversed(true)
+                .afterDisp(6, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
+                .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_TIP_APPROACH), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
+                .stopAndAdd(new NullAction());
+    }
+
+    public void driveToTriangleApproachFromSecondSpike() {
+        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+
+                .afterDisp(5, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
+                .setTangent(ANGLE_TOWARD_NET)
+                .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_TIP_APPROACH), ANGLE_TOWARD_RED, hairpinVelocity, hairpinAcceleration)
+                .stopAndAdd(new NullAction());
     }
 
     public void pickupSpecimenFromTriangle() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
-                .afterDisp(6, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
-                .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_TIP_APPROACH), ANGLE_TOWARD_RED, obsVelocity, obsAcceleration)
-                .waitSeconds(.01)
-                .setReversed(true)
                 .splineToLinearHeading(OBS_TRIANGLE_TIP_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration)
-                .waitSeconds(.15);
+                .waitSeconds(.2);
     }
-
-    public void pickupSpecimenFromTriangleComingFromSecondSpike() {
-        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .afterDisp(5, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
-                .setReversed(true)
-                .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_TIP_APPROACH), ANGLE_TOWARD_RED, hairpinVelocity, hairpinAcceleration)
-                .stopAndAdd(new NullAction())
-                .setReversed(true)
-                .splineToLinearHeading(OBS_TRIANGLE_TIP_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity, obsSlowAcceleration)
-                .waitSeconds(.15);
-    }
-
 
     private void driveToPark() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder

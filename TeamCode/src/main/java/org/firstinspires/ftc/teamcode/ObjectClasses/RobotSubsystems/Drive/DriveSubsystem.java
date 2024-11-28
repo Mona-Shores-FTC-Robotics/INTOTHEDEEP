@@ -85,14 +85,20 @@ public class DriveSubsystem extends SubsystemBase {
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
                     DriveParams.configureIntoTheDeep19429RRParams();
-                    mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+                    if (MatchConfig.hasAutoRun)
+                    {
+                        mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
+                    } else  mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+
                     DriveParams.configureIntoTheDeep19429Directions(mecanumDrive);
                     break;
 
                 case INTO_THE_DEEP_20245:
                     DriveParams.configureIntoTheDeep20245RRParams();
-                    mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-                    DriveParams.configureIntoTheDeep20245Directions(mecanumDrive);
+                    if (MatchConfig.hasAutoRun)
+                    {
+                        mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
+                    } else  mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));                    DriveParams.configureIntoTheDeep20245Directions(mecanumDrive);
                     break;
             }
             mecanumDrive.lazyImu.get().resetYaw();

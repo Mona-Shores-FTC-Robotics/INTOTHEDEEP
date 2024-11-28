@@ -54,8 +54,8 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_SCORE_4_FRUITPORT_IMPROVED;
-    private static final RoutesToRun blueObservationRoute = OBS_SCORE_4_FRUITPORT;
+    private static final RoutesToRun redObservationRoute = OBS_SCORE_4_PICKUP_AT_CORNER;
+    private static final RoutesToRun blueObservationRoute = OBS_SCORE_4_FRUITPORT_IMPROVED;
     private static final RoutesToRun redNetRoute = DO_NOTHING;
     private static final RoutesToRun blueNetRoute = redNetRoute;
 

@@ -260,6 +260,6 @@ public class AutoSelector extends LinearOpMode {
         Actions.runBlocking(parallelAction);
 
         // Update final autonomous data
-//        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+
     }
 }

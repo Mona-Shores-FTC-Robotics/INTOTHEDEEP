@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_315_DEGREES;
+import static com.example.sharedconstants.FieldConstants.ANGLE_340_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
@@ -42,13 +43,13 @@ public class DriveToObservationZone implements Action {
     private Action action;// Flag to indicate if the action has been cancelled
 
     // Velocity and acceleration overrides
-    public static final double VELOCITY_OVERRIDE = 45;
-    public static final double ACCELERATION_OVERRIDE = 45;
+    public static final double VELOCITY_OVERRIDE = 30;
+    public static final double ACCELERATION_OVERRIDE = 30;
     public static final double ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
     // Velocity and acceleration overrides
     public static final double VELOCITY_SLOW_OVERRIDE = 10;
-    public static final double ACCELERATION_SLOW_OVERRIDE = 20;
+    public static final double ACCELERATION_SLOW_OVERRIDE = 10;
 
     // Shared constraints for all routes
     public static VelConstraint velConstraint;
@@ -92,10 +93,11 @@ public class DriveToObservationZone implements Action {
             }
 
             action = robotAdapter.getActionBuilder(currentPose)
-                    .setReversed(true)
+                    .turnTo(ANGLE_TOWARD_NET)
                     .afterTime(.8, new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::gotoPickupAngle))
                     .afterTime(.8, new InstantAction(Robot.getInstance().getSpecimenIntakeSubsystem()::turnOnIntake))
-                    .splineToLinearHeading(FieldConstants.OBS_CORNER_APPROACH_AUDIENCE_WALL, ANGLE_315_DEGREES, velConstraint, accelConstraint)
+                    .setTangent(ANGLE_340_DEGREES)
+                    .splineToLinearHeading(FieldConstants.OBS_CORNER_APPROACH_DRIVE_TO_OBS_AUDIENCE_WALL, ANGLE_315_DEGREES, velConstraint, accelConstraint)
                     .setReversed(true)
                     .splineToLinearHeading(FieldConstants.OBS_CORNER_PICKUP_AUDIENCE_WALL, ANGLE_TOWARD_OBSERVATION, velSlowConstraint, accelSlowConstraint)
                     .build();

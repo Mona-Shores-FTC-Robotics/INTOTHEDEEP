@@ -45,7 +45,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                     SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
                     SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
                     SPECIMEN_INTAKE_PARAMS.MAX_POWER = 1.0;
-                    SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 30;
+                    SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 40;
                     SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 5;
                     break;
 
@@ -54,8 +54,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                     SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 0.8;
                     SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
                     SPECIMEN_INTAKE_PARAMS.MAX_POWER = 0.8;
-                    SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 25;
-                    SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 4;
+                    SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 50;
+                    SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 2;
                     break;
 
                 default:
@@ -88,7 +88,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
     public enum SpecimenIntakeDetectState {
         DETECTING,
-        WAITING_FOR_SPECIMEN_DELIVERY
+        DETECTED, WAITING_FOR_SPECIMEN_DELIVERY
     }
 
     private final CRServo specimenIntake;  // Continuous rotation servo
@@ -122,45 +122,55 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     // Initialize intake servo
     public void init() {
         preloadModeActive = Robot.getInstance().getOpModeType() == Robot.OpModeType.AUTO;
-        setCurrentState(SpecimenIntakeStates.INTAKE_OFF);  // Set default state to off
+        setCurrentState(SpecimenIntakeStates.INTAKE_OFF);  // Set delfault state to off
         currentPower = SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
         currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTING;
     }
 
     @Override
     public void periodic() {
-        switch (currentSpecimenIntakeDetectionState) {
-            case DETECTING: {
-                if (!isColorSensorConnected()) {
-                    //record that the specimen detector is disconnected in the log
-                    FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(SpecimenDetector.DetectionState.SENSOR_DISCONNECTED , - 1 , FieldConstants.SampleColor.UNKNOWN));
+        if (!isColorSensorConnected()) {
+            //record that the specimen detector is disconnected in the log
+            FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(SpecimenDetector.DetectionState.SENSOR_DISCONNECTED , - 1 , FieldConstants.SampleColor.UNKNOWN));
+        } else
+        {
+            DetectionState currentDetectionState = specimenDetector.updateDetection();
+            switch (currentSpecimenIntakeDetectionState) {
+                case DETECTING: {
+                    if (currentDetectionState == DetectionState.JUST_DETECTED) {
+                        handleSpecimenPickup();  // Trigger pickup behavior if specimen was just detected
+                        currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTED;
+                        Robot.getInstance().getLightingSubsystem().setGoodSampleIndicator();
+                    } else {
+                        //Set the lights off because we should no longer have a piece
+                        Robot.getInstance().getLightingSubsystem().setLightBlack();
+                    }
+                    FlightRecorder.write("SAMPLE_DETECTOR", new GamePieceDetectorMessage(specimenDetector.getDetectionState(), specimenDetector.getConsensusProximity(), specimenDetector.getConsensusColor()));
                     break;
                 }
-                if (specimenDetector.updateDetection() == DetectionState.JUST_DETECTED) {
-                    handleSpecimenPickup();  // Trigger pickup behavior if specimen was just detected
-                    currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.WAITING_FOR_SPECIMEN_DELIVERY;
-                    Robot.getInstance().getLightingSubsystem().setGoodSampleIndicator();
-                } else
-                {
-                    //Set the lights off because we should no longer have a piece
-                    Robot.getInstance().getLightingSubsystem().setLightBlack();
-                }
-                FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(specimenDetector.getDetectionState() , specimenDetector.getConsensusProximity() , specimenDetector.getConsensusColor()));
-                break;
-            }
 
-            case WAITING_FOR_SPECIMEN_DELIVERY:
-            {
-                if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
-                {
-                    //If The arm has gone back to CCW_Arm Home or Pickup then we know we have delivered a specimen and should start detecting again
-                    SpecimenArmSubsystem.SpecimenArmStates currentArmState = Robot.getInstance().getSpecimenArmSubsystem().getCurrentState();
-                    if (currentArmState == SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME) {
-                        specimenDetector.clearDetectionState();
-                        currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTING;
+                case DETECTED: {
+                    if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+                        //to avoid a quick double detection look for the arm to move away from SPECIMEN_PICKUP before moving to WAITING_FOR_SPECIMEN_DELIVERY
+                        SpecimenArmSubsystem.SpecimenArmStates currentArmState = Robot.getInstance().getSpecimenArmSubsystem().getCurrentState();
+                        if (currentArmState != SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP) {
+                            currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.WAITING_FOR_SPECIMEN_DELIVERY;
+                        }
                     }
+                    break;
                 }
-                break;
+                case WAITING_FOR_SPECIMEN_DELIVERY: {
+                    if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+                        //If The arm has gone back to CCW_Arm Home or Pickup then we know we have delivered a specimen and should start detecting again
+                        SpecimenArmSubsystem.SpecimenArmStates currentArmState = Robot.getInstance().getSpecimenArmSubsystem().getCurrentState();
+                        if (currentArmState == SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME ||
+                                currentArmState == SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP) {
+                            specimenDetector.clearDetectionState();
+                            currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTING;
+                        }
+                    }
+                    break;
+                }
             }
         }
         FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(specimenDetector.getDetectionState(), specimenDetector.getConsensusProximity() , specimenDetector.getConsensusColor()));
@@ -168,13 +178,14 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         FlightRecorder.write("SPECIMEN_INTAKE_STATE" , new SpecimenIntakeMessage(currentState, currentPower));
 
         //Simple Logging
+        Robot.getInstance().getSimpleLogger().update();
         Robot.getInstance().getSimpleLogger().addData("Periodic of Specimen Intake");
         Robot.getInstance().getSimpleLogger().addData(currentState);
         Robot.getInstance().getSimpleLogger().addData(specimenDetector.getDetectionState());
         Robot.getInstance().getSimpleLogger().addData(specimenDetector.getConsensusProximity());
         Robot.getInstance().getSimpleLogger().addData(specimenDetector.getConsensusColor());
         Robot.getInstance().getSimpleLogger().addData(currentSpecimenIntakeDetectionState);
-        Robot.getInstance().getSimpleLogger().update();
+
     }
 
     public void handleSpecimenPickup() {
@@ -225,8 +236,8 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
         String detectionState = (specimenDetector != null) ? specimenDetector.getDetectionState().toString() : "N/A";
 
         telemetry.addLine(String.format(
-                "%s | %s",
-                intakeState, detectionState
+                "%s | %s | %s",
+                intakeState, detectionState, currentSpecimenIntakeDetectionState
         ));
     }
 
