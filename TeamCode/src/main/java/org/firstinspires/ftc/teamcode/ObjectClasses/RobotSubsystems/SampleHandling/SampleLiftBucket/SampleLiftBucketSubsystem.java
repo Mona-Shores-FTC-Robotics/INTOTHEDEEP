@@ -23,13 +23,16 @@ import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleLiftMess
 @Config
 public class SampleLiftBucketSubsystem extends SubsystemBase {
 
+
+
     public static class SampleLiftParams extends ConfigurableParameters {
+        public double BUCKET_SOFT_LANDING_POS;
         public double BUCKET_INCREMENT_TIME, KA, KV, KG, KS;
         public double DUMP_TIME_MS, SCALE_FACTOR_FOR_MANUAL_LIFT, LIFT_DEAD_ZONE_FOR_MANUAL_LIFT, LIFT_POWER;
         public int MAX_TARGET_TICKS, MIN_TARGET_TICKS, HOME_HEIGHT_TICKS, HIGH_BASKET_TICKS, LOW_BASKET_TICKS, LIFT_HEIGHT_TICK_THRESHOLD;
         public double TIMEOUT_TIME_SECONDS, VEL_P, VEL_I, VEL_D;
         public double BUCKET_SCORE_POS, BUCKET_INTAKE_POS;
-        public double DUMPER_HOME_POS, DUMPER_PRESCORE_POS, DUMPER_DUMP_POS;
+        public double DUMPER_HOME_POS, DUMPER_PRESCORE_POS, DUMPER_DUMP_POS, DUMPER_HOLD_HIGH_POS;
         public double UPWARD_VELOCITY, DOWNWARD_VELOCITY, UPWARD_ACCELERATION, DOWNWARD_ACCELERATION;
 
         @Override
@@ -52,11 +55,11 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     UPWARD_VELOCITY = 180;    DOWNWARD_VELOCITY = 5;    UPWARD_ACCELERATION = 120;    DOWNWARD_ACCELERATION = 2;
 
                     // Bucket Servo Positions
-                    BUCKET_SCORE_POS = .32;    BUCKET_INTAKE_POS = .85;
+                    BUCKET_SCORE_POS = .32;    BUCKET_INTAKE_POS = .85; BUCKET_SOFT_LANDING_POS = .75;
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.678;    DUMPER_PRESCORE_POS = 0.74;    DUMPER_DUMP_POS = 0.98;
+                    DUMPER_HOME_POS = 0.678;    DUMPER_PRESCORE_POS = 0.74;    DUMPER_DUMP_POS = 0.98; DUMPER_HOLD_HIGH_POS = .78;
                     DUMP_TIME_MS = 800;
 
                     break;
@@ -76,14 +79,14 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     UPWARD_VELOCITY = 5;    DOWNWARD_VELOCITY = -18;    UPWARD_ACCELERATION = 2;    DOWNWARD_ACCELERATION = -1;
 
                     // Bucket Positions
-                    BUCKET_SCORE_POS = 0.2;    BUCKET_INTAKE_POS = .775;
+                    BUCKET_SCORE_POS = 0.23;    BUCKET_INTAKE_POS = .775;  BUCKET_SOFT_LANDING_POS = .65;
 
                     // Timing and Increment
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.75;    DUMPER_PRESCORE_POS = .81;    DUMPER_DUMP_POS = 0.98;
-                    DUMP_TIME_MS = 800;
+                    DUMPER_HOME_POS = .52;    DUMPER_PRESCORE_POS = .55;    DUMPER_DUMP_POS = 0.82; DUMPER_HOLD_HIGH_POS = .60;
+                    DUMP_TIME_MS = 700;
 
                     break;
                 default:
@@ -116,9 +119,11 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     public enum BucketStates {
         BUCKET_INTAKE_POS,
         BUCKET_SCORE_POS,
+        BUCKET_SOFT_LANDING_POS,
         MOVING_TO_SCORE_POSITION,
         MOVING_TO_INTAKE_POSITION,
-        MOVING_TO_PRE_SCORE_POSITION;
+        MOVING_TO_PRE_SCORE_POSITION,
+        MOVING_TO_SOFT_LANDING_POSITION;
 
         public double getBucketPosition() {
             switch (this) {
@@ -126,6 +131,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     return SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS;
                 case BUCKET_SCORE_POS:
                     return SAMPLE_LIFT_PARAMS.BUCKET_SCORE_POS;
+                case BUCKET_SOFT_LANDING_POS:
+                    return SAMPLE_LIFT_PARAMS.BUCKET_SOFT_LANDING_POS;
                 default:
                     throw new IllegalStateException("Power not defined for state: " + this);
             }
@@ -135,7 +142,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     public enum DumperStates {
         DUMPER_HOME,
         DUMPER_DUMP,
-        DUMPER_PRESCORE;
+        DUMPER_PRESCORE,
+        DUMPER_HOLD_HIGH;
 
         public double getDumperPosition() {
             switch (this) {
@@ -145,6 +153,8 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     return SAMPLE_LIFT_PARAMS.DUMPER_PRESCORE_POS;
                 case DUMPER_DUMP:
                     return SAMPLE_LIFT_PARAMS.DUMPER_DUMP_POS;
+                case DUMPER_HOLD_HIGH:
+                    return SAMPLE_LIFT_PARAMS.DUMPER_HOLD_HIGH_POS;
                 default:
                     throw new IllegalStateException("Power not defined for state: " + this);
             }
@@ -265,6 +275,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             {
                 bucket.setPosition(BucketStates.BUCKET_SCORE_POS.getBucketPosition());
                 currentBucketState=BucketStates.BUCKET_SCORE_POS;
+                movingToTarget = false;
+            } else if (currentBucketState==BucketStates.MOVING_TO_SOFT_LANDING_POSITION &&
+                    currentBucketPosition >= targetBucketPosition )
+            {
+                bucket.setPosition(BucketStates.BUCKET_SOFT_LANDING_POS.getBucketPosition());
+                currentBucketState=BucketStates.BUCKET_SOFT_LANDING_POS;
                 movingToTarget = false;
             }
 
@@ -398,6 +414,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         dumper.setPosition(currentDumperState.getDumperPosition());
     }
 
+    public void moveDumperToHighHold() {
+        currentDumperState= DumperStates.DUMPER_HOLD_HIGH;
+        dumper.setPosition(currentDumperState.getDumperPosition());
+    }
+
+
 
     public SampleLiftStates getCurrentLiftState() {
         return currentLiftState;
@@ -503,8 +525,15 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     //todo consider adjusting how fast bucket servo arm goes down/up to help with net side auto?
     public void setBucketToIntakePosition() {
         currentBucketState=BucketStates.MOVING_TO_INTAKE_POSITION;
-        setBucketTargetPositionWithSteps(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS, 10);
+        setBucketTargetPositionWithSteps(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS, 6);
     }
+
+    public void setBucketToSoftLandingPosition() {
+        currentBucketState=BucketStates.MOVING_TO_SOFT_LANDING_POSITION;
+        setBucketTargetPositionWithSteps(SAMPLE_LIFT_PARAMS.BUCKET_SOFT_LANDING_POS, 6);
+    }
+
+
 
     public void setBucketToScorePosition() {
         currentBucketState=BucketStates.MOVING_TO_SCORE_POSITION;

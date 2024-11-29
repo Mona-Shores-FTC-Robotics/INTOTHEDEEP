@@ -3,6 +3,8 @@ package com.example.sharedconstants.Routes.NET.SamplePreload;
 import static com.example.sharedconstants.FieldConstants.ANGLE_160_DEGREES;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT_AUTO;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_AUTO;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_DRIVE_TO_NET_APPROACH;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_DRIVE_TO_NET_SCORE;
 import static com.example.sharedconstants.FieldConstants.NET_START_POSE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_HIGH_BASKET;
@@ -47,8 +49,8 @@ public class NET_Score_1_Sample_Preload extends Routes {
         netTrajectoryActionBuilder = robotAdapter.getActionBuilder(NET_START_POSE)
                 .setTangent(ANGLE_160_DEGREES)
                 .afterDisp(10, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
-                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, Math.toRadians(235), preloadVelocity, preloadAcceleration)
-                .splineToLinearHeading(NET_BASKET_AUTO, Math.toRadians(235), preloadVelocity, preloadAcceleration);
+                .splineToLinearHeading(NET_BASKET_DRIVE_TO_NET_APPROACH, Math.toRadians(225), preloadVelocity, preloadAcceleration)
+                .splineToLinearHeading(NET_BASKET_DRIVE_TO_NET_SCORE, Math.toRadians(225), preloadVelocity, preloadAcceleration);
     }
 
     public void scoreSampleInHighBasket(){
