@@ -43,6 +43,7 @@ public class SampleButtonHandling {
                 case PARTIALLY_DEPLOYING:
                 default:
                     intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
+                    twisterSubsystem.setTwisterServoFaceInward();
                     actuatorSubsystem.flipSampleIntakeUpAndRetract();
                     break;
 

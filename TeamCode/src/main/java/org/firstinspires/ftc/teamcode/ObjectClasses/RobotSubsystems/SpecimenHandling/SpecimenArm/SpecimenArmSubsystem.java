@@ -14,6 +14,7 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -92,7 +93,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
                     // PID parameters
                     SPECIMEN_ARM_PARAMS.P = 0.0044;
-                    SPECIMEN_ARM_PARAMS.I = .015;
+                    SPECIMEN_ARM_PARAMS.I = .025;
                     SPECIMEN_ARM_PARAMS.D = .0001;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
@@ -106,7 +107,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.MAX_POWER = 1.0;
 
                     // Preset Angles
-                    SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
+                    SPECIMEN_ARM_PARAMS.CCW_HOME = 243.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
                     SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 214;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
@@ -119,7 +120,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.TIMEOUT_TIME_SECONDS = 1.5;
 
                     // Encoder Offset
-                    SPECIMEN_ARM_PARAMS.ENCODER_OFFSET = 123.28;
+                    SPECIMEN_ARM_PARAMS.ENCODER_OFFSET = 249.16;
                     break;
 
                 case INTO_THE_DEEP_20245:
@@ -248,7 +249,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
         arm = hMap.get(DcMotorEx.class , name);
         arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        arm.setDirection(DcMotorEx.Direction.REVERSE);
+        arm.setDirection(DcMotorEx.Direction.FORWARD);
         currentState = CCW_ARM_HOME;
         flipArmTimer = new ElapsedTime();
         zeroPowerTimer = new ElapsedTime();

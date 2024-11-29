@@ -29,9 +29,9 @@ public class SpecimenButtonHandling {
             case CCW_ARM_HOME:
             default:
                 armSubsystem.setTargetAngle(SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP);
-                if (!intakeSubsystem.getSpecimenDetector().haveSpecimen()) {
+                //if (!intakeSubsystem.getSpecimenDetector().haveSpecimen()) {
                     intakeSubsystem.setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_ON);
-                }
+                //}
                 break;
         }
     }
