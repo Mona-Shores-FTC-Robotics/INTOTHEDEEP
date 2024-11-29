@@ -18,6 +18,7 @@ import com.example.sharedconstants.Routes.OBS.OBS_Score4_PickupAtTriangleTip;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_SQUARE_AUTO;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport;
 import com.example.sharedconstants.Routes.Routes;
+import com.example.sharedconstants.Routes.TurnOnly;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -88,6 +89,11 @@ public class AutoSelector extends LinearOpMode {
         Routes obsRoute;
         List<Routes> obsRouteList = new ArrayList<>();
         robotAdapter.setAllianceColor(allianceColor);
+
+
+        obsRoute = new TurnOnly(robotAdapter);
+        obsRoute.buildRoute();
+        obsRouteList.add(obsRoute);
 
         obsRoute = new OBS_Score4_Fruitport(robotAdapter);
         obsRoute.buildRoute();

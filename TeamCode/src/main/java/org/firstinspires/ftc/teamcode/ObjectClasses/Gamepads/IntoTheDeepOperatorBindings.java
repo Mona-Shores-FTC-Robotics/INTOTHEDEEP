@@ -47,8 +47,6 @@ public class IntoTheDeepOperatorBindings {
 
         //Main Controls
         DeploySampleIntake(GamepadKeys.Button.A);
-
-
         SampleScoreSequence(GamepadKeys.Button.X);
         ManualLinearActuator(operatorGamePad::getRightY);
 //        bindClimberMotorMovement(GamepadKeys.Button.RIGHT_BUMPER);

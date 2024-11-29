@@ -55,6 +55,7 @@ public class DriveToNetZone implements Action {
             }
 
             action = robotAdapter.getActionBuilder(currentPose)
+                    .turnTo(ANGLE_225_DEGREES)
                     .setTangent(ANGLE_TOWARD_NET)
                     .splineToLinearHeading(FieldConstants.NET_BASKET_DRIVE_TO_NET, ANGLE_225_DEGREES).build();
 

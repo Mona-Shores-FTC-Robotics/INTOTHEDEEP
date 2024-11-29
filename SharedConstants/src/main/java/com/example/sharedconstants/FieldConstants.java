@@ -136,9 +136,9 @@ public class FieldConstants {
     public static Pose2d NET_SPIKE_THREE = new Pose2d(-3*TILE+HALF_ROBOT_WIDTH,-TILE-HALF_ROBOT_LENGTH-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d NET_SPIKE_THREE_APPROACH = NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(-6,0), 0));
 
-    public static Pose2d NET_BASKET = new Pose2d(-58, -62, ANGLE_45_DEGREES);
+    public static Pose2d NET_BASKET = new Pose2d(-59, -61, ANGLE_45_DEGREES);
     public static Pose2d NET_BASKET_PRE_SCORE = new Pose2d(NET_BASKET.position.x+15, NET_BASKET.position.y+15, ANGLE_45_DEGREES); //-48 -52
-    public static Pose2d NET_BASKET_DRIVE_TO_NET = new Pose2d(NET_BASKET.position.x+5, NET_BASKET.position.y+5, Math.toRadians(55)); //-48 -52
+    public static Pose2d NET_BASKET_DRIVE_TO_NET = new Pose2d(NET_BASKET.position.x+8, NET_BASKET.position.y+10, ANGLE_45_DEGREES); //-48 -52
 
     public static Pose2d NET_BASKET_AUTO = new Pose2d(-59, -61, Math.toRadians(55)); //-48 -52
     public static Pose2d NET_BASKET_ALIGNMENT_AUTO = new Pose2d(NET_BASKET_AUTO.position.x+5, NET_BASKET_AUTO.position.y+5, Math.toRadians(55)); //-48 -52

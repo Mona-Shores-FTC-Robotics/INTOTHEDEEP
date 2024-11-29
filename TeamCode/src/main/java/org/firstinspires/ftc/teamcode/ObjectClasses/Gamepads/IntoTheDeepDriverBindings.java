@@ -58,6 +58,7 @@ public class IntoTheDeepDriverBindings {
         //Main Controls
         bindDefaultDriving(driverGamePad::getLeftY , driverGamePad::getLeftX , (driverGamePad::getRightX));
         bindSpecimenArmIntakeAndScore(GamepadKeys.Button.A);
+        bindNitroMode(GamepadKeys.Button.LEFT_BUMPER);
         bindSlowMode(GamepadKeys.Button.RIGHT_BUMPER);
         driveToNetZone(GamepadKeys.Button.X);
         driveToObservationZone(GamepadKeys.Button.B);
@@ -71,8 +72,8 @@ public class IntoTheDeepDriverBindings {
         resetGyro(GamepadKeys.Button.DPAD_DOWN);
 
         // Configuration Options
-        cycleTelemetry(GamepadKeys.Button.LEFT_BUMPER);
-        cycleDriveMode(GamepadKeys.Button.DPAD_UP);
+        cycleTelemetry(GamepadKeys.Button.BACK);
+
         //todo should we switch this to the OPTIONS button so we don't risk accidentally pressing when setting controller on driver station?
         toggleFieldOrientedControl(GamepadKeys.Button.START);
 
@@ -80,6 +81,21 @@ public class IntoTheDeepDriverBindings {
         //todo should these be implemented as just buttons to set the orientation of the robot to a fixed angle without anything else?
 //        bindBucketAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
 //        bindSpecimenAngleDriving(GamepadKeys.Trigger.RIGHT_TRIGGER);
+    }
+
+    private void bindNitroMode(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed(new InstantCommand(robot.getDriveSubsystem()::enableNitroMode))
+                    .whenReleased(new InstantCommand(robot.getDriveSubsystem()::disableNitroMode)
+                    );
+
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    button,
+                    "Hold for Nitro Mode"
+            ));
+        }
     }
 
     private void bindSpecimenIntakeToggle(GamepadKeys.Button button) {
@@ -212,7 +228,7 @@ public class IntoTheDeepDriverBindings {
                 //this resets the onboard IMU, which we aren't using right now
                 robot.getDriveSubsystem().getMecanumDrive().lazyImu.get().resetYaw();
                 //this resets the pinpoint pose, which effectively resets the heading and pose to the corner
-                robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getResetCornerPose(MatchConfig.finalAllianceColor);
+                robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
             });
 
             AtomicBoolean canTrigger = new AtomicBoolean(true); // Tracks if the button can trigger the command

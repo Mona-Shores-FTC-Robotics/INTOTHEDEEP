@@ -51,7 +51,7 @@ public class DriveForwardFromBasketAndBringLiftDown implements Action {
         if (!started) {
             action = new SequentialAction(
                                 new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToIntakePosition),
-                                new SleepAction(.5),
+                                new SleepAction(1.2),
                                 new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHome)
                             );
 

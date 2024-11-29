@@ -55,14 +55,11 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         //Reset the Singleton CommandScheduler
         CommandScheduler.getInstance().reset();
 
-        // Can we just skip making a new robot if the auto did run?
-//        if (!hasAutoRun) {
-            // Create the robot
-            Robot.createInstance(this);
+        // Create the robot
+        Robot.createInstance(this);
 
-            // Initialize the robot
-            Robot.getInstance().init(Robot.OpModeType.TELEOP);
-//        }
+        // Initialize the robot
+        Robot.getInstance().init(Robot.OpModeType.TELEOP);
 
         //Initialize the Game-pads
         GamepadHandling gamepadHandling = new GamepadHandling(this);
