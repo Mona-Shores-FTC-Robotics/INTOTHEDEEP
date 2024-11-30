@@ -56,7 +56,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.678;    DUMPER_PRESCORE_POS = 0.74;    DUMPER_DUMP_POS = 0.98;
+                    DUMPER_HOME_POS = 0.678;    DUMPER_PRESCORE_POS = 0.74;    DUMPER_DUMP_POS = 0.925;
                     DUMP_TIME_MS = 800;
 
                     break;

@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Sampl
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
@@ -27,8 +28,11 @@ public class DefaultSampleLinearActuatorCommand extends CommandBase {
     @Override
     public void execute() {
         double actuatorInput = actuatorSupplier.getAsDouble();
-
         if (Math.abs(actuatorInput) > ACTUATOR_PARAMS.DEAD_ZONE_FOR_MANUAL_ACTUATION) {
+
+            sampleLinearActuatorSubsystem.setFlipperHover();
+            Robot.getInstance().getSampleTiwsterSubsystem().setTwisterServoFaceOutwards();
+
             // Move actuator based on input
             sampleLinearActuatorSubsystem.manualMove(-actuatorInput);
 
@@ -40,7 +44,6 @@ public class DefaultSampleLinearActuatorCommand extends CommandBase {
             }
         } else if (sampleLinearActuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.MANUAL) {
             sampleLinearActuatorSubsystem.stopActuator();
-            sampleLinearActuatorSubsystem.setCurrentState(SampleLinearActuatorSubsystem.SampleActuatorStates.UNKNOWN);
         }
     }
 

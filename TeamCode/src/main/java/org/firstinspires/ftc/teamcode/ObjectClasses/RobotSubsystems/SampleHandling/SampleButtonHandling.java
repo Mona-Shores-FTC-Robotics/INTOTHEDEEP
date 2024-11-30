@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -32,30 +33,57 @@ public class SampleButtonHandling {
     }
 
     public void onIntakeButtonPress() {
+        Command retract = new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOffIntake),
+                        new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward),
+                        new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperUp),
+                        new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract)),
+                new WaitCommand(800),
+                new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::reverseIntake),
+                new WaitCommand(800),
+                new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOffIntake));
+
+        Command deploy = new ParallelCommandGroup(
+                new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperDown),
+                new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy),
+                new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOnIntake),
+                new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
+        );
+
+        Command hover = new ParallelCommandGroup(
+                new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperHover),
+                new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy),
+                new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOnIntake),
+                new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
+        );
+
+        Command deployFromHover = new ParallelCommandGroup(
+                new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperDown),
+                new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOnIntake)
+        );
+
         SampleLinearActuatorSubsystem.SampleActuatorStates currentState = actuatorSubsystem.getCurrentState();
         switch (currentState) {
-                case FULLY_RETRACTED:
-                    Robot.getInstance().getSampleLinearActuatorSubsystem().setFlipperDown();
-                    Robot.getInstance().getSampleLinearActuatorSubsystem().partiallyDeploy();
-                    Robot.getInstance().getSampleIntakeSubsystem().turnOnIntake();
-                    Robot.getInstance().getSampleTiwsterSubsystem().setTwisterServoFaceOutwards();
-                    break;
-                case PARTIALLY_DEPLOYED:
-                    case PARTIALLY_DEPLOYING:
-                        case MANUAL:
-                    new SequentialCommandGroup(
-                            new ParallelCommandGroup(
-                                    new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOffIntake),
-                                    new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward),
-                                    new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperUp),
-                                    new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract)),
-                            new WaitCommand(800),
-                            new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::reverseIntake),
-                            new WaitCommand(800),
-                            new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOffIntake)
-                    ).schedule();
-                    break;
-            case UNKNOWN:
+            case FULLY_RETRACTED:
+                if (Robot.getInstance().getSampleLinearActuatorSubsystem().currentFlipperState== SampleLinearActuatorSubsystem.SampleFlipperStates.FLIPPER_HOVERING) {
+                    deploy.schedule();
+                } else if (Robot.getInstance().getSampleLinearActuatorSubsystem().currentFlipperState== SampleLinearActuatorSubsystem.SampleFlipperStates.FLIPPER_UP) {
+                    hover.schedule();
+                }
+                break;
+
+            case PARTIALLY_DEPLOYED:
+            case PARTIALLY_DEPLOYING:
+            case MANUAL:
+                if (Robot.getInstance().getSampleLinearActuatorSubsystem().currentFlipperState== SampleLinearActuatorSubsystem.SampleFlipperStates.FLIPPER_HOVERING)
+                {
+                    deployFromHover.schedule();
+                } else if (Robot.getInstance().getSampleLinearActuatorSubsystem().currentFlipperState== SampleLinearActuatorSubsystem.SampleFlipperStates.FLIPPER_DOWN)
+                {
+                    retract.schedule();
+                }
+                break;
             case FULLY_RETRACTING:
             default:
                 break;

@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,15 +14,16 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     public static class ActuatorParams extends ConfigurableParameters {
+
         public double FLIP_UP_INCREMENT_TIME =1.0 ;
         public double FLIP_UP_POSITION;
         public double FLIP_DOWN_POSITION;
+        public double FLIP_HOVER_POSITION;
         public double FLIP_UP_DELAY_TIME_MS;
         public double MANUAL_MOVEMENT_SCALAR = Double.NaN;
         public double NORMAL_POWER = Double.NaN;
@@ -51,8 +51,9 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
                     ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
                     FLIP_UP_DELAY_TIME_MS = 250;
-                    FLIP_UP_POSITION= .4;
-                    FLIP_DOWN_POSITION =0.7;
+                    FLIP_UP_POSITION= .35;
+                    FLIP_HOVER_POSITION = 0.6;
+                    FLIP_DOWN_POSITION = 0.7;
                     break;
 
                 case INTO_THE_DEEP_20245:
@@ -67,7 +68,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
 
                     FLIP_UP_DELAY_TIME_MS = 250;
-                    FLIP_UP_POSITION= .4;
+                    FLIP_UP_POSITION= .35;
+                    FLIP_HOVER_POSITION = 0.6;
                     FLIP_DOWN_POSITION =0.7;
                     break;
 
@@ -88,17 +90,23 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
         PARTIALLY_DEPLOYING,
         PARTIALLY_DEPLOYED,
-
         WAITING_FOR_FLIP_UP,
-
-        MANUAL,
-        UNKNOWN
+        MANUAL
     }
+
+    public enum SampleFlipperStates {
+        FLIPPER_HOVERING,
+        FLIPPER_DOWN,
+        FLIPPER_UP,
+        FLIPPER_GOING_TO_DOWN,
+        FLIPPER_GOING_TO_HOVERING,
+    }
+
+    public SampleFlipperStates currentFlipperState;
 
     private final DcMotorEx sampleActuator;
     private SampleActuatorStates currentState;
     private double currentPower;
-    private DigitalChannel retractedLimitSwitch;
     int currentTicks;
 
     private final Servo sampleIntakeFlipperServo;
@@ -122,12 +130,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         sampleActuator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         currentState = SampleActuatorStates.FULLY_RETRACTED;
         sampleIntakeFlipperServo=hardwareMap.get(Servo.class,sampleIntakeFlipperServoName);
-
-        // Initialize the limit switch if the name is provided
-//        if (limitSwitchName != null && !limitSwitchName.isEmpty()) {
-//            retractedLimitSwitch = hardwareMap.get(DigitalChannel.class, limitSwitchName);
-//            retractedLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
-//        }
     }
 
     // Initialize actuator motor with encoders and PID configuration
@@ -152,8 +154,16 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
             if (currentFlipperPosition >= targetFlipperPosition )
             {
-                sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_DOWN_POSITION);
+                sampleIntakeFlipperServo.setPosition(targetFlipperPosition);
                 movingToTarget = false;
+
+
+                if (currentFlipperState==SampleFlipperStates.FLIPPER_GOING_TO_DOWN)
+                {
+                    currentFlipperState=SampleFlipperStates.FLIPPER_DOWN;
+                } else if (currentFlipperState==SampleFlipperStates.FLIPPER_GOING_TO_HOVERING)
+                    currentFlipperState=SampleFlipperStates.FLIPPER_HOVERING;
+
             }
         }
 
@@ -162,6 +172,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
             case WAITING_FOR_FLIP_UP:
                 if (flipUpTimer.milliseconds()>= ACTUATOR_PARAMS.FLIP_UP_DELAY_TIME_MS)
                 {
+                    currentFlipperState=SampleFlipperStates.FLIPPER_UP;
                     fullyRetract();
                 }
                 break;
@@ -190,19 +201,11 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
             case PARTIALLY_DEPLOYED:
             case FULLY_RETRACTED:
             case MANUAL:
-            case UNKNOWN:
             case PARTIALLY_RETRACTED_AFTER_EJECTION:
                 //do nothing
                 break;
         }
         updateDashboardTelemetry();  // Update telemetry each loop
-    }
-
-
-    public void partiallyRetractAndIntakeOn() {
-        currentState=SampleActuatorStates.PARTIALLY_RETRACTING_AFTER_EJECTING;
-        runWithoutEncodersReverse();
-        actuatorTimer.reset();
     }
 
     public void fullyRetract() {
@@ -224,11 +227,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         moveActuator(ACTUATOR_PARAMS.NORMAL_POWER);
     }
 
-    // Method to power the motor on in one direction without encoders
-    public void runWithoutEncodersForwardSlowly() {
-        moveActuator(ACTUATOR_PARAMS.POWER_FOR_SLOW_DEPLOYMENT);
-    }
-
     // Method to power the motor on in reverse without encoders
     public void runWithoutEncodersReverse() {
         moveActuator(-ACTUATOR_PARAMS.NORMAL_POWER);
@@ -245,14 +243,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
     public void setCurrentState(SampleActuatorStates state) {
         currentState = state;
-    }
-
-    // Method to check if the actuator is fully retracted
-    public boolean isFullyRetracted() {
-        if (retractedLimitSwitch == null) {
-            System.out.println("Limit switch not configured; assuming fully retracted.");
-            return true;
-        }   return !retractedLimitSwitch.getState();  // Assuming switch triggers when low
     }
 
     public SampleActuatorStates getCurrentState() {
@@ -284,7 +274,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         String telemetryData = String.format("%s | Actuator Position: %d", currentState != null ? currentState : "MANUAL_ACTUATOR", currentTicks);
         telemetry.addLine(telemetryData);
 
-        @SuppressLint("DefaultLocale") String flipperTelemetry = String.format("Flipper Position: %f, Moving to Target: %b", sampleIntakeFlipperServo.getPosition(), movingToTarget);
+        @SuppressLint("DefaultLocale") String flipperTelemetry = String.format("Flipper State: %s, Flipper Position: %f", currentFlipperState, sampleIntakeFlipperServo.getPosition());
         telemetry.addLine(flipperTelemetry);
 
     }
@@ -314,11 +304,19 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         flipUpIncrementTimer.reset();  // Start timing
     }
     public void setFlipperDown() {
-        setFlipperTargetPositionWithSteps(SampleLinearActuatorSubsystem.ACTUATOR_PARAMS.FLIP_DOWN_POSITION, 20);
+        currentFlipperState = SampleFlipperStates.FLIPPER_GOING_TO_DOWN;
+        setFlipperTargetPositionWithSteps(SampleLinearActuatorSubsystem.ACTUATOR_PARAMS.FLIP_DOWN_POSITION, 5);
     }
 
     public void setFlipperUp() {
+        currentFlipperState=SampleFlipperStates.FLIPPER_UP;
         movingToTarget = false;
         sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_UP_POSITION);
     }
+
+    public void setFlipperHover() {
+        currentFlipperState = SampleFlipperStates.FLIPPER_GOING_TO_HOVERING;
+        setFlipperTargetPositionWithSteps(SampleLinearActuatorSubsystem.ACTUATOR_PARAMS.FLIP_HOVER_POSITION, 12);
+    }
+
 }
