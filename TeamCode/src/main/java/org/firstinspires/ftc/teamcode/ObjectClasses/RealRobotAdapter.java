@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses;
 
 
-import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE;
-
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.NullAction;
@@ -15,10 +13,6 @@ import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.BetterPrepareAction;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.DriveForwardFromBasketAndBringLiftDown;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.PrepareToScoreInHighBasketAction;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.ScoreSampleAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.ChangeSampleDumperPositionAction;
@@ -162,7 +156,17 @@ public class RealRobotAdapter implements RobotAdapter {
                                         new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToScorePosition));
                     } else return problem();
 
-                case SCORE_IN_HIGH_BASKET:
+                case PREPARE_TO_SCORE_IN_LOW_BASKET:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
+                            && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+                        return new  SequentialAction(
+                                new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToLowBasket),
+                                new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveDumperToPreScore),
+                                new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToScorePosition));
+                    } else return problem();
+
+                case SCORE_IN_BASKET:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
@@ -174,10 +178,17 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {
                         return  new ParallelAction(
-                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy),
+//                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy),
                                 new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON),
-                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::flipSampleIntakeDown)
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperHover),
+                                new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
                                 );
+                    } else return problem();
+
+                case PICKUP_FROM_GROUND:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
+                    {
+                        return  new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperDown);
                     } else return problem();
 
                 case GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL:

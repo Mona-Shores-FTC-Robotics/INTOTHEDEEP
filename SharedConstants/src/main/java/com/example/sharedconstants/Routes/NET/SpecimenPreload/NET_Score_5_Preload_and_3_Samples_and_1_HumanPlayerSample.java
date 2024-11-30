@@ -8,7 +8,7 @@ import static com.example.sharedconstants.FieldConstants.NET_BASKET_NEUTRAL_SIDE
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
-import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_HIGH_BASKET;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_BASKET;
 
 import com.example.sharedconstants.RobotAdapter;
 
@@ -37,7 +37,7 @@ public class NET_Score_5_Preload_and_3_Samples_and_1_HumanPlayerSample extends N
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .afterDisp(15, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .strafeToLinearHeading(PoseToVector(NET_BASKET_NEUTRAL_SIDE), ANGLE_TOWARD_BLUE)
-                .stopAndAdd(robotAdapter.getAction(SCORE_IN_HIGH_BASKET));
+                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET));
     }
 
 }

@@ -7,7 +7,7 @@ import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_ONE_APPROACH;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
-import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_HIGH_BASKET;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_BASKET;
 
 import com.example.sharedconstants.RobotAdapter;
 
@@ -46,7 +46,7 @@ public class NET_Score_2_Preload_and_1_Sample extends NET_Score_1_Specimen_Prelo
 
     public void scoreSampleInHighBasket(){
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
-                .stopAndAdd(robotAdapter.getAction(SCORE_IN_HIGH_BASKET))
+                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET))
                 .waitSeconds(.5);
     }
 

@@ -171,8 +171,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     break;
                 }
                 if (detectionState == DetectionState.JUST_DETECTED){
-                    if (sampleDetector.isGoodSample()) currentIntakeDetectionState = IntakeDetectState.DETECTED_GOOD_SAMPLE;
-                    else if (sampleDetector.isBadSample()) currentIntakeDetectionState = IntakeDetectState.DETECTED_BAD_SAMPLE;
+                    if (sampleDetector.isGoodSample()) currentIntakeDetectionState = SampleIntakeDetectState.DETECTED_GOOD_SAMPLE;
+                    else if (sampleDetector.isBadSample()) currentIntakeDetectionState = SampleIntakeDetectState.DETECTED_BAD_SAMPLE;
                 }
                 FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(sampleDetector.getDetectionState() , sampleDetector.getConsensusProximity() , sampleDetector.getConsensusColor()));
                 break;

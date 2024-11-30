@@ -16,7 +16,7 @@ import static com.example.sharedconstants.FieldConstants.NEXT_TO_NET_ASCENT;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
-import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_HIGH_BASKET;
+import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_BASKET;
 
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.AutoRoute;
@@ -52,7 +52,7 @@ public class NET_Score5_SamplePreload extends Routes {
                 .setReversed(true)
                 .afterDisp(10, robotAdapter.getAction((PREPARE_TO_SCORE_IN_HIGH_BASKET)))
                 .splineToLinearHeading(NET_BASKET, ANGLE_TOWARD_NET)
-                .stopAndAdd(robotAdapter.getAction(SCORE_IN_HIGH_BASKET));
+                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET));
     }
 
 
@@ -60,7 +60,7 @@ public class NET_Score5_SamplePreload extends Routes {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .afterDisp(4, robotAdapter.getAction((PREPARE_TO_SCORE_IN_HIGH_BASKET)))
                 .strafeToLinearHeading(PoseToVector(NET_BASKET_NEUTRAL_SIDE), ANGLE_TOWARD_BLUE)
-                .stopAndAdd(robotAdapter.getAction(SCORE_IN_HIGH_BASKET));
+                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET));
     }
 
     private void pickupNeutralSample1() {

@@ -41,23 +41,23 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                 case INTO_THE_DEEP_19429:
 
                     // Feedforward Coefficients
-                    KA = 0.0010;    KV = 0.002;    KG = 0.043;    KS = 0.0025;
-                    VEL_P = 0.00009;    VEL_I = 0.05;    VEL_D = .000025;
+                    KA = .00065;    KV = 0;    KG = 0.043;    KS = .00035;
+                    VEL_P = 0.0028;    VEL_I = 0.05;    VEL_D = .000025;
 
                     LIFT_POWER = 0.5;
                     TIMEOUT_TIME_SECONDS = 3.0;
                     MAX_TARGET_TICKS = 1135;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 15;
-                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1115;   LOW_BASKET_TICKS = 850;
+                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1115;   LOW_BASKET_TICKS = 500;
                     SCALE_FACTOR_FOR_MANUAL_LIFT = 50;    LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
 
-                    UPWARD_VELOCITY = 180;    DOWNWARD_VELOCITY = 5;    UPWARD_ACCELERATION = 120;    DOWNWARD_ACCELERATION = 2;
+                    UPWARD_VELOCITY = 50;    DOWNWARD_VELOCITY = -125;    UPWARD_ACCELERATION = 50;    DOWNWARD_ACCELERATION = -210;
 
                     // Bucket Servo Positions
-                    BUCKET_SCORE_POS = .32;    BUCKET_INTAKE_POS = .85; BUCKET_SOFT_LANDING_POS = .75;
+                    BUCKET_SCORE_POS = .45;    BUCKET_INTAKE_POS = .85; BUCKET_SOFT_LANDING_POS = .65;
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.678;    DUMPER_PRESCORE_POS = 0.74;    DUMPER_DUMP_POS = 0.925;
+                    DUMPER_HOME_POS = 0.678;    DUMPER_PRESCORE_POS = 0.74;    DUMPER_DUMP_POS = 0.85; DUMPER_HOLD_HIGH_POS = .76;
                     DUMP_TIME_MS = 800;
 
                     break;
@@ -73,7 +73,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     TIMEOUT_TIME_SECONDS = 3.0;
                     SCALE_FACTOR_FOR_MANUAL_LIFT = 50;    LIFT_DEAD_ZONE_FOR_MANUAL_LIFT = 0.05;
                     MAX_TARGET_TICKS = 1150;    MIN_TARGET_TICKS = 0;     LIFT_HEIGHT_TICK_THRESHOLD = 15;
-                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1125;   LOW_BASKET_TICKS = 850;
+                    HOME_HEIGHT_TICKS = 0;      HIGH_BASKET_TICKS = 1125;   LOW_BASKET_TICKS = 425;
                     UPWARD_VELOCITY = 5;    DOWNWARD_VELOCITY = -18;    UPWARD_ACCELERATION = 2;    DOWNWARD_ACCELERATION = -1;
 
                     // Bucket Positions
@@ -303,7 +303,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         pidOutput = pidController.calculate(currentTicks);
 
         // Calculate position difference
-        int positionDifference = targetTicks - currentTicks;
         double desiredVelocity = 0;
         double desiredAcceleration= 0;
         // Determine desired velocity and acceleration based on threshold
@@ -311,7 +310,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             // Moving up
             desiredVelocity = -SAMPLE_LIFT_PARAMS.DOWNWARD_VELOCITY;        // Negative value
             desiredAcceleration = -SAMPLE_LIFT_PARAMS.DOWNWARD_ACCELERATION; // Negative value
-        } else if (targetLiftState==SampleLiftStates.HIGH_BASKET)
+        } else if (targetLiftState==SampleLiftStates.HIGH_BASKET || targetLiftState==SampleLiftStates.LOW_BASKET)
         {
             desiredVelocity = SAMPLE_LIFT_PARAMS.UPWARD_VELOCITY;        // Positive value
             desiredAcceleration = SAMPLE_LIFT_PARAMS.UPWARD_ACCELERATION; // Positive value
@@ -398,6 +397,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         targetLiftState = state;
         setTargetTicks(state.getLiftHeightTicks());
     }
+
     public void setCurrentBucketState(BucketStates state){
         currentBucketState = state;
     }
@@ -514,6 +514,10 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
     public void moveLiftToHighBasket() {
         setTargetLiftState(SampleLiftStates.HIGH_BASKET);
+    }
+
+    public void moveLiftToLowBasket() {
+        setTargetLiftState(SampleLiftStates.LOW_BASKET);
     }
 
     public void moveLiftToHome() {

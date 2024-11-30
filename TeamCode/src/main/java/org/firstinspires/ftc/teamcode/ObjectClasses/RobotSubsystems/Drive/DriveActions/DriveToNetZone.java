@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Drive
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
+import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static java.lang.Math.PI;
 
@@ -73,6 +74,7 @@ public class DriveToNetZone implements Action {
         }
 
         if (!started) {
+
             velConstraint = new MinVelConstraint(Arrays.asList(
                     new TranslationalVelConstraint(VELOCITY_OVERRIDE),
                     new AngularVelConstraint(ANGULAR_VELOCITY_OVERRIDE)
@@ -97,10 +99,11 @@ public class DriveToNetZone implements Action {
             }
 
             action = robotAdapter.getActionBuilder(currentPose)
+                    .turnTo(Math.toRadians(MatchConfig.finalAllianceColor == BLUE ? 225 : 45)) // Pose map does not effect this...
                     .setTangent(ANGLE_225_DEGREES)
                     .afterDisp(15, new BetterPrepareAction())
                     .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_APPROACH), ANGLE_45_DEGREES, velConstraint, accelConstraint)
-                    .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_SCORE), ANGLE_45_DEGREES,velSlowConstraint, accelSlowConstraint)
+//                    .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_SCORE), ANGLE_45_DEGREES,velSlowConstraint, accelSlowConstraint) //todo taking this out to test
                     .stopAndAdd(new ScoreSampleAction())
                     .build();
 

@@ -71,8 +71,8 @@ public class DriveForwardFromBasketAndBringLiftDown implements Action {
                     .afterDisp(4,
                             new SequentialAction(
                                     new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToSoftLandingPosition),
-                                    new SleepAction(DELAY_TO_LOWER_LIFT),
                                     new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHome),
+                                    new SleepAction(DELAY_TO_LOWER_LIFT),
                                     new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToIntakePosition)
                             )
                     )

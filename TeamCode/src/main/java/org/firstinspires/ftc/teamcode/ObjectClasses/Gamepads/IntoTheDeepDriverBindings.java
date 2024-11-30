@@ -68,7 +68,6 @@ public class IntoTheDeepDriverBindings {
         bindSpecimenIntakeToggle(GamepadKeys.Button.Y);
 
         //Buttons for if things go wrong
-        //todo can we make this only reset the position if its held down for a moment?
         resetGyro(GamepadKeys.Button.DPAD_DOWN);
 
         // Configuration Options
@@ -249,7 +248,7 @@ public class IntoTheDeepDriverBindings {
                     GamepadType.DRIVER,
                     button,
                     resetYawCommand,
-                    "Reset to Observation Corner Pose"
+                    "Reset to Start Pose"
             ));
         }
     }

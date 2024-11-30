@@ -61,7 +61,8 @@ public class SampleProcessingStateMachine {
                 liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                 liftSubsystem.setBucketToIntakePosition();
-                actuatorSubsystem.flipSampleIntakeUpAndRetract();
+                actuatorSubsystem.setFlipperUp();
+                actuatorSubsystem.fullyRetract();
                 sampleTwisterSubsystem.setTwisterServoFaceInward();
                 lightingSubsystem.setGoodSampleIndicator();
                 break;

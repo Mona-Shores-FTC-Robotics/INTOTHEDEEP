@@ -64,9 +64,44 @@ public class IntoTheDeepOperatorBindings {
         bindDecreasePickupAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
         bindIncreasePickupAngle(GamepadKeys.Trigger.RIGHT_TRIGGER);
 
+        LiftToLowBucket(GamepadKeys.Button.Y);
+
+
         //Telemetry Cycling
         cycleTelemetry(GamepadKeys.Button.BACK);
 
+    }
+
+    private void LiftToLowBucket(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)) {
+            Set<Subsystem> requirements = new HashSet<>();
+            requirements.add(Robot.getInstance().getSampleLiftBucketSubsystem());
+
+            operatorGamePad.getGamepadButton(button)
+                    .whenPressed(()->
+                    {
+                        Command prepareToScoreLowBasket = new ParallelCommandGroup(
+                                new InstantCommand(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToLowBasket),
+                                new InstantCommand(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToScorePosition),
+                                new InstantCommand(Robot.getInstance().getSampleLiftBucketSubsystem()::moveDumperToPreScore)
+                        );
+                        prepareToScoreLowBasket.schedule();
+                    })
+                    .whenReleased(() -> {
+                        // Define a new SequentialAction each time the button is pressed
+                        ScoreSampleAction scoreSampleAction = new ScoreSampleAction();
+                        // Wrap the SequentialAction in an ActionCommand and schedule it
+                        Command scoreSample = new ActionCommand(scoreSampleAction, requirements);
+                        scoreSample.schedule();
+                    });
+
+            // Register button binding for debugging or tracking purposes
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Press (low basket prep), Release (score and drive)"
+            ));
+        }
     }
 
     private void SampleTwister(GamepadKeys.Button button) {

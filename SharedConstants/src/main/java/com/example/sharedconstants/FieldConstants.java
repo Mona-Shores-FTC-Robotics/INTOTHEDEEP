@@ -127,20 +127,20 @@ public class FieldConstants {
     public static Pose2d NET_START_POSE = new Pose2d(HALF_ROBOT_LENGTH-TILE,  -HALF_FIELD + HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
     public static Pose2d NET_DO_NOTHING = new Pose2d(NET_START_POSE.position.plus(new Vector2d(0, 0.01)), ANGLE_TOWARD_BLUE);
 
-    public static Pose2d NET_SPIKE_ONE = new Pose2d(-2*TILE+HALF_ROBOT_WIDTH-2*SAMPLE_WIDTH+1,-TILE-HALF_ROBOT_LENGTH-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d NET_SPIKE_ONE = new Pose2d(-2*TILE+HALF_ROBOT_WIDTH-2*SAMPLE_WIDTH+1,-TILE-HALF_ROBOT_LENGTH-QUARTER_TILE-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d NET_SPIKE_ONE_APPROACH = NET_SPIKE_ONE.plus(new Twist2d(new Vector2d(-6,0), 0));
 
-    public static Pose2d NET_SPIKE_TWO = new Pose2d(-2*TILE+HALF_ROBOT_WIDTH-SAMPLE_WIDTH-HALF_TILE,-TILE-HALF_ROBOT_LENGTH-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d NET_SPIKE_TWO = new Pose2d(-2*TILE+HALF_ROBOT_WIDTH-SAMPLE_WIDTH-HALF_TILE,-TILE-HALF_ROBOT_LENGTH-QUARTER_TILE-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d NET_SPIKE_TWO_APPROACH = NET_SPIKE_TWO.plus(new Twist2d(new Vector2d(-6,0), 0));
 
-    public static Pose2d NET_SPIKE_THREE = new Pose2d(-3*TILE+HALF_ROBOT_WIDTH,-TILE-HALF_ROBOT_LENGTH-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d NET_SPIKE_THREE = new Pose2d(-3*TILE+HALF_ROBOT_WIDTH,-TILE-HALF_ROBOT_LENGTH-QUARTER_TILE-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d NET_SPIKE_THREE_APPROACH = NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(-6,0), 0));
 
     public static Pose2d NET_BASKET = new Pose2d(-59, -61, ANGLE_45_DEGREES);
     public static Pose2d NET_BASKET_PRE_SCORE = new Pose2d(NET_BASKET.position.x+15, NET_BASKET.position.y+15, ANGLE_45_DEGREES); //-48 -52
 
-    public static Pose2d NET_BASKET_DRIVE_TO_NET_SCORE = new Pose2d(-60, -60, ANGLE_225_DEGREES);
-    public static Pose2d NET_BASKET_DRIVE_TO_NET_APPROACH = new Pose2d(NET_BASKET_DRIVE_TO_NET_SCORE.position.x+10, NET_BASKET_DRIVE_TO_NET_SCORE.position.y+10, ANGLE_225_DEGREES); //-48 -52
+    public static Pose2d NET_BASKET_DRIVE_TO_NET_SCORE = new Pose2d(-60, -60, Math.toRadians(55));
+    public static Pose2d NET_BASKET_DRIVE_TO_NET_APPROACH = new Pose2d(NET_BASKET_DRIVE_TO_NET_SCORE.position.x+10, NET_BASKET_DRIVE_TO_NET_SCORE.position.y+10, Math.toRadians(55)); //-48 -52
 
     public static Pose2d NET_BASKET_AUTO = new Pose2d(-59, -61, Math.toRadians(55)); //-48 -52
     public static Pose2d NET_BASKET_ALIGNMENT_AUTO = new Pose2d(NET_BASKET_AUTO.position.x+5, NET_BASKET_AUTO.position.y+5, Math.toRadians(55)); //-48 -52

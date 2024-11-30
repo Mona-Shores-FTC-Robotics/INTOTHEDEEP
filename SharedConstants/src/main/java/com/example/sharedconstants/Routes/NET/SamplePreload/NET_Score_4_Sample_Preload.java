@@ -8,15 +8,17 @@ import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATIO
 import static com.example.sharedconstants.FieldConstants.NET_ASCENT;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT_AUTO;
+import static com.example.sharedconstants.FieldConstants.NET_BASKET_AUTO;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE_APPROACH;
 import static com.example.sharedconstants.FieldConstants.NEXT_TO_NET_ASCENT;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.FLIP_UP_AND_RETRACT;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
+import static com.example.sharedconstants.RobotAdapter.ActionType.PICKUP_FROM_GROUND;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
+import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_LOW_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
-import static com.example.sharedconstants.RobotAdapter.ActionType.SCORE_IN_HIGH_BASKET;
 
 import com.example.sharedconstants.RobotAdapter;
 
@@ -28,7 +30,6 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
     {
         super.buildRoute();
         moveToNeutralSample3();
-        pickupNeutralSample3();
         moveFromNeutralSample3ToBasket();
         scoreSampleInHighBasket();
 //        scoreSampleLow();
@@ -42,25 +43,19 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
                 .setTangent(ANGLE_45_DEGREES)
                 .afterDisp(3, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
-                .splineToLinearHeading(NET_SPIKE_THREE_APPROACH, ANGLE_115_DEGREES, normalVelocity, normalAcceleration);
-    }
-
-    private void pickupNeutralSample3() {
-        netTrajectoryActionBuilder = netTrajectoryActionBuilder
-                .waitSeconds(.2) //give lift time to come down
-                .setTangent(ANGLE_TOWARD_BLUE)
-                .splineToLinearHeading(NET_SPIKE_THREE, ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
-                .waitSeconds(.75);
-
+                .splineToLinearHeading(NET_SPIKE_THREE, ANGLE_115_DEGREES, normalVelocity, normalAcceleration)
+                .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
+                .waitSeconds(2.0);
     }
 
     void moveFromNeutralSample3ToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
-                .afterDisp(3, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+//                .afterDisp(3, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+                .afterDisp(3, robotAdapter.getAction(PREPARE_TO_SCORE_IN_LOW_BASKET))
                 .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
-                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
-                .splineToLinearHeading(NET_BASKET, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+//                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
 
     private void travelToAscentZone() {
