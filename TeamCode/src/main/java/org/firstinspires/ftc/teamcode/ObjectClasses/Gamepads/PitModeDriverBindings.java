@@ -204,7 +204,7 @@ public class PitModeDriverBindings {
         {
             SampleLinearActuatorSubsystem linearActuatorSubsystem = Robot.getInstance().getSampleLinearActuatorSubsystem();
             Command flipIntakeDown = new InstantCommand(linearActuatorSubsystem::flipSampleIntakeDown);
-            Command flipIntakeUp = new InstantCommand(linearActuatorSubsystem::flipSampleIntakeUp);
+            Command flipIntakeUp = new InstantCommand(linearActuatorSubsystem::setFlipperUp);
 
             driverGamePad.getGamepadButton(button)
                     .toggleWhenPressed(flipIntakeDown, flipIntakeUp);

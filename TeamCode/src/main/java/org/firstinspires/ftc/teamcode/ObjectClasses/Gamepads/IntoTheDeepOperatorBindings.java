@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -26,6 +27,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleTwister.SampleTwisterSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
@@ -223,18 +225,15 @@ public class IntoTheDeepOperatorBindings {
     private void DeploySampleIntake(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
         {
-            SampleButtonHandling sampleHandlingStateMachine = robot.getSampleButtonHandling();
-            Command sampleIntakeButtonPressCommand = new InstantCommand(sampleHandlingStateMachine::onIntakeButtonPress);
-
             operatorGamePad.getGamepadButton(button)
-                    .whenPressed(sampleIntakeButtonPressCommand);
+                    .whenPressed(Robot.getInstance().getSampleButtonHandling()::onIntakeButtonPress);
 
             // Register button binding
             bindingManager.registerBinding(new ButtonBinding(
                     GamepadType.OPERATOR,
                     button,
-                    sampleIntakeButtonPressCommand,
-                    "Move Sample Actuator"
+                    null,
+                    "Deploy/Retract Sample Intake"
             ));
         }
     }
@@ -307,6 +306,7 @@ public class IntoTheDeepOperatorBindings {
                             new MoveClimberArmCommand(Robot.getInstance().getClimberSubsystem(), ClimberSubsystem.ClimberArmStates.READY),
                             resetArm
                     );
+
 
             // Register button binding
             bindingManager.registerBinding(new ButtonBinding(

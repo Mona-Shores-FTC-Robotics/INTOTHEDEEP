@@ -66,7 +66,7 @@ public class SampleTwisterSubsystem extends SubsystemBase {
 
     // Initialize intake servo
     public void init() {
-
+        setTwisterServoFaceInward();
     }
 
     @Override

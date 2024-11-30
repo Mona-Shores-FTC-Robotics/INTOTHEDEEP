@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
@@ -28,28 +32,34 @@ public class SampleButtonHandling {
     }
 
     public void onIntakeButtonPress() {
-            switch (actuatorSubsystem.getCurrentState()) {
+        SampleLinearActuatorSubsystem.SampleActuatorStates currentState = actuatorSubsystem.getCurrentState();
+        switch (currentState) {
                 case FULLY_RETRACTED:
-                    intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-                    twisterSubsystem.setTwisterServoFaceOutwards();
-                    actuatorSubsystem.setFlipperTargetPositionWithSteps(SampleLinearActuatorSubsystem.ACTUATOR_PARAMS.FLIP_DOWN_POSITION, 20);
-                    actuatorSubsystem.partiallyDeploy();
+                    Robot.getInstance().getSampleLinearActuatorSubsystem().setFlipperDown();
+                    Robot.getInstance().getSampleLinearActuatorSubsystem().partiallyDeploy();
+                    Robot.getInstance().getSampleIntakeSubsystem().turnOnIntake();
+                    Robot.getInstance().getSampleTiwsterSubsystem().setTwisterServoFaceOutwards();
                     break;
-
                 case PARTIALLY_DEPLOYED:
-                case MANUAL:
-                case UNKNOWN:
-                case FULLY_RETRACTING:
-                case PARTIALLY_DEPLOYING:
-                default:
-                    intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
-                    twisterSubsystem.setTwisterServoFaceInward();
-                    actuatorSubsystem.flipSampleIntakeUpAndRetract();
+                    case PARTIALLY_DEPLOYING:
+                        case MANUAL:
+                    new SequentialCommandGroup(
+                            new ParallelCommandGroup(
+                                    new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOffIntake),
+                                    new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward),
+                                    new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperUp),
+                                    new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract)),
+                            new WaitCommand(800),
+                            new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::reverseIntake),
+                            new WaitCommand(800),
+                            new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOffIntake)
+                    ).schedule();
                     break;
-
-
-
-            }
+            case UNKNOWN:
+            case FULLY_RETRACTING:
+            default:
+                break;
+        }
     }
 
     public void onMoveSampleBucketButtonPress() {

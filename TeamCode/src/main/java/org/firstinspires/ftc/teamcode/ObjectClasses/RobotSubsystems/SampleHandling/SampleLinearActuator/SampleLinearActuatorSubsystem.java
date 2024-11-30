@@ -101,8 +101,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     private DigitalChannel retractedLimitSwitch;
     int currentTicks;
 
-
-
     private final Servo sampleIntakeFlipperServo;
 
     ElapsedTime actuatorTimer = new ElapsedTime();
@@ -137,7 +135,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         // Initialize the current and target states to retracted
         currentState = SampleActuatorStates.FULLY_RETRACTED;
         sampleActuator.setPower(0);
-
+        setFlipperUp();
     }
 
     @Override
@@ -277,6 +275,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public void updateDashboardTelemetry() {
         MatchConfig.telemetryPacket.put("Sample Actuator/Current State", currentState.toString());
         MatchConfig.telemetryPacket.put("Sample Actuator/Current Position Ticks", currentTicks);
+        MatchConfig.telemetryPacket.put("Flipper Position", sampleIntakeFlipperServo.getPosition());
     }
 
     // Compact telemetry display for the driver station
@@ -284,6 +283,10 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         @SuppressLint("DefaultLocale")
         String telemetryData = String.format("%s | Actuator Position: %d", currentState != null ? currentState : "MANUAL_ACTUATOR", currentTicks);
         telemetry.addLine(telemetryData);
+
+        @SuppressLint("DefaultLocale") String flipperTelemetry = String.format("Flipper Position: %f, Moving to Target: %b", sampleIntakeFlipperServo.getPosition(), movingToTarget);
+        telemetry.addLine(flipperTelemetry);
+
     }
 
     // Verbose telemetry display
@@ -303,10 +306,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_DOWN_POSITION);
     }
 
-    public void flipSampleIntakeUp() {
-        sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_UP_POSITION);
-    }
-
     public void setFlipperTargetPositionWithSteps(double targetPosition, int numSteps) {
         targetFlipperPosition = targetPosition;
         currentFlipperPosition = sampleIntakeFlipperServo.getPosition();  // Starting position
@@ -314,5 +313,12 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         movingToTarget = true;
         flipUpIncrementTimer.reset();  // Start timing
     }
+    public void setFlipperDown() {
+        setFlipperTargetPositionWithSteps(SampleLinearActuatorSubsystem.ACTUATOR_PARAMS.FLIP_DOWN_POSITION, 20);
+    }
 
+    public void setFlipperUp() {
+        movingToTarget = false;
+        sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_UP_POSITION);
+    }
 }
