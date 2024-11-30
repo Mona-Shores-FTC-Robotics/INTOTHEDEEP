@@ -10,7 +10,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_1_Specimen_Preload;
-import com.example.sharedconstants.Routes.OBS.OBS_Score_1_Specimen_Preload;
+import com.example.sharedconstants.Routes.OBS.Old.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -117,10 +117,8 @@ public class AutoTest extends LinearOpMode {
         );
         MatchConfig.loopTimer = new ElapsedTime();
         MatchConfig.loopTimer.reset();
-        Actions.runBlocking(parallelAction);
-
         MatchConfig.hasAutoRun=true;
-        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+        Actions.runBlocking(parallelAction);
     }
 
     public Routes selectRoute() {

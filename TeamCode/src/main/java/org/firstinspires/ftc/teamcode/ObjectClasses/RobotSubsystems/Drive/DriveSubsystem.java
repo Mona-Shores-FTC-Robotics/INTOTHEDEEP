@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -51,7 +53,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     public double leftYAdjusted;
     public double leftXAdjusted;
-    public double rightXAdjusted;
 
     public double MAX_MOTOR_SPEED_RPS = 435.0 / 60.0;
     public double TICKS_PER_REV = 384.5;
@@ -86,21 +87,24 @@ public class DriveSubsystem extends SubsystemBase {
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
                     DriveParams.configureIntoTheDeep19429RRParams();
-                    if (MatchConfig.hasAutoRun) {
+                    //if auto has run use the pose that was last set in auto
+                    if (MatchConfig.hasAutoRun)
+                    {
                         mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
-                    } else mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+                    }
+                    //if auto has not run use a blank pose because we will set the pose based on the user setup stuff during init
+                    else  mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
                     DriveParams.configureIntoTheDeep19429Directions(mecanumDrive);
                     break;
 
                 case INTO_THE_DEEP_20245:
                     DriveParams.configureIntoTheDeep20245RRParams();
-                    if (MatchConfig.hasAutoRun) {
+                    if (MatchConfig.hasAutoRun)
+                    {
                         mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
-                    } else mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
-                    DriveParams.configureIntoTheDeep20245Directions(mecanumDrive);
+                    } else  mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));                    DriveParams.configureIntoTheDeep20245Directions(mecanumDrive);
                     break;
-
             }
             mecanumDrive.lazyImu.get().resetYaw();
             configurePID();
@@ -152,27 +156,45 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void setDriveStrafeTurnValues(double leftY, double leftX, double rightX) {
         boolean gamepadActive = driverGamepadIsActive(leftY, leftX, rightX);
-
         if (gamepadActive) {
-            double speedFactor = isSlowModeEnabled() ? STICK_PARAMS.SLOW_MODE_FACTOR : 1.0;
+            double speedFactor = isNitroModeEnabled() ? STICK_PARAMS.NITRO_MODE_FACTOR : 1.0;
+            //slow mode trumps nitro mode
+            speedFactor = isSlowModeEnabled() ? STICK_PARAMS.SLOW_MODE_FACTOR : speedFactor;
 
-            leftYAdjusted = leftY * STICK_PARAMS.DRIVE_SPEED_FACTOR * speedFactor;
-            leftXAdjusted = leftX * STICK_PARAMS.STRAFE_SPEED_FACTOR * speedFactor;
-            rightXAdjusted = rightX * STICK_PARAMS.TURN_SPEED_FACTOR * speedFactor;
             if (fieldOrientedControl) {
-                fieldOrientedControl(leftYAdjusted, leftXAdjusted);
+                // Perform FOC rotation
+                fieldOrientedControl(leftY, leftX);
+            } else {
+                // In robot-centric control, use compensated joystick inputs directly
+                leftYAdjusted = leftY;
+                leftXAdjusted = leftX;
             }
+            // Calculate magnitude and angle of robot-centric movement vector
+            double robotMovementMagnitude = Math.hypot(leftXAdjusted, leftYAdjusted);
+            double robotMovementAngle = Math.atan2(leftYAdjusted, leftXAdjusted);
+
+            // Get the blended scaling factor based on robot-centric movement angle
+            double blendedScalingFactor = getBlendedScalingFactor(robotMovementAngle);
+
+            // Apply the blended scaling factor to the magnitude
+            double adjustedMagnitude = robotMovementMagnitude * blendedScalingFactor * speedFactor;
+
+            // Reconstruct the adjusted robot-centric movement components
+            double compensatedX = adjustedMagnitude * Math.cos(robotMovementAngle);
+            double compensatedY = adjustedMagnitude * Math.sin(robotMovementAngle);
+
+            // Assign adjusted movement commands
+            drive = compensatedY;
+            strafe = compensatedX;
+
+            // Apply scaling to turn input
+            turn = rightX * STICK_PARAMS.TURN_SPEED_FACTOR * speedFactor;
         } else {
             // No input, set adjusted values to 0
-            leftYAdjusted = 0;
-            leftXAdjusted = 0;
-            rightXAdjusted = 0;
+            drive = 0;
+            strafe = 0;
+            turn = 0;
         }
-
-        // Set drive, strafe, and turn values
-        drive = leftYAdjusted;
-        strafe = leftXAdjusted;
-        turn = rightXAdjusted;
     }
 
     /**
@@ -180,14 +202,14 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void setDriveStrafeValues(double leftY, double leftX) {
         boolean gamepadActive = driverGamepadIsActive(leftY, leftX);
-
         if (gamepadActive) {
             double speedFactor = isSlowModeEnabled() ? STICK_PARAMS.SLOW_MODE_FACTOR : 1.0;
-
-            leftYAdjusted = leftY * STICK_PARAMS.DRIVE_SPEED_FACTOR * speedFactor;
-            leftXAdjusted = leftX * STICK_PARAMS.STRAFE_SPEED_FACTOR * speedFactor;
-            if (fieldOrientedControl) {
-                fieldOrientedControl(leftYAdjusted, leftXAdjusted);
+            if (fieldOrientedControl)
+            {
+                fieldOrientedControl(leftY, leftX);
+            } else {
+                leftYAdjusted = leftY * STICK_PARAMS.DRIVE_SPEED_FACTOR * speedFactor;
+                leftXAdjusted = leftX * STICK_PARAMS.STRAFE_SPEED_FACTOR * speedFactor;
             }
         } else {
             // No input, set adjusted values to 0
@@ -202,21 +224,94 @@ public class DriveSubsystem extends SubsystemBase {
 
 
     /**
+     * Calculates a compensation factor based on the desired movement angle.
+     * Adjusts for the difference in speed between forward/backward and strafing movements in mecanum drive.
+     *
+     * @param angle The desired movement angle in radians (relative to the field)
+     * @return The compensation factor to apply to the movement magnitude
+     */
+    private double getDirectionCompensationFactor(double angle) {
+        // Normalize angle to range [0, 2π)
+        angle = (angle + 2 * Math.PI) % (2 * Math.PI);
+
+        // Define the compensation factors
+        double forwardBackwardFactor = STICK_PARAMS.DRIVE_SPEED_FACTOR; // e.g., 1.0
+        double strafeFactor = STICK_PARAMS.STRAFE_SPEED_FACTOR; // e.g., 1.2
+
+        // Calculate the compensation factor based on the angle
+        // Use the fact that forward/backward movement occurs at angles of 0°, 180° (0, π)
+        // Strafing occurs at angles of 90°, 270° (π/2, 3π/2)
+        double cosAngle = Math.abs(Math.cos(angle));
+        double sinAngle = Math.abs(Math.sin(angle));
+
+        // Weighted average of the forward/backward and strafe factors based on movement direction
+        double compensationFactor = (forwardBackwardFactor * cosAngle) + (strafeFactor * sinAngle);
+
+        // Normalize the compensation factor
+        compensationFactor /= (cosAngle + sinAngle);
+
+        return compensationFactor;
+    }
+
+    /**
+     * Calculates a blended scaling factor based on the robot-centric movement angle.
+     * Blends the drive and strafe scaling factors to compensate for mechanical differences.
+     *
+     * @param angle The movement angle in robot-centric coordinates (radians)
+     * @return The blended scaling factor to apply to the movement magnitude
+     */
+    /**
+     * Calculates a blended scaling factor based on the robot-centric movement angle.
+     * Blends the drive and strafe scaling factors to compensate for mechanical differences.
+     *
+     * @param angle The movement angle in robot-centric coordinates (radians)
+     * @return The blended scaling factor to apply to the movement magnitude
+     */
+    private double getBlendedScalingFactor(double angle) {
+        // Normalize angle to range [0, 2π)
+        angle = (angle + 2 * Math.PI) % (2 * Math.PI);
+
+        // Retrieve scaling factors
+        double driveScaling = STICK_PARAMS.DRIVE_SPEED_FACTOR;
+        double strafeScaling = STICK_PARAMS.STRAFE_SPEED_FACTOR;
+
+        // Compute cosine and sine of the angle
+        double cosAngle = Math.cos(angle); // Represents strafe component
+        double sinAngle = Math.sin(angle); // Represents drive component
+
+        // Compute weighted scaling factors
+        double driveComponent = Math.abs(sinAngle) * driveScaling;
+        double strafeComponent = Math.abs(cosAngle) * strafeScaling;
+
+        // Compute normalization factor
+        double normalizationFactor = Math.abs(sinAngle) + Math.abs(cosAngle);
+
+        // Avoid division by zero
+        if (normalizationFactor == 0) {
+            return 0;
+        }
+
+        // Compute the blended scaling factor
+        double blendedScalingFactor = (driveComponent + strafeComponent) / normalizationFactor;
+
+        return blendedScalingFactor;
+    }
+
+    /**
      * Implements field-centric control. Adjusts the robot's movement based on the heading.
      */
     public void fieldOrientedControl(double y, double x) {
-        // Get the robot's current heading in radians (directly from the gyro)
+        // Get the robot's current heading in radians (include any offsets)
+        double botHeading = mecanumDrive.pose.heading.toDouble()
+                + Math.toRadians(MatchConfig.offsetFromStartPoseDegrees);
 
-        double botHeading = mecanumDrive.pose.heading.toDouble() + Math.toRadians(MatchConfig.offsetFromStartPoseDegrees);  //this is in radians
-        MatchConfig.telemetryPacket.put("offset", MatchConfig.offsetFromStartPoseDegrees);
-        MatchConfig.telemetryPacket.put("botHeading", Math.toDegrees(botHeading));
+        // Calculate the cosine and sine of the negative heading
+        double cosHeading = Math.cos(-botHeading);
+        double sinHeading = Math.sin(-botHeading);
 
-        // Rotate the movement direction relative to the robot's adjusted heading
-        leftXAdjusted = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-        leftYAdjusted = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-        // Optionally counteract imperfect strafing
-        leftYAdjusted = Math.min(leftYAdjusted * 1.1, 1);
+        // Perform the rotation to get robot-centric commands
+        leftXAdjusted = x * cosHeading - y * sinHeading;
+        leftYAdjusted = x * sinHeading + y * cosHeading;
     }
 
     // Helper method to normalize angles to the range of -180 to 180 degrees
@@ -302,9 +397,10 @@ public class DriveSubsystem extends SubsystemBase {
         public static class StickParams {
             public double DEAD_ZONE = 0.1;
             public double DRIVE_SPEED_FACTOR = 0.7;
-            public double STRAFE_SPEED_FACTOR = 1.0;
+            public double STRAFE_SPEED_FACTOR = .92;
             public double TURN_SPEED_FACTOR = 1.0;
             public double SLOW_MODE_FACTOR = 0.5; // Reduce speed by 50% in slow mode
+            public double NITRO_MODE_FACTOR = 1.8;
         }
 
         public static class RampParams {
@@ -315,10 +411,10 @@ public class DriveSubsystem extends SubsystemBase {
         }
 
         public static class PIDParams {
-            public double P = 6;
+            public double P = 3.0;
             public double D = 0;
             public double I = 0;
-            public double F = 8;
+            public double F = 8.0;
         }
     }
 
@@ -627,6 +723,16 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     private boolean slowModeEnabled = false;
+    private boolean nitroModeEnabled = false;
+
+
+    public void enableNitroMode() {
+        nitroModeEnabled = true;
+    }
+
+    public void disableNitroMode() {
+        nitroModeEnabled = false;
+    }
 
     public void enableSlowMode() {
         slowModeEnabled = true;
@@ -634,6 +740,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void disableSlowMode() {
         slowModeEnabled = false;
+    }
+
+    public boolean isNitroModeEnabled() {
+        return nitroModeEnabled;
     }
 
     public boolean isSlowModeEnabled() {

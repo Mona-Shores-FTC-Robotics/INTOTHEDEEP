@@ -5,8 +5,10 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.files.DataLogger;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Climber.ClimberSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
@@ -21,6 +23,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenProcessingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
+import org.firstinspires.ftc.teamcode.SimpleLogger;
+import org.slf4j.Logger;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -35,8 +39,6 @@ public class Robot {
 
     public RobotType robotType;
     public OpModeType opModeType;
-
-
 
     public enum RobotType {
         INTO_THE_DEEP_19429,
@@ -75,6 +77,9 @@ public class Robot {
     private final Set<SubsystemType> availableSubsystems = EnumSet.noneOf(SubsystemType.class);
     private final Map<SubsystemType, Object> subsystemMap = new HashMap<>();
 
+    public SimpleLogger simpleLogger;
+
+
     /* Constructor */
     private Robot(LinearOpMode opMode) {
         activeOpMode = opMode;
@@ -82,6 +87,7 @@ public class Robot {
         robotType = ControlHubIdentifierUtil.getRobotType(hMap);
         MatchConfig.finalRobotType = robotType;
         CreateSubsystems(hMap);
+        simpleLogger = new SimpleLogger("simpleLog", true);
     }
 
     private void CreateSubsystems(HardwareMap hardwareMap) {
@@ -255,6 +261,8 @@ public class Robot {
     public SampleTwisterSubsystem getSampleTiwsterSubsystem() {
         return sampleTwisterSubsytem;
     }
+    public SimpleLogger getSimpleLogger(){return simpleLogger;}
+
     public LightingSubsystem getLightingSubsystem() {return lightingSubsystem;}
 
     public static RobotType getPreviousRobotType(RobotType currentType) {

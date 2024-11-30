@@ -38,6 +38,16 @@ public class FieldConstants {
         return baseStartPose;
     }
 
+    public static Pose2d getResetCornerPose(AllianceColor allianceColor) {
+        Pose2d baseStartPose= OBS_CORNER_RESET_POSE;
+        //  Flip for blue alliance
+        if ( allianceColor== AllianceColor.BLUE) {
+            baseStartPose = rotate(baseStartPose);  // Rotate the pose 180 degrees for blue alliance
+        }
+        return baseStartPose;
+    }
+
+
     public static double HALF_FIELD = 70.5;
     public static double TILE = 23.5;
     public static double HALF_TILE = TILE/2;
@@ -86,7 +96,7 @@ public class FieldConstants {
     public static Pose2d CHAMBER_SLOT_TWELVE = CHAMBER_SLOT_ELEVEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
 
 
-    public static double CHAMBER_SPACER = 1.48;
+    public static double CHAMBER_SPACER = 1.85;
 
     public static Pose2d CHAMBER_SLOT_ONE_REDO = new Pose2d(QUARTER_TILE, -TILE-HALF_ROBOT_LENGTH+1, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_TWO_REDO = CHAMBER_SLOT_ONE_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
@@ -96,19 +106,19 @@ public class FieldConstants {
     public static Pose2d CHAMBER_SLOT_SIX_REDO = CHAMBER_SLOT_FIVE_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_SEVEN_REDO = CHAMBER_SLOT_SIX_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_EIGHT_REDO = CHAMBER_SLOT_SEVEN_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
-    public static Pose2d CHAMBER_SLOT_NINE_REDO = CHAMBER_SLOT_EIGHT_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
+    public static Pose2d CHAMBER_SLOT_NINE_REDO = CHAMBER_SLOT_EIGHT_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), Math.toRadians(10)));
     public static Pose2d CHAMBER_SLOT_TEN_REDO = CHAMBER_SLOT_NINE_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_ELEVEN_REDO = CHAMBER_SLOT_TEN_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_TWELVE_REDO = CHAMBER_SLOT_ELEVEN_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
 
-    public static Pose2d RIGHT_OF_CHAMBER_REDO =  new Pose2d(TILE+HALF_TILE, -TILE-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d RIGHT_OF_CHAMBER_REDO =  new Pose2d(TILE+HALF_TILE-2.5, -TILE-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
 
-    public static Pose2d OBS_BEHIND_SPIKE_ONE_REDO = new Pose2d(2*TILE, -HALF_TILE-2, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_DELIVER_SPIKE_ONE_REDO = new Pose2d(2*TILE, -2*TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_BEHIND_SPIKE_ONE_REDO = new Pose2d(2*TILE, -HALF_TILE-3, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_DELIVER_SPIKE_ONE_REDO = new Pose2d(2*TILE, -2*TILE-3, ANGLE_TOWARD_BLUE);
     public static Pose2d OBS_SPIKE_ONE_REDO = new Pose2d(2*TILE, -TILE, ANGLE_TOWARD_BLUE);
 
-    public static Pose2d OBS_BEHIND_SPIKE_TWO_REDO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH, -HALF_TILE-2, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_DELIVER_SPIKE_TWO_REDO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH, -2*TILE, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_BEHIND_SPIKE_TWO_REDO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH, -HALF_TILE-3, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_DELIVER_SPIKE_TWO_REDO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH, -2*TILE-3, ANGLE_TOWARD_BLUE);
     public static Pose2d OBS_SPIKE_TWO_REDO = new Pose2d(2*TILE+HALF_TILE-HALF_SAMPLE_WIDTH, -TILE, ANGLE_TOWARD_BLUE);
 
     public static Pose2d OBS_BEHIND_SPIKE_THREE_REDO = new Pose2d(3*TILE-HALF_ROBOT_WIDTH, -HALF_TILE-2, ANGLE_TOWARD_BLUE);
@@ -126,9 +136,11 @@ public class FieldConstants {
     public static Pose2d NET_SPIKE_THREE = new Pose2d(-3*TILE+HALF_ROBOT_WIDTH,-TILE-HALF_ROBOT_LENGTH-EIGHTH_TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d NET_SPIKE_THREE_APPROACH = NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(-6,0), 0));
 
-    public static Pose2d NET_BASKET = new Pose2d(-58, -62, ANGLE_45_DEGREES);
+    public static Pose2d NET_BASKET = new Pose2d(-59, -61, ANGLE_45_DEGREES);
     public static Pose2d NET_BASKET_PRE_SCORE = new Pose2d(NET_BASKET.position.x+15, NET_BASKET.position.y+15, ANGLE_45_DEGREES); //-48 -52
-    public static Pose2d NET_BASKET_DRIVE_TO_NET = new Pose2d(NET_BASKET.position.x+5, NET_BASKET.position.y+5, Math.toRadians(55)); //-48 -52
+
+    public static Pose2d NET_BASKET_DRIVE_TO_NET_SCORE = new Pose2d(-60, -60, ANGLE_225_DEGREES);
+    public static Pose2d NET_BASKET_DRIVE_TO_NET_APPROACH = new Pose2d(NET_BASKET_DRIVE_TO_NET_SCORE.position.x+10, NET_BASKET_DRIVE_TO_NET_SCORE.position.y+10, ANGLE_225_DEGREES); //-48 -52
 
     public static Pose2d NET_BASKET_AUTO = new Pose2d(-59, -61, Math.toRadians(55)); //-48 -52
     public static Pose2d NET_BASKET_ALIGNMENT_AUTO = new Pose2d(NET_BASKET_AUTO.position.x+5, NET_BASKET_AUTO.position.y+5, Math.toRadians(55)); //-48 -52
@@ -144,7 +156,6 @@ public class FieldConstants {
     public static Pose2d HUMAN_PLAYER_SAMPLE_STAGING = new Pose2d(TILE-HALF_ROBOT_LENGTH, -3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
     public static Pose2d HUMAN_PLAYER_SAMPLE_PICKUP = HUMAN_PLAYER_SAMPLE_STAGING.plus(new Twist2d(new Vector2d(THREE_QUARTER_TILE,0), 0));
 
-
     //Observation Poses
     public static Pose2d OBS_START_POSE = new Pose2d(TILE-HALF_ROBOT_LENGTH,-HALF_FIELD + HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
     public static Pose2d OBS_DO_NOTHING = new Pose2d(OBS_START_POSE.position.plus(new Vector2d(0, 0.01)), ANGLE_TOWARD_BLUE);
@@ -154,17 +165,27 @@ public class FieldConstants {
     public static Pose2d OBS_TRIANGLE_APPROACH = new Pose2d(TILE+HALF_TILE,-3*TILE+HALF_ROBOT_LENGTH+3*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
     public static Pose2d OBS_TRIANGLE_PICKUP = new Pose2d(TILE+HALF_TILE, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_BLUE);
 
-    public static Pose2d OBS_CORNER_APPROACH_ALLIANCE_WALL = new Pose2d(3*TILE-HALF_ROBOT_WIDTH,-3*TILE+HALF_ROBOT_LENGTH+3*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_CORNER_APPROACH_ALLIANCE_WALL = new Pose2d(3*TILE-HALF_ROBOT_WIDTH,-3*TILE+HALF_ROBOT_LENGTH+5*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
     public static Pose2d OBS_CORNER_PICKUP_ALLIANCE_WALL = new Pose2d(3*TILE-HALF_ROBOT_WIDTH,-3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_BLUE);
 
-    public static Pose2d OBS_CORNER_APPROACH_AUDIENCE_WALL = new Pose2d(3*TILE-HALF_ROBOT_LENGTH+3*PICKUP_ROOM,-3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_NET);
-    public static Pose2d OBS_CORNER_PICKUP_AUDIENCE_WALL = new Pose2d(3*TILE-HALF_ROBOT_LENGTH+PICKUP_ROOM,-3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_NET);
+    public static Pose2d OBS_CORNER_STAGING_AUDIENCE_WALL = new Pose2d(2*TILE+HALF_TILE -HALF_ROBOT_LENGTH-QUARTER_TILE,-3*TILE+ROBOT_WIDTH, ANGLE_TOWARD_NET);
+    public static Pose2d OBS_CORNER_APPROACH_AUDIENCE_WALL = new Pose2d(3*TILE-HALF_ROBOT_LENGTH-QUARTER_TILE,-3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_NET);
+    public static Pose2d OBS_CORNER_PICKUP_AUDIENCE_WALL = new Pose2d(3*TILE-HALF_ROBOT_LENGTH-PICKUP_ROOM,-3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_NET);
+
+    public static Pose2d OBS_CORNER_APPROACH_DRIVE_TO_OBS_AUDIENCE_WALL = new Pose2d(3*TILE-HALF_ROBOT_LENGTH-HALF_TILE,-3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_NET);
 
 
+    public static Pose2d OBS_TRIANGLE_APPROACH_REDO = new Pose2d(2*TILE-HALF_ROBOT_WIDTH+2,-3*TILE+HALF_ROBOT_LENGTH+5*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_TRIANGLE_PICKUP_REDO = new Pose2d(2*TILE-HALF_ROBOT_WIDTH+2, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_BLUE);
 
-    public static Pose2d OBS_TRIANGLE_APPROACH_REDO = new Pose2d(TILE+HALF_TILE,-3*TILE+HALF_ROBOT_LENGTH+6*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
-    public static Pose2d OBS_TRIANGLE_PICKUP_REDO = new Pose2d(TILE+HALF_TILE, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_CORNER_RESET_POSE = new Pose2d(3*TILE-HALF_ROBOT_LENGTH,-3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_NET);
 
+
+    public static Pose2d OBS_TRIANGLE_APPROACH_TILE_SEAM = new Pose2d(2*TILE-HALF_ROBOT_WIDTH+2,-3*TILE+HALF_ROBOT_LENGTH+5*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_TRIANGLE_PICKUP_TILE_SEAM = new Pose2d(2*TILE-HALF_ROBOT_WIDTH+2, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_BLUE);
+
+    public static Pose2d OBS_TRIANGLE_TIP_APPROACH = new Pose2d(2*TILE-HALF_TILE-HALF_ROBOT_WIDTH+2.5,-3*TILE+HALF_ROBOT_LENGTH+5*PICKUP_ROOM, ANGLE_TOWARD_BLUE);
+    public static Pose2d OBS_TRIANGLE_TIP_PICKUP = new Pose2d(2*TILE-HALF_TILE-HALF_ROBOT_WIDTH+2.5, -3*TILE+HALF_ROBOT_LENGTH+PICKUP_ROOM, ANGLE_TOWARD_BLUE);
 
     public static Pose2d RIGHT_OF_CHAMBER =  new Pose2d(TILE+HALF_TILE+1, -TILE-4, ANGLE_TOWARD_BLUE);
     public static Pose2d OBS_BEHIND_SPIKE_ONE = new Pose2d(2*TILE-5, -HALF_TILE-2, ANGLE_TOWARD_BLUE);

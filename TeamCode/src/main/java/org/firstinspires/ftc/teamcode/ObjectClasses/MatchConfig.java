@@ -16,8 +16,9 @@ public class MatchConfig {
     public static Robot.RobotType finalRobotType = Robot.RobotType.INTO_THE_DEEP_20245;  // This should be set when the robot is created
 
     public static double offsetFromStartPoseDegrees;
+    public static Pose2d endOfAutonomousPose;
 
-    public static Pose2d endOfAutonomousPose = null;
+//    public static Pose2d endOfAutonomousPose = null;
 
     public static ElapsedTime teleOpTimer;
     public static ElapsedTime loopTimer;

@@ -2,23 +2,33 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.Drive
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
-import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
-import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
+import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static java.lang.Math.PI;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.AngularVelConstraint;
+import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.FieldConstants;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.BetterPrepareAction;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.ScoreSampleAction;
+
+import java.util.Arrays;
 
 public class DriveToNetZone implements Action {
     private final DriveSubsystem driveSubsystem;
@@ -38,6 +48,22 @@ public class DriveToNetZone implements Action {
         this.cancelled = false; // Initialize the cancellation flag
     }
 
+    // Velocity and acceleration overrides
+    public static final double VELOCITY_OVERRIDE = 45;
+    public static final double ACCELERATION_OVERRIDE = 45;
+    public static final double ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+
+    // Velocity and acceleration overrides
+    public static final double VELOCITY_SLOW_OVERRIDE = 10;
+    public static final double ACCELERATION_SLOW_OVERRIDE = 10;
+
+    // Shared constraints for all routes
+    public static VelConstraint velConstraint;
+    public static AccelConstraint accelConstraint;
+    public static VelConstraint velSlowConstraint;
+    public static AccelConstraint accelSlowConstraint;
+
+
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
         if (cancelled) {
@@ -47,6 +73,22 @@ public class DriveToNetZone implements Action {
         }
 
         if (!started) {
+            velConstraint = new MinVelConstraint(Arrays.asList(
+                    new TranslationalVelConstraint(VELOCITY_OVERRIDE),
+                    new AngularVelConstraint(ANGULAR_VELOCITY_OVERRIDE)
+            ));
+            accelConstraint = new ProfileAccelConstraint(- ACCELERATION_OVERRIDE, ACCELERATION_OVERRIDE);
+
+            velSlowConstraint = new MinVelConstraint(Arrays.asList(
+                    new TranslationalVelConstraint(VELOCITY_SLOW_OVERRIDE),
+                    new AngularVelConstraint(ANGULAR_VELOCITY_OVERRIDE)
+            ));
+            accelSlowConstraint = new ProfileAccelConstraint(-ACCELERATION_SLOW_OVERRIDE, ACCELERATION_SLOW_OVERRIDE);
+            double maxAngVel = Math.PI*3; // shared with path
+            double maxAngAccel = Math.PI*3;
+            TurnConstraints turnConstraints = new TurnConstraints(
+                    maxAngVel, -maxAngAccel, maxAngAccel);
+
             RealRobotAdapter robotAdapter = new RealRobotAdapter();
             Pose2d currentPose = driveSubsystem.getMecanumDrive().pose;
 
@@ -55,8 +97,12 @@ public class DriveToNetZone implements Action {
             }
 
             action = robotAdapter.getActionBuilder(currentPose)
-                    .setTangent(ANGLE_TOWARD_NET)
-                    .splineToLinearHeading(FieldConstants.NET_BASKET_DRIVE_TO_NET, ANGLE_225_DEGREES).build();
+                    .setTangent(ANGLE_225_DEGREES)
+                    .afterDisp(15, new BetterPrepareAction())
+                    .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_APPROACH), ANGLE_45_DEGREES, velConstraint, accelConstraint)
+                    .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_SCORE), ANGLE_45_DEGREES,velSlowConstraint, accelSlowConstraint)
+                    .stopAndAdd(new ScoreSampleAction())
+                    .build();
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry
             started = true; // Ensure the action is only initialized once

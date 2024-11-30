@@ -8,6 +8,8 @@ import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.LogFile;
+import com.acmerobotics.roadrunner.ftc.MessageSchema;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
@@ -243,6 +245,9 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     private final OctoQuad octoquad;
     private final int armEncoderChannel = 4; // Specify the Octoquad channel for the arm encoder
 
+    MessageSchema paramsSchema;
+
+
     public SpecimenArmSubsystem(final HardwareMap hMap , Robot.RobotType robotType , final String name) {
         // Initialize parameters based on robot type
         SPECIMEN_ARM_PARAMS.loadDefaultsForRobotType(robotType); // Configure parameters for this robot type
@@ -282,10 +287,14 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         currentAngleDegrees = SPECIMEN_ARM_PARAMS.CCW_HOME;
         targetAngleDegrees = SPECIMEN_ARM_PARAMS.CCW_HOME;
         pidController.setSetPoint(targetAngleDegrees);
+
+
+        FlightRecorder.write("SpecimenArmParamsSchema", LogFile.schemaOfClass(SpecimenArmSubsystem.SpecimenArmParams.class));
     }
 
     @Override
     public void periodic() {
+
         // Retrieve current position from the encoder
         OctoQuad.EncoderDataBlock encoderDataBlock = new OctoQuad.EncoderDataBlock();
         octoquad.readAllEncoderData(encoderDataBlock);
@@ -344,9 +353,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     arm.setPower(0);
                     setCurrentState(SpecimenArmStates.ZERO_POWER_AT_CCW_ARM_HOME);
                     zeroPowerTimer.reset();
-                    if (!Robot.getInstance().getSpecimenIntakeSubsystem().getSpecimenDetector().haveSpecimen()){
-                        Robot.getInstance().getLightingSubsystem().setLightBlack();
-                    } else    Robot.getInstance().getLightingSubsystem().setProblemColor();
                 }
                 break;
 

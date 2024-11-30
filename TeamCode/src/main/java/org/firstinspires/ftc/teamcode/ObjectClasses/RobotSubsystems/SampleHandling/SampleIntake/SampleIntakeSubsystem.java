@@ -117,13 +117,13 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     ElapsedTime sampleIntakeTimer = new ElapsedTime();
 
-    public enum IntakeDetectState{
+    public enum SampleIntakeDetectState {
         DETECTING,
         DETECTED_GOOD_SAMPLE,
         DETECTED_BAD_SAMPLE,
     }
 
-    private IntakeDetectState currentIntakeDetectionState;
+    private SampleIntakeDetectState currentIntakeDetectionState;
 
     // Constructor with color sensor
     public SampleIntakeSubsystem(final HardwareMap hMap, Robot.RobotType robotType,  final String intakeServoL, final String intakeServoR, final String colorSensorName) {
@@ -157,7 +157,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         setCurrentState(SampleIntakeStates.INTAKE_OFF);  // Set default state to off
         currentPower = SAMPLE_INTAKE_PARAMS.INTAKE_OFF_POWER;  // Cache initial power
         sampleProcessingStateMachine = Robot.getInstance().getSampleProcessingStateMachine();
-        currentIntakeDetectionState=IntakeDetectState.DETECTING;
+        currentIntakeDetectionState= SampleIntakeDetectState.DETECTING;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
             case DETECTED_GOOD_SAMPLE:
                 if (sampleProcessingStateMachine.getCurrentSampleDetectionState() == SampleProcessingStateMachine.SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION) {
                     sampleDetector.clearDetectionState();
-                    currentIntakeDetectionState = IntakeDetectState.DETECTING;
+                    currentIntakeDetectionState = SampleIntakeDetectState.DETECTING;
                 }
                 break;
         }
@@ -363,7 +363,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         return false; // Return false if null or an exception is caught
     }
 
-    public IntakeDetectState getCurrentIntakeDetectState() {
+    public SampleIntakeDetectState getCurrentIntakeDetectState() {
         return currentIntakeDetectionState;
     }
 }

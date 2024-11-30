@@ -35,6 +35,7 @@ public class AutonomousPeriodicAction implements Action {
         FtcDashboard.getInstance().sendTelemetryPacket(MatchConfig.telemetryPacket);
         // Clear the packet for the next loop
         MatchConfig.telemetryPacket = new TelemetryPacket();
+        MatchConfig.endOfAutonomousPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
         return true;
     }
 }

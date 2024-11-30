@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
@@ -20,9 +21,10 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveSubsystem;
-
+@Config
 public class DriveForwardFromBasketAndBringLiftDown implements Action {
     private final DriveSubsystem driveSubsystem;
+    public static double DELAY_TO_LOWER_LIFT = .8;
     private boolean started;
     private boolean cancelled;
     private Action action;// Flag to indicate if the action has been cancelled
@@ -49,12 +51,32 @@ public class DriveForwardFromBasketAndBringLiftDown implements Action {
         }
 
         if (!started) {
-            action = new SequentialAction(
-                                new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToIntakePosition),
-                                new SleepAction(.5),
-                                new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHome)
-                            );
+            RealRobotAdapter robotAdapter = new RealRobotAdapter();
+            Pose2d currentPose = driveSubsystem.getMecanumDrive().pose;
 
+            if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+                currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log()+PI);
+            }
+
+            double heading = currentPose.heading.log();
+            double offsetX = distance * Math.cos(heading);
+            double offsetY = distance * Math.sin(heading);
+
+            Vector2d targetVector = new Vector2d(
+                    currentPose.position.x + offsetX,
+                    currentPose.position.y + offsetY);
+
+            action = robotAdapter.getActionBuilder(currentPose)
+                    .setReversed(false)
+                    .afterDisp(4,
+                            new SequentialAction(
+                                    new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToSoftLandingPosition),
+                                    new SleepAction(DELAY_TO_LOWER_LIFT),
+                                    new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHome),
+                                    new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToIntakePosition)
+                            )
+                    )
+                    .splineToConstantHeading(targetVector, Math.toRadians(180)+currentPose.heading.log()).build();
 
             action.preview(MatchConfig.telemetryPacket.fieldOverlay()); // Optional: Preview for telemetry
             started = true; // Ensure the action is only initialized once

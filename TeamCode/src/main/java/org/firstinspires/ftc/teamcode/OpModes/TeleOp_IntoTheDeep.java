@@ -89,7 +89,6 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
         }
 
         // Setup Button Bindings
-        // Example for avoiding duplicate bindings
         IntoTheDeepDriverBindings driverBindings = new IntoTheDeepDriverBindings(gamepadHandling.getDriverGamepad(), gamepadHandling.getBindingManager());
         IntoTheDeepOperatorBindings operatorBindings = new IntoTheDeepOperatorBindings(gamepadHandling.getOperatorGamepad(), gamepadHandling.getBindingManager());
 
@@ -123,8 +122,8 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             gamepadHandling.getDriverGamepad().readButtons();
             gamepadHandling.getOperatorGamepad().readButtons();
 
+            //todo can we delete this?
             driverBindings.updateTriggerBindings();
-
 
             // Display Telemetry through the Robot's Telemetry Manager
             Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry(gamepadHandling.getBindingManager());

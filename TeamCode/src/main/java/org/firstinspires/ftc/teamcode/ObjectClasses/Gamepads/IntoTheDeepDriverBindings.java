@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.example.sharedconstants.FieldConstants;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.sun.tools.javac.util.List;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
@@ -30,9 +31,11 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.DoubleSupplier;
 
 public class IntoTheDeepDriverBindings {
+    private static final double RESET_POSE_DELAY_TIME_MILLISECONDS = 500;
     GamepadEx driverGamePad;
     Robot robot;
     GamePadBindingManager bindingManager;
@@ -55,6 +58,7 @@ public class IntoTheDeepDriverBindings {
         //Main Controls
         bindDefaultDriving(driverGamePad::getLeftY , driverGamePad::getLeftX , (driverGamePad::getRightX));
         bindSpecimenArmIntakeAndScore(GamepadKeys.Button.A);
+        bindNitroMode(GamepadKeys.Button.LEFT_BUMPER);
         bindSlowMode(GamepadKeys.Button.RIGHT_BUMPER);
         driveToNetZone(GamepadKeys.Button.X);
         driveToObservationZone(GamepadKeys.Button.B);
@@ -68,8 +72,8 @@ public class IntoTheDeepDriverBindings {
         resetGyro(GamepadKeys.Button.DPAD_DOWN);
 
         // Configuration Options
-        cycleTelemetry(GamepadKeys.Button.LEFT_BUMPER);
-        cycleDriveMode(GamepadKeys.Button.DPAD_UP);
+        cycleTelemetry(GamepadKeys.Button.BACK);
+
         //todo should we switch this to the OPTIONS button so we don't risk accidentally pressing when setting controller on driver station?
         toggleFieldOrientedControl(GamepadKeys.Button.START);
 
@@ -77,6 +81,21 @@ public class IntoTheDeepDriverBindings {
         //todo should these be implemented as just buttons to set the orientation of the robot to a fixed angle without anything else?
 //        bindBucketAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
 //        bindSpecimenAngleDriving(GamepadKeys.Trigger.RIGHT_TRIGGER);
+    }
+
+    private void bindNitroMode(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed(new InstantCommand(robot.getDriveSubsystem()::enableNitroMode))
+                    .whenReleased(new InstantCommand(robot.getDriveSubsystem()::disableNitroMode)
+                    );
+
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    button,
+                    "Hold for Nitro Mode"
+            ));
+        }
     }
 
     private void bindSpecimenIntakeToggle(GamepadKeys.Button button) {
@@ -202,20 +221,35 @@ public class IntoTheDeepDriverBindings {
 
     private void resetGyro(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            ElapsedTime buttonPressTimer = new ElapsedTime(); // Timer to track button press duration
+
+            // Command to reset the gyro and pose
             Command resetYawCommand = new InstantCommand(() -> {
+                //this resets the onboard IMU, which we aren't using right now
                 robot.getDriveSubsystem().getMecanumDrive().lazyImu.get().resetYaw();
-                robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField , MatchConfig.finalAllianceColor);
+                //this resets the pinpoint pose, which effectively resets the heading and pose to the corner
+                robot.getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
             });
 
-            driverGamePad.getGamepadButton(button)
-                    .whenPressed(resetYawCommand);
+            AtomicBoolean canTrigger = new AtomicBoolean(true); // Tracks if the button can trigger the command
 
-            // Register the yaw reset
+            // Start the timer when the button is pressed
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed(buttonPressTimer::reset)
+                    .whileHeld(() -> {
+                        if (canTrigger.get() && buttonPressTimer.milliseconds() >= RESET_POSE_DELAY_TIME_MILLISECONDS) {
+                            resetYawCommand.schedule(); // Schedule the command
+                            canTrigger.set(false);      // Block further triggers until button is released
+                        }
+                    })
+                    .whenReleased(() -> canTrigger.set(true)); // Allow re-triggering on button release
+
+            // Register the yaw reset with a description
             bindingManager.registerBinding(new ButtonBinding(
-                    GamepadType.DRIVER ,
-                    button ,
-                    resetYawCommand ,
-                    "Reset to Start Pose"
+                    GamepadType.DRIVER,
+                    button,
+                    resetYawCommand,
+                    "Reset to Observation Corner Pose"
             ));
         }
     }
