@@ -70,7 +70,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     FLIP_UP_DELAY_TIME_MS = 250;
                     FLIP_UP_POSITION= .35;
                     FLIP_HOVER_POSITION = 0.6;
-                    FLIP_DOWN_POSITION =0.7;
+                    FLIP_DOWN_POSITION =0.73;
                     break;
 
                 default:

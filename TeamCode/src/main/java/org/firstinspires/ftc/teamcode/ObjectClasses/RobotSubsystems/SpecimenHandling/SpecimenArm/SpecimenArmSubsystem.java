@@ -152,7 +152,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.MAX_POWER = 1.0;
 
                     // Preset Angles
-                    SPECIMEN_ARM_PARAMS.CCW_HOME = 247.0;
+                    SPECIMEN_ARM_PARAMS.CCW_HOME = 243.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
                     SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 222.8;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
@@ -162,7 +162,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.TIMEOUT_TIME_SECONDS = 1.5;
 
                     // Encoder Offset
-                    SPECIMEN_ARM_PARAMS.ENCODER_OFFSET = 123.28;
+                    SPECIMEN_ARM_PARAMS.ENCODER_OFFSET = 300;
                     break;
 
                 default:

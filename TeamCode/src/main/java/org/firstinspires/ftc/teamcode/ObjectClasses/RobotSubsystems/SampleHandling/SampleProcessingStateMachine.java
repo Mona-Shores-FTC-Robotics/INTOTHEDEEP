@@ -84,6 +84,7 @@ public class SampleProcessingStateMachine {
                 lightingSubsystem.setBadSampleWarningColor();
                 currentSampleDetectionState = SampleDetectionStates.EJECTING_BAD_SAMPLE;
                 sampleTwisterSubsystem.setTwisterServoDumpToSide();
+                actuatorSubsystem.setFlipperHover();
                 intakeSubsystem.ejectBadSample();
                 break;
             case EJECTING_BAD_SAMPLE:
