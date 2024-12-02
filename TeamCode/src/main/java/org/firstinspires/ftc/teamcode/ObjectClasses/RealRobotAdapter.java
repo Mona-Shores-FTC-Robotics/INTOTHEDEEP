@@ -9,6 +9,9 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
@@ -150,7 +153,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)
                             && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
-                        return new  SequentialAction(
+                        return new ParallelAction(
                                         new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveLiftToHighBasket),
                                         new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::moveDumperToPreScore),
                                         new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::setBucketToScorePosition));
@@ -260,6 +263,28 @@ public class RealRobotAdapter implements RobotAdapter {
                                 robot.getSpecimenIntakeSubsystem().getSpecimenDetector()::haveSpecimen,  //this is the condition upon which it performs the first action
                                100); // this is how often it checks the condition
                     }
+
+
+
+                case WAIT_FOR_PICKUP_OR_TIMEOUT:
+                    SequentialAction retract = new SequentialAction (
+                            new ParallelAction(
+                                new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::turnOffIntake),
+                                new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward),
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperUp),
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract)),
+                            new SleepAction(.800),
+                            new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::reverseIntake),
+                            new SleepAction(.800),
+                            new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::turnOffIntake)
+                    );
+
+                    return new ConditionalTimeoutAction(
+                            new SleepAction(1.3),  // if we have a sample we should wait for the transfer
+                            retract,
+                            robot.getSampleIntakeSubsystem().getSampleDetector()::haveSample,  //this is the condition upon which it performs the first action
+                            5000); //
+
                 case LEVEL_1_ASCENT:
                 {
                     return new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::level1Ascent);

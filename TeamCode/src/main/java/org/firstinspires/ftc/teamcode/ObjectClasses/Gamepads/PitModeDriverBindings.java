@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
+import com.acmerobotics.roadrunner.InstantAction;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
@@ -8,19 +9,23 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.ActionCommand;
+import org.firstinspires.ftc.teamcode.ObjectClasses.ConditionalTimeoutAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.ButtonBinding;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleHandlingActions.BetterPrepareAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.ChangeSampleBucketPositionAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleTwister.SampleTwisterSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 public class PitModeDriverBindings {
@@ -48,7 +53,9 @@ public class PitModeDriverBindings {
         SampleIntake(GamepadKeys.Button.A);
         SampleOuttake(GamepadKeys.Button.B);
 
-        Level1Ascent(GamepadKeys.Button.DPAD_UP);
+        SpecimenIntakeOn(GamepadKeys.Button.DPAD_DOWN);
+
+        testConditionalTimeoutAction(GamepadKeys.Button.DPAD_UP);
         //////////////////////////////////////////////////////////
         // Button Bindings to Move Each Motor                   //
         //////////////////////////////////////////////////////////
@@ -132,6 +139,22 @@ public class PitModeDriverBindings {
 
     }
 
+    private void SpecimenIntakeOn(GamepadKeys.Button button) {
+        SpecimenIntakeSubsystem specimenIntakeSubsystem= Robot.getInstance().getSpecimenIntakeSubsystem();
+
+        Command intakeOn = new InstantCommand(specimenIntakeSubsystem::turnOnIntake);
+
+        driverGamePad.getGamepadButton(button)
+                .whenPressed(intakeOn);
+
+        // Register button binding
+        bindingManager.registerBinding(new ButtonBinding(
+                GamepadType.OPERATOR,
+                button,
+                "Test Conditional Command"
+        ));
+    }
+
     private void Level1Ascent(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
             SpecimenArmSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
@@ -149,6 +172,35 @@ public class PitModeDriverBindings {
             ));
         }
     }
+
+    private void testConditionalTimeoutAction(GamepadKeys.Button button) {
+        Set<Subsystem> requirements = new HashSet<>();
+
+        SampleIntakeSubsystem sampleIntakeSubsystem = Robot.getInstance().getSampleIntakeSubsystem();
+        SpecimenIntakeSubsystem specimenIntakeSubsystem= Robot.getInstance().getSpecimenIntakeSubsystem();
+
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed(()->
+                            {
+                                ConditionalTimeoutAction test = new ConditionalTimeoutAction(
+                                        new InstantAction(specimenIntakeSubsystem::turnOffIntake),
+                                        new InstantAction(specimenIntakeSubsystem::turnOffIntake),
+                                        sampleIntakeSubsystem.getSampleDetector()::haveSample,
+                                        5000
+                                );
+                                Command testCommand = new ActionCommand(test, requirements);
+                                testCommand.schedule();
+                            });
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Test Conditional Command"
+            ));
+
+    }
+
 
     private void SampleOuttake(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {

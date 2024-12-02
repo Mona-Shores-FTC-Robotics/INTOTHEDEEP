@@ -21,6 +21,7 @@ import static com.example.sharedconstants.RobotAdapter.ActionType.PICKUP_FROM_GR
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_HIGH_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_LOW_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
+import static com.example.sharedconstants.RobotAdapter.ActionType.WAIT_FOR_PICKUP_OR_TIMEOUT;
 
 import com.example.sharedconstants.RobotAdapter;
 
@@ -43,20 +44,19 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
     private void moveToNeutralSample3() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_45_DEGREES)
-                .afterDisp(7.0, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
+                .afterDisp(4.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .splineToLinearHeading(NET_SPIKE_THREE, ANGLE_115_DEGREES, normalVelocity, normalAcceleration)
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .waitSeconds(2.5);
+                .stopAndAdd(robotAdapter.getAction(WAIT_FOR_PICKUP_OR_TIMEOUT));
     }
 
     void moveFromNeutralSample3ToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
-                .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
-                .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
-//                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
-                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+//                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)\
+                .stopAndAdd(robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
 
     private void travelToAscentZone() {
