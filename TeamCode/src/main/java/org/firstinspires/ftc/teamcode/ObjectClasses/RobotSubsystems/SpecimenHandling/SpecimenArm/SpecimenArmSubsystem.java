@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm;
 
+import static com.example.sharedconstants.RobotAdapter.ActionType.LEVEL_1_ASCENT;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP;
+import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.ZERO_POWER;
 
 import android.annotation.SuppressLint;
 
@@ -32,6 +34,7 @@ import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenArmSta
 
 @Config
 public class SpecimenArmSubsystem extends SubsystemBase {
+
 
     public static class SpecimenArmParams extends ConfigurableParameters {
         // Flip parameters
@@ -67,6 +70,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double SPECIMEN_PICKUP_ANGLE = Double.NaN;
         private double DEFAULT_PICKUP_ANGLE;
         private double MAX_PICKUP_ANGLE_ADJUSTMENT;
+        public double LEVEL_1_ASCENT_ANGLE;
+
 
         public double CW_HOME = Double.NaN;
 
@@ -113,6 +118,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
                     SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 214;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
+                    LEVEL_1_ASCENT_ANGLE = 57;
+
 
                     DEFAULT_PICKUP_ANGLE = SPECIMEN_PICKUP_ANGLE;
                     MAX_PICKUP_ANGLE_ADJUSTMENT=10;
@@ -158,6 +165,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
                     SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 222.8;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
+                    LEVEL_1_ASCENT_ANGLE = 57;
 
                     // Motion Profile Parameters
                     SPECIMEN_ARM_PARAMS.RAMP_UP_TIME_MILLISECONDS = 250;
@@ -182,7 +190,9 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         FLIPPING_TO_CW,
         ZERO_POWER_AT_CCW_ARM_HOME,
         ZERO_POWER_AT_CW_ARM_HOME,
-        ROTATING_CCW_TO_TARGET_ANGLE; // New state for constant power rotation
+        ROTATING_CCW_TO_TARGET_ANGLE,
+        LEVEL_1_ASCENT,
+        ZERO_POWER; // New state for constant power rotation
 
         public double getArmAngle() {
             switch (this) {
@@ -194,6 +204,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     return SPECIMEN_ARM_PARAMS.CW_HOME;
                 case SPECIMEN_PICKUP:
                     return SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE;
+                case LEVEL_1_ASCENT:
+                    return SPECIMEN_ARM_PARAMS.LEVEL_1_ASCENT_ANGLE;
                 default:
                     throw new IllegalStateException("Angle not defined for state: " + this);
             }
@@ -372,7 +384,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
             case CCW_ARM_HOME:
             case CW_ARM_HOME:
             case SPECIMEN_PICKUP:
-            default:
+            case LEVEL_1_ASCENT:
                 // Check if movement is needed based on the target angle
                 if (Math.abs(targetAngleDegrees - currentAngleDegrees) > SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES) {
                     moveToTargetAngle(); // Move towards the target if outside tolerance
@@ -380,6 +392,12 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     maintainPosition(); // Hold the position if within tolerance
                 }
                 break;
+
+            case ZERO_POWER:
+            default:
+                //do nothing
+                break;
+
         }
 
         updateParameters();
@@ -403,6 +421,22 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         pidController.setSetPoint(targetAngleDegrees);
         arm.setPower(SpecimenArmSubsystem.SPECIMEN_ARM_PARAMS.CONSTANT_POWER_FOR_CW_FLIP);
     }
+
+
+    public void level1Ascent() {
+        setCurrentState(SpecimenArmStates.LEVEL_1_ASCENT);
+    }
+
+    public void depowerArm() {
+        currentState=ZERO_POWER;
+        arm.setPower(0);
+    }
+
+    public void gotoCCWHome() {
+        setCurrentState(SpecimenArmStates.CCW_ARM_HOME);
+    }
+
+
 
     public void gotoPickupAngle() {
         setCurrentState(SpecimenArmStates.SPECIMEN_PICKUP);

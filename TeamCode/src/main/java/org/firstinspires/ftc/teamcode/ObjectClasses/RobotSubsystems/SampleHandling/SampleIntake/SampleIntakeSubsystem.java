@@ -53,7 +53,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     INTAKE_OFF_POWER = 0.0;
                     MAX_POWER = 1.0;
                     PROXIMITY_THRESHOLD = 40.0;
-                    COLOR_HISTORY_SIZE = 5;
+                    COLOR_HISTORY_SIZE = 2;
                     TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 800.0;
                     LEFT_POWER_REVERSE = 1.0;
@@ -66,7 +66,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     INTAKE_OFF_POWER = 0;
                     MAX_POWER = 1.0;
                     PROXIMITY_THRESHOLD = 40;
-                    COLOR_HISTORY_SIZE = 5;
+                    COLOR_HISTORY_SIZE = 2;
                     TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 801.0;
                     LEFT_POWER_REVERSE = 1.0;

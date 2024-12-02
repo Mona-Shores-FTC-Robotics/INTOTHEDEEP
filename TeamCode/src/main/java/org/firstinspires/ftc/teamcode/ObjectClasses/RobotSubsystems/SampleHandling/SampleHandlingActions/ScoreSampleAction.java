@@ -21,7 +21,7 @@ public class ScoreSampleAction implements Action {
         actionSequence = new SequentialAction(
                 new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::dumpSampleInBucket),
                 new SleepAction(.65),
-                new DriveForwardFromBasketAndBringLiftDown(8),
+                new DriveForwardFromBasketAndBringLiftDown(10),
                 new InstantAction(Robot.getInstance().getLightingSubsystem()::setLightBlack)
         );
     }

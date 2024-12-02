@@ -53,12 +53,12 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     UPWARD_VELOCITY = 50;    DOWNWARD_VELOCITY = -125;    UPWARD_ACCELERATION = 50;    DOWNWARD_ACCELERATION = -210;
 
                     // Bucket Servo Positions
-                    BUCKET_SCORE_POS = .45;    BUCKET_INTAKE_POS = .85; BUCKET_SOFT_LANDING_POS = .65;
+                    BUCKET_SCORE_POS = .45;    BUCKET_INTAKE_POS = .96; BUCKET_SOFT_LANDING_POS = .65;
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.678;    DUMPER_PRESCORE_POS = 0.74;    DUMPER_DUMP_POS = 0.85; DUMPER_HOLD_HIGH_POS = .76;
-                    DUMP_TIME_MS = 800;
+                    DUMPER_HOME_POS = 0.628;    DUMPER_PRESCORE_POS = 0.70;    DUMPER_DUMP_POS = 1.0; DUMPER_HOLD_HIGH_POS = .75;
+                    DUMP_TIME_MS = 300;
 
                     break;
 
@@ -84,7 +84,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
                     // Dumper Positions
                     DUMPER_HOME_POS = .52;    DUMPER_PRESCORE_POS = .55;    DUMPER_DUMP_POS = 0.82; DUMPER_HOLD_HIGH_POS = .60;
-                    DUMP_TIME_MS = 700;
+                    DUMP_TIME_MS = 200;
 
                     break;
                 default:

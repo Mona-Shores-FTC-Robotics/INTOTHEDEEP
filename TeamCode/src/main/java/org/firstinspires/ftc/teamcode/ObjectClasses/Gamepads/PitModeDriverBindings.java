@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleTwister.SampleTwisterSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 
 import java.util.Collections;
 import java.util.Set;
@@ -46,6 +47,8 @@ public class PitModeDriverBindings {
         SampleTwister(GamepadKeys.Button.Y);
         SampleIntake(GamepadKeys.Button.A);
         SampleOuttake(GamepadKeys.Button.B);
+
+        Level1Ascent(GamepadKeys.Button.DPAD_UP);
         //////////////////////////////////////////////////////////
         // Button Bindings to Move Each Motor                   //
         //////////////////////////////////////////////////////////
@@ -127,6 +130,24 @@ public class PitModeDriverBindings {
 //        ));
 
 
+    }
+
+    private void Level1Ascent(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+            SpecimenArmSubsystem specimenArmSubsystem = Robot.getInstance().getSpecimenArmSubsystem();
+            Command level1Ascent = new InstantCommand(specimenArmSubsystem::level1Ascent);
+            Command home = new InstantCommand(specimenArmSubsystem::gotoCCWHome);
+
+            driverGamePad.getGamepadButton(button)
+                    .toggleWhenPressed(level1Ascent, home);
+
+            // Register button binding
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.OPERATOR,
+                    button,
+                    "Level 1 ascent"
+            ));
+        }
     }
 
     private void SampleOuttake(GamepadKeys.Button button) {

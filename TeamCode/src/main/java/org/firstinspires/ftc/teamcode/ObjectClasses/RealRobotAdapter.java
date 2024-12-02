@@ -260,6 +260,16 @@ public class RealRobotAdapter implements RobotAdapter {
                                 robot.getSpecimenIntakeSubsystem().getSpecimenDetector()::haveSpecimen,  //this is the condition upon which it performs the first action
                                100); // this is how often it checks the condition
                     }
+                case LEVEL_1_ASCENT:
+                {
+                    return new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::level1Ascent);
+                }
+
+                case DEPOWER_ARM:
+                {
+                    return new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::depowerArm);
+                }
+
                 default:
                     telemetryManger.displayError("Unknown action type: " + actionType);
                     return new NullAction();
