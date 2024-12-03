@@ -53,7 +53,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     UPWARD_VELOCITY = 50;    DOWNWARD_VELOCITY = -125;    UPWARD_ACCELERATION = 50;    DOWNWARD_ACCELERATION = -210;
 
                     // Bucket Servo Positions
-                    BUCKET_SCORE_POS = 0.44;    BUCKET_INTAKE_POS = .97; BUCKET_SOFT_LANDING_POS = 0.65;
+                    BUCKET_SCORE_POS = .28;    BUCKET_INTAKE_POS = .8; BUCKET_SOFT_LANDING_POS = 0.65;
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions

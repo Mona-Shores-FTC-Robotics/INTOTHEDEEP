@@ -139,7 +139,6 @@ public class AutoSelector extends LinearOpMode {
 
         //Guess what side of field we are on to make setup easier
 
-
         finalSideOfField = FieldConstants.SideOfField.OBSERVATION;
 
         // Perform route selection during init
