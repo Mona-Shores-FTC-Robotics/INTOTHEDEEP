@@ -118,23 +118,33 @@ public class IntoTheDeepDriverBindings {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Set<Subsystem> requirements = new HashSet<>();
             requirements.add(Robot.getInstance().getDriveSubsystem());
-            RealRobotAdapter robotAdapter = new RealRobotAdapter();
-            Pose2d currentPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
 
-            if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
-                currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log() + Math.PI);
-            }
 
             // Build an action to rotate the robot 5 degrees to the left
-            Action action = robotAdapter.getActionBuilder(currentPose)
-                    .turn(Math.toRadians(5)) // Rotate 5 degrees to the left
-                    .build();
+
+
+            Command driveToNetZoneCommand =
+                    new InstantCommand(() -> {
+                        RealRobotAdapter robotAdapter = new RealRobotAdapter();
+                        Pose2d currentPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+
+                        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+                            currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log() + Math.PI);
+                        }
+                        Action action = robotAdapter.getActionBuilder(currentPose)
+                                .turn(Math.toRadians(5)) // Rotate 5 degrees to the left
+                                .build();
+                        ActionCommand actionCommand = new ActionCommand(action , Collections.singleton(robot.getDriveSubsystem()));
+                        actionCommand.schedule();
+                    });
+
+
 
             // Trigger reader to detect when the trigger is pressed
             Trigger triggerPress = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.3);
 
             // Start the command once when the trigger is pressed
-            triggerPress.whenActive(new ActionCommand(action, requirements));
+            triggerPress.whenActive(driveToNetZoneCommand);
 
             // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
