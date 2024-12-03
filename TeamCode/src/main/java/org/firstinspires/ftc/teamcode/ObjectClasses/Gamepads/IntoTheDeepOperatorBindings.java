@@ -27,7 +27,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.DefaultSampleLiftCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.DefaultSampleLinearActuatorCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleTwister.SampleTwisterSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
@@ -61,8 +60,8 @@ public class IntoTheDeepOperatorBindings {
         ReverseSampleIntakeToggle(GamepadKeys.Button.DPAD_LEFT);
         ReverseSpecimenIntakeToggle(GamepadKeys.Button.DPAD_RIGHT);
         ManualDump(GamepadKeys.Button.DPAD_DOWN);
-        bindDecreasePickupAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
-        bindIncreasePickupAngle(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        bindDecreaseArmITerm(GamepadKeys.Trigger.LEFT_TRIGGER);
+        bindIncreaseArmITerm(GamepadKeys.Trigger.RIGHT_TRIGGER);
 
         LiftToLowBucket(GamepadKeys.Button.Y);
 
@@ -350,13 +349,13 @@ public class IntoTheDeepOperatorBindings {
     }
 
 
-    private void bindIncreasePickupAngle(GamepadKeys.Trigger trigger) {
+    private void bindIncreaseArmITerm(GamepadKeys.Trigger trigger) {
         if(Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
         {
             //See teleop centerstage code - can't figure out how to make binding declarative
             Trigger triggerDown = new Trigger(() -> operatorGamePad.getTrigger(trigger) > 0.3);
             //todo can we fix this to work better doesn't seem to modify angle immediately in a noticeable way
-            triggerDown.whenActive(new InstantCommand(robot.getSpecimenArmSubsystem()::increasePickupAngle));
+            triggerDown.whenActive(new InstantCommand(robot.getSpecimenArmSubsystem()::increaseArmITerm));
 
             // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
@@ -367,19 +366,19 @@ public class IntoTheDeepOperatorBindings {
         }
     }
 
-    private void bindDecreasePickupAngle(GamepadKeys.Trigger trigger) {
+    private void bindDecreaseArmITerm(GamepadKeys.Trigger trigger) {
         if(Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
         {
         //See teleop centerstage code - can't figure out how to make binding declarative
         Trigger leftTriggerDown = new Trigger(() -> operatorGamePad.getTrigger(trigger) > 0.3);
         //todo can we fix this to work better doesn't seem to modify angle immediately in a noticeable way
-        leftTriggerDown.whenActive(new InstantCommand(robot.getSpecimenArmSubsystem()::decreasePickupAngle));
+        leftTriggerDown.whenActive(new InstantCommand(robot.getSpecimenArmSubsystem()::decreaseArmITerm));
 
         // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
                     GamepadType.OPERATOR,
                     Collections.singletonList(trigger.name()),
-                    "Decrease Pickup Angle"
+                    "Decrease Arm I Term"
             ));
         }
     }

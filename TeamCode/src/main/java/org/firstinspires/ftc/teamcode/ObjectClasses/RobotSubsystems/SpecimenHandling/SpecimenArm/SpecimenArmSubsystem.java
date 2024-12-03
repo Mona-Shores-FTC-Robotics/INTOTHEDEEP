@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm;
 
-import static com.example.sharedconstants.RobotAdapter.ActionType.LEVEL_1_ASCENT;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP;
@@ -18,7 +17,6 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ArmFeedforward;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -50,6 +48,12 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double DEAD_ZONE = Double.NaN;
 
         // PID parameters
+
+
+        public double DEFAULT_I = Double.NaN;
+        public double MAX_I_DEVIATION; // Adjust as needed
+
+
         public double P = Double.NaN;
         public double I = Double.NaN;
         public double D = Double.NaN;
@@ -101,6 +105,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // PID parameters
                     SPECIMEN_ARM_PARAMS.P = 0.0044;
                     SPECIMEN_ARM_PARAMS.I = 0.1;
+                    DEFAULT_I = I;
+                    MAX_I_DEVIATION = .2;
                     SPECIMEN_ARM_PARAMS.D = .0001;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
@@ -148,6 +154,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // PID parameters
                     SPECIMEN_ARM_PARAMS.P = 0.0044;
                     SPECIMEN_ARM_PARAMS.I = 0.10;
+                    DEFAULT_I = I;
                     SPECIMEN_ARM_PARAMS.D = 0.0001;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
@@ -442,31 +449,27 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         setCurrentState(SpecimenArmStates.SPECIMEN_PICKUP);
     }
 
-    public void increasePickupAngle() {
-        MatchConfig.telemetryPacket.put("increase", currentState);
-        if (currentState == SPECIMEN_PICKUP) {
-            // Check if the adjustment is within the allowed range
-            if (SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE < SPECIMEN_ARM_PARAMS.DEFAULT_PICKUP_ANGLE + SPECIMEN_ARM_PARAMS.MAX_PICKUP_ANGLE_ADJUSTMENT) {
-                SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE += .5;
-                setCurrentState(SPECIMEN_PICKUP);
 
+
+    public void increaseArmITerm() {
+        if (currentState == SPECIMEN_PICKUP) {
+            double newI = SPECIMEN_ARM_PARAMS.I + 0.025;
+            // Ensure newI does not exceed the allowed range
+            if (newI <= SPECIMEN_ARM_PARAMS.DEFAULT_I + SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION) {
+                SPECIMEN_ARM_PARAMS.I = newI;
             }
         }
     }
 
-    public void decreasePickupAngle() {
-        MatchConfig.telemetryPacket.put("decrease", currentState);
-
+    public void decreaseArmITerm() {
         if (currentState == SPECIMEN_PICKUP) {
-            // Check if the adjustment is within the allowed range
-            if (SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE > SPECIMEN_ARM_PARAMS.DEFAULT_PICKUP_ANGLE - SPECIMEN_ARM_PARAMS.MAX_PICKUP_ANGLE_ADJUSTMENT) {
-                SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE -= .5;
-                setCurrentState(SPECIMEN_PICKUP);
+            double newI = SPECIMEN_ARM_PARAMS.I - 0.025;
+            // Ensure newI does not go below the allowed range
+            if (newI >= SPECIMEN_ARM_PARAMS.DEFAULT_I + SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION) {
+                SPECIMEN_ARM_PARAMS.I = newI;
             }
         }
     }
-
-
 
     public void setManualTargetAngle(double armInput) {
         // Calculate the change in angle based on input and scale factor
