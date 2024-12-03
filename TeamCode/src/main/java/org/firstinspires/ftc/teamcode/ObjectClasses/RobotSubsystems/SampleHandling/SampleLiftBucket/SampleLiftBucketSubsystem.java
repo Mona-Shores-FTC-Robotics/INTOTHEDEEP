@@ -524,7 +524,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         setTargetLiftState(SampleLiftStates.LIFT_HOME);
     }
 
-    //todo consider adjusting how fast bucket servo arm goes down/up to help with net side auto?
     public void setBucketToIntakePosition() {
         currentBucketState=BucketStates.MOVING_TO_INTAKE_POSITION;
         setBucketTargetPositionWithSteps(SAMPLE_LIFT_PARAMS.BUCKET_INTAKE_POS, 6);
@@ -534,8 +533,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         currentBucketState=BucketStates.MOVING_TO_SOFT_LANDING_POSITION;
         setBucketTargetPositionWithSteps(SAMPLE_LIFT_PARAMS.BUCKET_SOFT_LANDING_POS, 6);
     }
-
-
 
     public void setBucketToScorePosition() {
         currentBucketState=BucketStates.MOVING_TO_SCORE_POSITION;

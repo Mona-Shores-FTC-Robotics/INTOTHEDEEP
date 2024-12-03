@@ -4,7 +4,6 @@ import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATIO
 import static com.example.sharedconstants.FieldConstants.HUMAN_PLAYER_SAMPLE_PICKUP;
 import static com.example.sharedconstants.FieldConstants.HUMAN_PLAYER_SAMPLE_STAGING;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
-import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_INTAKE_ON;
 
 import com.example.sharedconstants.RobotAdapter;
 
@@ -23,7 +22,6 @@ public class NET_Score_6_Preload_and_3_Samples_and_2_HumanPlayerSamples extends 
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_TOWARD_OBSERVATION)
                 .splineToSplineHeading(HUMAN_PLAYER_SAMPLE_STAGING, ANGLE_TOWARD_OBSERVATION)
-                .stopAndAdd(robotAdapter.getAction(SAMPLE_INTAKE_ON))
                 .strafeTo(PoseToVector(HUMAN_PLAYER_SAMPLE_PICKUP));
     }
 

@@ -103,7 +103,7 @@ public class DriveToNetZone implements Action {
                     .setTangent(ANGLE_225_DEGREES)
                     .afterDisp(15, new BetterPrepareAction())
                     .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_APPROACH), ANGLE_45_DEGREES, velConstraint, accelConstraint)
-                    .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_SCORE), ANGLE_45_DEGREES,velSlowConstraint, accelSlowConstraint) //todo taking this out to test
+                    .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_SCORE), ANGLE_45_DEGREES,velSlowConstraint, accelSlowConstraint)
                     .stopAndAdd(new ScoreSampleAction())
                     .build();
 

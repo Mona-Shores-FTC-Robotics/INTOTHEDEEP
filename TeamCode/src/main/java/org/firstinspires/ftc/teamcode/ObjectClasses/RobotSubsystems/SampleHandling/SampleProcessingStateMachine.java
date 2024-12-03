@@ -96,9 +96,6 @@ public class SampleProcessingStateMachine {
                 }
                 break;
         }
-        //todo please make sure transition between manual and auto pick up is okay
-        // check on speeds
-        // hit A make sure we turn around when we retract and spit out, what about a blue?
     }
 
 

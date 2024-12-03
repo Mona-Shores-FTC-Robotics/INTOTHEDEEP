@@ -9,7 +9,6 @@ public interface RobotAdapter {
 
     // Enum for actions that both RealRobot and MeepMeep should handle
     enum ActionType {
-        //todo I think it might be best if these 9 "simple" actions were deleted and we had the actions be bigger "chunks"
         SAMPLE_INTAKE_ON,
         SAMPLE_INTAKE_OFF,
         SAMPLE_INTAKE_REVERSE,

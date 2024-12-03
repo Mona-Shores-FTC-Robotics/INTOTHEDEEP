@@ -79,12 +79,10 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
 
         telemetry.addData("hasAutoRun", hasAutoRun);
 
-            //todo can we make this contingent on an auto being run or not? Anything else we should think about based on if an auto was run?
         if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.DRIVE) && !hasAutoRun) {
             //set the starting location of the robot on the field
             Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose = FieldConstants.getStartPose(MatchConfig.finalSideOfField, MatchConfig.finalAllianceColor);
             //After we set the start pose, use that to set the offset from the start pose for field centric driving
-//            Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
             Robot.getInstance().getDriveSubsystem().CalculateYawOffset();
         }
 
@@ -121,9 +119,6 @@ public class TeleOp_IntoTheDeep extends LinearOpMode
             // Read buttons
             gamepadHandling.getDriverGamepad().readButtons();
             gamepadHandling.getOperatorGamepad().readButtons();
-
-            //todo can we delete this?
-            driverBindings.updateTriggerBindings();
 
             // Display Telemetry through the Robot's Telemetry Manager
             Robot.getInstance().getDriverStationTelemetryManager().displayTelemetry(gamepadHandling.getBindingManager());
