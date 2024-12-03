@@ -2,9 +2,16 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
 import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 
+import static java.lang.Math.PI;
+
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.RunCommand;
+import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
@@ -18,6 +25,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.B
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToChamber;
@@ -31,6 +39,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.DoubleSupplier;
 
@@ -42,13 +51,6 @@ public class IntoTheDeepDriverBindings {
     DriveToObservationZone driveToObservationZoneAction;
     DriveToNetZone driveToNetZoneAction;
     DriveForwardAndBack driveForwardAndBack;
-    public Command driveTo90OrMinus90;
-    public Command driveTo45or225;
-
-    private TriggerReader fixedBucketScoreAngleTrigger;
-    private TriggerReader fixedSpecimenScoreAngleTrigger;
-    private boolean isBucketAngleCommandActive = false; // Track if 45/225 mode is active
-    private boolean isSpecimenAngleCommandActive = false; // Track if -90/90 mode is active
 
     public IntoTheDeepDriverBindings(GamepadEx gamePad , GamePadBindingManager gamePadBindingManager) {
         robot = Robot.getInstance();
@@ -64,7 +66,6 @@ public class IntoTheDeepDriverBindings {
         driveToObservationZone(GamepadKeys.Button.B);
 
         //Operator also has the ability to do this
-        //todo should this be removed?
         bindSpecimenIntakeToggle(GamepadKeys.Button.Y);
 
         //Buttons for if things go wrong
@@ -72,14 +73,76 @@ public class IntoTheDeepDriverBindings {
 
         // Configuration Options
         cycleTelemetry(GamepadKeys.Button.BACK);
-
-        //todo should we switch this to the OPTIONS button so we don't risk accidentally pressing when setting controller on driver station?
         toggleFieldOrientedControl(GamepadKeys.Button.START);
 
         //Drive Angle restriction
-        //todo should these be implemented as just buttons to set the orientation of the robot to a fixed angle without anything else?
 //        bindBucketAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
 //        bindSpecimenAngleDriving(GamepadKeys.Trigger.RIGHT_TRIGGER);
+
+        turnFiveDegreesLeft(GamepadKeys.Trigger.LEFT_TRIGGER);
+        turnFiveDegreesRight(GamepadKeys.Trigger.RIGHT_TRIGGER);
+
+    }
+
+    private void turnFiveDegreesRight(GamepadKeys.Trigger trigger) {
+            if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+                Set<Subsystem> requirements = new HashSet<>();
+                requirements.add(Robot.getInstance().getDriveSubsystem());
+                RealRobotAdapter robotAdapter = new RealRobotAdapter();
+                Pose2d currentPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+
+                if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+                    currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log() + PI);
+                }
+
+                Action action = robotAdapter.getActionBuilder(currentPose)
+                        .turn(Math.toRadians(-5)) // Rotate 5 degrees to the right
+                        .build();
+
+                // Trigger reader to detect when the trigger is pressed
+                Trigger triggerPress = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.3);
+
+                // Start the command once when the trigger is pressed
+                triggerPress.whenActive(new ActionCommand(action, requirements));
+
+                // Register for debugging/telemetry
+                bindingManager.registerBinding(new AnalogBinding(
+                        GamepadType.DRIVER,
+                        Collections.singletonList(trigger.name()),
+                        "Turn 5 Degrees Right"
+                ));
+            }
+    }
+
+    private void turnFiveDegreesLeft(GamepadKeys.Trigger trigger) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            Set<Subsystem> requirements = new HashSet<>();
+            requirements.add(Robot.getInstance().getDriveSubsystem());
+            RealRobotAdapter robotAdapter = new RealRobotAdapter();
+            Pose2d currentPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
+
+            if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
+                currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log() + Math.PI);
+            }
+
+            // Build an action to rotate the robot 5 degrees to the left
+            Action action = robotAdapter.getActionBuilder(currentPose)
+                    .turn(Math.toRadians(5)) // Rotate 5 degrees to the left
+                    .build();
+
+            // Trigger reader to detect when the trigger is pressed
+            Trigger triggerPress = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.3);
+
+            // Start the command once when the trigger is pressed
+            triggerPress.whenActive(new ActionCommand(action, requirements));
+
+            // Register for debugging/telemetry
+            bindingManager.registerBinding(new AnalogBinding(
+                    GamepadType.DRIVER,
+                    Collections.singletonList(trigger.name()),
+                    "Turn 5 Degrees Left"
+            ));
+        }
     }
 
     private void bindNitroMode(GamepadKeys.Button button) {
@@ -115,25 +178,6 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void retrySpecimenScore(GamepadKeys.Button button) {
-        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            Command retrySpecimenScoreCommand =
-                    new InstantCommand(() -> {
-                        driveForwardAndBack = new DriveForwardAndBack(10);
-                        ActionCommand actionCommand = new ActionCommand(driveForwardAndBack , Collections.singleton(robot.getDriveSubsystem()));
-                        actionCommand.schedule();
-                    });
-            driverGamePad.getGamepadButton(button)
-                    .whenPressed(retrySpecimenScoreCommand);
-            // Register the drive forward binding
-            bindingManager.registerBinding(new ButtonBinding(
-                    GamepadType.DRIVER ,
-                    button ,
-                    "Retry Specimen Scoring"
-            ));
-        }
-    }
-
     private void driveToNetZone(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Command driveToNetZoneCommand =
@@ -165,8 +209,6 @@ public class IntoTheDeepDriverBindings {
 
     private void driveToObservationZone(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-
-
             Command driveToObservationZoneCommand = new InstantCommand(() -> {
                 driveToObservationZoneAction = new DriveToObservationZone();
                 ActionCommand actionCommand = new ActionCommand(driveToObservationZoneAction ,
@@ -336,65 +378,53 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    //todo is this worth working on?
     private void bindBucketAngle(GamepadKeys.Trigger trigger) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            driveTo45or225 = new DriveAtFixedDegreeHeadingCommand(
+            // Command to drive the robot to a fixed heading
+            DriveAtFixedDegreeHeadingCommand lockBasketAngle = new DriveAtFixedDegreeHeadingCommand(
                     robot.getDriveSubsystem(),
                     driverGamePad::getLeftY,
                     driverGamePad::getLeftX,
                     (MatchConfig.finalAllianceColor == BLUE) ? 225 : 45
             );
-            fixedBucketScoreAngleTrigger = new TriggerReader(driverGamePad, trigger, 0.5);
+
+            // Trigger reader to detect when the trigger is pressed
+            Trigger triggerDown = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.3);
+
+            // While the trigger is held, execute the command to rotate to the fixed angle
+            triggerDown.whileActiveOnce(lockBasketAngle);
 
             // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
                     GamepadType.DRIVER,
                     Collections.singletonList(trigger.name()),
-                    "Toggle 45/225 Mode"
+                    "Hold to Rotate to Fixed Angle"
             ));
         }
     }
 
-    //todo is this worth working on?
     private void bindSpecimenAngleDriving(GamepadKeys.Trigger trigger) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            driveTo90OrMinus90 = new DriveAtFixedDegreeHeadingCommand(
+            // Command to drive the robot to -90 or 90 degrees based on alliance color
+            DriveAtFixedDegreeHeadingCommand lockSpecimenPickupAngle = new DriveAtFixedDegreeHeadingCommand(
                     robot.getDriveSubsystem(),
                     driverGamePad::getLeftY,
                     driverGamePad::getLeftX,
-                    (MatchConfig.finalAllianceColor == BLUE) ? -90 : 90
+                    (MatchConfig.finalAllianceColor == BLUE) ? 180 : 0
             );
-            fixedSpecimenScoreAngleTrigger = new TriggerReader(driverGamePad, trigger, 0.5);
+
+            // Trigger reader to detect when the trigger is pressed
+            Trigger triggerDown = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.5);
+
+            // While the trigger is held, run the driveTo90OrMinus90 command
+            triggerDown.whileActiveOnce(lockSpecimenPickupAngle);
 
             // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
                     GamepadType.DRIVER,
                     Collections.singletonList(trigger.name()),
-                    "Toggle -90/90 Mode"
+                    "Hold for 180/0 Mode"
             ));
-        }
-    }
-    public void updateTriggerBindings() {
-        if (fixedBucketScoreAngleTrigger!=null && fixedSpecimenScoreAngleTrigger!=null) {
-            // Toggle 45/225 mode (left trigger)
-            toggleTriggerCommand(fixedBucketScoreAngleTrigger, driveTo45or225, isBucketAngleCommandActive);
-            isBucketAngleCommandActive = CommandScheduler.getInstance().isScheduled(driveTo45or225);
-
-            // Toggle -90/90 mode (right trigger)
-            toggleTriggerCommand(fixedSpecimenScoreAngleTrigger, driveTo90OrMinus90, isSpecimenAngleCommandActive);
-            isSpecimenAngleCommandActive = CommandScheduler.getInstance().isScheduled(driveTo90OrMinus90);
-        }
-    }
-
-    private void toggleTriggerCommand(TriggerReader triggerReader, Command command, boolean isActive) {
-        triggerReader.readValue();
-        if (triggerReader.wasJustPressed()) {
-            if (isActive) {
-                CommandScheduler.getInstance().cancel(command);
-            } else {
-                CommandScheduler.getInstance().schedule(command);
-            }
         }
     }
 }

@@ -212,23 +212,39 @@ public class DriveSubsystem extends SubsystemBase {
     public void setDriveStrafeValues(double leftY, double leftX) {
         boolean gamepadActive = driverGamepadIsActive(leftY, leftX);
         if (gamepadActive) {
-            double speedFactor = isSlowModeEnabled() ? STICK_PARAMS.SLOW_MODE_FACTOR : 1.0;
-            if (fieldOrientedControl)
-            {
+            double speedFactor = isNitroModeEnabled() ? STICK_PARAMS.NITRO_MODE_FACTOR : 1.0;
+            //slow mode trumps nitro mode
+            speedFactor = isSlowModeEnabled() ? STICK_PARAMS.SLOW_MODE_FACTOR : speedFactor;
+            if (fieldOrientedControl) {
+                // Perform FOC rotation
                 fieldOrientedControl(leftY, leftX);
             } else {
-                leftYAdjusted = leftY * STICK_PARAMS.DRIVE_SPEED_FACTOR * speedFactor;
-                leftXAdjusted = leftX * STICK_PARAMS.STRAFE_SPEED_FACTOR * speedFactor;
+                // In robot-centric control, use compensated joystick inputs directly
+                leftYAdjusted = leftY;
+                leftXAdjusted = leftX;
             }
+            // Calculate magnitude and angle of robot-centric movement vector
+            double robotMovementMagnitude = Math.hypot(leftXAdjusted, leftYAdjusted);
+            double robotMovementAngle = Math.atan2(leftYAdjusted, leftXAdjusted);
+
+            // Get the blended scaling factor based on robot-centric movement angle
+            double blendedScalingFactor = getBlendedScalingFactor(robotMovementAngle);
+
+            // Apply the blended scaling factor to the magnitude
+            double adjustedMagnitude = robotMovementMagnitude * blendedScalingFactor * speedFactor;
+
+            // Reconstruct the adjusted robot-centric movement components
+            double compensatedX = adjustedMagnitude * Math.cos(robotMovementAngle);
+            double compensatedY = adjustedMagnitude * Math.sin(robotMovementAngle);
+
+            // Assign adjusted movement commands
+            drive = compensatedY;
+            strafe = compensatedX;
         } else {
             // No input, set adjusted values to 0
             leftYAdjusted = 0;
             leftXAdjusted = 0;
         }
-
-        // Set drive, strafe, and turn values
-        drive = leftYAdjusted;
-        strafe = leftXAdjusted;
     }
 
 
