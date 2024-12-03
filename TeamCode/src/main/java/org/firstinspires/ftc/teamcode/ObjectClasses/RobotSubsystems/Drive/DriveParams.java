@@ -16,28 +16,28 @@ public class DriveParams {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        MecanumDrive.PARAMS.inPerTick = 1;
-        MecanumDrive.PARAMS.lateralInPerTick = 0.6282148904063195;
+        MecanumDrive.PARAMS.inPerTick = 1; // SparkFun OTOS Note: you can probably leave this at 1
+        MecanumDrive.PARAMS.lateralInPerTick = 0.5986580181755985;
         MecanumDrive.PARAMS.trackWidthTicks = 11.5;
 
         // feedforward parameters (in tick units)
-        MecanumDrive.PARAMS.kS = 1.342005378418436;
-        MecanumDrive.PARAMS.kV = 0.12820421878128316;
+        MecanumDrive.PARAMS.kS = 1.5603878434857292;
+        MecanumDrive.PARAMS.kV = 0.12440377818594824;
         MecanumDrive.PARAMS.kA = 0.03;
 
         // path profile parameters (in inches)
-        MecanumDrive.PARAMS.maxWheelVel = 29;
-        MecanumDrive.PARAMS.minProfileAccel = -29;
-        MecanumDrive.PARAMS.maxProfileAccel = 29;
+        MecanumDrive.PARAMS.maxWheelVel = 60;
+        MecanumDrive.PARAMS.minProfileAccel = -60;
+        MecanumDrive.PARAMS.maxProfileAccel = 60;
 
         // turn profile parameters (in radians)
         MecanumDrive.PARAMS.maxAngVel = Math.toRadians(360);; // shared with path
         MecanumDrive.PARAMS.maxAngAccel = Math.toRadians(360);;
 
         // path controller gains
-        MecanumDrive.PARAMS.axialGain = 13;
-        MecanumDrive.PARAMS.lateralGain = 11;
-        MecanumDrive.PARAMS.headingGain = 9; // shared with turn
+        MecanumDrive.PARAMS.axialGain = 8.0;
+        MecanumDrive.PARAMS.lateralGain = 8;
+        MecanumDrive.PARAMS.headingGain = 6; // Shared with turn
 
         MecanumDrive.PARAMS.axialVelGain = 0;
         MecanumDrive.PARAMS.lateralVelGain = 0;

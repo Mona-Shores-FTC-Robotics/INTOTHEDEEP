@@ -90,7 +90,12 @@ public class DriveSubsystem extends SubsystemBase {
                     //if auto has run use the pose that was last set in auto
                     if (MatchConfig.hasAutoRun)
                     {
-                        mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
+                        if (MatchConfig.endOfAutonomousPose!=null) mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
+                        else
+                        {
+                            MatchConfig.hasAutoRun=false;
+                            mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+                        }
                     }
                     //if auto has not run use a blank pose because we will set the pose based on the user setup stuff during init
                     else  mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
@@ -100,9 +105,13 @@ public class DriveSubsystem extends SubsystemBase {
 
                 case INTO_THE_DEEP_20245:
                     DriveParams.configureIntoTheDeep20245RRParams();
-                    if (MatchConfig.hasAutoRun)
-                    {
-                        mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
+                    if (MatchConfig.hasAutoRun) {
+                        if (MatchConfig.endOfAutonomousPose != null)
+                            mecanumDrive = new PinpointDrive(hardwareMap, MatchConfig.endOfAutonomousPose);
+                        else {
+                            MatchConfig.hasAutoRun = false;
+                            mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+                        }
                     } else  mecanumDrive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));                    DriveParams.configureIntoTheDeep20245Directions(mecanumDrive);
                     break;
             }

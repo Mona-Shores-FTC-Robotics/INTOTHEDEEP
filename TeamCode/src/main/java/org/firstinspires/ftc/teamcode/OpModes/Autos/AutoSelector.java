@@ -91,29 +91,29 @@ public class AutoSelector extends LinearOpMode {
         robotAdapter.setAllianceColor(allianceColor);
 
 
-        obsRoute = new TurnOnly(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
-
-        obsRoute = new OBS_Score4_Fruitport(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
+//        obsRoute = new TurnOnly(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
+//
+//        obsRoute = new OBS_Score4_Fruitport(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
 
         obsRoute = new OBS_Score4_Fruitport_Improved(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
-        obsRoute = new OBS_Score4_PickupAtCorner(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
-
-        obsRoute = new OBS_Score4_PickupAtTileSeam(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
-
-        obsRoute = new OBS_Score4_PickupAtTriangleTip(robotAdapter);
-        obsRoute.buildRoute();
-        obsRouteList.add(obsRoute);
+//        obsRoute = new OBS_Score4_PickupAtCorner(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
+//
+//        obsRoute = new OBS_Score4_PickupAtTileSeam(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
+//
+//        obsRoute = new OBS_Score4_PickupAtTriangleTip(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
 
         return obsRouteList;
     }
