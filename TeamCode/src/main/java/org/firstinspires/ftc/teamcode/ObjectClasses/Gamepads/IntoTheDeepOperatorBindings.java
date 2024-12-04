@@ -50,12 +50,12 @@ public class IntoTheDeepOperatorBindings {
         DeploySampleIntake(GamepadKeys.Button.A);
         SampleScoreSequence(GamepadKeys.Button.X);
         SampleTwister(GamepadKeys.Button.B);
-        ManualLinearActuator(operatorGamePad::getRightY);
+        ManualLinearActuator(operatorGamePad::getLeftY);
 //        bindClimberMotorMovement(GamepadKeys.Button.RIGHT_BUMPER);
 //        bindMoveClimberArm(GamepadKeys.Button.LEFT_BUMPER);
 
         //Manual controls for when things aren't working right
-        ManualLift(operatorGamePad::getLeftY);
+        ManualLift(operatorGamePad::getRightY);
         MoveBucketServoArm(GamepadKeys.Button.DPAD_UP);
         ReverseSampleIntakeToggle(GamepadKeys.Button.DPAD_LEFT);
         ReverseSpecimenIntakeToggle(GamepadKeys.Button.DPAD_RIGHT);
@@ -257,7 +257,9 @@ public class IntoTheDeepOperatorBindings {
         if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
         {
             operatorGamePad.getGamepadButton(button)
-                    .whenPressed(Robot.getInstance().getSampleButtonHandling()::onIntakeButtonPress);
+                    .whenPressed(Robot.getInstance().getSampleButtonHandling()::onIntakeButtonPress)
+                    .whenPressed(Robot.getInstance().getSampleLinearActuatorSubsystem()::SetNotReadyToTransfer)
+                    .whenReleased(Robot.getInstance().getSampleLinearActuatorSubsystem()::SetReadyToTransfer);
 
             // Register button binding
             bindingManager.registerBinding(new ButtonBinding(
@@ -355,7 +357,8 @@ public class IntoTheDeepOperatorBindings {
             //See teleop centerstage code - can't figure out how to make binding declarative
             Trigger triggerDown = new Trigger(() -> operatorGamePad.getTrigger(trigger) > 0.3);
             //todo can we fix this to work better doesn't seem to modify angle immediately in a noticeable way
-            triggerDown.whenActive(new InstantCommand(robot.getSpecimenArmSubsystem()::increaseArmITerm));
+            triggerDown.whenActive(
+                    new InstantCommand(robot.getSpecimenArmSubsystem()::increaseArmITerm));
 
             // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(

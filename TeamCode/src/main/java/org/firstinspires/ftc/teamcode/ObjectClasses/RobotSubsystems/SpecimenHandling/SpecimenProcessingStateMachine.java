@@ -20,6 +20,6 @@ public class SpecimenProcessingStateMachine {
     public void onSpecimenDetection() {
         intakeSubsystem.setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
         armSubsystem.flipCWFast();
-        lightingSubsystem.setGoodSampleIndicator();
+//        lightingSubsystem.setGoodSampleIndicator();
     }
 }

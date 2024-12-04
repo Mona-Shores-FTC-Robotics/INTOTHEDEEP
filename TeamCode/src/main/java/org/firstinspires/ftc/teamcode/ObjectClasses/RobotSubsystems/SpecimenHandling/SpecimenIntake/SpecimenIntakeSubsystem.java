@@ -131,7 +131,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
     public void periodic() {
         if (!isColorSensorConnected()) {
             //record that the specimen detector is disconnected in the log
-            FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(SpecimenDetector.DetectionState.SENSOR_DISCONNECTED , - 1 , FieldConstants.SampleColor.UNKNOWN));
+//            FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(SpecimenDetector.DetectionState.SENSOR_DISCONNECTED , - 1 , FieldConstants.SampleColor.UNKNOWN));
         } else
         {
             DetectionState currentDetectionState = specimenDetector.updateDetection();
@@ -145,7 +145,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                         //Set the lights off because we should no longer have a piece
                         Robot.getInstance().getLightingSubsystem().setLightBlack();
                     }
-                    FlightRecorder.write("SAMPLE_DETECTOR", new GamePieceDetectorMessage(specimenDetector.getDetectionState(), specimenDetector.getConsensusProximity(), specimenDetector.getConsensusColor()));
+//                    FlightRecorder.write("SAMPLE_DETECTOR", new GamePieceDetectorMessage(specimenDetector.getDetectionState(), specimenDetector.getConsensusProximity(), specimenDetector.getConsensusColor()));
                     break;
                 }
 
@@ -173,19 +173,9 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                 }
             }
         }
-        FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(specimenDetector.getDetectionState(), specimenDetector.getConsensusProximity() , specimenDetector.getConsensusColor()));
+//        FlightRecorder.write("SPECIMEN_DETECTOR" , new GamePieceDetectorMessage(specimenDetector.getDetectionState(), specimenDetector.getConsensusProximity() , specimenDetector.getConsensusColor()));
         updateDashboardTelemetry();
-        FlightRecorder.write("SPECIMEN_INTAKE_STATE" , new SpecimenIntakeMessage(currentState, currentPower));
-
-        //Simple Logging
-        Robot.getInstance().getSimpleLogger().update();
-        Robot.getInstance().getSimpleLogger().addData("Periodic of Specimen Intake");
-        Robot.getInstance().getSimpleLogger().addData(currentState);
-        Robot.getInstance().getSimpleLogger().addData(specimenDetector.getDetectionState());
-        Robot.getInstance().getSimpleLogger().addData(specimenDetector.getConsensusProximity());
-        Robot.getInstance().getSimpleLogger().addData(specimenDetector.getConsensusColor());
-        Robot.getInstance().getSimpleLogger().addData(currentSpecimenIntakeDetectionState);
-
+//        FlightRecorder.write("SPECIMEN_INTAKE_STATE" , new SpecimenIntakeMessage(currentState, currentPower));
     }
 
     public void handleSpecimenPickup() {

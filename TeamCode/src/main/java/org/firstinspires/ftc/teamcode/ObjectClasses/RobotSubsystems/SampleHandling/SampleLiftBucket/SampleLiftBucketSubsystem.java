@@ -53,11 +53,11 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     UPWARD_VELOCITY = 50;    DOWNWARD_VELOCITY = -125;    UPWARD_ACCELERATION = 50;    DOWNWARD_ACCELERATION = -210;
 
                     // Bucket Servo Positions
-                    BUCKET_SCORE_POS = 0.23;    BUCKET_INTAKE_POS = .775;  BUCKET_SOFT_LANDING_POS = .65;
+                    BUCKET_SCORE_POS = 0.15;    BUCKET_INTAKE_POS = .7;  BUCKET_SOFT_LANDING_POS = .60;
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.628;    DUMPER_PRESCORE_POS = 0.70;    DUMPER_DUMP_POS = 1.0; DUMPER_HOLD_HIGH_POS = .75;
+                    DUMPER_HOME_POS = 0.61;    DUMPER_PRESCORE_POS = 0.67;    DUMPER_DUMP_POS = 1.0; DUMPER_HOLD_HIGH_POS = .7;
                     DUMP_TIME_MS = 300;
 
                     break;
@@ -66,7 +66,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
 
                     // Feedforward Coefficients
                     KA = 0;    KV = 0;    KG = .045;    KS = 0;
-                    VEL_P = .001;    VEL_I = .095;    VEL_D = 0.0;
+                    VEL_P = .001;    VEL_I = 0.129;    VEL_D = .0002;
 
                     // Lift Parameters
                     LIFT_POWER = 0.5;
@@ -77,13 +77,13 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     UPWARD_VELOCITY = 5;    DOWNWARD_VELOCITY = -18;    UPWARD_ACCELERATION = 2;    DOWNWARD_ACCELERATION = -1;
 
                     // Bucket Positions
-                    BUCKET_SCORE_POS = 0.23;    BUCKET_INTAKE_POS = .775;  BUCKET_SOFT_LANDING_POS = .65;
+                    BUCKET_SCORE_POS = 0.25;    BUCKET_INTAKE_POS = 0.782;  BUCKET_SOFT_LANDING_POS = .65;
 
                     // Timing and Increment
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = .52;    DUMPER_PRESCORE_POS = .55;    DUMPER_DUMP_POS = 0.82; DUMPER_HOLD_HIGH_POS = .60;
+                    DUMPER_HOME_POS = .348;    DUMPER_PRESCORE_POS = .41;    DUMPER_DUMP_POS = .84; DUMPER_HOLD_HIGH_POS = .41;
                     DUMP_TIME_MS = 200;
 
                     break;
@@ -288,9 +288,9 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         updateLiftControl();
         updateLiftState();
 
-        FlightRecorder.write("SAMPLE_DUMPER", new SampleDumperMessage(currentDumperState));
-        FlightRecorder.write("SAMPLE_BUCKET_ARM", new SampleBucketServoArmMessage(currentBucketState));
-        FlightRecorder.write("SAMPLE_LIFT", new SampleLiftMessage(currentLiftState));
+//        FlightRecorder.write("SAMPLE_DUMPER", new SampleDumperMessage(currentDumperState));
+//        FlightRecorder.write("SAMPLE_BUCKET_ARM", new SampleBucketServoArmMessage(currentBucketState));
+//        FlightRecorder.write("SAMPLE_LIFT", new SampleLiftMessage(currentLiftState));
 
         updateParameters();
         updateDashboardTelemetry();

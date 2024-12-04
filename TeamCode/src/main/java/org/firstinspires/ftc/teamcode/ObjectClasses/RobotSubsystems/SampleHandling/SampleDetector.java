@@ -69,4 +69,25 @@ public class SampleDetector extends GamePieceDetector {
     public boolean isUnknown() {
         return consensusColor==SampleColor.UNKNOWN;
     }
+
+    @Override
+    public DetectionState updateDetection() {
+        boolean proximityStable = updateProximity();
+        boolean colorStable = updateColor();
+
+        // Detection is valid if proximity is stable and, if required, color is stable
+        if (proximityStable && colorStable) {
+            if (detectionState == DetectionState.NOT_DETECTED) {
+                detectionState = DetectionState.JUST_DETECTED;
+            } else {
+                detectionState = DetectionState.STILL_DETECTED;
+            }
+        } else {
+            detectionState = DetectionState.NOT_DETECTED;
+        }
+
+        return detectionState;
+    }
+
+
 }

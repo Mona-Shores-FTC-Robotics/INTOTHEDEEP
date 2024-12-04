@@ -51,7 +51,7 @@ public abstract class GamePieceDetector {
     }
 
 
-    private boolean updateProximity() {
+    protected boolean updateProximity() {
         double proximity = sensor.getDistance(DistanceUnit.MM);
 
         if (proximityHistory.size() >= getProximityHistorySize()) {

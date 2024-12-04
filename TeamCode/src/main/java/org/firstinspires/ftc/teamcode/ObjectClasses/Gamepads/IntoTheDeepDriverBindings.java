@@ -2,19 +2,16 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
 import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 
-import static java.lang.Math.PI;
-
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.sun.tools.javac.util.List;
@@ -28,7 +25,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToChamber;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToNetZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
@@ -42,9 +38,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.DoubleSupplier;
-
+@Config
 public class IntoTheDeepDriverBindings {
     private static final double RESET_POSE_DELAY_TIME_MILLISECONDS = 500;
+    public double SLOW_TURN_SPEED = .5 ;
     GamepadEx driverGamePad;
     Robot robot;
     GamePadBindingManager bindingManager;
@@ -79,78 +76,67 @@ public class IntoTheDeepDriverBindings {
 //        bindBucketAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
 //        bindSpecimenAngleDriving(GamepadKeys.Trigger.RIGHT_TRIGGER);
 
-        turnFiveDegreesLeft(GamepadKeys.Trigger.LEFT_TRIGGER);
-        turnFiveDegreesRight(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        turnSlowLeft(GamepadKeys.Trigger.LEFT_TRIGGER);
+        turnSlowRight(GamepadKeys.Trigger.RIGHT_TRIGGER);
 
     }
 
-    private void turnFiveDegreesRight(GamepadKeys.Trigger trigger) {
-            if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-                Set<Subsystem> requirements = new HashSet<>();
-                requirements.add(Robot.getInstance().getDriveSubsystem());
-                RealRobotAdapter robotAdapter = new RealRobotAdapter();
-                Pose2d currentPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
-
-                if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
-                    currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log() + PI);
-                }
-
-                Action action = robotAdapter.getActionBuilder(currentPose)
-                        .turn(Math.toRadians(-5)) // Rotate 5 degrees to the right
-                        .build();
-
-                // Trigger reader to detect when the trigger is pressed
-                Trigger triggerPress = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.3);
-
-                // Start the command once when the trigger is pressed
-                triggerPress.whenActive(new ActionCommand(action, requirements));
-
-                // Register for debugging/telemetry
-                bindingManager.registerBinding(new AnalogBinding(
-                        GamepadType.DRIVER,
-                        Collections.singletonList(trigger.name()),
-                        "Turn 5 Degrees Right"
-                ));
-            }
-    }
-
-    private void turnFiveDegreesLeft(GamepadKeys.Trigger trigger) {
+    private void turnSlowRight(GamepadKeys.Trigger trigger) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Set<Subsystem> requirements = new HashSet<>();
             requirements.add(Robot.getInstance().getDriveSubsystem());
 
-
-            // Build an action to rotate the robot 5 degrees to the left
-
-
-            Command driveToNetZoneCommand =
-                    new InstantCommand(() -> {
-                        RealRobotAdapter robotAdapter = new RealRobotAdapter();
-                        Pose2d currentPose = Robot.getInstance().getDriveSubsystem().getMecanumDrive().pose;
-
-                        if (MatchConfig.finalAllianceColor == FieldConstants.AllianceColor.BLUE) {
-                            currentPose = new Pose2d(-currentPose.position.x, -currentPose.position.y, currentPose.heading.log() + Math.PI);
-                        }
-                        Action action = robotAdapter.getActionBuilder(currentPose)
-                                .turn(Math.toRadians(5)) // Rotate 5 degrees to the left
-                                .build();
-                        ActionCommand actionCommand = new ActionCommand(action , Collections.singleton(robot.getDriveSubsystem()));
-                        actionCommand.schedule();
-                    });
-
-
+            DefaultDriveCommand slowRightTurn = new DefaultDriveCommand(
+                    robot.getDriveSubsystem(),
+                    driverGamePad::getLeftY,
+                    driverGamePad::getLeftX,
+                    ()->-driverGamePad.getTrigger(trigger)*SLOW_TURN_SPEED
+            );
 
             // Trigger reader to detect when the trigger is pressed
-            Trigger triggerPress = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.3);
+            Trigger triggerDown = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.2);
+            Trigger triggerUp = new Trigger(() -> driverGamePad.getTrigger(trigger) < 0.2);
 
             // Start the command once when the trigger is pressed
-            triggerPress.whenActive(driveToNetZoneCommand);
+            triggerDown.whenActive(slowRightTurn);
+            triggerUp.cancelWhenActive(slowRightTurn);
 
             // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
                     GamepadType.DRIVER,
                     Collections.singletonList(trigger.name()),
-                    "Turn 5 Degrees Left"
+                    "Slow Right Turn"
+            ));
+        }
+    }
+
+
+    private void turnSlowLeft(GamepadKeys.Trigger trigger) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            Set<Subsystem> requirements = new HashSet<>();
+            requirements.add(Robot.getInstance().getDriveSubsystem());
+
+            DefaultDriveCommand slowLeftTurn = new DefaultDriveCommand(
+                    robot.getDriveSubsystem(),
+                    driverGamePad::getLeftY,
+                    driverGamePad::getLeftX,
+                    ()-> driverGamePad.getTrigger(trigger)*SLOW_TURN_SPEED
+            );
+
+            // Trigger reader to detect when the trigger is pressed
+            Trigger triggerDown = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.2);
+
+            Trigger triggerUp = new Trigger(() -> driverGamePad.getTrigger(trigger) < 0.2);
+
+
+            // Start the command once when the trigger is pressed
+            triggerDown.whenActive(slowLeftTurn);
+            triggerUp.cancelWhenActive(slowLeftTurn);
+            // Register for debugging/telemetry
+            bindingManager.registerBinding(new AnalogBinding(
+                    GamepadType.DRIVER,
+                    Collections.singletonList(trigger.name()),
+                    "Slow Left Turn"
             ));
         }
     }

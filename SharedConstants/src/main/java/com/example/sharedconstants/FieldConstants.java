@@ -97,7 +97,7 @@ public class FieldConstants {
 
     public static double CHAMBER_SPACER = 1.85;
 
-    public static Pose2d CHAMBER_SLOT_ONE_REDO = new Pose2d(QUARTER_TILE-.8, -TILE-HALF_ROBOT_LENGTH+1, ANGLE_TOWARD_BLUE);
+    public static Pose2d CHAMBER_SLOT_ONE_REDO = new Pose2d(QUARTER_TILE-.8, -TILE-HALF_ROBOT_LENGTH+2.2, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_TWO_REDO = CHAMBER_SLOT_ONE_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_THREE_REDO = CHAMBER_SLOT_TWO_REDO.plus(new Twist2d(new Vector2d(0, CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_FOUR_REDO = CHAMBER_SLOT_THREE_REDO.plus(new Twist2d(new Vector2d(0, CHAMBER_SPACER), 0));
@@ -138,12 +138,11 @@ public class FieldConstants {
     public static Pose2d NET_BASKET = new Pose2d(-59, -61, ANGLE_45_DEGREES);
     public static Pose2d NET_BASKET_PRE_SCORE = new Pose2d(NET_BASKET.position.x+15, NET_BASKET.position.y+15, ANGLE_45_DEGREES); //-48 -52
 
-    public static Pose2d NET_BASKET_DRIVE_TO_NET_SCORE = new Pose2d(-57, -63, Math.toRadians(55));
+    public static Pose2d NET_BASKET_DRIVE_TO_NET_SCORE = new Pose2d(-61.5, -57, Math.toRadians(47));
     public static Pose2d NET_BASKET_DRIVE_TO_NET_APPROACH = new Pose2d(NET_BASKET_DRIVE_TO_NET_SCORE.position.x+10, NET_BASKET_DRIVE_TO_NET_SCORE.position.y+10, Math.toRadians(55)); //-48 -52
 
     public static Pose2d NET_BASKET_AUTO = new Pose2d(-59, -61, Math.toRadians(55)); //-48 -52
-    public static Pose2d NET_BASKET_ALIGNMENT_AUTO = new Pose2d(NET_BASKET_AUTO.position.x+5, NET_BASKET_AUTO.position.y+5, Math.toRadians(55)); //-48 -52
-
+    public static Pose2d NET_BASKET_ALIGNMENT_AUTO = new Pose2d(NET_BASKET_AUTO.position.x+5, NET_BASKET_AUTO.position.y+5, Math.toRadians(55)); //-48 -5
 
 
     public static Pose2d NEXT_TO_NET_ASCENT = new Pose2d(-TILE-HALF_TILE, -HALF_TILE, ANGLE_TOWARD_OBSERVATION);

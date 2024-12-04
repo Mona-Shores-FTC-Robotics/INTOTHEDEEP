@@ -152,10 +152,11 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.DEAD_ZONE = 0.05;
 
                     // PID parameters
-                    SPECIMEN_ARM_PARAMS.P = 0.0044;
-                    SPECIMEN_ARM_PARAMS.I = 0.10;
+                    SPECIMEN_ARM_PARAMS.P = 0.004;
+                    SPECIMEN_ARM_PARAMS.I = .01;
                     DEFAULT_I = I;
-                    SPECIMEN_ARM_PARAMS.D = 0.0001;
+                    MAX_I_DEVIATION = .2;
+                    SPECIMEN_ARM_PARAMS.D = 0;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
                     // Arm Feedforward parameters
@@ -308,7 +309,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         pidController.setSetPoint(targetAngleDegrees);
 
 
-        FlightRecorder.write("SpecimenArmParamsSchema", LogFile.schemaOfClass(SpecimenArmSubsystem.SpecimenArmParams.class));
+//        FlightRecorder.write("SpecimenArmParamsSchema", LogFile.schemaOfClass(SpecimenArmSubsystem.SpecimenArmParams.class));
     }
 
     @Override
@@ -409,8 +410,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
         updateParameters();
         updateDashboardTelemetry();
-        FlightRecorder.write("SPECIMEN_ARM_STATE", new SpecimenArmStateMessage(currentAngleDegrees, currentVelocity, currentState));
-        FlightRecorder.write("SPECIMEN_ARM_POWER", new SpecimenArmPowerMessage(pidPower , feedforwardPower , clippedPower));
+//        FlightRecorder.write("SPECIMEN_ARM_STATE", new SpecimenArmStateMessage(currentAngleDegrees, currentVelocity, currentState));
+//        FlightRecorder.write("SPECIMEN_ARM_POWER", new SpecimenArmPowerMessage(pidPower , feedforwardPower , clippedPower));
     }
 
     public void flipCCWFast() {
@@ -449,26 +450,30 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         setCurrentState(SpecimenArmStates.SPECIMEN_PICKUP);
     }
 
-
+    double newI;
 
     public void increaseArmITerm() {
-        if (currentState == SPECIMEN_PICKUP) {
-            double newI = SPECIMEN_ARM_PARAMS.I + 0.025;
+             newI = SPECIMEN_ARM_PARAMS.I + 0.025;
             // Ensure newI does not exceed the allowed range
-            if (newI <= SPECIMEN_ARM_PARAMS.DEFAULT_I + SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION) {
+            if (newI <= (SPECIMEN_ARM_PARAMS.DEFAULT_I + SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION)) {
                 SPECIMEN_ARM_PARAMS.I = newI;
             }
-        }
+    }
+
+    public void tempTelemetry(){
+        Robot.getInstance().getActiveOpMode().telemetry.addData("I Value", SPECIMEN_ARM_PARAMS.I);
+        Robot.getInstance().getActiveOpMode().telemetry.addData("Default I Value", SPECIMEN_ARM_PARAMS.DEFAULT_I);
+        Robot.getInstance().getActiveOpMode().telemetry.addData("Max Deviation", SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION);
+        Robot.getInstance().getActiveOpMode().telemetry.addData("newI",newI);
+
     }
 
     public void decreaseArmITerm() {
-        if (currentState == SPECIMEN_PICKUP) {
-            double newI = SPECIMEN_ARM_PARAMS.I - 0.025;
+        newI = SPECIMEN_ARM_PARAMS.I - 0.025;
             // Ensure newI does not go below the allowed range
-            if (newI >= SPECIMEN_ARM_PARAMS.DEFAULT_I + SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION) {
+            if (newI >= (SPECIMEN_ARM_PARAMS.DEFAULT_I - SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION)) {
                 SPECIMEN_ARM_PARAMS.I = newI;
             }
-        }
     }
 
     public void setManualTargetAngle(double armInput) {

@@ -21,6 +21,8 @@ public class SampleButtonHandling {
     private final SampleLiftBucketSubsystem liftSubsystem;
     private final SampleTwisterSubsystem twisterSubsystem;
 
+    public boolean mightHaveUndetectedSampleFlag;
+
     // Constructor
     public SampleButtonHandling(SampleLinearActuatorSubsystem actuatorSubsystem,
                                 SampleIntakeSubsystem intakeSubsystem,
@@ -30,6 +32,7 @@ public class SampleButtonHandling {
         this.intakeSubsystem = intakeSubsystem;
         this.liftSubsystem = liftSubsystem;
         this.twisterSubsystem = twisterSubsystem;
+        mightHaveUndetectedSampleFlag =false;
     }
 
     public void onIntakeButtonPress() {
@@ -37,8 +40,12 @@ public class SampleButtonHandling {
                 new ParallelCommandGroup(
                         new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOffIntake),
                         new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward),
-                        new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperUp),
-                        new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract)),
+                        new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract),
+                        new SequentialCommandGroup(
+                                new WaitCommand(100),
+                                new  InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperUp)
+                        )
+                ),
                 new WaitCommand(800),
                 new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::reverseIntake),
                 new WaitCommand(800),
@@ -54,6 +61,12 @@ public class SampleButtonHandling {
         Command hover = new ParallelCommandGroup(
                 new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperHover),
                 new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy),
+                new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOnIntake),
+                new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
+        );
+
+        Command hoverWithoutActuator = new ParallelCommandGroup(
+                new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperHover),
                 new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOnIntake),
                 new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
         );
@@ -78,10 +91,16 @@ public class SampleButtonHandling {
             case MANUAL:
                 if (Robot.getInstance().getSampleLinearActuatorSubsystem().currentFlipperState== SampleLinearActuatorSubsystem.SampleFlipperStates.FLIPPER_HOVERING)
                 {
-                    deployFromHover.schedule();
+                    if (mightHaveUndetectedSampleFlag)
+                    {
+                        retract.schedule();
+                        mightHaveUndetectedSampleFlag=false;
+                    } else deployFromHover.schedule();
                 } else if (Robot.getInstance().getSampleLinearActuatorSubsystem().currentFlipperState== SampleLinearActuatorSubsystem.SampleFlipperStates.FLIPPER_DOWN)
                 {
-                    retract.schedule();
+                    mightHaveUndetectedSampleFlag =true;
+                    //todo this hover should probably not be the same height, should probably be higher so that we dont hit a piece retracting on the submersible.
+                    hoverWithoutActuator.schedule();
                 }
                 break;
             case FULLY_RETRACTING:

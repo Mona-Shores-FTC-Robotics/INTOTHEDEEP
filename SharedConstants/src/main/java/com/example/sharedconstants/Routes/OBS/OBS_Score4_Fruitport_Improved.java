@@ -106,7 +106,7 @@ public class OBS_Score4_Fruitport_Improved extends OBS_Score_1_Specimen_Preload 
         obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(FieldConstants.OBS_START_POSE)
                 .setTangent(ANGLE_TOWARD_BLUE)
                 .afterDisp(2, robotAdapter.getAction(MOVE_PRELOAD_SPECIMEN_TO_CW_HOME))
-                .splineToLinearHeading(chamberSlot.plus(new Twist2d(new Vector2d(-7,0), 0)), chamberSlot.heading.toDouble(), obsVelocity)
+                .splineToLinearHeading(chamberSlot.plus(new Twist2d(new Vector2d(-10,0), 0)), chamberSlot.heading.toDouble(), obsVelocity)
                 .stopAndAdd(new NullAction())
                 .splineToConstantHeading(PoseToVector(chamberSlot), chamberSlot.heading.toDouble(), obsSlowVelocity)
                 .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))

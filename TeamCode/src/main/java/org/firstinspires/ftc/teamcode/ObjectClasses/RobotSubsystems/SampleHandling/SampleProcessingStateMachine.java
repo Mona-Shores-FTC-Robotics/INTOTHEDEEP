@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandl
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting.LightingSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
@@ -18,6 +19,7 @@ public class SampleProcessingStateMachine {
     private final SampleLiftBucketSubsystem liftSubsystem;
     private final LightingSubsystem lightingSubsystem;
     private final SampleTwisterSubsystem sampleTwisterSubsystem;
+    private ElapsedTime flipAllTheWayUpTimer;
 
     public enum SampleDetectionStates {
         ON_GOOD_SAMPLE_DETECTION,
@@ -26,7 +28,7 @@ public class SampleProcessingStateMachine {
         ON_BAD_SAMPLE_DETECTED,
         EJECTING_BAD_SAMPLE,
         LOOKING_FOR_SAMPLE,
-        WAITING_FOR_SAMPLE_DETECTION,
+        WAITING_FOR_SAMPLE_DETECTION, FLIPPING_ALL_THE_WAY_UP,
     }
     private SampleDetectionStates currentSampleDetectionState;
 
@@ -41,6 +43,7 @@ public class SampleProcessingStateMachine {
         this.lightingSubsystem = lightingSubsystem;
         this.sampleTwisterSubsystem = sampleTwisterSubsystem;
         currentSampleDetectionState= SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
+        flipAllTheWayUpTimer = new ElapsedTime();
     }
 
     public void updateSampleProcessingState() {
@@ -61,19 +64,28 @@ public class SampleProcessingStateMachine {
                 liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                 liftSubsystem.setBucketToIntakePosition();
-                actuatorSubsystem.setFlipperUp();
+                actuatorSubsystem.setFlipperHover();
                 actuatorSubsystem.fullyRetract();
                 sampleTwisterSubsystem.setTwisterServoFaceInward();
                 lightingSubsystem.setGoodSampleIndicator();
                 break;
 
             case GETTING_READY_FOR_TRANSFER:
-                if (actuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.FULLY_RETRACTED) {
-                    currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
+                if (actuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.FULLY_RETRACTED && actuatorSubsystem.getReadyToTransfer()) {
+                    currentSampleDetectionState = SampleDetectionStates.FLIPPING_ALL_THE_WAY_UP;
                     lightingSubsystem.setLightToSampleColor();
+                    actuatorSubsystem.setFlipperUp();
+                    flipAllTheWayUpTimer.reset();
+                }
+                break;
+            case FLIPPING_ALL_THE_WAY_UP:
+                if (flipAllTheWayUpTimer.milliseconds()>400)
+                {
+                    currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
                     intakeSubsystem.transferSampleToBucket();
                 }
                 break;
+
             case TRANSFERRING:
                 if (intakeSubsystem.getCurrentState() == SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF) {
                     currentSampleDetectionState = SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;

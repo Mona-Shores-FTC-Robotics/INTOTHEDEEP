@@ -167,14 +167,14 @@ public class SampleIntakeSubsystem extends SubsystemBase {
             case DETECTING:
                 if (!isColorSensorConnected()) {
                     //record that the specimen detector is disconnected in the log
-                    FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(SampleDetector.DetectionState.SENSOR_DISCONNECTED,-1 , FieldConstants.SampleColor.UNKNOWN));
+//                    FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(SampleDetector.DetectionState.SENSOR_DISCONNECTED,-1 , FieldConstants.SampleColor.UNKNOWN));
                     break;
                 }
                 if (detectionState == DetectionState.JUST_DETECTED){
                     if (sampleDetector.isGoodSample()) currentIntakeDetectionState = SampleIntakeDetectState.DETECTED_GOOD_SAMPLE;
                     else if (sampleDetector.isBadSample()) currentIntakeDetectionState = SampleIntakeDetectState.DETECTED_BAD_SAMPLE;
                 }
-                FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(sampleDetector.getDetectionState() , sampleDetector.getConsensusProximity() , sampleDetector.getConsensusColor()));
+//                FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(sampleDetector.getDetectionState() , sampleDetector.getConsensusProximity() , sampleDetector.getConsensusColor()));
                 break;
             case DETECTED_BAD_SAMPLE:
             case DETECTED_GOOD_SAMPLE:
@@ -207,7 +207,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                 //do nothing
                 break;
         }
-        FlightRecorder.write("SAMPLE_INTAKE_STATE" , new SampleIntakeMessage(currentSampleIntakeState , currentPower));
+//        FlightRecorder.write("SAMPLE_INTAKE_STATE" , new SampleIntakeMessage(currentSampleIntakeState , currentPower));
     }
 
     public void transferSampleToBucket() {

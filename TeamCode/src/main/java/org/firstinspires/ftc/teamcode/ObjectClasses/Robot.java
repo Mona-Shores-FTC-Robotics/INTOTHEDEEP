@@ -77,9 +77,6 @@ public class Robot {
     private final Set<SubsystemType> availableSubsystems = EnumSet.noneOf(SubsystemType.class);
     private final Map<SubsystemType, Object> subsystemMap = new HashMap<>();
 
-    public SimpleLogger simpleLogger;
-
-
     /* Constructor */
     private Robot(LinearOpMode opMode) {
         activeOpMode = opMode;
@@ -87,7 +84,6 @@ public class Robot {
         robotType = ControlHubIdentifierUtil.getRobotType(hMap);
         MatchConfig.finalRobotType = robotType;
         CreateSubsystems(hMap);
-        simpleLogger = new SimpleLogger("simpleLog", true);
     }
 
     private void CreateSubsystems(HardwareMap hardwareMap) {
@@ -261,7 +257,6 @@ public class Robot {
     public SampleTwisterSubsystem getSampleTiwsterSubsystem() {
         return sampleTwisterSubsytem;
     }
-    public SimpleLogger getSimpleLogger(){return simpleLogger;}
 
     public LightingSubsystem getLightingSubsystem() {return lightingSubsystem;}
 

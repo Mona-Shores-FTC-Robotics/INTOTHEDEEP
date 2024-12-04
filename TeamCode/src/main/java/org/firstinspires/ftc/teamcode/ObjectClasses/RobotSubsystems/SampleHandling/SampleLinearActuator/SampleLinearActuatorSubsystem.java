@@ -69,8 +69,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
                     FLIP_UP_DELAY_TIME_MS = 250;
                     FLIP_UP_POSITION= 0;
-                    FLIP_HOVER_POSITION = 0.6;
-                    FLIP_DOWN_POSITION =.3;
+                    FLIP_HOVER_POSITION = .25;
+                    FLIP_DOWN_POSITION =.35;
                     break;
 
                 default:
@@ -119,6 +119,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     private double flipperStepIncrement;
     private boolean movingToTarget = false;
     ElapsedTime flipUpIncrementTimer = new ElapsedTime();
+
+    public boolean readyToTransfer =true;
 
     // Constructor with limit switch
     public SampleLinearActuatorSubsystem(HardwareMap hardwareMap, Robot.RobotType robotType, String actuatorMotorName, String sampleIntakeFlipperServoName) {
@@ -239,6 +241,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         actuatorInput *= ACTUATOR_PARAMS.MANUAL_MOVEMENT_SCALAR;
         double actuatorManualPower = Range.clip(actuatorInput, -.5, .5);
         sampleActuator.setPower(actuatorManualPower);
+        Robot.getInstance().getSampleButtonHandling().mightHaveUndetectedSampleFlag=false;
     }
 
     public void setCurrentState(SampleActuatorStates state) {
@@ -317,6 +320,22 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public void setFlipperHover() {
         currentFlipperState = SampleFlipperStates.FLIPPER_GOING_TO_HOVERING;
         setFlipperTargetPositionWithSteps(SampleLinearActuatorSubsystem.ACTUATOR_PARAMS.FLIP_HOVER_POSITION, 12);
+    }
+
+    public void SetNotReadyToTransfer()
+    {
+        readyToTransfer =false;
+    }
+
+
+    public void SetReadyToTransfer()
+    {
+        readyToTransfer =true;
+    }
+
+    public boolean getReadyToTransfer()
+    {
+        return readyToTransfer;
     }
 
 }
