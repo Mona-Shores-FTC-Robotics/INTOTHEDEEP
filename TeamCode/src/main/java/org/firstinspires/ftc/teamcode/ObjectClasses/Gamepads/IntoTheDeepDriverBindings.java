@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads;
 
-import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -22,22 +18,20 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.B
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamePadBindingManager;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Gamepads.BindingManagement.GamepadType;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToNetZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.TurnToBucketAngle;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DriveAtFixedDegreeHeadingCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.DoubleSupplier;
+
 @Config
 public class IntoTheDeepDriverBindings {
     private static final double RESET_POSE_DELAY_TIME_MILLISECONDS = 500;
@@ -47,45 +41,37 @@ public class IntoTheDeepDriverBindings {
     GamePadBindingManager bindingManager;
     DriveToObservationZone driveToObservationZoneAction;
     DriveToNetZone driveToNetZoneAction;
-    DriveForwardAndBack driveForwardAndBack;
 
     public IntoTheDeepDriverBindings(GamepadEx gamePad , GamePadBindingManager gamePadBindingManager) {
         robot = Robot.getInstance();
         driverGamePad = gamePad;
         bindingManager = gamePadBindingManager;
 
-        //Main Controls
-        bindDefaultDriving(driverGamePad::getLeftY , driverGamePad::getLeftX , (driverGamePad::getRightX));
-        bindSpecimenArmIntakeAndScore(GamepadKeys.Button.A);
-        bindNitroMode(GamepadKeys.Button.LEFT_BUMPER);
-        bindSlowMode(GamepadKeys.Button.RIGHT_BUMPER);
-        driveToNetZone(GamepadKeys.Button.X);
-        driveToObservationZone(GamepadKeys.Button.B);
-
-        //Operator also has the ability to do this
-        bindSpecimenIntakeToggle(GamepadKeys.Button.Y);
-
-        //Buttons for if things go wrong
-        resetGyro(GamepadKeys.Button.DPAD_DOWN);
-
-        // Configuration Options
-        cycleTelemetry(GamepadKeys.Button.BACK);
-        toggleFieldOrientedControl(GamepadKeys.Button.START);
-
-        //Drive Angle restriction
-//        bindBucketAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
-//        bindSpecimenAngleDriving(GamepadKeys.Trigger.RIGHT_TRIGGER);
-
+        //Driver Controls
+        DefaultDriving(driverGamePad::getLeftY , driverGamePad::getLeftX , (driverGamePad::getRightX));
+        SpecimenArmIntakeAndScore(GamepadKeys.Button.A);
+        DriveToObservationZone(GamepadKeys.Button.B);
+        DriveToNetZone(GamepadKeys.Button.X);
+        ReverseSpecimenIntakeToggle(GamepadKeys.Button.Y);        //Operator also has the ability to do this
+        NitroMode(GamepadKeys.Button.LEFT_BUMPER);
+        SlowMode(GamepadKeys.Button.RIGHT_BUMPER);
         turnSlowLeft(GamepadKeys.Trigger.LEFT_TRIGGER);
         turnSlowRight(GamepadKeys.Trigger.RIGHT_TRIGGER);
 
+        //Buttons for if things go wrong
+        ResetGyroAfterHalfSecond(GamepadKeys.Button.DPAD_DOWN);
+        toggleFieldOrientedControl(GamepadKeys.Button.BACK);
+        cycleTelemetry(GamepadKeys.Button.START);
+
+        //Drive Angle restriction
+        TurnToBucketAngle(GamepadKeys.Button.DPAD_LEFT);
+        TurnToHorizontalPickup(GamepadKeys.Button.DPAD_RIGHT);
+        TurnToChamberAngle(GamepadKeys.Button.DPAD_UP);
     }
+
 
     private void turnSlowRight(GamepadKeys.Trigger trigger) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            Set<Subsystem> requirements = new HashSet<>();
-            requirements.add(Robot.getInstance().getDriveSubsystem());
-
             DefaultDriveCommand slowRightTurn = new DefaultDriveCommand(
                     robot.getDriveSubsystem(),
                     driverGamePad::getLeftY,
@@ -113,9 +99,6 @@ public class IntoTheDeepDriverBindings {
 
     private void turnSlowLeft(GamepadKeys.Trigger trigger) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            Set<Subsystem> requirements = new HashSet<>();
-            requirements.add(Robot.getInstance().getDriveSubsystem());
-
             DefaultDriveCommand slowLeftTurn = new DefaultDriveCommand(
                     robot.getDriveSubsystem(),
                     driverGamePad::getLeftY,
@@ -125,14 +108,11 @@ public class IntoTheDeepDriverBindings {
 
             // Trigger reader to detect when the trigger is pressed
             Trigger triggerDown = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.2);
-
             Trigger triggerUp = new Trigger(() -> driverGamePad.getTrigger(trigger) < 0.2);
 
-
-            // Start the command once when the trigger is pressed
             triggerDown.whenActive(slowLeftTurn);
             triggerUp.cancelWhenActive(slowLeftTurn);
-            // Register for debugging/telemetry
+
             bindingManager.registerBinding(new AnalogBinding(
                     GamepadType.DRIVER,
                     Collections.singletonList(trigger.name()),
@@ -141,7 +121,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void bindNitroMode(GamepadKeys.Button button) {
+    private void NitroMode(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             driverGamePad.getGamepadButton(button)
                     .whenPressed(new InstantCommand(robot.getDriveSubsystem()::enableNitroMode))
@@ -156,7 +136,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void bindSpecimenIntakeToggle(GamepadKeys.Button button) {
+    private void ReverseSpecimenIntakeToggle(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
             SpecimenIntakeSubsystem intakeSubsystem = Robot.getInstance().getSpecimenIntakeSubsystem();
             Command turnIntakeOn = new InstantCommand(intakeSubsystem::reverseIntake);
@@ -174,7 +154,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void driveToNetZone(GamepadKeys.Button button) {
+    private void DriveToNetZone(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Command driveToNetZoneCommand =
                     new InstantCommand(() -> {
@@ -203,7 +183,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void driveToObservationZone(GamepadKeys.Button button) {
+    private void DriveToObservationZone(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Command driveToObservationZoneCommand = new InstantCommand(() -> {
                 driveToObservationZoneAction = new DriveToObservationZone();
@@ -256,7 +236,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void resetGyro(GamepadKeys.Button button) {
+    private void ResetGyroAfterHalfSecond(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             ElapsedTime buttonPressTimer = new ElapsedTime(); // Timer to track button press duration
 
@@ -291,22 +271,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void cycleDriveMode(GamepadKeys.Button button) {
-        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            Command cycleDriveModeCommand = new InstantCommand(() -> robot.getDriveSubsystem().cycleDriveMode());
 
-            driverGamePad.getGamepadButton(button)
-                    .whenPressed(cycleDriveModeCommand);
-
-            // Register the drive mode cycling
-            bindingManager.registerBinding(new ButtonBinding(
-                    GamepadType.DRIVER ,
-                    button ,
-                    cycleDriveModeCommand ,
-                    "Cycle Drive Mode"
-            ));
-        }
-    }
 
     private void cycleTelemetry(GamepadKeys.Button button) {
         // Command to cycle telemetry modes using DriverStationTelemetryManager
@@ -323,7 +288,7 @@ public class IntoTheDeepDriverBindings {
         ));
     }
 
-    private void bindSlowMode(GamepadKeys.Button button) {
+    private void SlowMode(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             driverGamePad.getGamepadButton(button)
                     .whenPressed(new InstantCommand(robot.getDriveSubsystem()::enableSlowMode))
@@ -338,7 +303,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void bindDefaultDriving(DoubleSupplier leftY , DoubleSupplier leftX , DoubleSupplier rightX) {
+    private void DefaultDriving(DoubleSupplier leftY , DoubleSupplier leftX , DoubleSupplier rightX) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             Command defaultDriveCommand = new DefaultDriveCommand(robot.getDriveSubsystem() ,
                     leftY ,
@@ -355,7 +320,7 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void bindSpecimenArmIntakeAndScore(GamepadKeys.Button button) {
+    private void SpecimenArmIntakeAndScore(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) &&
                 robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
             SpecimenButtonHandling specimenHandlingStateMachine = robot.getSpecimenButtonHandling();
@@ -374,52 +339,74 @@ public class IntoTheDeepDriverBindings {
         }
     }
 
-    private void bindBucketAngle(GamepadKeys.Trigger trigger) {
+    private void TurnToBucketAngle(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            // Command to drive the robot to a fixed heading
-            DriveAtFixedDegreeHeadingCommand lockBasketAngle = new DriveAtFixedDegreeHeadingCommand(
-                    robot.getDriveSubsystem(),
-                    driverGamePad::getLeftY,
-                    driverGamePad::getLeftX,
-                    (MatchConfig.finalAllianceColor == BLUE) ? 225 : 45
-            );
 
-            // Trigger reader to detect when the trigger is pressed
-            Trigger triggerDown = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.3);
-
-            // While the trigger is held, execute the command to rotate to the fixed angle
-            triggerDown.whileActiveOnce(lockBasketAngle);
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed( new InstantCommand(() -> {
+                        Action turnToBucketAngle = new TurnToBucketAngle();
+                        ActionCommand actionCommand = new ActionCommand(turnToBucketAngle , Collections.singleton(robot.getDriveSubsystem()));
+                        actionCommand.schedule();
+                    }));
 
             // Register for debugging/telemetry
-            bindingManager.registerBinding(new AnalogBinding(
+            bindingManager.registerBinding(new ButtonBinding(
                     GamepadType.DRIVER,
-                    Collections.singletonList(trigger.name()),
-                    "Hold to Rotate to Fixed Angle"
+                    button,
+                    "Rotate to Bucket Angle"
             ));
         }
     }
 
-    private void bindSpecimenAngleDriving(GamepadKeys.Trigger trigger) {
+    private void TurnToHorizontalPickup(GamepadKeys.Button button) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            // Command to drive the robot to -90 or 90 degrees based on alliance color
-            DriveAtFixedDegreeHeadingCommand lockSpecimenPickupAngle = new DriveAtFixedDegreeHeadingCommand(
-                    robot.getDriveSubsystem(),
-                    driverGamePad::getLeftY,
-                    driverGamePad::getLeftX,
-                    (MatchConfig.finalAllianceColor == BLUE) ? 180 : 0
-            );
-
-            // Trigger reader to detect when the trigger is pressed
-            Trigger triggerDown = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.5);
-
-            // While the trigger is held, run the driveTo90OrMinus90 command
-            triggerDown.whileActiveOnce(lockSpecimenPickupAngle);
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed(new InstantCommand(() -> {
+                        Action turnToHorizontalPickupAngle = new TurnToBucketAngle();
+                        ActionCommand actionCommand = new ActionCommand(turnToHorizontalPickupAngle , Collections.singleton(robot.getDriveSubsystem()));
+                        actionCommand.schedule();
+                    }));
 
             // Register for debugging/telemetry
-            bindingManager.registerBinding(new AnalogBinding(
+            bindingManager.registerBinding(new ButtonBinding(
                     GamepadType.DRIVER,
-                    Collections.singletonList(trigger.name()),
-                    "Hold for 180/0 Mode"
+                    button,
+                    "Rotate to Horizontal Pickup Angle"
+            ));
+        }
+    }
+
+    private void TurnToChamberAngle(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed(new InstantCommand(() -> {
+                        Action turnToChamberAngle = new TurnToBucketAngle();
+                        ActionCommand actionCommand = new ActionCommand(turnToChamberAngle , Collections.singleton(robot.getDriveSubsystem()));
+                        actionCommand.schedule();
+                    }));
+
+            // Register for debugging/telemetry
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER,
+                    button,
+                    "Rotate to Chamber Angle"
+            ));
+        }
+    }
+
+    private void cycleDriveMode(GamepadKeys.Button button) {
+        if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
+            Command cycleDriveModeCommand = new InstantCommand(() -> robot.getDriveSubsystem().cycleDriveMode());
+
+            driverGamePad.getGamepadButton(button)
+                    .whenPressed(cycleDriveModeCommand);
+
+            // Register the drive mode cycling
+            bindingManager.registerBinding(new ButtonBinding(
+                    GamepadType.DRIVER ,
+                    button ,
+                    cycleDriveModeCommand ,
+                    "Cycle Drive Mode"
             ));
         }
     }
