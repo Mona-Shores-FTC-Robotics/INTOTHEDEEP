@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
@@ -182,6 +183,41 @@ public class RealRobotAdapter implements RobotAdapter {
                                 new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON),
                                 new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperHover),
                                 new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
+                                );
+                    } else return problem();
+
+                case GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
+                    {
+                        return  new ParallelAction(
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyDeploy),
+                                new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON),
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperHover),
+                                new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
+                        );
+                    } else return problem();
+
+                case PICKUP_FROM_GROUND_WITHOUT_TRANSFER:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
+                    {
+                        return new SequentialAction(
+                                new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::setAutomaticPickupFalse),
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperDown),
+                                new SleepAction(.8),
+                                new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF),
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract));
+
+                    } else return problem();
+
+                case DROP_OFF_GROUND_SAMPLE_WITHOUT_TRANSFER:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE)) {
+                        return new SequentialAction(
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyDeploy),
+                                new SleepAction(.2),
+                                new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE),
+                                new SleepAction(.5),
+                                new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::setAutomaticPickupTrue),
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract)
                                 );
                     } else return problem();
 

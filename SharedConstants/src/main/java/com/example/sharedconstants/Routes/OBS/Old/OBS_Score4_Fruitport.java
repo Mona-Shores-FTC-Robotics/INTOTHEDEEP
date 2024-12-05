@@ -1,4 +1,4 @@
-package com.example.sharedconstants.Routes.OBS;
+package com.example.sharedconstants.Routes.OBS.Old;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
@@ -27,7 +27,6 @@ import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.RobotAdapter;
-import com.example.sharedconstants.Routes.OBS.Old.OBS_Score_1_Specimen_Preload;
 
 import java.util.Arrays;
 

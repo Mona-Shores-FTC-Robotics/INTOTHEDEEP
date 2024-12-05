@@ -32,6 +32,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
 
         public double FULL_DEPLOYMENT_TIME_MS = Double.NaN;
         public double PARTIAL_DEPLOYMENT_TIME_MS = Double.NaN;
+
         public double FULL_RETRACTION_TIME_MS = Double.NaN;
         public double PARTIAL_RETRACTION_TIME_MS = Double.NaN;
 
@@ -91,6 +92,8 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         PARTIALLY_DEPLOYING,
         PARTIALLY_DEPLOYED,
         WAITING_FOR_FLIP_UP,
+        FULLY_DEPLOYING,
+        FULLY_DEPLOYED,
         MANUAL
     }
 
@@ -185,6 +188,13 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                 }
                 break;
 
+            case FULLY_DEPLOYING:
+                if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS) {
+                    stopActuator();
+                    setCurrentState(SampleActuatorStates.FULLY_DEPLOYED);
+                }
+                break;
+
             case PARTIALLY_RETRACTING_AFTER_EJECTING:
                 if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS) {
                     stopActuator();
@@ -201,6 +211,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                 }
                 break;
             case PARTIALLY_DEPLOYED:
+            case FULLY_DEPLOYED:
             case FULLY_RETRACTED:
             case MANUAL:
             case PARTIALLY_RETRACTED_AFTER_EJECTION:
@@ -221,6 +232,14 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         runWithoutEncodersForward();
         actuatorTimer.reset();
     }
+
+
+    public void fullyDeploy() {
+        currentState=SampleActuatorStates.FULLY_DEPLOYING;
+        runWithoutEncodersForward();
+        actuatorTimer.reset();
+    }
+
 
 
 

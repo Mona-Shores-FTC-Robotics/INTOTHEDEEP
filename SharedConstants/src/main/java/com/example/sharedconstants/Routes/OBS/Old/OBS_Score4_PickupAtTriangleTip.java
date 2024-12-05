@@ -1,4 +1,4 @@
-package com.example.sharedconstants.Routes.OBS;
+package com.example.sharedconstants.Routes.OBS.Old;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
@@ -15,11 +15,8 @@ import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_THREE
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_TWO_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_ONE_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_TWO_REDO;
-import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_APPROACH_REDO;
-import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_APPROACH_TILE_SEAM;
-import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_PICKUP;
-import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_PICKUP_REDO;
-import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_PICKUP_TILE_SEAM;
+import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_TIP_APPROACH;
+import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_TIP_PICKUP;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static com.example.sharedconstants.FieldConstants.RIGHT_OF_CHAMBER_REDO;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
@@ -40,9 +37,9 @@ import com.example.sharedconstants.Routes.Routes;
 
 import java.util.Arrays;
 
-public class OBS_Score4_PickupAtTileSeam extends Routes {
+public class OBS_Score4_PickupAtTriangleTip extends Routes {
 
-    public OBS_Score4_PickupAtTileSeam(RobotAdapter robotAdapter) {
+    public OBS_Score4_PickupAtTriangleTip(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
     public void buildRoute(){
@@ -51,16 +48,15 @@ public class OBS_Score4_PickupAtTileSeam extends Routes {
         pushFirstNeutralSpecimen();
         pushSecondNeutralSpecimen();
         pushThirdNeutralSpecimen();
-        pickupSpecimenFromTileSeam();
+        pickupSpecimenFromTriangleTip();
         scoreOnHighChamberFromCorner(CHAMBER_SLOT_THREE_REDO);
-        pickupSpecimenFromTileSeam();
+        pickupSpecimenFromTriangleTip();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE_REDO);
-        pickupSpecimenFromTileSeam();
+        pickupSpecimenFromTriangleTip();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_SEVEN_REDO);
         driveToPark();
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
-
 
     private static final double OBS_FAST_VELOCITY_OVERRIDE = 55;
     private static final double OBS_FAST_ACCELERATION_OVERRIDE = 55;
@@ -150,21 +146,21 @@ public class OBS_Score4_PickupAtTileSeam extends Routes {
     }
 
 
-    public void pickupSpecimenFromTileSeam() {
+    public void pickupSpecimenFromTriangleTip() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
                 .afterDisp(1, robotAdapter.getAction(RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
-                .splineToLinearHeading(OBS_TRIANGLE_APPROACH_TILE_SEAM, ANGLE_TOWARD_RED, obsFastVelocity)
+                .splineToLinearHeading(OBS_TRIANGLE_TIP_APPROACH, ANGLE_TOWARD_RED, obsFastVelocity)
                 .waitSeconds(.01)
                 .setReversed(true)
-                .splineToLinearHeading(OBS_TRIANGLE_PICKUP_TILE_SEAM, ANGLE_TOWARD_RED, obsSlowVelocity)
+                .splineToLinearHeading(OBS_TRIANGLE_TIP_PICKUP, ANGLE_TOWARD_RED, obsSlowVelocity)
                 .waitSeconds(.15);
     }
 
     private void driveToPark() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setReversed(true)
-                .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_PICKUP), ANGLE_TOWARD_RED, obsFastVelocity);
+                .splineToConstantHeading(PoseToVector(OBS_TRIANGLE_TIP_PICKUP), ANGLE_TOWARD_RED, obsFastVelocity);
     }
 }
 

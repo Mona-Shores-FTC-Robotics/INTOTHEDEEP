@@ -117,6 +117,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     ElapsedTime sampleIntakeTimer = new ElapsedTime();
 
+    private boolean automaticPickup=true;
+
     public enum SampleIntakeDetectState {
         DETECTING,
         DETECTED_GOOD_SAMPLE,
@@ -170,7 +172,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 //                    FlightRecorder.write("SAMPLE_DETECTOR" , new GamePieceDetectorMessage(SampleDetector.DetectionState.SENSOR_DISCONNECTED,-1 , FieldConstants.SampleColor.UNKNOWN));
                     break;
                 }
-                if (detectionState == DetectionState.JUST_DETECTED){
+                if (detectionState == DetectionState.JUST_DETECTED && automaticPickup){
                     if (sampleDetector.isGoodSample()) currentIntakeDetectionState = SampleIntakeDetectState.DETECTED_GOOD_SAMPLE;
                     else if (sampleDetector.isBadSample()) currentIntakeDetectionState = SampleIntakeDetectState.DETECTED_BAD_SAMPLE;
                 }
@@ -365,5 +367,13 @@ public class SampleIntakeSubsystem extends SubsystemBase {
 
     public SampleIntakeDetectState getCurrentIntakeDetectState() {
         return currentIntakeDetectionState;
+    }
+
+    public void setAutomaticPickupTrue() {
+        this.automaticPickup = true;
+    }
+
+    public void setAutomaticPickupFalse() {
+        this.automaticPickup = false;
     }
 }

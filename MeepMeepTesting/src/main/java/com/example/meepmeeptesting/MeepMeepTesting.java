@@ -4,14 +4,10 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
-import static com.example.sharedconstants.RoutesToRun.DO_NOTHING;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_1_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SAMPLE_PRELOAD;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT_IMPROVED;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_PICKUP_AT_CORNER;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_PICKUP_AT_TILE_SEAM;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_PICKUP_AT_TRIAGNLE_TIP;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_LEAVE_PRELOAD_PUSH_AND_PICKUP_AT_TRIANGLE;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkRed;
@@ -25,20 +21,21 @@ import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_P
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
-import com.example.sharedconstants.Routes.OBS.OBS_Score4_PickupAtTriangleTip;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Leave_Yellow_Ground_Pickup;
+import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_PickupAtTriangleTip;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_SQUARE_AUTO;
-import com.example.sharedconstants.Routes.OBS.OBS_Score4_PickupAtCorner;
-import com.example.sharedconstants.Routes.OBS.OBS_Score4_PickupAtTileSeam;
+import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_PickupAtCorner;
+import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_PickupAtTileSeam;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_NO_PRELOAD_SPECTACULAR;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_Preload_Push_All_And_Pickup_At_Triangle;
-import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport;
+import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_Fruitport;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score5_Preload_Ground_Pickup_And_Dump_And_Pickup_At_Triangle;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.DoNothing;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score5_SamplePreload;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_4_Preload_and_3_Samples;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle;
-import com.example.sharedconstants.Routes.OBS.Old.OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score5_Preload_Push_All_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score_1_Specimen_Preload;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_1_Specimen_Preload;
@@ -56,7 +53,7 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
 
-    private static final RoutesToRun redObservationRoute = OBS_SCORE_4_PICKUP_AT_CORNER;
+    private static final RoutesToRun redObservationRoute = OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP;
     private static final RoutesToRun blueObservationRoute = OBS_SCORE_4_FRUITPORT_IMPROVED;
     private static final RoutesToRun redNetRoute = NET_SCORE_4_SAMPLE_PRELOAD;
     private static final RoutesToRun blueNetRoute = redNetRoute;
@@ -190,6 +187,9 @@ public class MeepMeepTesting {
 
             case NET_SCORE_5_SAMPLE_PRELOAD:
                 return new NET_Score5_SamplePreload(adapter);
+
+            case OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP:
+                return new OBS_Score5_Leave_Yellow_Ground_Pickup(adapter);
 
             case OBS_SCORE_4_FRUITPORT:
                 return new OBS_Score4_Fruitport(adapter);
