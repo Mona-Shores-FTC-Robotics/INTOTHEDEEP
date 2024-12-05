@@ -97,7 +97,7 @@ public class FieldConstants {
 
     public static double CHAMBER_SPACER = 1.85;
 
-    public static Pose2d CHAMBER_SLOT_ONE_REDO = new Pose2d(QUARTER_TILE-.8, -TILE-HALF_ROBOT_LENGTH+2.2, ANGLE_TOWARD_BLUE);
+    public static Pose2d CHAMBER_SLOT_ONE_REDO = new Pose2d(QUARTER_TILE-.8, -TILE-HALF_ROBOT_LENGTH+1.8, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_TWO_REDO = CHAMBER_SLOT_ONE_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_THREE_REDO = CHAMBER_SLOT_TWO_REDO.plus(new Twist2d(new Vector2d(0, CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_FOUR_REDO = CHAMBER_SLOT_THREE_REDO.plus(new Twist2d(new Vector2d(0, CHAMBER_SPACER), 0));
@@ -153,6 +153,7 @@ public class FieldConstants {
     public static Pose2d NET_BASKET_NEUTRAL_SIDE = new Pose2d(-3*TILE+HALF_ROBOT_WIDTH,-2*TILE, ANGLE_TOWARD_BLUE);
     public static Pose2d HUMAN_PLAYER_SAMPLE_STAGING = new Pose2d(TILE-HALF_ROBOT_LENGTH, -3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
     public static Pose2d HUMAN_PLAYER_SAMPLE_PICKUP = HUMAN_PLAYER_SAMPLE_STAGING.plus(new Twist2d(new Vector2d(THREE_QUARTER_TILE,0), 0));
+    public static Pose2d PARTNER_PRELOAD_LEFT_BEHIND = new Pose2d(-HALF_TILE, -3*TILE+HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);
 
     //Observation Poses
     public static Pose2d OBS_START_POSE = new Pose2d(TILE-HALF_ROBOT_LENGTH,-HALF_FIELD + HALF_ROBOT_WIDTH, ANGLE_TOWARD_OBSERVATION);

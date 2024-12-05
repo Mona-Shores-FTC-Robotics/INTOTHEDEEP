@@ -46,8 +46,7 @@ public class NET_Score_2_Sample_Preload extends NET_Score_1_Sample_Preload {
                 .setReversed(true)
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
-//                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
-                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
 
 }
