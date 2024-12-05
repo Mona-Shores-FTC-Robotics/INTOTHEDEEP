@@ -22,9 +22,9 @@ public class SampleTwisterSubsystem extends SubsystemBase {
 
             switch (robotType) {
                 case INTO_THE_DEEP_19429:
-                    TWISTER_FACE_INWARDS = .975;
-                    TWISTER_FACE_OUTWARDS = .54;
-                    TWISTER_FACE_DUMP = .61;
+                    TWISTER_FACE_INWARDS = 1.0;
+                    TWISTER_FACE_OUTWARDS = .6;
+                    TWISTER_FACE_DUMP = .31;
                     break;
                 case INTO_THE_DEEP_20245:
                     TWISTER_FACE_INWARDS = .65;

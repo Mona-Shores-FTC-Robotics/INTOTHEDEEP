@@ -51,7 +51,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
                     ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
                     FLIP_UP_DELAY_TIME_MS = 250;
-                    FLIP_UP_POSITION= .35;
+                    FLIP_UP_POSITION= .39;
                     FLIP_HOVER_POSITION = 0.6;
                     FLIP_DOWN_POSITION = 0.7;
                     break;
