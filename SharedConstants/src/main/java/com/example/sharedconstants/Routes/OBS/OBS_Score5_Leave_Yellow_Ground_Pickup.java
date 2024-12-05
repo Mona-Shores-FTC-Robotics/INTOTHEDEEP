@@ -99,6 +99,7 @@ public class OBS_Score5_Leave_Yellow_Ground_Pickup extends Routes {
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FOUR_REDO);
         pickupSpecimenFromTriangle();
         scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE_REDO);
+        driveToPark();
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
@@ -167,6 +168,12 @@ public class OBS_Score5_Leave_Yellow_Ground_Pickup extends Routes {
                 new AngularVelConstraint(FAST_ANGULAR_VELOCITY_OVERRIDE)
         ));
         fastAcceleration = new ProfileAccelConstraint(- FAST_ACCELERATION_OVERRIDE , FAST_ACCELERATION_OVERRIDE);
+    }
+
+    private void driveToPark() {
+        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+                .setReversed(true)
+                .splineToLinearHeading(OBS_TRIANGLE_PICKUP, ANGLE_TOWARD_RED, fastVelocity, fastAcceleration);
     }
 }
 
