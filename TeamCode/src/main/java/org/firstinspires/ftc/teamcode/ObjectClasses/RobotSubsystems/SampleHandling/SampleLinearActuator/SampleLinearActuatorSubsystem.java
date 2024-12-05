@@ -50,7 +50,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                     ACTUATOR_PARAMS.FULL_DEPLOYMENT_TIME_MS = 600;
                     ACTUATOR_PARAMS.PARTIAL_DEPLOYMENT_TIME_MS = 140;
                     ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS = 700;
-                    ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 100;
+                    ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS = 200;
                     FLIP_UP_DELAY_TIME_MS = 250;
                     FLIP_UP_POSITION= .39;
                     FLIP_HOVER_POSITION = 0.6;
@@ -84,9 +84,9 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
     public static ActuatorParams ACTUATOR_PARAMS = new ActuatorParams();
 
     public enum SampleActuatorStates {
-        PARTIALLY_RETRACTED_AFTER_EJECTION,
+        PARTIALLY_RETRACTED,
         FULLY_RETRACTED,
-        PARTIALLY_RETRACTING_AFTER_EJECTING,
+        PARTIALLY_RETRACTING,
         FULLY_RETRACTING,
 
         PARTIALLY_DEPLOYING,
@@ -195,14 +195,10 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
                 }
                 break;
 
-            case PARTIALLY_RETRACTING_AFTER_EJECTING:
+            case PARTIALLY_RETRACTING:
                 if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.PARTIAL_RETRACTION_TIME_MS) {
                     stopActuator();
-                    if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE))
-                    {
-                        Robot.getInstance().getSampleIntakeSubsystem().setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON);
-                    }
-                    setCurrentState(SampleActuatorStates.PARTIALLY_RETRACTED_AFTER_EJECTION);
+                    setCurrentState(SampleActuatorStates.PARTIALLY_RETRACTED);
                 }
             case FULLY_RETRACTING:
                 if (actuatorTimer.milliseconds() >= ACTUATOR_PARAMS.FULL_RETRACTION_TIME_MS) {
@@ -214,7 +210,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
             case FULLY_DEPLOYED:
             case FULLY_RETRACTED:
             case MANUAL:
-            case PARTIALLY_RETRACTED_AFTER_EJECTION:
+            case PARTIALLY_RETRACTED:
                 //do nothing
                 break;
         }
@@ -226,6 +222,13 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         runWithoutEncodersReverse();
         actuatorTimer.reset();
     }
+
+    public void partiallyRetract() {
+        currentState=SampleActuatorStates.PARTIALLY_RETRACTING;
+        runWithoutEncodersReverse();
+        actuatorTimer.reset();
+    }
+
 
     public void partiallyDeploy() {
         currentState=SampleActuatorStates.PARTIALLY_DEPLOYING;

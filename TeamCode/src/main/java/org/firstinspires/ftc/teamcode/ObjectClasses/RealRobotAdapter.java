@@ -205,7 +205,7 @@ public class RealRobotAdapter implements RobotAdapter {
                                 new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperDown),
                                 new SleepAction(.8),
                                 new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF),
-                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract));
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyRetract));
 
                     } else return problem();
 
@@ -217,7 +217,7 @@ public class RealRobotAdapter implements RobotAdapter {
                                 new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_REVERSE),
                                 new SleepAction(.5),
                                 new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::setAutomaticPickupTrue),
-                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract)
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyRetract)
                                 );
                     } else return problem();
 

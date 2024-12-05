@@ -40,10 +40,10 @@ public class OBS_Score5_Leave_Yellow_Ground_Pickup extends Routes {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder.setTangent(ANGLE_45_DEGREES);
         pickUpGroundSample(OBS_SPIKE_ONE);
         dropOffGroundSample();
-//        pickUpGroundSample(OBS_SPIKE_TWO);
-//        dropOffGroundSample();
-//        pickUpGroundSample(OBS_SPIKE_THREE);
-//        dropOffGroundSample();
+        pickUpGroundSample(OBS_SPIKE_TWO);
+        dropOffGroundSample();
+        pickUpGroundSample(OBS_SPIKE_THREE);
+        dropOffGroundSample();
 //        pickupSpecimenFromTriangleComingFromThirdSpike();
 //        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_ONE);
 //        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder.setTangent(ANGLE_315_DEGREES);
@@ -66,7 +66,7 @@ public class OBS_Score5_Leave_Yellow_Ground_Pickup extends Routes {
                 .afterDisp(3, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
                 .strafeToLinearHeading(PoseToVector(sampleLocation).minus(new Vector2d(10,18)), Math.toRadians(45))
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND_WITHOUT_TRANSFER))
-                .waitSeconds(.5);
+                .waitSeconds(.3);
     }
     private void dropOffGroundSample() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
