@@ -123,7 +123,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.CCW_HOME = 243.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
                     SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 218.0;
-                    SPECIMEN_ARM_PARAMS.CW_HOME = 38.79;
+                    SPECIMEN_ARM_PARAMS.CW_HOME = 45;//38.79;
                     LEVEL_1_ASCENT_ANGLE = 57;
 
 
