@@ -112,7 +112,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
                     // Arm Feedforward parameters
                     SPECIMEN_ARM_PARAMS.kS = 0;
-                    SPECIMEN_ARM_PARAMS.kCos = 0.2;
+                    SPECIMEN_ARM_PARAMS.kCos = 0.1;
                     SPECIMEN_ARM_PARAMS.kV = 0;
                     SPECIMEN_ARM_PARAMS.kA = 0;
 
