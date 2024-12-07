@@ -131,7 +131,7 @@ public class OBS_Score5_Leave_Yellow_Ground_Pickup extends Routes {
 
     public void pickupSpecimenFromTriangleComingFromThirdSpike() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .turnTo(Math.toRadians(95))
+//                .turnTo(Math.toRadians(95))
                 .setTangent(ANGLE_TOWARD_NET)
                 .afterDisp(0 , robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE))
                 .afterDisp(5 , robotAdapter.getAction(GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
