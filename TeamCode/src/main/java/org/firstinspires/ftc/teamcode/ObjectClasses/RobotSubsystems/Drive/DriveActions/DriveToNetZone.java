@@ -101,7 +101,7 @@ public class DriveToNetZone implements Action {
             action = robotAdapter.getActionBuilder(currentPose)
                     .turnTo(Math.toRadians(MatchConfig.finalAllianceColor == BLUE ? 225 : 45)) // Pose map does not effect this...
                     .setTangent(ANGLE_225_DEGREES)
-                    .afterDisp(15, new BetterPrepareAction())
+                    .afterDisp(0, new BetterPrepareAction())
                     .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_APPROACH), ANGLE_45_DEGREES, velConstraint, accelConstraint)
                     .strafeToLinearHeading(PoseToVector(FieldConstants.NET_BASKET_DRIVE_TO_NET_SCORE), ANGLE_45_DEGREES,velSlowConstraint, accelSlowConstraint)
 //                    .stopAndAdd(new ScoreSampleAction())

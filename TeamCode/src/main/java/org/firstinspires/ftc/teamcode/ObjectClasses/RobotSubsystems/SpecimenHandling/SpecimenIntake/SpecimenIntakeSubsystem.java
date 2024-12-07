@@ -46,14 +46,14 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                     SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
                     SPECIMEN_INTAKE_PARAMS.MAX_POWER = 1.0;
                     SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 40;
-                    SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 5;
+                    SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 2;
                     break;
 
                 case INTO_THE_DEEP_20245:
-                    SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = - 0.8;
-                    SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 0.8;
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_ON_POWER = - 1.0;
+                    SPECIMEN_INTAKE_PARAMS.INTAKE_REVERSE_POWER = 1.0;
                     SPECIMEN_INTAKE_PARAMS.INTAKE_OFF_POWER = 0.0;
-                    SPECIMEN_INTAKE_PARAMS.MAX_POWER = 0.8;
+                    SPECIMEN_INTAKE_PARAMS.MAX_POWER = 1.0;
                     SPECIMEN_INTAKE_PARAMS.PROXIMITY_THRESHOLD_IN_MM = 50;
                     SPECIMEN_INTAKE_PARAMS.HISTORY_SIZE = 2;
                     break;

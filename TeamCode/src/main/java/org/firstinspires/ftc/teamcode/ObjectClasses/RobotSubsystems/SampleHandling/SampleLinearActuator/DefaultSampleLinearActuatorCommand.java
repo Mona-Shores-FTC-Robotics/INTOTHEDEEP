@@ -34,7 +34,7 @@ public class DefaultSampleLinearActuatorCommand extends CommandBase {
             Robot.getInstance().getSampleTiwsterSubsystem().setTwisterServoFaceOutwards();
 
             // Move actuator based on input
-            sampleLinearActuatorSubsystem.manualMove(-actuatorInput);
+            sampleLinearActuatorSubsystem.manualMove(actuatorInput);
 
             // Check direction and control intake accordingly
             if (actuatorInput > 0) {  // Forward movement

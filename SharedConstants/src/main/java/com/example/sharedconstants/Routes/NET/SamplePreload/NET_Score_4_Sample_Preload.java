@@ -12,6 +12,7 @@ import static com.example.sharedconstants.FieldConstants.NET_BASKET_AUTO;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE_APPROACH;
 import static com.example.sharedconstants.FieldConstants.NEXT_TO_NET_ASCENT;
+import static com.example.sharedconstants.FieldConstants.SAMPLE_LENGTH;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DEPOWER_ARM;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.FLIP_UP_AND_RETRACT;
@@ -22,6 +23,8 @@ import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCO
 import static com.example.sharedconstants.RobotAdapter.ActionType.PREPARE_TO_SCORE_IN_LOW_BASKET;
 import static com.example.sharedconstants.RobotAdapter.ActionType.SAMPLE_LIFT_TO_HOME;
 
+import com.acmerobotics.roadrunner.Twist2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.example.sharedconstants.RobotAdapter;
 
 public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
@@ -44,7 +47,7 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
                 .setTangent(ANGLE_45_DEGREES)
                 .afterDisp(7.0, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
-                .splineToLinearHeading(NET_SPIKE_THREE, ANGLE_115_DEGREES, normalVelocity, normalAcceleration)
+                .splineToLinearHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,0),0)), ANGLE_115_DEGREES, normalVelocity, normalAcceleration)
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .waitSeconds(2.5);
     }

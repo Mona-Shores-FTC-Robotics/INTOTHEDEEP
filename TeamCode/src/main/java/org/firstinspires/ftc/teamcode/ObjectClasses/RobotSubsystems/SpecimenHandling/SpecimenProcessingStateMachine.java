@@ -18,7 +18,7 @@ public class SpecimenProcessingStateMachine {
 
     // If we detect a good specimen, shut off the intake and move the arm to clockwise home staging for scoring position
     public void onSpecimenDetection() {
-        intakeSubsystem.setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
+//        intakeSubsystem.setCurrentState(SpecimenIntakeSubsystem.SpecimenIntakeStates.INTAKE_OFF);
         armSubsystem.flipCWFast();
 //        lightingSubsystem.setGoodSampleIndicator();
     }

@@ -68,7 +68,7 @@ public class SampleButtonHandling {
         Command hoverWithoutActuator = new ParallelCommandGroup(
                 new InstantCommand(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperHover),
                 new InstantCommand(Robot.getInstance().getSampleIntakeSubsystem()::turnOnIntake),
-                new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
+                new InstantCommand(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward)
         );
 
         Command deployFromHover = new ParallelCommandGroup(

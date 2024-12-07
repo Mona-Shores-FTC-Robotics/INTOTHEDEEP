@@ -138,7 +138,7 @@ public class FieldConstants {
     public static Pose2d NET_BASKET = new Pose2d(-59, -61, ANGLE_45_DEGREES);
     public static Pose2d NET_BASKET_PRE_SCORE = new Pose2d(NET_BASKET.position.x+15, NET_BASKET.position.y+15, ANGLE_45_DEGREES); //-48 -52
 
-    public static Pose2d NET_BASKET_DRIVE_TO_NET_SCORE = new Pose2d(-61.5, -57, Math.toRadians(47));
+    public static Pose2d NET_BASKET_DRIVE_TO_NET_SCORE = new Pose2d(-59.5, -60.5, Math.toRadians(47));
     public static Pose2d NET_BASKET_DRIVE_TO_NET_APPROACH = new Pose2d(NET_BASKET_DRIVE_TO_NET_SCORE.position.x+10, NET_BASKET_DRIVE_TO_NET_SCORE.position.y+10, Math.toRadians(55)); //-48 -52
 
     public static Pose2d NET_BASKET_AUTO = new Pose2d(-59, -61, Math.toRadians(55)); //-48 -52

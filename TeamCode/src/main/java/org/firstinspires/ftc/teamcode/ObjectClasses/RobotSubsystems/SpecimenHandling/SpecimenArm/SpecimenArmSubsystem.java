@@ -353,6 +353,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
             case FLIPPING_TO_CW:
                 if (flipArmTimer.milliseconds() > SPECIMEN_ARM_PARAMS.CW_FLIP_TIME_MS) {
+                    Robot.getInstance().getSpecimenIntakeSubsystem().turnOffIntake();
                     arm.setPower(0);
                     setCurrentState(SpecimenArmStates.ZERO_POWER_AT_CW_ARM_HOME);
                     zeroPowerTimer.reset();
