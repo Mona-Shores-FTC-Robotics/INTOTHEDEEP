@@ -8,6 +8,8 @@ import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SAMPLE_PRELOAD
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT_IMPROVED;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_PRELOAD_GROUND_PICKUP_AND_DUMP_AND_PICKUP_AT_TRIANGLE;
+import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_SPECIMEN_PRELOAD_GROUND_PICKUP;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkRed;
@@ -22,6 +24,7 @@ import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preloa
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
 import com.example.sharedconstants.Routes.OBS.OBS_Score5_Leave_Yellow_Ground_Pickup;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Specimen_Preload_Ground_Pickup;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_PickupAtTriangleTip;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_SQUARE_AUTO;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_PickupAtCorner;
@@ -54,12 +57,12 @@ import javax.imageio.ImageIO;
 public class MeepMeepTesting {
 
     private static final RoutesToRun redObservationRoute = OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP;
-    private static final RoutesToRun blueObservationRoute = OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP;
+    private static final RoutesToRun blueObservationRoute = OBS_SCORE_5_SPECIMEN_PRELOAD_GROUND_PICKUP;
     private static final RoutesToRun redNetRoute = NET_SCORE_5_SAMPLE_PRELOAD;
     private static final RoutesToRun blueNetRoute = NET_SCORE_5_SAMPLE_PRELOAD;
 
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(1200);
+        MeepMeep meepMeep = new MeepMeep(800);
         String filePath = "intothedeep2.png";  // Customize the field background
         try {
             Image img = ImageIO.read(new File(filePath));
@@ -190,6 +193,10 @@ public class MeepMeepTesting {
 
             case OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP:
                 return new OBS_Score5_Leave_Yellow_Ground_Pickup(adapter);
+
+            case OBS_SCORE_5_SPECIMEN_PRELOAD_GROUND_PICKUP:
+                return new OBS_Score5_Specimen_Preload_Ground_Pickup(adapter);
+
 
             case OBS_SCORE_4_FRUITPORT:
                 return new OBS_Score4_Fruitport(adapter);

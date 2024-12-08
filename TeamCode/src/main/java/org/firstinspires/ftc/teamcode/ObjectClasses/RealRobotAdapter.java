@@ -14,11 +14,14 @@ import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.ChangeSampleDumperPositionAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
@@ -136,8 +139,6 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new InstantAction(robot.getSpecimenArmSubsystem()::flipCWFast);
                     } else return problem();
 
-
-
             case HANG_SPECIMEN_ON_HIGH_CHAMBER:
                     if (robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM) && robot.hasSubsystem(Robot.SubsystemType.SPECIMEN_INTAKE)) {
                         return new SequentialAction(
@@ -179,7 +180,6 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {
                         return  new ParallelAction(
-//                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy),
                                 new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON),
                                 new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperHover),
                                 new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
@@ -248,34 +248,18 @@ public class RealRobotAdapter implements RobotAdapter {
                         return new SequentialAction(redoSupplier.get(), redoSupplier.get(), redoSupplier.get());
                     } else return problem();
 
-//            case INTAKE_SAMPLE_FROM_GROUND_AND_RETRACT:
-//                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
-//                    {
-//                        return new SequentialAction(
-//                                new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF),
-//                                new SequentialAction(
-//                                        new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::runWithoutEncodersReverse),
-//                                        new SleepAction(.5),
-//                                        new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::stopActuator),
-//                                        new InstantAction(Robot.getInstance().getSampleButtonHandling()::setIntakeReverse),
-//                                        new SleepAction(.6),
-//                                        new InstantAction(Robot.getInstance().getSampleButtonHandling()::setIntakeOff)
-//                                )
-//                        );
-//                    } else return problem();
-
-//                case SAMPLE_ACTUATOR_RETRACT:
-//                    try {
-//                        if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
-//                         return new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract);
-//                        }
-//                    } catch (Exception e) {
-//                        throw new RuntimeException(e);
-//                    }
-
                 case FLIP_UP_AND_RETRACT:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR)) {
-                        return new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::flipSampleIntakeUpAndRetract);
+                        return
+                                new SequentialAction(
+                                        new ParallelAction(
+                                            new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperUp),
+                                            new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract),
+                                            new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward)
+                                                ),
+                                        new SleepAction(SampleProcessingStateMachine.FLIP_UP_DELAY_TIME_MS),
+                                        new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::transferSampleToBucket)
+                                );
                     } else return problem();
 
                 case DUMP_SAMPLE_IN_OBSERVATION_ZONE:
@@ -283,7 +267,7 @@ public class RealRobotAdapter implements RobotAdapter {
                     {
                         return new SequentialAction(
                                 new ChangeSampleDumperPositionAction(SampleLiftBucketSubsystem.DumperStates.DUMPER_DUMP),
-                                new SleepAction(.8),
+                                new SleepAction(SampleLiftBucketSubsystem.SAMPLE_LIFT_PARAMS.DUMP_TIME_MS*1000),
                                 new ChangeSampleDumperPositionAction(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME)
                         );
                     } else return problem();

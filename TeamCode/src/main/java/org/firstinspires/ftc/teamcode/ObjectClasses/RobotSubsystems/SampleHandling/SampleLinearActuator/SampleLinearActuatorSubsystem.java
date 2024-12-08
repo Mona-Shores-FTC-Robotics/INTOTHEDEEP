@@ -311,12 +311,6 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         telemetry.addData("Sample Actuator Motor Power", currentPower);
     }
 
-    // Verbose telemetry display
-    public void flipSampleIntakeUpAndRetract() {
-        currentState=SampleActuatorStates.WAITING_FOR_FLIP_UP;
-        flipUpTimer.reset(); // once this timer hits a timer then do the retract in the periodic
-        sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_UP_POSITION);
-    }
     public void flipSampleIntakeDown() {
         sampleIntakeFlipperServo.setPosition(ACTUATOR_PARAMS.FLIP_DOWN_POSITION);
     }

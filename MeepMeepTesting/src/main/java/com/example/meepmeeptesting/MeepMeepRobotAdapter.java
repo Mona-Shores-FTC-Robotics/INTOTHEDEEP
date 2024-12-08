@@ -71,7 +71,7 @@ public class MeepMeepRobotAdapter implements RobotAdapter {
         public Action createAction(ActionType actionType) {
             switch (actionType) {
                 default:
-                    return new SleepAction(.1);
+                    return new SleepAction(.5);
             }
         }
     }
