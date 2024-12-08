@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleProcessi
 @Config
 public class SampleProcessingStateMachine {
 
+    public double FLIP_UP_DELAY_TIME_MS = 400;
+
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
     private final SampleLiftBucketSubsystem liftSubsystem;
@@ -71,7 +73,7 @@ public class SampleProcessingStateMachine {
                 break;
 
             case GETTING_READY_FOR_TRANSFER:
-                if (actuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.FULLY_RETRACTED && actuatorSubsystem.getReadyToTransfer()) {
+                if (actuatorSubsystem.getReadyToTransfer()) {
                     currentSampleDetectionState = SampleDetectionStates.FLIPPING_ALL_THE_WAY_UP;
                     lightingSubsystem.setLightToSampleColor();
                     actuatorSubsystem.setFlipperUp();
@@ -79,7 +81,7 @@ public class SampleProcessingStateMachine {
                 }
                 break;
             case FLIPPING_ALL_THE_WAY_UP:
-                if (flipAllTheWayUpTimer.milliseconds()>400)
+                if (flipAllTheWayUpTimer.milliseconds()>FLIP_UP_DELAY_TIME_MS)
                 {
                     currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
                     intakeSubsystem.transferSampleToBucket();
@@ -109,7 +111,6 @@ public class SampleProcessingStateMachine {
                 break;
         }
     }
-
 
     public SampleDetectionStates getCurrentSampleDetectionState() {
         return currentSampleDetectionState;

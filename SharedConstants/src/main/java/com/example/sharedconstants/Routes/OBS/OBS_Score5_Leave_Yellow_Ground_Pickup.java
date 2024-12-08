@@ -1,52 +1,29 @@
 package com.example.sharedconstants.Routes.OBS;
 
-import static com.example.sharedconstants.FieldConstants.ANGLE_115_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_315_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_NET;
-import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FIVE;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FIVE_REDO;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FOUR;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FOUR_REDO;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE_REDO;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_THREE;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_THREE_REDO;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWO;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWO_REDO;
-import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_THREE;
-import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_TWO;
-import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_THREE;
-import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_TWO;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_TWO;
-import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_APPROACH;
 import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_PICKUP;
 import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_TIP_APPROACH;
 import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_TIP_PICKUP;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
-import static com.example.sharedconstants.RobotAdapter.ActionType.DROP_OFF_GROUND_SAMPLE_WITHOUT_TRANSFER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL;
 import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_ON_HIGH_CHAMBER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.PICKUP_FROM_GROUND;
-import static com.example.sharedconstants.RobotAdapter.ActionType.PICKUP_FROM_GROUND_WITHOUT_TRANSFER;
 
 import com.acmerobotics.roadrunner.AccelConstraint;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
-import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
-import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.FieldConstants;
@@ -88,38 +65,49 @@ public class OBS_Score5_Leave_Yellow_Ground_Pickup extends Routes {
         setupConstraints();
         obsTrajectoryActionBuilder = robotAdapter.getActionBuilder(FieldConstants.OBS_START_POSE);
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder.setTangent(ANGLE_45_DEGREES);
-        pickupAndDumpGroundSamples();
-        pickupSpecimenFromTriangleComingFromThirdSpike();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_ONE_REDO);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_TWO_REDO);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_THREE_REDO);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FOUR_REDO);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE_REDO);
-        driveToPark();
+        pickupGroundSampleOne();
+        pickupGroundSampleTwo();
+//        pickupGroundSampleThree();
+//        pickupSpecimenFromTriangleComingFromThirdSpike();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_ONE_REDO);
+//        pickupSpecimenFromTriangle();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_TWO_REDO);
+//        pickupSpecimenFromTriangle();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_THREE_REDO);
+//        pickupSpecimenFromTriangle();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FOUR_REDO);
+//        pickupSpecimenFromTriangle();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FIVE_REDO);
+//        driveToPark();
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 
-    public void pickupAndDumpGroundSamples() {
+    private void pickupGroundSampleTwo() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .afterDisp(3 , robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
-                .strafeToLinearHeading(PoseToVector(OBS_SPIKE_ONE).minus(new Vector2d(- 1.5 , 22)) , ANGLE_TOWARD_BLUE)
-                .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .waitSeconds(.8) // give some time to grab it from the ground and do the transfer
                 .afterDisp(1 , robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
                 .afterDisp(2 , robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE)) // dump the sample while pulling in the next one
                 .strafeToLinearHeading(PoseToVector(OBS_SPIKE_TWO).minus(new Vector2d(- 3.5 , 22)) , ANGLE_TOWARD_BLUE)
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .waitSeconds(.8)
+                .waitSeconds(.8);
+    }
+
+    public void pickupGroundSampleOne() {
+        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
+                .afterDisp(3 , robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
+                .strafeToLinearHeading(PoseToVector(OBS_SPIKE_ONE).minus(new Vector2d(- 1.5 , 22)) , ANGLE_TOWARD_BLUE)
+                .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
+                .waitSeconds(.8); // give some time to grab it from the ground and do the transfer
+    }
+
+    private void pickupGroundSampleThree() {
+        obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .afterDisp(1 , robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
                 .afterDisp(2 , robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE))
                 .strafeToLinearHeading(PoseToVector(OBS_SPIKE_THREE).minus(new Vector2d(4 , 22)) , Math.toRadians(60))
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .waitSeconds(.8);
     }
+
 
     public void scoreOnHighChamberFromTriangle(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
