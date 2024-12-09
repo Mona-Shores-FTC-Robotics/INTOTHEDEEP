@@ -107,7 +107,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.I = 0.02;
                     DEFAULT_I = I;
                     MAX_I_DEVIATION = .2;
-                    SPECIMEN_ARM_PARAMS.D = .0001;
+                    SPECIMEN_ARM_PARAMS.D = 0;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
                     // Arm Feedforward parameters
