@@ -93,14 +93,14 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.DEAD_ZONE = 0.05;
 
                     // PID parameters
-                    SPECIMEN_ARM_PARAMS.P = 0.0044;
-                    SPECIMEN_ARM_PARAMS.I = 0.1;
-                    SPECIMEN_ARM_PARAMS.D = .0001;
+                    SPECIMEN_ARM_PARAMS.P = 0.02;
+                    SPECIMEN_ARM_PARAMS.I = 0.02;
+                    SPECIMEN_ARM_PARAMS.D = 0;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
                     // Arm Feedforward parameters
                     SPECIMEN_ARM_PARAMS.kS = 0;
-                    SPECIMEN_ARM_PARAMS.kCos = 0.1;
+                    SPECIMEN_ARM_PARAMS.kCos = 0.095;
                     SPECIMEN_ARM_PARAMS.kV = 0;
                     SPECIMEN_ARM_PARAMS.kA = 0;
 
@@ -313,8 +313,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         currentTicks = encoderDataBlock.positions[armEncoderChannel];
         currentVelocity = encoderDataBlock.velocities[armEncoderChannel];
         currentAngleDegrees = calculateCurrentArmAngleInDegrees();
-
-
 
         switch (currentState) {
             case ROTATING_CCW_TO_TARGET_ANGLE:

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Lighting;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
@@ -17,33 +18,35 @@ public class LightingSubsystem extends SubsystemBase{
     public static void configureParamsForRobotType(Robot.RobotType robotType) {
         switch (robotType) {
             case INTO_THE_DEEP_19429:
-                LIGHTING_PARAMS.HAVE_GAME_PIECE_COLOR = RevBlinkinLedDriver.BlinkinPattern.GREEN;
-                LIGHTING_PARAMS.BAD_SAMPLE_WARNING_COLOR = RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
-                LIGHTING_PARAMS.BAD_SPECIMEN_WARNING_COLOR = RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
-                LIGHTING_PARAMS.SHADE_OF_RED = RevBlinkinLedDriver.BlinkinPattern.RED;
-                LIGHTING_PARAMS.SHADE_OF_BLUE = RevBlinkinLedDriver.BlinkinPattern.BLUE;
-                LIGHTING_PARAMS.SHADE_OF_YELLOW = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
-                LIGHTING_PARAMS.SHADE_OF_BLACK = RevBlinkinLedDriver.BlinkinPattern.BLACK;
-                LIGHTING_PARAMS.ALLIANCE_NET_BLUE = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
-                LIGHTING_PARAMS.ALLIANCE_NET_RED = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;
-                LIGHTING_PARAMS.ALLIANCE_OBSERVATION_BLUE = RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE;
-                LIGHTING_PARAMS.ALLIANCE_OBSERVATION_RED = RevBlinkinLedDriver.BlinkinPattern.DARK_RED;
-                LIGHTING_PARAMS.UNKNOWN_COLOR = RevBlinkinLedDriver.BlinkinPattern.GRAY;
+                LIGHTING_PARAMS.PROBLEM_COLOR = 0.0; //RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+                LIGHTING_PARAMS.HAVE_GAME_PIECE_COLOR = 0.5; //RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                LIGHTING_PARAMS.BAD_SAMPLE_WARNING_COLOR = 1.0; //RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
+                LIGHTING_PARAMS.BAD_SPECIMEN_WARNING_COLOR = 1.0; //RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
+                LIGHTING_PARAMS.SHADE_OF_RED = 0.28; //RevBlinkinLedDriver.BlinkinPattern.RED;
+                LIGHTING_PARAMS.SHADE_OF_BLUE = 0.61; //RevBlinkinLedDriver.BlinkinPattern.BLUE;
+                LIGHTING_PARAMS.SHADE_OF_YELLOW = 0.34; //RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+                LIGHTING_PARAMS.SHADE_OF_BLACK = 0.0; //RevBlinkinLedDriver.BlinkinPattern.BLACK;
+                LIGHTING_PARAMS.ALLIANCE_NET_BLUE = 0.61; // RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
+                LIGHTING_PARAMS.ALLIANCE_NET_RED = 0.28; //RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;
+                LIGHTING_PARAMS.ALLIANCE_OBSERVATION_BLUE = 0.61; //RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE;
+                LIGHTING_PARAMS.ALLIANCE_OBSERVATION_RED = 0.28;//RevBlinkinLedDriver.BlinkinPattern.DARK_RED;
+                LIGHTING_PARAMS.UNKNOWN_COLOR = 0.0;//RevBlinkinLedDriver.BlinkinPattern.YELLOW;
                 break;
 
             case INTO_THE_DEEP_20245:
-                LIGHTING_PARAMS.HAVE_GAME_PIECE_COLOR = RevBlinkinLedDriver.BlinkinPattern.LIME;
-                LIGHTING_PARAMS.BAD_SAMPLE_WARNING_COLOR = RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
-                LIGHTING_PARAMS.BAD_SPECIMEN_WARNING_COLOR = RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
-                LIGHTING_PARAMS.SHADE_OF_RED = RevBlinkinLedDriver.BlinkinPattern.RED;
-                LIGHTING_PARAMS.SHADE_OF_BLUE = RevBlinkinLedDriver.BlinkinPattern.BLUE;
-                LIGHTING_PARAMS.SHADE_OF_YELLOW = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
-                LIGHTING_PARAMS.SHADE_OF_BLACK = RevBlinkinLedDriver.BlinkinPattern.BLACK;
-                LIGHTING_PARAMS.ALLIANCE_NET_BLUE = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
-                LIGHTING_PARAMS.ALLIANCE_NET_RED = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;
-                LIGHTING_PARAMS.ALLIANCE_OBSERVATION_BLUE = RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE;
-                LIGHTING_PARAMS.ALLIANCE_OBSERVATION_RED = RevBlinkinLedDriver.BlinkinPattern.DARK_RED;
-                LIGHTING_PARAMS.UNKNOWN_COLOR = RevBlinkinLedDriver.BlinkinPattern.GRAY;
+                LIGHTING_PARAMS.PROBLEM_COLOR = 0.0; //RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+                LIGHTING_PARAMS.HAVE_GAME_PIECE_COLOR = 0.5; //RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                LIGHTING_PARAMS.BAD_SAMPLE_WARNING_COLOR = 1.0; //RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
+                LIGHTING_PARAMS.BAD_SPECIMEN_WARNING_COLOR = 1.0; //RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
+                LIGHTING_PARAMS.SHADE_OF_RED = 0.28; //RevBlinkinLedDriver.BlinkinPattern.RED;
+                LIGHTING_PARAMS.SHADE_OF_BLUE = 0.61; //RevBlinkinLedDriver.BlinkinPattern.BLUE;
+                LIGHTING_PARAMS.SHADE_OF_YELLOW = 0.34; //RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+                LIGHTING_PARAMS.SHADE_OF_BLACK = 0.0; //RevBlinkinLedDriver.BlinkinPattern.BLACK;
+                LIGHTING_PARAMS.ALLIANCE_NET_BLUE = 0.61; // RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
+                LIGHTING_PARAMS.ALLIANCE_NET_RED = 0.28; //RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;
+                LIGHTING_PARAMS.ALLIANCE_OBSERVATION_BLUE = 0.61; //RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE;
+                LIGHTING_PARAMS.ALLIANCE_OBSERVATION_RED = 0.28;//RevBlinkinLedDriver.BlinkinPattern.DARK_RED;
+                LIGHTING_PARAMS.UNKNOWN_COLOR = 0.0;//RevBlinkinLedDriver.BlinkinPattern.YELLOW;
                 break;
 
 
@@ -53,32 +56,32 @@ public class LightingSubsystem extends SubsystemBase{
     }
 
     public static class LightingParams {
-        public RevBlinkinLedDriver.BlinkinPattern PROBLEM_COLOR = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
-        public RevBlinkinLedDriver.BlinkinPattern HAVE_GAME_PIECE_COLOR = RevBlinkinLedDriver.BlinkinPattern.GREEN;
-        public RevBlinkinLedDriver.BlinkinPattern BAD_SAMPLE_WARNING_COLOR = RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
-        public RevBlinkinLedDriver.BlinkinPattern BAD_SPECIMEN_WARNING_COLOR = RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
-        public RevBlinkinLedDriver.BlinkinPattern SHADE_OF_RED = RevBlinkinLedDriver.BlinkinPattern.RED;
-        public RevBlinkinLedDriver.BlinkinPattern SHADE_OF_BLUE = RevBlinkinLedDriver.BlinkinPattern.BLUE;
-        public RevBlinkinLedDriver.BlinkinPattern SHADE_OF_YELLOW = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
-        public RevBlinkinLedDriver.BlinkinPattern SHADE_OF_BLACK = RevBlinkinLedDriver.BlinkinPattern.BLACK;
-        public RevBlinkinLedDriver.BlinkinPattern ALLIANCE_NET_BLUE = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
-        public RevBlinkinLedDriver.BlinkinPattern ALLIANCE_NET_RED = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;
-        public RevBlinkinLedDriver.BlinkinPattern ALLIANCE_OBSERVATION_BLUE = RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE;
-        public RevBlinkinLedDriver.BlinkinPattern ALLIANCE_OBSERVATION_RED = RevBlinkinLedDriver.BlinkinPattern.DARK_RED;
-        public RevBlinkinLedDriver.BlinkinPattern UNKNOWN_COLOR = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+        public double PROBLEM_COLOR = 0.0; //RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+        public double HAVE_GAME_PIECE_COLOR = 0.5; //RevBlinkinLedDriver.BlinkinPattern.GREEN;
+        public double BAD_SAMPLE_WARNING_COLOR = 1.0; //RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
+        public double BAD_SPECIMEN_WARNING_COLOR = 1.0; //RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
+        public double SHADE_OF_RED = 0.28; //RevBlinkinLedDriver.BlinkinPattern.RED;
+        public double SHADE_OF_BLUE = 0.61; //RevBlinkinLedDriver.BlinkinPattern.BLUE;
+        public double SHADE_OF_YELLOW = 0.34; //RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+        public double SHADE_OF_BLACK = 0.0; //RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        public double ALLIANCE_NET_BLUE = 0.61; // RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
+        public double ALLIANCE_NET_RED = 0.28; //RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;
+        public double ALLIANCE_OBSERVATION_BLUE = 0.61; //RevBlinkinLedDriver.BlinkinPattern.DARK_BLUE;
+        public double ALLIANCE_OBSERVATION_RED = 0.28;//RevBlinkinLedDriver.BlinkinPattern.DARK_RED;
+        public double UNKNOWN_COLOR = 0.0;//RevBlinkinLedDriver.BlinkinPattern.YELLOW;
     }
 
 
-    private final RevBlinkinLedDriver blinkin;
+    private final Servo indicator;
     private SpecimenDetector specimenDetector;
     private SampleDetector sampleDetector;
-    private RevBlinkinLedDriver.BlinkinPattern currentPattern;
+    private double currentPattern;
 
     // Constructor with color sensor
-    public LightingSubsystem(final HardwareMap hMap, final Robot.RobotType robotType, final String blinkinName) {
+    public LightingSubsystem(final HardwareMap hMap, final Robot.RobotType robotType, final String indicatorName) {
         configureParamsForRobotType(robotType);
-        blinkin = hMap.get(RevBlinkinLedDriver.class, blinkinName);
-        currentPattern = null; // Start with no pattern set
+        indicator = hMap.get(Servo.class, indicatorName);
+        currentPattern = 0.0; // Start with no pattern set
     }
 
     public void init() {
@@ -86,10 +89,10 @@ public class LightingSubsystem extends SubsystemBase{
         specimenDetector = Robot.getInstance().getSpecimenIntakeSubsystem().getSpecimenDetector();
     }
 
-    public void setLight(RevBlinkinLedDriver.BlinkinPattern pattern) {
+    public void setLight(double pattern) {
         if (currentPattern != pattern) {
             currentPattern = pattern;
-            blinkin.setPattern(pattern);
+            indicator.setPosition(pattern);
         }
     }
 
@@ -170,7 +173,7 @@ public class LightingSubsystem extends SubsystemBase{
             preload = Robot.getInstance().getSpecimenIntakeSubsystem().checkForPreload();
         }
 
-        RevBlinkinLedDriver.BlinkinPattern lightPattern;
+        double lightPattern;
 
         if (!preload) {
             lightPattern = LIGHTING_PARAMS.BAD_SPECIMEN_WARNING_COLOR;

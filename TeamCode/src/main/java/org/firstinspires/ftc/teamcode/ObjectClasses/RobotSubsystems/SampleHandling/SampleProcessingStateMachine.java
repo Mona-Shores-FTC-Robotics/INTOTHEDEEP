@@ -58,6 +58,10 @@ public class SampleProcessingStateMachine {
                 else if (intakeSubsystem.getCurrentIntakeDetectState() == SampleIntakeSubsystem.SampleIntakeDetectState.DETECTED_BAD_SAMPLE)  {
                         currentSampleDetectionState = SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
                 }
+                // Turn the light off if we're trying to detect again
+                else if (intakeSubsystem.getCurrentState() == SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON){
+                    lightingSubsystem.setLightBlack();
+                }
                 break;
             case ON_GOOD_SAMPLE_DETECTION:
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;
