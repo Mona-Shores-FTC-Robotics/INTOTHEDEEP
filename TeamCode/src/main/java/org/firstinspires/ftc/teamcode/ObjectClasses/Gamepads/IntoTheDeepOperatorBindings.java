@@ -60,8 +60,8 @@ public class IntoTheDeepOperatorBindings {
         ReverseSampleIntakeToggle(GamepadKeys.Button.DPAD_LEFT);
         ReverseSpecimenIntakeToggle(GamepadKeys.Button.DPAD_RIGHT);
         ManualDump(GamepadKeys.Button.DPAD_DOWN);
-        bindDecreaseArmITerm(GamepadKeys.Trigger.LEFT_TRIGGER);
-        bindIncreaseArmITerm(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        bindRaiseArmAngle(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        bindLowerPickupArmAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
 
         LiftToLowBucket(GamepadKeys.Button.Y);
 
@@ -351,14 +351,14 @@ public class IntoTheDeepOperatorBindings {
     }
 
 
-    private void bindIncreaseArmITerm(GamepadKeys.Trigger trigger) {
+    private void bindLowerPickupArmAngle(GamepadKeys.Trigger trigger) {
         if(Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
         {
             //See teleop centerstage code - can't figure out how to make binding declarative
             Trigger triggerDown = new Trigger(() -> operatorGamePad.getTrigger(trigger) > 0.3);
             //todo can we fix this to work better doesn't seem to modify angle immediately in a noticeable way
             triggerDown.whenActive(
-                    new InstantCommand(robot.getSpecimenArmSubsystem()::increaseArmITerm));
+                    new InstantCommand(robot.getSpecimenArmSubsystem()::lowerArm));
 
             // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
@@ -369,13 +369,13 @@ public class IntoTheDeepOperatorBindings {
         }
     }
 
-    private void bindDecreaseArmITerm(GamepadKeys.Trigger trigger) {
+    private void bindRaiseArmAngle(GamepadKeys.Trigger trigger) {
         if(Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM))
         {
         //See teleop centerstage code - can't figure out how to make binding declarative
         Trigger leftTriggerDown = new Trigger(() -> operatorGamePad.getTrigger(trigger) > 0.3);
         //todo can we fix this to work better doesn't seem to modify angle immediately in a noticeable way
-        leftTriggerDown.whenActive(new InstantCommand(robot.getSpecimenArmSubsystem()::decreaseArmITerm));
+        leftTriggerDown.whenActive(new InstantCommand(robot.getSpecimenArmSubsystem()::raiseArm));
 
         // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(

@@ -27,7 +27,7 @@ public class SampleTwisterSubsystem extends SubsystemBase {
                     TWISTER_FACE_DUMP = .31;
                     break;
                 case INTO_THE_DEEP_20245:
-                    TWISTER_FACE_INWARDS = .65;
+                    TWISTER_FACE_INWARDS = 0.63;
                     TWISTER_FACE_OUTWARDS = 0.23;
                     TWISTER_FACE_DUMP = .8;
                     break;

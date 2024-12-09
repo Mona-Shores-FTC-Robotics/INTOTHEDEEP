@@ -2,14 +2,11 @@ package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHan
 
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.CCW_ARM_HOME;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.CW_ARM_HOME;
-import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP;
 import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem.SpecimenArmStates.ZERO_POWER;
 
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.ftc.FlightRecorder;
-import com.acmerobotics.roadrunner.ftc.LogFile;
 import com.acmerobotics.roadrunner.ftc.MessageSchema;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -27,8 +24,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
-import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenArmPowerMessage;
-import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SpecimenArmStateMessage;
 
 @Config
 public class SpecimenArmSubsystem extends SubsystemBase {
@@ -49,11 +44,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
         // PID parameters
 
-
-        public double DEFAULT_I = Double.NaN;
-        public double MAX_I_DEVIATION; // Adjust as needed
-
-
         public double P = Double.NaN;
         public double I = Double.NaN;
         public double D = Double.NaN;
@@ -73,7 +63,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         public double CCW_FLIP_ARM_TARGET_ANGLE = Double.NaN;
         public double SPECIMEN_PICKUP_ANGLE = Double.NaN;
         private double DEFAULT_PICKUP_ANGLE;
-        private double MAX_PICKUP_ANGLE_ADJUSTMENT;
+        public double MAX_PICKUP_ANGLE_ADJUSTMENT;
         public double LEVEL_1_ASCENT_ANGLE;
 
 
@@ -105,8 +95,6 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // PID parameters
                     SPECIMEN_ARM_PARAMS.P = 0.0044;
                     SPECIMEN_ARM_PARAMS.I = 0.1;
-                    DEFAULT_I = I;
-                    MAX_I_DEVIATION = .2;
                     SPECIMEN_ARM_PARAMS.D = .0001;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
 
@@ -123,11 +111,12 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.CCW_HOME = 243.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
                     SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 218.0;
+                    DEFAULT_PICKUP_ANGLE = SPECIMEN_PICKUP_ANGLE;
+
                     SPECIMEN_ARM_PARAMS.CW_HOME = 45;//38.79;
                     LEVEL_1_ASCENT_ANGLE = 57;
 
 
-                    DEFAULT_PICKUP_ANGLE = SPECIMEN_PICKUP_ANGLE;
                     MAX_PICKUP_ANGLE_ADJUSTMENT=10;
 
                     // Motion Profile Parameters
@@ -152,16 +141,18 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.DEAD_ZONE = 0.05;
 
                     // PID parameters
-                    SPECIMEN_ARM_PARAMS.P = 0.004;
-                    SPECIMEN_ARM_PARAMS.I = 0.18;
-                    DEFAULT_I = I;
-                    MAX_I_DEVIATION = .2;
-                    SPECIMEN_ARM_PARAMS.D = 0.001;
+                    SPECIMEN_ARM_PARAMS.P = 0.0180;
+                    SPECIMEN_ARM_PARAMS.I = .012;
+                    SPECIMEN_ARM_PARAMS.D = 0;
                     SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES = 0.5;
+
+
+                    MAX_PICKUP_ANGLE_ADJUSTMENT=10;
+
 
                     // Arm Feedforward parameters
                     SPECIMEN_ARM_PARAMS.kS = 0;
-                    SPECIMEN_ARM_PARAMS.kCos = 0.03;
+                    SPECIMEN_ARM_PARAMS.kCos = 0.098;
                     SPECIMEN_ARM_PARAMS.kV = 0;
                     SPECIMEN_ARM_PARAMS.kA = 0;
 
@@ -171,7 +162,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // Preset Angles
                     SPECIMEN_ARM_PARAMS.CCW_HOME = 243.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
-                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 217.0;
+                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 224.0;
+                    DEFAULT_PICKUP_ANGLE = SPECIMEN_PICKUP_ANGLE;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 52.0;
                     LEVEL_1_ASCENT_ANGLE = 57;
 
@@ -322,6 +314,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         currentVelocity = encoderDataBlock.velocities[armEncoderChannel];
         currentAngleDegrees = calculateCurrentArmAngleInDegrees();
 
+
+
         switch (currentState) {
             case ROTATING_CCW_TO_TARGET_ANGLE:
                 double elapsedTimeMilliseconds = flipArmTimer.milliseconds();
@@ -390,10 +384,11 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                 }
                 break;
 
-            case CCW_ARM_HOME:
+
             case CW_ARM_HOME:
             case SPECIMEN_PICKUP:
             case LEVEL_1_ASCENT:
+                setTargetAngle(currentState);
                 // Check if movement is needed based on the target angle
                 if (Math.abs(targetAngleDegrees - currentAngleDegrees) > SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES) {
                     moveToTargetAngle(); // Move towards the target if outside tolerance
@@ -403,6 +398,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                 break;
 
             case ZERO_POWER:
+            case CCW_ARM_HOME:
             default:
                 //do nothing
                 break;
@@ -451,31 +447,27 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         setCurrentState(SpecimenArmStates.SPECIMEN_PICKUP);
     }
 
-    double newI;
+    double newPickupAngle;
 
-    public void increaseArmITerm() {
-             newI = SPECIMEN_ARM_PARAMS.I + 0.025;
-            // Ensure newI does not exceed the allowed range
-            if (newI <= (SPECIMEN_ARM_PARAMS.DEFAULT_I + SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION)) {
-                SPECIMEN_ARM_PARAMS.I = newI;
-            }
+    public void lowerArm() {
+        newPickupAngle = SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE + 1.0;
+        if (newPickupAngle <= (SPECIMEN_ARM_PARAMS.DEFAULT_PICKUP_ANGLE + SPECIMEN_ARM_PARAMS.MAX_PICKUP_ANGLE_ADJUSTMENT)) {
+                SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = newPickupAngle;
+        }
+    }
+
+    public void raiseArm() {
+        newPickupAngle = SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE - 1.0;
+        if (newPickupAngle >= (SPECIMEN_ARM_PARAMS.DEFAULT_PICKUP_ANGLE - SPECIMEN_ARM_PARAMS.MAX_PICKUP_ANGLE_ADJUSTMENT)) {
+            SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = newPickupAngle;
+        }
     }
 
     public void tempTelemetry(){
-        Robot.getInstance().getActiveOpMode().telemetry.addData("I Value", SPECIMEN_ARM_PARAMS.I);
-        Robot.getInstance().getActiveOpMode().telemetry.addData("Default I Value", SPECIMEN_ARM_PARAMS.DEFAULT_I);
-        Robot.getInstance().getActiveOpMode().telemetry.addData("Max Deviation", SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION);
-        Robot.getInstance().getActiveOpMode().telemetry.addData("newI",newI);
 
     }
 
-    public void decreaseArmITerm() {
-        newI = SPECIMEN_ARM_PARAMS.I - 0.025;
-            // Ensure newI does not go below the allowed range
-            if (newI >= (SPECIMEN_ARM_PARAMS.DEFAULT_I - SPECIMEN_ARM_PARAMS.MAX_I_DEVIATION)) {
-                SPECIMEN_ARM_PARAMS.I = newI;
-            }
-    }
+
 
     public void setManualTargetAngle(double armInput) {
         // Calculate the change in angle based on input and scale factor

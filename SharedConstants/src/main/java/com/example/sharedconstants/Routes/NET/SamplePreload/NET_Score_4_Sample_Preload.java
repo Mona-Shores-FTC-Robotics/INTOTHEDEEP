@@ -47,7 +47,7 @@ public class NET_Score_4_Sample_Preload extends NET_Score_3_Sample_Preload {
                 .setTangent(ANGLE_45_DEGREES)
                 .afterDisp(7.0, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
-                .splineToLinearHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,0),0)), ANGLE_115_DEGREES, normalVelocity, normalAcceleration)
+                .splineToLinearHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,-.5),0)), ANGLE_115_DEGREES, normalVelocity, normalAcceleration)
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .waitSeconds(2.5);
     }

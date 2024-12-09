@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
 
 @Config
 public class SampleLinearActuatorSubsystem extends SubsystemBase {
@@ -349,7 +348,7 @@ public class SampleLinearActuatorSubsystem extends SubsystemBase {
         readyToTransfer =true;
     }
 
-    public boolean getReadyToTransfer()
+    public boolean isReadyToTransfer()
     {
         return readyToTransfer;
     }

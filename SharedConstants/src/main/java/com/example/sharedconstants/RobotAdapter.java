@@ -33,6 +33,8 @@ public interface RobotAdapter {
         GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL,
         HANG_SPECIMEN_ON_HIGH_CHAMBER,
 
+        DISABLE_PRELOAD_MODE,
+
         LEVEL_1_ASCENT,
         LEVEL_2_ASCENT,
         LEVEL_3_ASCENT,

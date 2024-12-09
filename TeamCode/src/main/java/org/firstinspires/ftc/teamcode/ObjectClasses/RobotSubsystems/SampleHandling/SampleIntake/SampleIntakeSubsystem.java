@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import android.annotation.SuppressLint;
 
-import com.example.sharedconstants.FieldConstants;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -21,8 +19,6 @@ import static org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GameP
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.ConfigurableParameters;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleDetector;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
-import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.GamePieceDetectorMessage;
-import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleIntakeMessage;
 
 @Config
 public class SampleIntakeSubsystem extends SubsystemBase {
@@ -38,10 +34,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         public double TRANSFER_TIME_MS;
         public double EJECT_TIME_MS;
 
-        public double LEFT_POWER_REVERSE;
-        public double RIGHT_POWER_REVERSE;
-        public double FULL_SPEED_REVERSE;
-
+        public double EJECT_POWER_REVERSE;
+        public double TRANSFER_POWER_REVERSE;
 
         @Override
         public void loadDefaultsForRobotType(Robot.RobotType robotType) {
@@ -54,11 +48,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     MAX_POWER = 1.0;
                     PROXIMITY_THRESHOLD = 40.0;
                     COLOR_HISTORY_SIZE = 2;
-                    TRANSFER_TIME_MS = 1200;
+                    TRANSFER_TIME_MS = 400;
                     EJECT_TIME_MS = 800.0;
-                    LEFT_POWER_REVERSE = 1.0;
-                    RIGHT_POWER_REVERSE = 1.0;
-                    FULL_SPEED_REVERSE = 1;
+                    EJECT_POWER_REVERSE = 1.0;
+                    TRANSFER_POWER_REVERSE = .3;
                     break;
 
                 case INTO_THE_DEEP_20245:
@@ -69,9 +62,8 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     COLOR_HISTORY_SIZE = 2;
                     TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 801.0;
-                    LEFT_POWER_REVERSE = 1.0;
-                    RIGHT_POWER_REVERSE = 1.0;
-                    FULL_SPEED_REVERSE = 1;
+                    EJECT_POWER_REVERSE = 1.0;
+                    TRANSFER_POWER_REVERSE = .3;
                     break;
 
                 default:
@@ -93,7 +85,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         public double getIntakePower() {
             switch (this) {
                 case INTAKE_REVERSE:
-                    return SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE;
+                    return SAMPLE_INTAKE_PARAMS.EJECT_POWER_REVERSE;
                 case INTAKE_ON:
                     return SAMPLE_INTAKE_PARAMS.INTAKE_ON_POWER;
                 case INTAKE_OFF:
@@ -245,15 +237,15 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         currentSampleIntakeState = state;
         if (state == SampleIntakeStates.REVERSING_INTAKE_TO_TRANSFER) {
             if (sampleIntakeRight == null) {
-                setSoloPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE);
+                setSoloPower(SAMPLE_INTAKE_PARAMS.TRANSFER_POWER_REVERSE);
             } else {
-                setPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE);
+                setPower(SAMPLE_INTAKE_PARAMS.TRANSFER_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.TRANSFER_POWER_REVERSE);
             }
         } else if (state == SampleIntakeStates.REVERSING_INTAKE_TO_EJECT) {
             if (sampleIntakeRight == null) {
-                setSoloPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE);
+                setSoloPower(SAMPLE_INTAKE_PARAMS.EJECT_POWER_REVERSE);
             } else {
-                setPower(SAMPLE_INTAKE_PARAMS.LEFT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.RIGHT_POWER_REVERSE);
+                setPower(SAMPLE_INTAKE_PARAMS.EJECT_POWER_REVERSE, SAMPLE_INTAKE_PARAMS.EJECT_POWER_REVERSE);
             }
         } else {
 

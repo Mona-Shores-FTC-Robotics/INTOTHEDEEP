@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
+import java.io.SequenceInputStream;
 import java.util.function.Supplier;
 
 public class RealRobotAdapter implements RobotAdapter {
@@ -266,9 +267,9 @@ public class RealRobotAdapter implements RobotAdapter {
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_LIFT_BUCKET))
                     {
                         return new SequentialAction(
-                                new ChangeSampleDumperPositionAction(SampleLiftBucketSubsystem.DumperStates.DUMPER_DUMP),
-                                new SleepAction(SampleLiftBucketSubsystem.SAMPLE_LIFT_PARAMS.DUMP_TIME_MS*1000),
-                                new ChangeSampleDumperPositionAction(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME)
+                                new InstantAction(Robot.getInstance().getSampleLiftBucketSubsystem()::dumpSampleInBucket),
+                                new InstantAction(Robot.getInstance().getSampleProcessingStateMachine()::setWaitingForSampleDetectionState),
+                                new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::turnOnIntake)
                         );
                     } else return problem();
 
@@ -284,6 +285,12 @@ public class RealRobotAdapter implements RobotAdapter {
                 {
                     return new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::level1Ascent);
                 }
+
+                case DISABLE_PRELOAD_MODE:
+                {
+                    return new InstantAction(Robot.getInstance().getSpecimenIntakeSubsystem()::disablePreloadMode);
+                }
+
 
                 case DEPOWER_ARM:
                 {

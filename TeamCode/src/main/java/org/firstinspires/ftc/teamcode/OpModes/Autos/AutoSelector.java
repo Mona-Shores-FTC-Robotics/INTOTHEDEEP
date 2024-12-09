@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Leave_Yellow_Ground_Pickup;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -56,6 +57,7 @@ public class AutoSelector extends LinearOpMode {
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
+
         // Tested 11-15-24
 //        netRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
 //        netRoute.buildRoute();
@@ -93,7 +95,11 @@ public class AutoSelector extends LinearOpMode {
 //        obsRoute.buildRoute();
 //        obsRouteList.add(obsRoute);
 
-        obsRoute = new OBS_Score4_Fruitport_Improved(robotAdapter);
+//        obsRoute = new OBS_Score4_Fruitport_Improved(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
+
+        obsRoute = new OBS_Score5_Leave_Yellow_Ground_Pickup(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 

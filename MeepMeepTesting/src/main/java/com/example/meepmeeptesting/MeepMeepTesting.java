@@ -57,7 +57,7 @@ import javax.imageio.ImageIO;
 public class MeepMeepTesting {
 
     private static final RoutesToRun redObservationRoute = OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP;
-    private static final RoutesToRun blueObservationRoute = OBS_SCORE_5_SPECIMEN_PRELOAD_GROUND_PICKUP;
+    private static final RoutesToRun blueObservationRoute = OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP;
     private static final RoutesToRun redNetRoute = NET_SCORE_5_SAMPLE_PRELOAD;
     private static final RoutesToRun blueNetRoute = NET_SCORE_5_SAMPLE_PRELOAD;
 

@@ -77,16 +77,16 @@ public class OBS_Score5_Specimen_Preload_Ground_Pickup extends Routes {
 
         pickupGroundSampleOne();
         pickupGroundSampleTwo();
-        pickupGroundSampleThree();
-        pickupSpecimenFromTriangleComingFromThirdSpike();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_ONE_REDO);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_TWO_REDO);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_THREE_REDO);
-        pickupSpecimenFromTriangle();
-        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FOUR_REDO);
-        driveToPark();
+//        pickupGroundSampleThree();
+//        pickupSpecimenFromTriangleComingFromThirdSpike();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_ONE_REDO);
+//        pickupSpecimenFromTriangle();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_TWO_REDO);
+//        pickupSpecimenFromTriangle();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_THREE_REDO);
+//        pickupSpecimenFromTriangle();
+//        scoreOnHighChamberFromTriangle(CHAMBER_SLOT_FOUR_REDO);
+//        driveToPark();
         observationBotRoute = obsTrajectoryActionBuilder.build();
     }
 

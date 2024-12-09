@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleProcessi
 @Config
 public class SampleProcessingStateMachine {
 
-    public static double FLIP_UP_DELAY_TIME_MS = 400;
+    public static double FLIP_UP_DELAY_TIME_MS = 200;
 
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
@@ -63,7 +63,6 @@ public class SampleProcessingStateMachine {
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;
                 lightingSubsystem.setGoodSampleIndicator();
                 intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
-                liftSubsystem.setCurrentDumperState(SampleLiftBucketSubsystem.DumperStates.DUMPER_HOME);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                 liftSubsystem.setBucketToIntakePosition();
                 actuatorSubsystem.setFlipperHover();
@@ -73,7 +72,7 @@ public class SampleProcessingStateMachine {
                 break;
 
             case GETTING_READY_FOR_TRANSFER:
-                if (actuatorSubsystem.getReadyToTransfer()) {
+                if (actuatorSubsystem.isReadyToTransfer()) {
                     currentSampleDetectionState = SampleDetectionStates.FLIPPING_ALL_THE_WAY_UP;
                     lightingSubsystem.setLightToSampleColor();
                     actuatorSubsystem.setFlipperUp();
@@ -114,5 +113,12 @@ public class SampleProcessingStateMachine {
 
     public SampleDetectionStates getCurrentSampleDetectionState() {
         return currentSampleDetectionState;
+    }
+
+
+
+    public void setWaitingForSampleDetectionState()
+    {
+        currentSampleDetectionState = SampleDetectionStates.WAITING_FOR_SAMPLE_DETECTION;
     }
 }
