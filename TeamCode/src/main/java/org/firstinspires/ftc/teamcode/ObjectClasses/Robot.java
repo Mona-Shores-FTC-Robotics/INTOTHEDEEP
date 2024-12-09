@@ -143,7 +143,7 @@ public class Robot {
                 climberSubsystem = new ClimberSubsystem(hardwareMap, robotType, "climberservo", "climbermotor");
                 registerSubsystem(SubsystemType.CLIMBER, climberSubsystem);
 
-                lightingSubsystem = new LightingSubsystem(hardwareMap, robotType, "blinkin");
+                lightingSubsystem = new LightingSubsystem(hardwareMap, robotType, "inidcator");
                 registerSubsystem(SubsystemType.LIGHTING, lightingSubsystem);
 
                 if (    hasSubsystem(SubsystemType.SAMPLE_LIFT_BUCKET) &&

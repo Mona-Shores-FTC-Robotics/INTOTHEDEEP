@@ -204,6 +204,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                 }
                 break;
             case INTAKE_ON:
+                Robot.getInstance().getLightingSubsystem().setLightBlack();
             case INTAKE_OFF:
             case INTAKE_REVERSE:
                 //do nothing

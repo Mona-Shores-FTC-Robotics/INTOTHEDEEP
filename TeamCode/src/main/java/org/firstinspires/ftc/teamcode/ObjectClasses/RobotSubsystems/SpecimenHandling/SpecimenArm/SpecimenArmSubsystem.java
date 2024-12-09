@@ -103,8 +103,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     SPECIMEN_ARM_PARAMS.DEAD_ZONE = 0.05;
 
                     // PID parameters
-                    SPECIMEN_ARM_PARAMS.P = 0.0044;
-                    SPECIMEN_ARM_PARAMS.I = 0.1;
+                    SPECIMEN_ARM_PARAMS.P = 0.02;
+                    SPECIMEN_ARM_PARAMS.I = 0.02;
                     DEFAULT_I = I;
                     MAX_I_DEVIATION = .2;
                     SPECIMEN_ARM_PARAMS.D = .0001;
@@ -112,7 +112,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
                     // Arm Feedforward parameters
                     SPECIMEN_ARM_PARAMS.kS = 0;
-                    SPECIMEN_ARM_PARAMS.kCos = 0.1;
+                    SPECIMEN_ARM_PARAMS.kCos = 0.095;
                     SPECIMEN_ARM_PARAMS.kV = 0;
                     SPECIMEN_ARM_PARAMS.kA = 0;
 

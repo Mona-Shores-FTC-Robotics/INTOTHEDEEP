@@ -254,6 +254,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         if (currentDumperState == DumperStates.DUMPER_DUMP && dumperTimer.milliseconds() > SAMPLE_LIFT_PARAMS.DUMP_TIME_MS) {
             setCurrentDumperState(DumperStates.DUMPER_HOME);
             hasDumped = true;
+            Robot.getInstance().getLightingSubsystem().setLightBlack();
         }
 
         // Handle bucket movement

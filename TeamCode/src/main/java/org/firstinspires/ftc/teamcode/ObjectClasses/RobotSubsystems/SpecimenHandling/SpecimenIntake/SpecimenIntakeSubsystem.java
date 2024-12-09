@@ -143,7 +143,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                         Robot.getInstance().getLightingSubsystem().setGoodSampleIndicator();
                     } else {
                         //Set the lights off because we should no longer have a piece
-                        Robot.getInstance().getLightingSubsystem().setLightBlack();
+                        //Robot.getInstance().getLightingSubsystem().setLightBlack();
                     }
 //                    FlightRecorder.write("SAMPLE_DETECTOR", new GamePieceDetectorMessage(specimenDetector.getDetectionState(), specimenDetector.getConsensusProximity(), specimenDetector.getConsensusColor()));
                     break;
@@ -151,6 +151,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
 
                 case DETECTED: {
                     if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.SPECIMEN_ARM)) {
+                        Robot.getInstance().getLightingSubsystem().setAllianceColor();
                         //to avoid a quick double detection look for the arm to move away from SPECIMEN_PICKUP before moving to WAITING_FOR_SPECIMEN_DELIVERY
                         SpecimenArmSubsystem.SpecimenArmStates currentArmState = Robot.getInstance().getSpecimenArmSubsystem().getCurrentState();
                         if (currentArmState != SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP) {
@@ -167,6 +168,7 @@ public class SpecimenIntakeSubsystem extends SubsystemBase {
                                 currentArmState == SpecimenArmSubsystem.SpecimenArmStates.SPECIMEN_PICKUP) {
                             specimenDetector.clearDetectionState();
                             currentSpecimenIntakeDetectionState = SpecimenIntakeDetectState.DETECTING;
+                            Robot.getInstance().getLightingSubsystem().setLightBlack();
                         }
                     }
                     break;
