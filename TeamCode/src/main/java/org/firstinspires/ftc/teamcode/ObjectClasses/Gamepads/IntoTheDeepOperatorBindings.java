@@ -49,7 +49,6 @@ public class IntoTheDeepOperatorBindings {
         //Main Controls
         DeploySampleIntake(GamepadKeys.Button.A);
         SampleScoreSequence(GamepadKeys.Button.X);
-        SampleTwister(GamepadKeys.Button.B);
         ManualLinearActuator(operatorGamePad::getLeftY);
 //        bindClimberMotorMovement(GamepadKeys.Button.RIGHT_BUMPER);
 //        bindMoveClimberArm(GamepadKeys.Button.LEFT_BUMPER);
@@ -62,10 +61,6 @@ public class IntoTheDeepOperatorBindings {
         ManualDump(GamepadKeys.Button.DPAD_DOWN);
         bindRaiseArmAngle(GamepadKeys.Trigger.RIGHT_TRIGGER);
         bindLowerPickupArmAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
-
-        LiftToLowBucket(GamepadKeys.Button.Y);
-
-
         //Telemetry Cycling
         cycleTelemetry(GamepadKeys.Button.BACK);
 

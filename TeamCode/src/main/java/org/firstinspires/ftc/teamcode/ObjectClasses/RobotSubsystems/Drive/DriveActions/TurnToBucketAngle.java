@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
@@ -32,7 +33,7 @@ public class TurnToBucketAngle implements Action {
 
             // Set up the forward and backward actions as one combined action
             turnToBucketAngle = robotAdapter.actionBuilder(initialPose)
-                    .turnTo(Math.toRadians(MatchConfig.finalAllianceColor == BLUE ? 225 : 45))
+                    .turnTo(Math.toRadians(MatchConfig.finalAllianceColor == BLUE ? 225 : 45), new TurnConstraints(Math.toRadians(720),-Math.toRadians(720), Math.toRadians(720)))
                     .build();
             initialized = true;
         }

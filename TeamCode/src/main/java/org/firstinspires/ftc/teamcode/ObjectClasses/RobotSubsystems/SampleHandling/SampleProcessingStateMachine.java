@@ -61,20 +61,18 @@ public class SampleProcessingStateMachine {
                 break;
             case ON_GOOD_SAMPLE_DETECTION:
                 currentSampleDetectionState = SampleDetectionStates.GETTING_READY_FOR_TRANSFER;
-                lightingSubsystem.setGoodSampleIndicator();
                 intakeSubsystem.setCurrentState(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_OFF);
                 liftSubsystem.setTargetLiftState(SampleLiftBucketSubsystem.SampleLiftStates.LIFT_HOME);
                 liftSubsystem.setBucketToIntakePosition();
                 actuatorSubsystem.setFlipperHover();
                 actuatorSubsystem.fullyRetract();
                 sampleTwisterSubsystem.setTwisterServoFaceInward();
-                lightingSubsystem.setGoodSampleIndicator();
+                lightingSubsystem.setLightToSampleColor();
                 break;
 
             case GETTING_READY_FOR_TRANSFER:
                 if (actuatorSubsystem.isReadyToTransfer()) {
                     currentSampleDetectionState = SampleDetectionStates.FLIPPING_ALL_THE_WAY_UP;
-                    lightingSubsystem.setLightToSampleColor();
                     actuatorSubsystem.setFlipperUp();
                     flipAllTheWayUpTimer.reset();
                 }

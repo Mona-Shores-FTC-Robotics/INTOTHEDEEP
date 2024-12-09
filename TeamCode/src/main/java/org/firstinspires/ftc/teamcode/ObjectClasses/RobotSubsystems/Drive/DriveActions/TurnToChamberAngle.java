@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.TurnConstraints;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.MatchConfig;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RealRobotAdapter;
@@ -31,7 +32,7 @@ public class TurnToChamberAngle implements Action {
 
             // Set up the forward and backward actions as one combined action
             turnToBucketAngle = robotAdapter.actionBuilder(initialPose)
-                    .turnTo(Math.toRadians(MatchConfig.finalAllianceColor == BLUE ? 90 : -90))
+                    .turnTo(Math.toRadians(MatchConfig.finalAllianceColor == BLUE ? -90 : 90),  new TurnConstraints(Math.toRadians(720),-Math.toRadians(720), Math.toRadians(720)))
                     .build();
             initialized = true;
         }

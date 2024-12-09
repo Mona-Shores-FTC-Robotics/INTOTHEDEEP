@@ -22,6 +22,8 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.Robot;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToNetZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveToObservationZone;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.TurnToBucketAngle;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.TurnToChamberAngle;
+import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.TurnToHorizontalSpecimenPickupAngle;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
@@ -35,7 +37,7 @@ import java.util.function.DoubleSupplier;
 @Config
 public class IntoTheDeepDriverBindings {
     private static final double RESET_POSE_DELAY_TIME_MILLISECONDS = 500;
-    public double SLOW_TURN_SPEED = .5 ;
+    public double SLOW_TURN_SPEED = .4;
     GamepadEx driverGamePad;
     Robot robot;
     GamePadBindingManager bindingManager;
@@ -55,13 +57,13 @@ public class IntoTheDeepDriverBindings {
         ReverseSpecimenIntakeToggle(GamepadKeys.Button.Y);        //Operator also has the ability to do this
         NitroMode(GamepadKeys.Button.LEFT_BUMPER);
         SlowMode(GamepadKeys.Button.RIGHT_BUMPER);
-        turnSlowLeft(GamepadKeys.Trigger.LEFT_TRIGGER);
-        turnSlowRight(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        turnSlowRightAngle(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        turnSlowLeftAngle(GamepadKeys.Trigger.LEFT_TRIGGER);
 
         //Buttons for if things go wrong
         ResetGyroAfterHalfSecond(GamepadKeys.Button.DPAD_DOWN);
-        toggleFieldOrientedControl(GamepadKeys.Button.BACK);
-        cycleTelemetry(GamepadKeys.Button.START);
+//        toggleFieldOrientedControl(GamepadKeys.Button.BACK);
+        cycleTelemetry(GamepadKeys.Button.BACK);
 
         //Drive Angle restriction
         TurnToBucketAngle(GamepadKeys.Button.DPAD_LEFT);
@@ -70,9 +72,9 @@ public class IntoTheDeepDriverBindings {
     }
 
 
-    private void turnSlowRight(GamepadKeys.Trigger trigger) {
+    private void turnSlowLeftAngle(GamepadKeys.Trigger trigger) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            DefaultDriveCommand slowRightTurn = new DefaultDriveCommand(
+            DefaultDriveCommand slowLeftTurn = new DefaultDriveCommand(
                     robot.getDriveSubsystem(),
                     driverGamePad::getLeftY,
                     driverGamePad::getLeftX,
@@ -84,22 +86,22 @@ public class IntoTheDeepDriverBindings {
             Trigger triggerUp = new Trigger(() -> driverGamePad.getTrigger(trigger) < 0.2);
 
             // Start the command once when the trigger is pressed
-            triggerDown.whenActive(slowRightTurn);
-            triggerUp.cancelWhenActive(slowRightTurn);
+            triggerDown.whenActive(slowLeftTurn);
+            triggerUp.cancelWhenActive(slowLeftTurn);
 
             // Register for debugging/telemetry
             bindingManager.registerBinding(new AnalogBinding(
                     GamepadType.DRIVER,
                     Collections.singletonList(trigger.name()),
-                    "Slow Right Turn"
+                    "Slow Left Turn"
             ));
         }
     }
 
 
-    private void turnSlowLeft(GamepadKeys.Trigger trigger) {
+    private void turnSlowRightAngle(GamepadKeys.Trigger trigger) {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
-            DefaultDriveCommand slowLeftTurn = new DefaultDriveCommand(
+            DefaultDriveCommand slowRightTurn = new DefaultDriveCommand(
                     robot.getDriveSubsystem(),
                     driverGamePad::getLeftY,
                     driverGamePad::getLeftX,
@@ -110,13 +112,13 @@ public class IntoTheDeepDriverBindings {
             Trigger triggerDown = new Trigger(() -> driverGamePad.getTrigger(trigger) > 0.2);
             Trigger triggerUp = new Trigger(() -> driverGamePad.getTrigger(trigger) < 0.2);
 
-            triggerDown.whenActive(slowLeftTurn);
-            triggerUp.cancelWhenActive(slowLeftTurn);
+            triggerDown.whenActive(slowRightTurn);
+            triggerUp.cancelWhenActive(slowRightTurn);
 
             bindingManager.registerBinding(new AnalogBinding(
                     GamepadType.DRIVER,
                     Collections.singletonList(trigger.name()),
-                    "Slow Left Turn"
+                    "Slow Right Turn"
             ));
         }
     }
@@ -362,7 +364,7 @@ public class IntoTheDeepDriverBindings {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             driverGamePad.getGamepadButton(button)
                     .whenPressed(new InstantCommand(() -> {
-                        Action turnToHorizontalPickupAngle = new TurnToBucketAngle();
+                        Action turnToHorizontalPickupAngle = new TurnToHorizontalSpecimenPickupAngle();
                         ActionCommand actionCommand = new ActionCommand(turnToHorizontalPickupAngle , Collections.singleton(robot.getDriveSubsystem()));
                         actionCommand.schedule();
                     }));
@@ -380,7 +382,7 @@ public class IntoTheDeepDriverBindings {
         if (robot.hasSubsystem(Robot.SubsystemType.DRIVE)) {
             driverGamePad.getGamepadButton(button)
                     .whenPressed(new InstantCommand(() -> {
-                        Action turnToChamberAngle = new TurnToBucketAngle();
+                        Action turnToChamberAngle = new TurnToChamberAngle();
                         ActionCommand actionCommand = new ActionCommand(turnToChamberAngle , Collections.singleton(robot.getDriveSubsystem()));
                         actionCommand.schedule();
                     }));
