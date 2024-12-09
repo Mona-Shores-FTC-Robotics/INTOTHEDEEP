@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleProcessi
 @Config
 public class SampleProcessingStateMachine {
 
-    public static double FLIP_UP_DELAY_TIME_MS = 200;
+    public static double FLIP_UP_DELAY_TIME_MS = 400;
 
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
@@ -57,10 +57,6 @@ public class SampleProcessingStateMachine {
                 }
                 else if (intakeSubsystem.getCurrentIntakeDetectState() == SampleIntakeSubsystem.SampleIntakeDetectState.DETECTED_BAD_SAMPLE)  {
                         currentSampleDetectionState = SampleDetectionStates.ON_BAD_SAMPLE_DETECTED;
-                }
-                // Turn the light off if we're trying to detect again
-                else if (intakeSubsystem.getCurrentState() == SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON){
-                    lightingSubsystem.setLightBlack();
                 }
                 break;
             case ON_GOOD_SAMPLE_DETECTION:

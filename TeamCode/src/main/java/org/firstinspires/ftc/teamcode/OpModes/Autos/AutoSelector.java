@@ -95,13 +95,13 @@ public class AutoSelector extends LinearOpMode {
 //        obsRoute.buildRoute();
 //        obsRouteList.add(obsRoute);
 
-//        obsRoute = new OBS_Score4_Fruitport_Improved(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-
-        obsRoute = new OBS_Score5_Leave_Yellow_Ground_Pickup(robotAdapter);
+        obsRoute = new OBS_Score4_Fruitport_Improved(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
+
+//        obsRoute = new OBS_Score5_Leave_Yellow_Ground_Pickup(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
 
 //        obsRoute = new OBS_Score4_PickupAtCorner(robotAdapter);
 //        obsRoute.buildRoute();

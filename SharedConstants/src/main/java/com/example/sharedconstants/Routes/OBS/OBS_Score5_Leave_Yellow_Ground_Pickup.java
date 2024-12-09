@@ -96,24 +96,24 @@ public class OBS_Score5_Leave_Yellow_Ground_Pickup extends Routes {
 
     public void pickupGroundSampleOne() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .afterDisp(3 , robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
+                .afterTime(0 , robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
+                .afterTime(1.3, robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .strafeToLinearHeading(PoseToVector(OBS_SPIKE_ONE).minus(new Vector2d(- 1.5 , 23)) , ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
-                .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .waitSeconds(1.0); // give some time to grab it from the ground and do the transfer
+                .waitSeconds(.64); // give some time to grab it from the ground and do the transfer
     }
 
     private void pickupGroundSampleTwo() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .afterTime( 1.1, robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE)) // dump the sample while pulling in the next one
+                .afterTime( 1.3, robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE)) // dump the sample while pulling in the next one
                 .afterTime(.8 , robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
                 .strafeToLinearHeading(PoseToVector(OBS_SPIKE_TWO).minus(new Vector2d(- 4.70 , 23)) , ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .waitSeconds(1.3);
+                .waitSeconds(1.1);
     }
 
     private void pickupGroundSampleThree() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
-                .afterTime(0, robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE))
+                .afterTime(.24, robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE))
                 .afterTime(.8, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
                 .afterTime(.9, robotAdapter.getAction(GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .strafeToLinearHeading(PoseToVector(OBS_SPIKE_THREE).minus(new Vector2d(4 , 23)) , Math.toRadians(59), slowVelocity, slowAcceleration)
@@ -137,8 +137,8 @@ public class OBS_Score5_Leave_Yellow_Ground_Pickup extends Routes {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setTangent(ANGLE_115_DEGREES)
                 //TODO if we were to dial this in so its not a two step-process probably could save time
-                .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(0,-3)), chamberSlot.heading.toDouble(), normalVelocity)
-                .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE, slowVelocity)
+                .splineToConstantHeading(PoseToVector(chamberSlot).plus(new Vector2d(0,-3.9)), chamberSlot.heading.toDouble(), normalVelocity, normalAcceleration)
+//                .splineToConstantHeading(PoseToVector(chamberSlot), ANGLE_TOWARD_BLUE, slowVelocity)
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER));
     }
 

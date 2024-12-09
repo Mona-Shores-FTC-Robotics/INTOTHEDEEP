@@ -35,13 +35,8 @@ public class DefaultSampleLinearActuatorCommand extends CommandBase {
 
             // Move actuator based on input
             sampleLinearActuatorSubsystem.manualMove(actuatorInput);
+            sampleIntakeSubsystem.turnOnIntake();  // Turn on intake
 
-            // Check direction and control intake accordingly
-            if (actuatorInput > 0) {  // Forward movement
-                sampleIntakeSubsystem.turnOnIntake();  // Turn on intake
-            } else if (actuatorInput < 0) {  // Backward movement
-                sampleIntakeSubsystem.turnOnIntake();  // Turn off intake
-            }
         } else if (sampleLinearActuatorSubsystem.getCurrentState() == SampleLinearActuatorSubsystem.SampleActuatorStates.MANUAL) {
             sampleLinearActuatorSubsystem.stopActuator();
         }
