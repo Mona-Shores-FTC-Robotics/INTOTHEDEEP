@@ -71,9 +71,9 @@ public class MeepMeepRobotAdapter implements RobotAdapter {
         public Action createAction(ActionType actionType) {
             switch (actionType) {
                 case CONDITIONAL_PICKUP:
-                    return new SleepAction(.8);
-                case CONDITIONAL_TRANSFER:
                     return new SleepAction(.3);
+                case CONDITIONAL_TRANSFER:
+                    return new SleepAction(.8);
 
                 default:
                     return new SleepAction(.2);
