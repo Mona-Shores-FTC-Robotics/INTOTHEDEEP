@@ -1,4 +1,4 @@
-package com.example.sharedconstants.Routes.OBS;
+package com.example.sharedconstants.Routes.OBS.Old;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_115_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_315_DEGREES;
@@ -9,20 +9,16 @@ import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FIVE_REDO;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_FOUR_REDO;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_ONE_REDO;
-import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_SEVEN_REDO;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_THREE_REDO;
 import static com.example.sharedconstants.FieldConstants.CHAMBER_SLOT_TWO_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_ONE_REDO;
-import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_THREE_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_BEHIND_SPIKE_TWO_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_ONE_REDO;
-import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_THREE_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_DELIVER_SPIKE_TWO_REDO;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_ONE;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_ONE_REDO;
-import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.OBS_SPIKE_TWO;
 import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_PICKUP;
 import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_TIP_APPROACH;
@@ -47,7 +43,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
-import com.example.sharedconstants.Routes.OBS.Old.OBS_Score_1_Specimen_Preload;
 
 import java.util.Arrays;
 

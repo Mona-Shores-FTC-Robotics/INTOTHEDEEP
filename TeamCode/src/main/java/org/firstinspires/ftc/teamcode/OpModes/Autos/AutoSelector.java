@@ -11,8 +11,8 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
+import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_5_Sample_Preload_Submersible_Grab;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
-import com.example.sharedconstants.Routes.OBS.OBS_Score5_Leave_Yellow_Ground_Pickup;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -54,6 +54,10 @@ public class AutoSelector extends LinearOpMode {
 //        netRouteList.add(netRoute);
 
         netRoute = new NET_Score_4_Sample_Preload(robotAdapter);
+        netRoute.buildRoute();
+        netRouteList.add(netRoute);
+
+        netRoute = new NET_Score_5_Sample_Preload_Submersible_Grab(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
@@ -99,7 +103,7 @@ public class AutoSelector extends LinearOpMode {
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
 
-//        obsRoute = new OBS_Score5_Leave_Yellow_Ground_Pickup(robotAdapter);
+//        obsRoute = new OBS_Score5_Specimen_Preload_Ground_Pickup(robotAdapter);
 //        obsRoute.buildRoute();
 //        obsRouteList.add(obsRoute);
 

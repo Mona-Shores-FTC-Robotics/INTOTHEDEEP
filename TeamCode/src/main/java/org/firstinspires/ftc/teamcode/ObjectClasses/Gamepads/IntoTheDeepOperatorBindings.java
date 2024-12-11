@@ -47,11 +47,13 @@ public class IntoTheDeepOperatorBindings {
         bindingManager = gamePadBindingManager;
 
         //Main Controls
+        SampleTwister(GamepadKeys.Button.B);
         DeploySampleIntake(GamepadKeys.Button.A);
         SampleScoreSequence(GamepadKeys.Button.X);
         ManualLinearActuator(operatorGamePad::getLeftY);
 //        bindClimberMotorMovement(GamepadKeys.Button.RIGHT_BUMPER);
 //        bindMoveClimberArm(GamepadKeys.Button.LEFT_BUMPER);
+
 
         //Manual controls for when things aren't working right
         ManualLift(operatorGamePad::getRightY);

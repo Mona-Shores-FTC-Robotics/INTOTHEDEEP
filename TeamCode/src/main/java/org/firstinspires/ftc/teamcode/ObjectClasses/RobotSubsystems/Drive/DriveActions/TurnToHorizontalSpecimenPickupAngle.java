@@ -32,7 +32,7 @@ public class TurnToHorizontalSpecimenPickupAngle implements Action {
 
             // Set up the forward and backward actions as one combined action
             turnToBucketAngle = robotAdapter.actionBuilder(initialPose)
-                    .turnTo(Math.toRadians(MatchConfig.finalAllianceColor == BLUE ? 180 : 0),  new TurnConstraints(Math.toRadians(720),-Math.toRadians(720), Math.toRadians(720)))
+                    .turnTo(Math.toRadians(MatchConfig.finalAllianceColor == BLUE ? 0 : 180),  new TurnConstraints(Math.toRadians(720),-Math.toRadians(720), Math.toRadians(720)))
                     .build();
             initialized = true;
         }
