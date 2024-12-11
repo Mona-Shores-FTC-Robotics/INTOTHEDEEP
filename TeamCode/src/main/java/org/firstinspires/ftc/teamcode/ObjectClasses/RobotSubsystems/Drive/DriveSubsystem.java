@@ -120,6 +120,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void init() {
+        if (Robot.getInstance().isAutoMode()) {
+            PinpointDrive pinpointDrive = (PinpointDrive) mecanumDrive;
+            pinpointDrive.pinpoint.resetPosAndIMU();
+        }
         fieldOrientedControl = true; // Default to field-oriented control
     }
 

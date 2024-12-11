@@ -110,7 +110,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // Preset Angles
                     SPECIMEN_ARM_PARAMS.CCW_HOME = 243.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
-                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 218.0;
+                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 219.0;
                     DEFAULT_PICKUP_ANGLE = SPECIMEN_PICKUP_ANGLE;
 
                     SPECIMEN_ARM_PARAMS.CW_HOME = 45;//38.79;
@@ -162,7 +162,7 @@ public class SpecimenArmSubsystem extends SubsystemBase {
                     // Preset Angles
                     SPECIMEN_ARM_PARAMS.CCW_HOME = 243.0;
                     SPECIMEN_ARM_PARAMS.CCW_FLIP_ARM_TARGET_ANGLE = 100;
-                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 217.0;
+                    SPECIMEN_ARM_PARAMS.SPECIMEN_PICKUP_ANGLE = 219.0;
                     DEFAULT_PICKUP_ANGLE = SPECIMEN_PICKUP_ANGLE;
                     SPECIMEN_ARM_PARAMS.CW_HOME = 52.0;
                     LEVEL_1_ASCENT_ANGLE = 57;
@@ -259,6 +259,8 @@ public class SpecimenArmSubsystem extends SubsystemBase {
 
     MessageSchema paramsSchema;
 
+    private boolean oneTimeTeleopCodeHasRun = false;
+
 
     public SpecimenArmSubsystem(final HardwareMap hMap , Robot.RobotType robotType , final String name) {
         // Initialize parameters based on robot type
@@ -279,18 +281,25 @@ public class SpecimenArmSubsystem extends SubsystemBase {
     }
 
     public void init() {
+
+        OctoQuad.EncoderDataBlock encoderDataBlock = new OctoQuad.EncoderDataBlock();
+        octoquad.readAllEncoderData(encoderDataBlock);
+        currentTicks = encoderDataBlock.positions[armEncoderChannel];
+        currentVelocity = encoderDataBlock.velocities[armEncoderChannel];
+        currentAngleDegrees = calculateCurrentArmAngleInDegrees();
+
         voltageSensor = Robot.getInstance().getActiveOpMode().hardwareMap.voltageSensor.iterator().next();
         double batteryVoltage = voltageSensor.getVoltage();
         double voltageScale = NOMINAL_VOLTAGE / batteryVoltage;
 
         armFeedforward = new ArmFeedforward(
-                SPECIMEN_ARM_PARAMS.kS * voltageScale ,
-                SPECIMEN_ARM_PARAMS.kCos ,
-                SPECIMEN_ARM_PARAMS.kV * voltageScale ,
+                SPECIMEN_ARM_PARAMS.kS * voltageScale,
+                SPECIMEN_ARM_PARAMS.kCos,
+                SPECIMEN_ARM_PARAMS.kV * voltageScale,
                 SPECIMEN_ARM_PARAMS.kA * voltageScale
         );
 
-        pidController = new PIDController(SPECIMEN_ARM_PARAMS.P , SPECIMEN_ARM_PARAMS.I , SPECIMEN_ARM_PARAMS.D);
+        pidController = new PIDController(SPECIMEN_ARM_PARAMS.P, SPECIMEN_ARM_PARAMS.I, SPECIMEN_ARM_PARAMS.D);
         pidController.setTolerance(SPECIMEN_ARM_PARAMS.ANGLE_TOLERANCE_THRESHOLD_DEGREES);
         pidController.reset();
         arm.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -300,12 +309,21 @@ public class SpecimenArmSubsystem extends SubsystemBase {
         targetAngleDegrees = SPECIMEN_ARM_PARAMS.CCW_HOME;
         pidController.setSetPoint(targetAngleDegrees);
 
-
 //        FlightRecorder.write("SpecimenArmParamsSchema", LogFile.schemaOfClass(SpecimenArmSubsystem.SpecimenArmParams.class));
+
+        if (! Robot.getInstance().isAutoMode()) {
+            oneTimeTeleopCodeHasRun=false;
+        }
     }
 
     @Override
     public void periodic() {
+
+        if (!Robot.getInstance().isAutoMode() && !oneTimeTeleopCodeHasRun)
+        {
+                oneTimeTeleopCodeHasRun=true;
+                flipCCWFast();
+        }
 
         // Retrieve current position from the encoder
         OctoQuad.EncoderDataBlock encoderDataBlock = new OctoQuad.EncoderDataBlock();
