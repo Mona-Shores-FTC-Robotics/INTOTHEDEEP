@@ -297,6 +297,36 @@ public class RealRobotAdapter implements RobotAdapter {
                     return new InstantAction(Robot.getInstance().getSpecimenArmSubsystem()::depowerArm);
                 }
 
+                case CONDITIONAL_PICKUP:
+                {
+                    return new ConditionalTimeoutAction(
+                            new NullAction(),
+                            new SequentialAction(
+                                    new ParallelAction(
+                                            new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperUp),
+                                            new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract),
+                                            new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward)
+                                    ),
+                                    new SleepAction(SampleProcessingStateMachine.FLIP_UP_DELAY_TIME_MS),
+                                    new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::transferSampleToBucket)
+                            ),
+                            Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector()::haveSample,
+                            2250 //this should be adjusted to give time for action to complete.
+                    );
+                }
+
+                case CONDITIONAL_TRANSFER:
+                {
+                    return new ConditionalTimeoutAction(
+                            new SleepAction(.3), // amount of time to make sure sample got from intake to the bucket
+                            new NullAction(),
+                            Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector()::doNotHaveSample, // NOT HAVE SAMPLE
+                            500 //this should be adjusted to give time for action to complete.
+                    );
+                }
+
+
+
                 default:
                     telemetryManger.displayError("Unknown action type: " + actionType);
                     return new NullAction();

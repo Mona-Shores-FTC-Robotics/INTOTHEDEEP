@@ -42,6 +42,7 @@ public class NET_Score_2_Sample_Preload extends NET_Score_1_Sample_Preload {
                 .splineToLinearHeading(NET_SPIKE_ONE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,0),0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .waitSeconds(2.25);
+                //ConditionalTimeoutAction(
     }
 
     void moveFromNeutralSample1ToBasket() {

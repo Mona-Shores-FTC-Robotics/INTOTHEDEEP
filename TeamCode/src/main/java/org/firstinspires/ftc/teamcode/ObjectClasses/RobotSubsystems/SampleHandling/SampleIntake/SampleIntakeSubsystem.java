@@ -369,4 +369,9 @@ public class SampleIntakeSubsystem extends SubsystemBase {
     public void setAutomaticPickupFalse() {
         this.automaticPickup = false;
     }
+
+    public boolean haveSample() {
+        return sampleDetector.haveSample();
+    }
+
 }

@@ -65,6 +65,10 @@ public class SampleDetector extends GamePieceDetector {
         return haveGamePiece();
     }
 
+    public boolean doNotHaveSample() {
+        return !haveGamePiece();
+    }
+
 
     public boolean isUnknown() {
         return consensusColor==SampleColor.UNKNOWN;
