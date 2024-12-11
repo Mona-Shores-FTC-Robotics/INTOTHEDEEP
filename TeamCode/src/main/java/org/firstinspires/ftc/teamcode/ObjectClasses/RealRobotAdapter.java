@@ -307,7 +307,7 @@ public class RealRobotAdapter implements RobotAdapter {
                                             new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract),
                                             new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward)
                                     ),
-                                    new SleepAction(SampleProcessingStateMachine.FLIP_UP_DELAY_TIME_MS),
+                                    new SleepAction(SampleProcessingStateMachine.FLIP_UP_DELAY_TIME_FOR_AUTO_MS),
                                     new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::transferSampleToBucket)
                             ),
                             Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector()::haveSample,

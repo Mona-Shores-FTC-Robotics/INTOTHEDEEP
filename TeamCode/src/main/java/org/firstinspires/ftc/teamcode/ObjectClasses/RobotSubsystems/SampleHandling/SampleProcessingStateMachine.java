@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleProcessi
 @Config
 public class SampleProcessingStateMachine {
 
+    public static double FLIP_UP_DELAY_TIME_FOR_AUTO_MS = 200;
     public static double FLIP_UP_DELAY_TIME_MS = 840;
 
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
