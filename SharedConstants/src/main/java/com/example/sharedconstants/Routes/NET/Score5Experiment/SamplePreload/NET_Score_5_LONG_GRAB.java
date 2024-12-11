@@ -2,10 +2,10 @@ package com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_160_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
+import static com.example.sharedconstants.FieldConstants.ANGLE_315_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
-import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static com.example.sharedconstants.FieldConstants.NET_ASCENT;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT_AUTO;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_AUTO;
@@ -18,7 +18,6 @@ import static com.example.sharedconstants.FieldConstants.SAMPLE_LENGTH;
 import static com.example.sharedconstants.RobotAdapter.ActionType.CONDITIONAL_PICKUP;
 import static com.example.sharedconstants.RobotAdapter.ActionType.CONDITIONAL_TRANSFER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DEPOWER_ARM;
-import static com.example.sharedconstants.RobotAdapter.ActionType.FLIP_UP_AND_RETRACT;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION;
 import static com.example.sharedconstants.RobotAdapter.ActionType.LEVEL_1_ASCENT;
@@ -40,8 +39,8 @@ import com.example.sharedconstants.Routes.Routes;
 
 import java.util.Arrays;
 
-public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
-    public NET_Score_5_Sample_Preload_Submersible_Grab(RobotAdapter robotAdapter) {
+public class NET_Score_5_LONG_GRAB extends Routes {
+    public NET_Score_5_LONG_GRAB(RobotAdapter robotAdapter) {
         super(robotAdapter);
     }
 
@@ -208,7 +207,7 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
                 .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .afterDisp(6, robotAdapter.getAction(LEVEL_1_ASCENT))
                 .splineToLinearHeading(NEXT_TO_NET_ASCENT, ANGLE_TOWARD_OBSERVATION, fastVelocity, fastAcceleration)
-                .splineToSplineHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, slowVelocity, slowAcceleration)
+                .splineToLinearHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, slowVelocity, slowAcceleration)
                 .stopAndAdd(robotAdapter.getAction(DEPOWER_ARM));
     }
 

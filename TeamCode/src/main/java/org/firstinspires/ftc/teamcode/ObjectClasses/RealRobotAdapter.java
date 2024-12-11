@@ -182,6 +182,17 @@ public class RealRobotAdapter implements RobotAdapter {
                                 );
                     } else return problem();
 
+                case GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_PARTIAL_EXTENSION:
+                    if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
+                    {
+                        return  new ParallelAction(
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::partiallyDeploy),
+                                new ChangeSampleIntakePowerAction(SampleIntakeSubsystem.SampleIntakeStates.INTAKE_ON),
+                                new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperHover),
+                                new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceOutwards)
+                        );
+                    } else return problem();
+
                 case GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION:
                     if (robot.hasSubsystem(Robot.SubsystemType.SAMPLE_INTAKE) && robot.hasSubsystem(Robot.SubsystemType.SAMPLE_ACTUATOR))
                     {

@@ -11,7 +11,8 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
-import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_Sample_Preload_Submersible_Grab;
+import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_LONG_GRAB;
+import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_SHORT_GRAB;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,7 +27,6 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHand
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Autonomous(name = "Auto Selector")
 public class AutoSelector extends LinearOpMode {
@@ -45,42 +45,13 @@ public class AutoSelector extends LinearOpMode {
         List<Routes> netRouteList = new ArrayList<>();
         robotAdapter.setAllianceColor(allianceColor);
 
-//        netRoute = new NET_Score_1_Sample_Preload(robotAdapter);
-//        netRoute.buildRoute();
-//        netRouteList.add(netRoute);
-
-//        netRoute = new NET_Score_2_Sample_Preload(robotAdapter);
-//        netRoute.buildRoute();
-//        netRouteList.add(netRoute);
-
-        netRoute = new NET_Score_4_Sample_Preload(robotAdapter);
+        netRoute = new NET_Score_5_SHORT_GRAB(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
-        netRoute = new NET_Score_5_Sample_Preload_Submersible_Grab(robotAdapter);
+        netRoute = new NET_Score_5_LONG_GRAB(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
-
-
-        // Tested 11-15-24
-//        netRoute = new NET_Score_1_Specimen_Preload(robotAdapter);
-//        netRoute.buildRoute();
-//        netRouteList.add(netRoute);
-
-        // Tested 11-15-24
-//        netRoute = new NET_Score_2_Preload_and_1_Sample(robotAdapter);
-//        netRoute.buildRoute();
-//        netRouteList.add(netRoute);
-
-        // Tested 11-15-24
-//        netRoute = new NET_Score_3_Preload_and_2_Samples(robotAdapter);
-//        netRoute.buildRoute();
-//        netRouteList.add(netRoute);
-
-        // Same as the last one but Scores more points.
-//        netRoute = new NET_Score_4_Preload_and_3_Samples(robotAdapter);
-//        netRoute.buildRoute();
-//        netRouteList.add(netRoute); // Tristan + Landon likes
 
         return netRouteList;
     }
@@ -90,34 +61,9 @@ public class AutoSelector extends LinearOpMode {
         List<Routes> obsRouteList = new ArrayList<>();
         robotAdapter.setAllianceColor(allianceColor);
 
-
-//        obsRoute = new TurnOnly(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-//
-//        obsRoute = new OBS_Score4_Fruitport(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-
         obsRoute = new OBS_Score4_Fruitport_Improved(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
-
-//        obsRoute = new OBS_Score5_Specimen_Preload_Ground_Pickup(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-
-//        obsRoute = new OBS_Score4_PickupAtCorner(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-//
-//        obsRoute = new OBS_Score4_PickupAtTileSeam(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
-//
-//        obsRoute = new OBS_Score4_PickupAtTriangleTip(robotAdapter);
-//        obsRoute.buildRoute();
-//        obsRouteList.add(obsRoute);
 
         return obsRouteList;
     }
@@ -141,9 +87,6 @@ public class AutoSelector extends LinearOpMode {
 
         buildRoutes();
 
-        //Guess what side of field we are on to make setup easier
-
-
         finalSideOfField = FieldConstants.SideOfField.OBSERVATION;
 
         // Perform route selection during init
@@ -159,11 +102,9 @@ public class AutoSelector extends LinearOpMode {
                         .monitorSpecimenPreload(robotAdapter , gamepadHandling.LockedSettingsFlag , gamepadHandling.manualOverrideFlag);
             }
 
-
             // Allow driver to override and lock alliance color and side
             gamepadHandling.SelectAllianceAndSide(telemetry);
             selectRoute();
-
 
             //Handle Lighting During Init
             if (Robot.getInstance().hasSubsystem(Robot.SubsystemType.LIGHTING)) {

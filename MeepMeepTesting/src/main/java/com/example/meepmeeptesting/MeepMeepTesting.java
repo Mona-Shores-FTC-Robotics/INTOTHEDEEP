@@ -4,11 +4,8 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_4_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_SAMPLE_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT_IMPROVED;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_PUSH_3;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_SPECIMEN_PRELOAD_GROUND_PICKUP;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkRed;
@@ -19,7 +16,7 @@ import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_1_Sample_P
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_2_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_3_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
-import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_Sample_Preload_Submersible_Grab;
+import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_LONG_GRAB;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
@@ -36,7 +33,6 @@ import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_Fruitport;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score5_Preload_Ground_Pickup_And_Dump_And_Pickup_At_Triangle;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.DoNothing;
-import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_5_SamplePreload_REQUIRES_PARTNER_PRELOAD;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_4_Preload_and_3_Samples;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_Preload_Push_Two_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score5_Leave_Preload_Push_All_And_Pickup_At_Triangle;
@@ -190,7 +186,7 @@ public class MeepMeepTesting {
                 return new NET_Score_4_Preload_and_3_Samples(adapter);
 
             case NET_SCORE_5_SAMPLE_PRELOAD:
-                return new NET_Score_5_Sample_Preload_Submersible_Grab(adapter);
+                return new NET_Score_5_LONG_GRAB(adapter);
 
             case OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP:
                 return new OBS_Score5_Leave_Yellow_Ground_Pickup(adapter);
