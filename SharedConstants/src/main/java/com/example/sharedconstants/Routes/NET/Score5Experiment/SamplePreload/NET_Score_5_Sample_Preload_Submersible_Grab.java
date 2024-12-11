@@ -5,6 +5,7 @@ import static com.example.sharedconstants.FieldConstants.ANGLE_225_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_45_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_BLUE;
 import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_OBSERVATION;
+import static com.example.sharedconstants.FieldConstants.ANGLE_TOWARD_RED;
 import static com.example.sharedconstants.FieldConstants.NET_ASCENT;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_ALIGNMENT_AUTO;
 import static com.example.sharedconstants.FieldConstants.NET_BASKET_AUTO;
@@ -47,7 +48,7 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
     public double DELAY_FOR_SCORING = .1; // .250
 
     public static final double SLOW_VELOCITY_OVERRIDE = 10;
-    public static final double SLOW_ACCELERATION_OVERRIDE = 10;
+    public static final double SLOW_ACCELERATION_OVERRIDE = 15;
     public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
 
     public static final double NORMAL_VELOCITY_OVERRIDE = 27;
@@ -113,7 +114,7 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
                 // might be able to use afterDisp to score faster here rather than stopAndAdd...
-                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
     }
 
     public void scoreSampleInHighBasket(){
@@ -194,9 +195,10 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
                 .afterDisp(17, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
-                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
+                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_TOWARD_RED, fastVelocity, fastAcceleration)
                 // might be able to use afterDisp to score faster here rather than stopAndAdd...
-                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .setTangent(ANGLE_225_DEGREES)
+                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
     }
 
     private void travelToAscentZone() {
