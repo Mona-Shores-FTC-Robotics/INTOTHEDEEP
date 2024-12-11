@@ -129,7 +129,7 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .splineToLinearHeading(NET_SPIKE_ONE, ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
-                .afterDisp(0, robotAdapter.getAction(PICKUP_FROM_GROUND))
+                .afterDisp(1.1, robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .splineToSplineHeading(NET_SPIKE_ONE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,0),0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
@@ -148,7 +148,7 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
                 .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .splineToLinearHeading(NET_SPIKE_TWO, ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
-                .afterDisp(0, robotAdapter.getAction(PICKUP_FROM_GROUND))
+                .afterDisp(1.1, robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .splineToSplineHeading(NET_SPIKE_TWO.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,0),0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
@@ -166,9 +166,9 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
                 .setTangent(ANGLE_45_DEGREES)
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .afterDisp(7.0, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
-                .splineToLinearHeading(NET_SPIKE_THREE, ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
-                .afterDisp(0, robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .splineToSplineHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,0),0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
+                .splineToLinearHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(0,-.8), 0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
+                .afterDisp(1.1, robotAdapter.getAction(PICKUP_FROM_GROUND))
+                .splineToSplineHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,-.8),0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
     }
