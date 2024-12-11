@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleProcessi
 @Config
 public class SampleProcessingStateMachine {
 
-    public static double TWISTER_DELAY_TIME_FOR_AUTO_MS = 100;
-    public static double FLIP_UP_DELAY_TIME_FOR_AUTO_MS = 200;
+    public static double TWISTER_DELAY_TIME_FOR_AUTO_SECONDS = .1;
+    public static double FLIP_UP_DELAY_TIME_FOR_AUTO_SECONDS = .2;
 
-    public static double FLIP_UP_DELAY_TIME_MS = 840;
+    public static double FLIP_UP_DELAY_TIME_MS = 600;
 
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
@@ -85,7 +85,7 @@ public class SampleProcessingStateMachine {
                     }
                     break;
                 case FLIPPING_ALL_THE_WAY_UP:
-                    if (flipAllTheWayUpTimer.milliseconds()>(FLIP_UP_DELAY_TIME_MS - (FLIP_UP_DELAY_TIME_MS/2)) && !haveTwisted)
+                    if (flipAllTheWayUpTimer.milliseconds()>(200) && !haveTwisted)
                     {
                         haveTwisted=true;
                         sampleTwisterSubsystem.setTwisterServoFaceInward();

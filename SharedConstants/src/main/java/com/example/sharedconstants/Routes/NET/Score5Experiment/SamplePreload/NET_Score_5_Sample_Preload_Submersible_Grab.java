@@ -45,7 +45,7 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
         super(robotAdapter);
     }
 
-    public double DELAY_FOR_SCORING = .1; // .250
+    public double DELAY_FOR_SCORING = .035; // .250
 
     public static final double SLOW_VELOCITY_OVERRIDE = 10;
     public static final double SLOW_ACCELERATION_OVERRIDE = 15;
@@ -71,7 +71,7 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
     {
         setupConstraints();
         moveFromStartToBasket();
-        scoreSampleInHighBasket(); // score 1
+//        scoreSampleInHighBasket(); // score 1
         moveToNeutralSample1();
         moveFromNeutralSample1ToBasket();
         scoreSampleInHighBasket(); // score 2
@@ -114,7 +114,8 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
                 // might be able to use afterDisp to score faster here rather than stopAndAdd...
-                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
+                .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
 
     public void scoreSampleInHighBasket(){
@@ -185,8 +186,8 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
                 .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .splineToLinearHeading(NEXT_TO_NET_ASCENT, ANGLE_TOWARD_OBSERVATION, fastVelocity, fastAcceleration)
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
+                .afterDisp(9, robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .splineToSplineHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration)
-                .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
     }
@@ -195,10 +196,10 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
                 .afterDisp(17, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
-                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_TOWARD_RED, fastVelocity, fastAcceleration)
+                .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
                 // might be able to use afterDisp to score faster here rather than stopAndAdd...
                 .setTangent(ANGLE_225_DEGREES)
-                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
 
     private void travelToAscentZone() {
@@ -207,7 +208,7 @@ public class NET_Score_5_Sample_Preload_Submersible_Grab extends Routes {
                 .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .afterDisp(6, robotAdapter.getAction(LEVEL_1_ASCENT))
                 .splineToLinearHeading(NEXT_TO_NET_ASCENT, ANGLE_TOWARD_OBSERVATION, fastVelocity, fastAcceleration)
-                .splineToSplineHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration)
+                .splineToSplineHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, slowVelocity, slowAcceleration)
                 .stopAndAdd(robotAdapter.getAction(DEPOWER_ARM));
     }
 

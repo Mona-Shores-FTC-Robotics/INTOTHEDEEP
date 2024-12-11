@@ -9,24 +9,19 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.RobotAdapter;
 
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.Drive.DriveActions.DriveForwardAndBack;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleButtonHandling;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.ChangeSampleIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleIntake.SampleIntakeSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.ChangeSampleDumperPositionAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.MoveSampleLiftAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLiftBucket.SampleLiftBucketSubsystem;
-import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleLinearActuator.SampleLinearActuatorSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandling.SampleProcessingStateMachine;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenArm.SpecimenArmSubsystem;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.ChangeSpecimenIntakePowerAction;
 import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SpecimenHandling.SpecimenIntake.SpecimenIntakeSubsystem;
 
-import java.io.SequenceInputStream;
 import java.util.function.Supplier;
 
 public class RealRobotAdapter implements RobotAdapter {
@@ -306,23 +301,23 @@ public class RealRobotAdapter implements RobotAdapter {
                                             new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::setFlipperUp),
                                             new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract)
                                     ),
-                                    new SleepAction(SampleProcessingStateMachine.TWISTER_DELAY_TIME_FOR_AUTO_MS),
+                                    new SleepAction(SampleProcessingStateMachine.TWISTER_DELAY_TIME_FOR_AUTO_SECONDS),
                                     new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward),
-                                    new SleepAction(SampleProcessingStateMachine.FLIP_UP_DELAY_TIME_FOR_AUTO_MS),
+                                    new SleepAction(SampleProcessingStateMachine.FLIP_UP_DELAY_TIME_FOR_AUTO_SECONDS),
                                     new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::transferSampleToBucket)
                             ),
                             Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector()::haveSample,
-                            2250 //this should be adjusted to give time for action to complete.
+                            1200 //this should be adjusted to give time for action to complete.
                     );
                 }
 
                 case CONDITIONAL_TRANSFER:
                 {
                     return new ConditionalTimeoutAction(
-                            new SleepAction(.3), // amount of time to make sure sample got from intake to the bucket
-                            new NullAction(),
+                            new SleepAction(.15), // amount of time to make sure sample got from intake to the bucket
+                            new SleepAction(.15),
                             Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector()::doNotHaveSample, // NOT HAVE SAMPLE
-                            500 //this should be adjusted to give time for action to complete.
+                            2250 //this should be adjusted to give time for action to complete.
                     );
                 }
 

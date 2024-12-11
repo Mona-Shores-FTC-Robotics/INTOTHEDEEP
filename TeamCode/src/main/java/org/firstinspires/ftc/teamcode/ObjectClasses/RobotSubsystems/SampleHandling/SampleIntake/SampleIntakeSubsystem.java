@@ -63,7 +63,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 801.0;
                     EJECT_POWER_REVERSE = 1.0;
-                    TRANSFER_POWER_REVERSE = .3;
+                    TRANSFER_POWER_REVERSE = .38;
                     break;
 
                 default:
