@@ -4,6 +4,7 @@ import static com.example.sharedconstants.FieldConstants.AllianceColor.BLUE;
 import static com.example.sharedconstants.FieldConstants.AllianceColor.RED;
 import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_LONG_GRAB;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_SHORT_GRAB;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT_IMPROVED;
 
@@ -58,7 +59,7 @@ public class MeepMeepTesting {
     private static final RoutesToRun redObservationRoute = OBS_SCORE_4_FRUITPORT_IMPROVED;
     private static final RoutesToRun blueObservationRoute = OBS_SCORE_4_FRUITPORT_IMPROVED;
     private static final RoutesToRun redNetRoute = NET_SCORE_5_SHORT_GRAB;
-    private static final RoutesToRun blueNetRoute = NET_SCORE_5_SHORT_GRAB;
+    private static final RoutesToRun blueNetRoute = NET_SCORE_5_LONG_GRAB;
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
