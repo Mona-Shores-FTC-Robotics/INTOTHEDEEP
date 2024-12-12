@@ -21,6 +21,8 @@ import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_PICKUP;
 import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_TIP_APPROACH;
 import static com.example.sharedconstants.FieldConstants.OBS_TRIANGLE_TIP_PICKUP;
 import static com.example.sharedconstants.FieldConstants.PoseToVector;
+import static com.example.sharedconstants.RobotAdapter.ActionType.CONDITIONAL_PICKUP;
+import static com.example.sharedconstants.RobotAdapter.ActionType.CONDITIONAL_TRANSFER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DISABLE_PRELOAD_MODE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DUMP_SAMPLE_IN_OBSERVATION_ZONE;
 import static com.example.sharedconstants.RobotAdapter.ActionType.FLIP_UP_AND_RETRACT;
@@ -112,7 +114,8 @@ public class OBS_Score5_Specimen_Preload_Ground_Pickup extends Routes {
                         new Pose2d(PoseToVector(OBS_SPIKE_ONE).minus(new Vector2d(- 1.5 , 23)), ANGLE_TOWARD_BLUE),
                         ANGLE_TOWARD_OBSERVATION, normalVelocity)
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .waitSeconds(1.5); // give some time to grab it from the ground and do the transfer
+                .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
+                .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
     }
 
     private void pickupGroundSampleTwo() {
@@ -120,9 +123,9 @@ public class OBS_Score5_Specimen_Preload_Ground_Pickup extends Routes {
                 .afterTime(.8 , robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
                 .afterTime( 1.4, robotAdapter.getAction(DUMP_SAMPLE_IN_OBSERVATION_ZONE)) // dump the sample while pulling in the next one
                 .strafeToLinearHeading(PoseToVector(OBS_SPIKE_TWO).minus(new Vector2d(- 4.70 , 23)) , ANGLE_TOWARD_BLUE, slowVelocity)
-                .waitSeconds(.3)
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .waitSeconds(1.2);
+                .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
+                .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
     }
 
     private void pickupGroundSampleThree() {
@@ -131,9 +134,9 @@ public class OBS_Score5_Specimen_Preload_Ground_Pickup extends Routes {
                 .afterTime(.6, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION))
                 .afterTime(.9, robotAdapter.getAction(GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .strafeToLinearHeading(PoseToVector(OBS_SPIKE_THREE).minus(new Vector2d(4 , 23)) , Math.toRadians(59), slowVelocity)
-                .waitSeconds(.3)
                 .stopAndAdd(robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .waitSeconds(1.2);
+                .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
+                .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
     }
 
     public void pickupSpecimenFromFieldCornerComingFromThirdSpike() {
