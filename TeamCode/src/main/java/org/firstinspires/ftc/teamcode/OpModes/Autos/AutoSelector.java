@@ -12,7 +12,10 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.example.sharedconstants.FieldConstants;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_LONG_GRAB;
+import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_MID_GRAB;
+import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_PARTNER_PRELOAD;
 import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_SHORT_GRAB;
+import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_6_PARTNER_PRELOAD;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -49,7 +52,19 @@ public class AutoSelector extends LinearOpMode {
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
+        netRoute = new NET_Score_5_MID_GRAB(robotAdapter);
+        netRoute.buildRoute();
+        netRouteList.add(netRoute);
+
         netRoute = new NET_Score_5_LONG_GRAB(robotAdapter);
+        netRoute.buildRoute();
+        netRouteList.add(netRoute);
+
+        netRoute = new NET_Score_5_PARTNER_PRELOAD(robotAdapter);
+        netRoute.buildRoute();
+        netRouteList.add(netRoute);
+
+        netRoute = new NET_Score_6_PARTNER_PRELOAD(robotAdapter);
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 

@@ -6,7 +6,7 @@ import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_LONG_GRAB;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_PARTNER_PRELOAD;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_SHORT_GRAB;
+import static com.example.sharedconstants.RoutesToRun.NET_SCORE_6_PARTNER_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT_IMPROVED;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
@@ -18,10 +18,11 @@ import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_1_Sample_P
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_2_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_3_Sample_Preload;
 import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_4_Sample_Preload;
-import com.example.sharedconstants.Routes.NET.SamplePreload.NET_Score_5_SamplePreload_REQUIRES_PARTNER_PRELOAD;
 import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_LONG_GRAB;
 import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_MID_GRAB;
+import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_PARTNER_PRELOAD;
 import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_SHORT_GRAB;
+import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_6_PARTNER_PRELOAD;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_2_Preload_and_1_Sample;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_3_Preload_and_2_Samples;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
@@ -198,7 +199,11 @@ public class MeepMeepTesting {
                 return new NET_Score_5_LONG_GRAB(adapter);
 
             case NET_SCORE_5_PARTNER_PRELOAD:
-                return new NET_Score_5_SamplePreload_REQUIRES_PARTNER_PRELOAD(adapter);
+                return new NET_Score_5_PARTNER_PRELOAD(adapter);
+
+
+            case NET_SCORE_6_PARTNER_PRELOAD:
+                return new NET_Score_6_PARTNER_PRELOAD(adapter);
 
             case OBS_SCORE_5_LEAVE_YELLOW_GROUND_PICKUP:
                 return new OBS_Score5_Leave_Yellow_Ground_Pickup(adapter);
