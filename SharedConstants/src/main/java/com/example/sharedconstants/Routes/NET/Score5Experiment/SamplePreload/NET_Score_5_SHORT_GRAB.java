@@ -81,6 +81,7 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
         netBotRoute = netTrajectoryActionBuilder.build();
     }
 
+
     private void setupConstraints() {
         slowVelocity = new MinVelConstraint(Arrays.asList(
                 new TranslationalVelConstraint(SLOW_VELOCITY_OVERRIDE),
@@ -127,6 +128,7 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .setReversed(true)
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
+                //todo SHORT side is different than the others right now. need to test this
                 .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
                 .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
