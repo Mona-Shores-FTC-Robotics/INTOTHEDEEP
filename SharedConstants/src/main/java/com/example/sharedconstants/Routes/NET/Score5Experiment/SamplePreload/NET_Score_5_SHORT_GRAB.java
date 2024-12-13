@@ -13,10 +13,12 @@ import static com.example.sharedconstants.FieldConstants.NET_SPIKE_THREE;
 import static com.example.sharedconstants.FieldConstants.NET_SPIKE_TWO;
 import static com.example.sharedconstants.FieldConstants.NET_START_POSE;
 import static com.example.sharedconstants.FieldConstants.NEXT_TO_NET_ASCENT;
+import static com.example.sharedconstants.FieldConstants.PoseToVector;
 import static com.example.sharedconstants.FieldConstants.SAMPLE_LENGTH;
 import static com.example.sharedconstants.RobotAdapter.ActionType.CONDITIONAL_PICKUP;
 import static com.example.sharedconstants.RobotAdapter.ActionType.CONDITIONAL_TRANSFER;
 import static com.example.sharedconstants.RobotAdapter.ActionType.DEPOWER_ARM;
+import static com.example.sharedconstants.RobotAdapter.ActionType.FLIP_UP_AND_RETRACT;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND;
 import static com.example.sharedconstants.RobotAdapter.ActionType.GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND_WITH_FULL_EXTENSION;
 import static com.example.sharedconstants.RobotAdapter.ActionType.LEVEL_1_ASCENT;
@@ -53,9 +55,14 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
     public static final double NORMAL_ACCELERATION_OVERRIDE = 27;
     public static final double NORMAL_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
 
-    public static final double FAST_VELOCITY_OVERRIDE = 35;
-    public static final double FAST_ACCELERATION_OVERRIDE = 35;
+    public static final double FAST_VELOCITY_OVERRIDE = 37;
+    public static final double FAST_ACCELERATION_OVERRIDE = 37;
     public static final double FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+
+    public static final double VERY_FAST_VELOCITY_OVERRIDE = 45;
+    public static final double VERY_FAST_ACCELERATION_OVERRIDE = 45;
+    public static final double VERY_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+
 
     // Shared constraints for all routes
     public static VelConstraint slowVelocity;
@@ -64,6 +71,8 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
     public static AccelConstraint normalAcceleration;
     public static VelConstraint fastVelocity;
     public static AccelConstraint fastAcceleration;
+    public static VelConstraint superFastVelocity;
+    public static AccelConstraint superFastAcceleration;
 
     public void buildRoute()
     {
@@ -100,6 +109,12 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 new AngularVelConstraint(FAST_ANGULAR_VELOCITY_OVERRIDE)
         ));
         fastAcceleration = new ProfileAccelConstraint(-FAST_ACCELERATION_OVERRIDE, FAST_ACCELERATION_OVERRIDE);
+
+        superFastVelocity = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(VERY_FAST_VELOCITY_OVERRIDE),
+                new AngularVelConstraint(VERY_FAST_ANGULAR_VELOCITY_OVERRIDE)
+        ));
+        superFastAcceleration = new ProfileAccelConstraint(-VERY_FAST_ACCELERATION_OVERRIDE, VERY_FAST_ACCELERATION_OVERRIDE);
     }
 
     private void moveFromStartToBasket() {
@@ -159,9 +174,9 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .setTangent(ANGLE_45_DEGREES)
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .afterDisp(7.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
-                .splineToLinearHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(0,-.8), 0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
+                .splineToLinearHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(0,-1), 0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .afterDisp(.5, robotAdapter.getAction(PICKUP_FROM_GROUND))
-                .splineToSplineHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,-.8),0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
+                .splineToSplineHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,-1),0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
     }
@@ -179,17 +194,19 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_45_DEGREES)
                 .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
-                .splineToLinearHeading(NEXT_TO_NET_ASCENT, ANGLE_TOWARD_OBSERVATION, fastVelocity, fastAcceleration)
+                .splineToLinearHeading(NEXT_TO_NET_ASCENT, ANGLE_TOWARD_OBSERVATION, superFastVelocity, superFastAcceleration)
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .afterDisp(9, robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .splineToSplineHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration)
-                .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
+                .strafeToConstantHeading(PoseToVector(NET_ASCENT).plus(new Vector2d(0,5)), slowVelocity, slowAcceleration)
+//                .strafeToConstantHeading(PoseToVector(NET_ASCENT).plus(new Vector2d(0,-3)), slowVelocity, slowAcceleration)
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
     }
 
     private void moveFromSubmersibleToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
+                .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
                 .afterDisp(17, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
                 .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
@@ -201,9 +218,9 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_45_DEGREES)
                 .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
-                .afterDisp(6, robotAdapter.getAction(LEVEL_1_ASCENT))
+//                .afterDisp(6, robotAdapter.getAction(LEVEL_1_ASCENT))
                 .splineToLinearHeading(NEXT_TO_NET_ASCENT, ANGLE_TOWARD_OBSERVATION, fastVelocity, fastAcceleration)
-                .splineToLinearHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, slowVelocity, slowAcceleration)
-                .stopAndAdd(robotAdapter.getAction(DEPOWER_ARM));
+                .splineToLinearHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration);
+//                .stopAndAdd(robotAdapter.getAction(DEPOWER_ARM));
     }
 }

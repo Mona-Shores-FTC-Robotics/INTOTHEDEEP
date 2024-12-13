@@ -264,7 +264,7 @@ public class RealRobotAdapter implements RobotAdapter {
                                             new InstantAction(Robot.getInstance().getSampleLinearActuatorSubsystem()::fullyRetract),
                                             new InstantAction(Robot.getInstance().getSampleTiwsterSubsystem()::setTwisterServoFaceInward)
                                                 ),
-                                        new SleepAction(SampleProcessingStateMachine.FLIP_UP_DELAY_TIME_MS),
+                                        new SleepAction(SampleProcessingStateMachine.FLIP_UP_DELAY_TIME_SECONDS),
                                         new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::transferSampleToBucket)
                                 );
                     } else return problem();
@@ -325,8 +325,8 @@ public class RealRobotAdapter implements RobotAdapter {
                 case CONDITIONAL_TRANSFER:
                 {
                     return new ConditionalTimeoutAction(
-                            new SleepAction(.15), // amount of time to make sure sample got from intake to the bucket
-                            new SleepAction(.15),
+                            new SleepAction(.3), // amount of time to make sure sample got from intake to the bucket
+                            new SleepAction(.3),
                             Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector()::doNotHaveSample, // NOT HAVE SAMPLE
                             2250 //this should be adjusted to give time for action to complete.
                     );

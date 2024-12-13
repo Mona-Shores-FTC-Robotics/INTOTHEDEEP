@@ -48,10 +48,10 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     MAX_POWER = 1.0;
                     PROXIMITY_THRESHOLD = 40.0;
                     COLOR_HISTORY_SIZE = 2;
-                    TRANSFER_TIME_MS = 400;
+                    TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 800.0;
                     EJECT_POWER_REVERSE = 1.0;
-                    TRANSFER_POWER_REVERSE = .3;
+                    TRANSFER_POWER_REVERSE = .38;
                     break;
 
                 case INTO_THE_DEEP_20245:

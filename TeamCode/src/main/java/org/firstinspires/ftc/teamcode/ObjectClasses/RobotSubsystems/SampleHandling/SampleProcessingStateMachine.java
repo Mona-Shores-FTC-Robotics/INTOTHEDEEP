@@ -15,10 +15,12 @@ import org.firstinspires.ftc.teamcode.messages.MonaShoresMessages.SampleProcessi
 @Config
 public class SampleProcessingStateMachine {
 
-    public static double TWISTER_DELAY_TIME_FOR_AUTO_SECONDS = .1;
-    public static double FLIP_UP_DELAY_TIME_FOR_AUTO_SECONDS = .2;
+    public static double TWISTER_DELAY_TIME_FOR_AUTO_SECONDS = .2;
+    public static double FLIP_UP_DELAY_TIME_FOR_AUTO_SECONDS = .4;
 
-    public static double FLIP_UP_DELAY_TIME_MS = 600;
+    public static double FLIP_UP_DELAY_TIME_MILLISECONDS = 600;
+
+    public static double FLIP_UP_DELAY_TIME_SECONDS = .6;
 
     private final SampleLinearActuatorSubsystem actuatorSubsystem;
     private final SampleIntakeSubsystem intakeSubsystem;
@@ -90,7 +92,7 @@ public class SampleProcessingStateMachine {
                         haveTwisted=true;
                         sampleTwisterSubsystem.setTwisterServoFaceInward();
                     }
-                    if (flipAllTheWayUpTimer.milliseconds() > FLIP_UP_DELAY_TIME_MS) {
+                    if (flipAllTheWayUpTimer.milliseconds() > FLIP_UP_DELAY_TIME_MILLISECONDS) {
                         currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
                         intakeSubsystem.transferSampleToBucket();
                     }
@@ -147,7 +149,7 @@ public class SampleProcessingStateMachine {
                     }
                     break;
                 case FLIPPING_ALL_THE_WAY_UP:
-                    if (flipAllTheWayUpTimer.milliseconds() > FLIP_UP_DELAY_TIME_MS) {
+                    if (flipAllTheWayUpTimer.milliseconds() > FLIP_UP_DELAY_TIME_MILLISECONDS) {
                         currentSampleDetectionState = SampleDetectionStates.TRANSFERRING;
                         intakeSubsystem.transferSampleToBucket();
                     }
