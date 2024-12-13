@@ -17,6 +17,7 @@ import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET
 import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_5_SHORT_GRAB;
 import com.example.sharedconstants.Routes.NET.Score5Experiment.SamplePreload.NET_Score_6_PARTNER_PRELOAD;
 import com.example.sharedconstants.Routes.OBS.OBS_Score4_Fruitport_Improved;
+import com.example.sharedconstants.Routes.OBS.OBS_Score5_Specimen_Preload_Ground_Pickup;
 import com.example.sharedconstants.Routes.Routes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -79,6 +80,10 @@ public class AutoSelector extends LinearOpMode {
         obsRoute = new OBS_Score4_Fruitport_Improved(robotAdapter);
         obsRoute.buildRoute();
         obsRouteList.add(obsRoute);
+
+//        obsRoute = new OBS_Score5_Specimen_Preload_Ground_Pickup(robotAdapter);
+//        obsRoute.buildRoute();
+//        obsRouteList.add(obsRoute);
 
         return obsRouteList;
     }
