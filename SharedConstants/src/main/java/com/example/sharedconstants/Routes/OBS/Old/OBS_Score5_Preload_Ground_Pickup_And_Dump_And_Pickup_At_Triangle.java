@@ -1,4 +1,4 @@
-package com.example.sharedconstants.Routes.OBS;
+package com.example.sharedconstants.Routes.OBS.Old;
 
 import static com.example.sharedconstants.FieldConstants.ANGLE_115_DEGREES;
 import static com.example.sharedconstants.FieldConstants.ANGLE_315_DEGREES;
@@ -21,7 +21,6 @@ import static com.example.sharedconstants.RobotAdapter.ActionType.HANG_SPECIMEN_
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.example.sharedconstants.RobotAdapter;
-import com.example.sharedconstants.Routes.OBS.Old.OBS_Score_1_Specimen_Preload;
 
 public class OBS_Score5_Preload_Ground_Pickup_And_Dump_And_Pickup_At_Triangle extends OBS_Score_1_Specimen_Preload {
 

@@ -104,7 +104,7 @@ public class OBS_Score5_Specimen_Preload_Ground_Pickup extends Routes {
                 .stopAndAdd(new NullAction())
                 .splineToConstantHeading(PoseToVector(chamberSlot), chamberSlot.heading.toDouble(), slowVelocity)
                 .stopAndAdd(robotAdapter.getAction((HANG_SPECIMEN_ON_HIGH_CHAMBER)))
-                .waitSeconds(.15);
+                .waitSeconds(.1);
     }
     public void pickupGroundSampleOne() {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
@@ -152,10 +152,10 @@ public class OBS_Score5_Specimen_Preload_Ground_Pickup extends Routes {
     public void scoreOnHighChamberFromTriangle(Pose2d chamberSlot) {
         obsTrajectoryActionBuilder = obsTrajectoryActionBuilder
                 .setTangent(ANGLE_115_DEGREES)
-                .strafeToLinearHeading(PoseToVector(chamberSlot).plus(new Vector2d(0,-5.5)), chamberSlot.heading.toDouble(), fastVelocity, fastAcceleration)
-                .strafeToLinearHeading(PoseToVector(chamberSlot), chamberSlot.heading.toDouble(), slowVelocity)
+                .strafeToLinearHeading(PoseToVector(chamberSlot).plus(new Vector2d(0,-2)), chamberSlot.heading.toDouble(), fastVelocity, fastAcceleration)
+                .strafeToLinearHeading(PoseToVector(chamberSlot), chamberSlot.heading.toDouble(), slowVelocity, slowAcceleration)
                 .stopAndAdd(robotAdapter.getAction(HANG_SPECIMEN_ON_HIGH_CHAMBER))
-                .waitSeconds(.15);
+                .waitSeconds(.1);
     }
 
     public void pickupSpecimenFromTriangle() {
@@ -163,7 +163,6 @@ public class OBS_Score5_Specimen_Preload_Ground_Pickup extends Routes {
                 .setTangent(ANGLE_315_DEGREES)
                 .afterDisp(3 , robotAdapter.getAction(GET_READY_FOR_SPECIMEN_INTAKE_FROM_WALL))
                 .strafeToLinearHeading(PoseToVector(OBS_TRIANGLE_TIP_APPROACH), ANGLE_TOWARD_BLUE, fastVelocity, fastAcceleration)
-                .waitSeconds(.1)
                 .setReversed(true)
                 .strafeToLinearHeading(PoseToVector(OBS_TRIANGLE_TIP_PICKUP).plus(new Vector2d(0,2)), ANGLE_TOWARD_BLUE, slowVelocity, slowAcceleration)
                 .waitSeconds(.1);

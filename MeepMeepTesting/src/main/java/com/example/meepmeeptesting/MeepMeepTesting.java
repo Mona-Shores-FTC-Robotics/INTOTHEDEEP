@@ -6,9 +6,7 @@ import static com.example.sharedconstants.FieldConstants.SideOfField.NET;
 import static com.example.sharedconstants.FieldConstants.SideOfField.OBSERVATION;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_LONG_GRAB;
 import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_MID_GRAB;
-import static com.example.sharedconstants.RoutesToRun.NET_SCORE_5_PARTNER_PRELOAD;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_4_FRUITPORT_IMPROVED;
-import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_PRELOAD_GROUND_PICKUP_AND_DUMP_AND_PICKUP_AT_TRIANGLE;
 import static com.example.sharedconstants.RoutesToRun.OBS_SCORE_5_SPECIMEN_PRELOAD_GROUND_PICKUP;
 
 import com.example.meepmeeptesting.ColorSchemes.CustomColorSchemeDarkBlue;
@@ -38,7 +36,7 @@ import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_PickupAtTileSeam;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_NO_PRELOAD_SPECTACULAR;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_Preload_Push_All_And_Pickup_At_Triangle;
 import com.example.sharedconstants.Routes.OBS.Old.OBS_Score4_Fruitport;
-import com.example.sharedconstants.Routes.OBS.OBS_Score5_Preload_Ground_Pickup_And_Dump_And_Pickup_At_Triangle;
+import com.example.sharedconstants.Routes.OBS.Old.OBS_Score5_Preload_Ground_Pickup_And_Dump_And_Pickup_At_Triangle;
 import com.example.sharedconstants.RobotAdapter;
 import com.example.sharedconstants.Routes.DoNothing;
 import com.example.sharedconstants.Routes.NET.SpecimenPreload.NET_Score_4_Preload_and_3_Samples;
