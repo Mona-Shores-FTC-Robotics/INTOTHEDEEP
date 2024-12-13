@@ -239,11 +239,26 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         pidController.setSetPoint(currentLiftState.getLiftHeightTicks());
         setTargetTicks(currentLiftState.getLiftHeightTicks());
         oneTimeTeleopCodeHasRun=false;
+        dumperTimer = new ElapsedTime();
+
+        if (Robot.getInstance().isAutoMode()) {
+            oneTimeTeleopCodeHasRun = true;
+            if (bucket != null) {
+                setCurrentBucketState(BucketStates.BUCKET_INTAKE_POS);
+                bucket.setPosition(currentBucketState.getBucketPosition());
+            }
+            if (dumper != null) {
+                hasDumped = false;
+                setCurrentDumperState(DumperStates.DUMPER_HOME);
+            }
+        }
+
     }
 
     public void periodic() {
 
-        if (!Robot.getInstance().isAutoMode() && !oneTimeTeleopCodeHasRun)
+        if (
+                (!Robot.getInstance().isAutoMode() && !oneTimeTeleopCodeHasRun))
         {
             oneTimeTeleopCodeHasRun=true;
             if (bucket != null) {
@@ -252,7 +267,6 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
             }
             if (dumper != null) {
                 hasDumped = false;
-                dumperTimer = new ElapsedTime();
                 setCurrentDumperState(DumperStates.DUMPER_HOME);
             }
         }
