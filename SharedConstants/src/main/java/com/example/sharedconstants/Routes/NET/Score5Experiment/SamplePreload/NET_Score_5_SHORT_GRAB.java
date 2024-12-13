@@ -90,7 +90,6 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
         netBotRoute = netTrajectoryActionBuilder.build();
     }
 
-
     private void setupConstraints() {
         slowVelocity = new MinVelConstraint(Arrays.asList(
                 new TranslationalVelConstraint(SLOW_VELOCITY_OVERRIDE),
@@ -132,7 +131,7 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .splineToLinearHeading(NET_SPIKE_ONE, ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
-                .afterDisp(.5, robotAdapter.getAction(PICKUP_FROM_GROUND)) //1.1 worked
+                .afterDisp(.5, robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .splineToSplineHeading(NET_SPIKE_ONE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,0),0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_PICKUP))
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
@@ -143,7 +142,6 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .setReversed(true)
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
-                //todo SHORT side is different than the others right now. need to test this
                 .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
                 .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
@@ -199,7 +197,6 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .afterDisp(9, robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .splineToSplineHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration)
                 .strafeToConstantHeading(PoseToVector(NET_ASCENT).plus(new Vector2d(0,5)), slowVelocity, slowAcceleration)
-//                .strafeToConstantHeading(PoseToVector(NET_ASCENT).plus(new Vector2d(0,-3)), slowVelocity, slowAcceleration)
                 .stopAndAdd(robotAdapter.getAction(CONDITIONAL_TRANSFER));
     }
 
