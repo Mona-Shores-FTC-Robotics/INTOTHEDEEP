@@ -59,8 +59,8 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
     public static final double FAST_ACCELERATION_OVERRIDE = 37;
     public static final double FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
-    public static final double VERY_FAST_VELOCITY_OVERRIDE = 45;
-    public static final double VERY_FAST_ACCELERATION_OVERRIDE = 45;
+    public static final double VERY_FAST_VELOCITY_OVERRIDE = 38;
+    public static final double VERY_FAST_ACCELERATION_OVERRIDE = 38;
     public static final double VERY_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
 
@@ -121,8 +121,8 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .setTangent(ANGLE_160_DEGREES)
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
-                .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
-                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .afterDisp(2, robotAdapter.getAction(SCORE_IN_BASKET))
+                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
     }
 
     private void moveToNeutralSample1() {
@@ -171,7 +171,7 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_45_DEGREES)
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
-                .afterDisp(7.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
+                .afterDisp(7.9, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
                 .splineToLinearHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(0,-1), 0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
                 .afterDisp(.5, robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .splineToSplineHeading(NET_SPIKE_THREE.plus(new Twist2d(new Vector2d(SAMPLE_LENGTH/2,-1),0)), ANGLE_TOWARD_BLUE, normalVelocity, normalAcceleration)
@@ -191,8 +191,8 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
     private void goToSubmersibleAndFish() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_45_DEGREES)
-                .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
-                .splineToLinearHeading(NEXT_TO_NET_ASCENT, ANGLE_TOWARD_OBSERVATION, superFastVelocity, superFastAcceleration)
+                .afterDisp(7.9, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
+                .splineToLinearHeading(NEXT_TO_NET_ASCENT.plus(new Twist2d(new Vector2d(-5,0), 0)), ANGLE_TOWARD_OBSERVATION, superFastVelocity, superFastAcceleration)
                 .afterDisp(0, robotAdapter.getAction(GET_READY_FOR_SAMPLE_INTAKE_FROM_GROUND))
                 .afterDisp(9, robotAdapter.getAction(PICKUP_FROM_GROUND))
                 .splineToSplineHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration)
@@ -203,7 +203,7 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
     private void moveFromSubmersibleToBasket() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
-                .afterDisp(0, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
+                .afterDisp(5, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
                 .afterDisp(17, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
                 .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
@@ -214,7 +214,7 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
     private void travelToAscentZone() {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setTangent(ANGLE_45_DEGREES)
-                .afterDisp(5.5, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
+                .afterDisp(6.2, robotAdapter.getAction(SAMPLE_LIFT_TO_HOME))
 //                .afterDisp(6, robotAdapter.getAction(LEVEL_1_ASCENT))
                 .splineToLinearHeading(NEXT_TO_NET_ASCENT, ANGLE_TOWARD_OBSERVATION, fastVelocity, fastAcceleration)
                 .splineToLinearHeading(NET_ASCENT, ANGLE_TOWARD_OBSERVATION, normalVelocity, normalAcceleration);

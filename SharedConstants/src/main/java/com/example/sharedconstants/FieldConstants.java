@@ -95,9 +95,9 @@ public class FieldConstants {
     public static Pose2d CHAMBER_SLOT_TWELVE = CHAMBER_SLOT_ELEVEN.plus(new Twist2d(new Vector2d(0,SAMPLE_WIDTH), 0));
 
 
-    public static double CHAMBER_SPACER = 1.85;
+    public static double CHAMBER_SPACER = 1.9;
 
-    public static Pose2d CHAMBER_SLOT_ONE_REDO = new Pose2d(QUARTER_TILE-.8, -TILE-HALF_ROBOT_LENGTH+1.8, ANGLE_TOWARD_BLUE);
+    public static Pose2d CHAMBER_SLOT_ONE_REDO = new Pose2d(QUARTER_TILE-.5, -TILE-HALF_ROBOT_LENGTH+1.8, ANGLE_TOWARD_BLUE);
     public static Pose2d CHAMBER_SLOT_TWO_REDO = CHAMBER_SLOT_ONE_REDO.plus(new Twist2d(new Vector2d(0,CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_THREE_REDO = CHAMBER_SLOT_TWO_REDO.plus(new Twist2d(new Vector2d(0, CHAMBER_SPACER), 0));
     public static Pose2d CHAMBER_SLOT_FOUR_REDO = CHAMBER_SLOT_THREE_REDO.plus(new Twist2d(new Vector2d(0, CHAMBER_SPACER), 0));

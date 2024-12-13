@@ -57,7 +57,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = 0.59;    DUMPER_PRESCORE_POS = 0.67;    DUMPER_DUMP_POS = .915; DUMPER_HOLD_HIGH_POS = .65;
+                    DUMPER_HOME_POS = 0.59;    DUMPER_PRESCORE_POS = 0.67;    DUMPER_DUMP_POS = .918; DUMPER_HOLD_HIGH_POS = .65;
                     DUMP_TIME_MS = 300;
 
                     break;
@@ -83,7 +83,7 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
                     BUCKET_INCREMENT_TIME = 1.0;
 
                     // Dumper Positions
-                    DUMPER_HOME_POS = .348;    DUMPER_PRESCORE_POS = .41;    DUMPER_DUMP_POS = .95; DUMPER_HOLD_HIGH_POS = .41;
+                    DUMPER_HOME_POS = .348;    DUMPER_PRESCORE_POS = .41;    DUMPER_DUMP_POS = .98; DUMPER_HOLD_HIGH_POS = .43;
                     DUMP_TIME_MS = 200;
 
                     break;
