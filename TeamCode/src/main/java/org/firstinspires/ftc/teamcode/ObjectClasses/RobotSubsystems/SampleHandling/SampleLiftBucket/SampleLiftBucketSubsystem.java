@@ -197,6 +197,9 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
     private double currentKv = SAMPLE_LIFT_PARAMS.KV;
     private double currentKa = SAMPLE_LIFT_PARAMS.KA;
 
+    private boolean oneTimeTeleopCodeHasRun=false;
+
+
     public SampleLiftBucketSubsystem(final HardwareMap hMap, final Robot.RobotType robotType, final String liftName, final String bucketName, final String dumperName) {
         SAMPLE_LIFT_PARAMS.loadDefaultsForRobotType(robotType);
         lift = hMap.get(DcMotorEx.class, liftName);
@@ -235,19 +238,25 @@ public class SampleLiftBucketSubsystem extends SubsystemBase {
         pidController.reset();
         pidController.setSetPoint(currentLiftState.getLiftHeightTicks());
         setTargetTicks(currentLiftState.getLiftHeightTicks());
-
-        if (bucket != null) {
-            setCurrentBucketState(BucketStates.BUCKET_INTAKE_POS);
-            bucket.setPosition(currentBucketState.getBucketPosition());
-        }
-        if (dumper != null) {
-            hasDumped = false;
-            dumperTimer = new ElapsedTime();
-            setCurrentDumperState(DumperStates.DUMPER_HOME);
-        }
+        oneTimeTeleopCodeHasRun=false;
     }
 
     public void periodic() {
+
+        if (!Robot.getInstance().isAutoMode() && !oneTimeTeleopCodeHasRun)
+        {
+            oneTimeTeleopCodeHasRun=true;
+            if (bucket != null) {
+                setCurrentBucketState(BucketStates.BUCKET_INTAKE_POS);
+                bucket.setPosition(currentBucketState.getBucketPosition());
+            }
+            if (dumper != null) {
+                hasDumped = false;
+                dumperTimer = new ElapsedTime();
+                setCurrentDumperState(DumperStates.DUMPER_HOME);
+            }
+        }
+
         currentTicks = lift.getCurrentPosition();
 
         // Handle dumper timing
