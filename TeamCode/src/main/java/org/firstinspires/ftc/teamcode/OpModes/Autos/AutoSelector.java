@@ -60,13 +60,13 @@ public class AutoSelector extends LinearOpMode {
         netRoute.buildRoute();
         netRouteList.add(netRoute);
 
-        netRoute = new NET_Score_5_PARTNER_PRELOAD(robotAdapter);
-        netRoute.buildRoute();
-        netRouteList.add(netRoute);
-
-        netRoute = new NET_Score_6_PARTNER_PRELOAD(robotAdapter);
-        netRoute.buildRoute();
-        netRouteList.add(netRoute);
+//        netRoute = new NET_Score_5_PARTNER_PRELOAD(robotAdapter);
+//        netRoute.buildRoute();
+//        netRouteList.add(netRoute);
+//
+//        netRoute = new NET_Score_6_PARTNER_PRELOAD(robotAdapter);
+//        netRoute.buildRoute();
+//        netRouteList.add(netRoute);
 
         return netRouteList;
     }
