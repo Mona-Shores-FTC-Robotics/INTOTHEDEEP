@@ -326,8 +326,8 @@ public class RealRobotAdapter implements RobotAdapter {
                 case CONDITIONAL_TRANSFER:
                 {
                     return new ConditionalTimeoutAction(
-                            new SleepAction(.5), // amount of time to make sure sample got from intake to the bucket
-                            new SleepAction(.5),
+                            new SleepAction(.45), // amount of time to make sure sample got from intake to the bucket
+                            new SleepAction(.45),
                             Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector()::doNotHaveSample, // NOT HAVE SAMPLE
                             2250 //this should be adjusted to give time for action to complete.
                     );

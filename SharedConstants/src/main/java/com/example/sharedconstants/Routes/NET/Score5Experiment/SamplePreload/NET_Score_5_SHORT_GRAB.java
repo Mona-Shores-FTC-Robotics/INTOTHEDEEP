@@ -121,8 +121,9 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .setTangent(ANGLE_160_DEGREES)
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
-                .afterDisp(2, robotAdapter.getAction(SCORE_IN_BASKET))
-                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, slowVelocity, slowAcceleration)
+                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET))
+                .waitSeconds(.1);
     }
 
     private void moveToNeutralSample1() {
@@ -142,8 +143,10 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .setReversed(true)
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
-                .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
-                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
+                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET))
+                .waitSeconds(.1);
+
     }
 
     private void moveToNeutralSample2() {
@@ -164,7 +167,9 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
                 .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
-                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
+                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET))
+                .waitSeconds(.1);
     }
 
     private void moveToNeutralSample3() {
@@ -184,8 +189,9 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .setReversed(true)
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
-                .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
-                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
+                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET))
+                .waitSeconds(.1);
     }
 
     private void goToSubmersibleAndFish() {
@@ -206,9 +212,11 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
                 .afterDisp(5, robotAdapter.getAction(FLIP_UP_AND_RETRACT))
                 .afterDisp(17, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
-                .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
                 .setTangent(ANGLE_225_DEGREES)
-                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
+                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET))
+                .waitSeconds(.1);
+
     }
 
     private void travelToAscentZone() {
