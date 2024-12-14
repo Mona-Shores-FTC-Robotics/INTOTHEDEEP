@@ -62,8 +62,8 @@ public class MeepMeepTesting {
 
     private static final RoutesToRun redObservationRoute = OBS_SCORE_5_SPECIMEN_PRELOAD_GROUND_PICKUP;
     private static final RoutesToRun blueObservationRoute = OBS_SCORE_4_FRUITPORT_IMPROVED;
-    private static final RoutesToRun redNetRoute = NET_SCORE_5_SHORT_GRAB;
-    private static final RoutesToRun blueNetRoute = NET_SCORE_5_LONG_GRAB;
+    private static final RoutesToRun redNetRoute = NET_SCORE_5_MID_GRAB;
+    private static final RoutesToRun blueNetRoute = NET_SCORE_5_SHORT_GRAB;
 
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);

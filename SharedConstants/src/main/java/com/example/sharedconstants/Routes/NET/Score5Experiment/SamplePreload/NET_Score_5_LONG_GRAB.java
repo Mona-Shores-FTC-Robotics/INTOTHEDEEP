@@ -50,19 +50,19 @@ public class NET_Score_5_LONG_GRAB extends Routes {
 
     public static final double SLOW_VELOCITY_OVERRIDE = 10;
     public static final double SLOW_ACCELERATION_OVERRIDE = 15;
-    public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
+    public static final double SLOW_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(720);
 
     public static final double NORMAL_VELOCITY_OVERRIDE = 27;
     public static final double NORMAL_ACCELERATION_OVERRIDE = 27;
-    public static final double NORMAL_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(180);
+    public static final double NORMAL_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(720);
 
     public static final double FAST_VELOCITY_OVERRIDE = 38;
     public static final double FAST_ACCELERATION_OVERRIDE = 38;
-    public static final double FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+    public static final double FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(720);
 
     public static final double VERY_FAST_VELOCITY_OVERRIDE = 45;
     public static final double VERY_FAST_ACCELERATION_OVERRIDE = 45;
-    public static final double VERY_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
+    public static final double VERY_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(720);
 
     // Shared constraints for all routes
     public static VelConstraint slowVelocity;
@@ -78,19 +78,14 @@ public class NET_Score_5_LONG_GRAB extends Routes {
     {
         setupConstraints();
         moveFromStartToBasket();
-//        scoreSampleInHighBasket(); // score 1
         moveToNeutralSample1();
         moveFromNeutralSample1ToBasket();
-//        scoreSampleInHighBasket(); // score 2
         moveToNeutralSample2();
         moveFromNeutralSample2ToBasket();
-//        scoreSampleInHighBasket(); // score 3
         moveToNeutralSample3();
         moveFromNeutralSample3ToBasket();
-//        scoreSampleInHighBasket(); // score 4
         goToSubmersibleAndFish();
         moveFromSubmersibleToBasket();
-//        scoreSampleInHighBasket(); // score 5
         travelToAscentZone();
         netBotRoute = netTrajectoryActionBuilder.build();
     }
@@ -128,13 +123,7 @@ public class NET_Score_5_LONG_GRAB extends Routes {
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, fastVelocity, fastAcceleration)
                 .afterDisp(2, robotAdapter.getAction(SCORE_IN_BASKET))
-                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
-    }
-
-    public void scoreSampleInHighBasket(){
-        netTrajectoryActionBuilder = netTrajectoryActionBuilder
-                .stopAndAdd(robotAdapter.getAction(SCORE_IN_BASKET))
-                .waitSeconds(DELAY_FOR_SCORING);
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, slowVelocity, slowAcceleration);
     }
 
     private void moveToNeutralSample1() {
@@ -197,10 +186,9 @@ public class NET_Score_5_LONG_GRAB extends Routes {
         netTrajectoryActionBuilder = netTrajectoryActionBuilder
                 .setReversed(true)
                 .afterDisp(0, robotAdapter.getAction(PREPARE_TO_SCORE_IN_HIGH_BASKET))
-//                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
                 .splineToLinearHeading(NET_BASKET_ALIGNMENT_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration)
                 .afterDisp(4, robotAdapter.getAction(SCORE_IN_BASKET))
-                .splineToLinearHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
+                .splineToSplineHeading(NET_BASKET_AUTO, ANGLE_225_DEGREES, normalVelocity, normalAcceleration);
     }
 
     private void goToSubmersibleAndFish() {
