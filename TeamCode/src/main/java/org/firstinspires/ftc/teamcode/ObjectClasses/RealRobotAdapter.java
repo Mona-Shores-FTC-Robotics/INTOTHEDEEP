@@ -318,15 +318,16 @@ public class RealRobotAdapter implements RobotAdapter {
                                     new InstantAction(Robot.getInstance().getSampleIntakeSubsystem()::transferSampleToBucket)
                             ),
                             Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector()::haveSample,
-                            1200 //this should be adjusted to give time for action to complete.
+                            1200 //this shou
+                            // ld be adjusted to give time for action to complete.
                     );
                 }
 
                 case CONDITIONAL_TRANSFER:
                 {
                     return new ConditionalTimeoutAction(
-                            new SleepAction(.3), // amount of time to make sure sample got from intake to the bucket
-                            new SleepAction(.3),
+                            new SleepAction(.5), // amount of time to make sure sample got from intake to the bucket
+                            new SleepAction(.5),
                             Robot.getInstance().getSampleIntakeSubsystem().getSampleDetector()::doNotHaveSample, // NOT HAVE SAMPLE
                             2250 //this should be adjusted to give time for action to complete.
                     );
