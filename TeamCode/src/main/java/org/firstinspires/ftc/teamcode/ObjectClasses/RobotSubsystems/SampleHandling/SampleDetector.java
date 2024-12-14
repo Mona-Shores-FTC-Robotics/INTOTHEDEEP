@@ -12,11 +12,14 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.GamePieceDet
 public class SampleDetector extends GamePieceDetector {
     private final double proximityThreshold;
     private final int colorHistorySize;
+    private final int proximityHistorySize;
 
-    public SampleDetector(RevColorSensorV3 sensor, double proximityThreshold, int colorHistorySize) {
+
+    public SampleDetector(RevColorSensorV3 sensor, double proximityThreshold, int proximityHistorySize, int colorHistorySize) {
         super(sensor, colorHistorySize);
         this.proximityThreshold = proximityThreshold;
         this.colorHistorySize = colorHistorySize;
+        this.proximityHistorySize = proximityHistorySize;
     }
 
     @Override
@@ -26,7 +29,7 @@ public class SampleDetector extends GamePieceDetector {
 
     @Override
     protected int getProximityHistorySize() {
-        return colorHistorySize;
+        return proximityHistorySize;
     }
 
     @Override

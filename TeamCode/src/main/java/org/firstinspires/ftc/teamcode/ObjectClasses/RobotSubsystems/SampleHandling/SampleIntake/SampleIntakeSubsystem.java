@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.ObjectClasses.RobotSubsystems.SampleHandli
 public class SampleIntakeSubsystem extends SubsystemBase {
 
     public static class SampleIntakeParams extends ConfigurableParameters {
+
         public double INTAKE_ON_POWER;
         public double INTAKE_OFF_POWER;
         public double MAX_POWER;  // Max allowable power for intake servo
@@ -31,6 +32,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         // Set a minimum proximity threshold to consider an object as "near"
         public double PROXIMITY_THRESHOLD;
         public int COLOR_HISTORY_SIZE;
+        public int PROXIMITY_HISTORY_SIZE;
         public double TRANSFER_TIME_MS;
         public double EJECT_TIME_MS;
 
@@ -48,6 +50,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     MAX_POWER = 1.0;
                     PROXIMITY_THRESHOLD = 40.0;
                     COLOR_HISTORY_SIZE = 2;
+                    PROXIMITY_HISTORY_SIZE = 3;
                     TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 800.0;
                     EJECT_POWER_REVERSE = 1.0;
@@ -60,6 +63,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
                     MAX_POWER = 1.0;
                     PROXIMITY_THRESHOLD = 40;
                     COLOR_HISTORY_SIZE = 2;
+                    PROXIMITY_HISTORY_SIZE = 3;
                     TRANSFER_TIME_MS = 1200;
                     EJECT_TIME_MS = 801.0;
                     EJECT_POWER_REVERSE = 1.0;
@@ -134,7 +138,7 @@ public class SampleIntakeSubsystem extends SubsystemBase {
         colorSensor = colorSensorName != null ? hMap.get(RevColorSensorV3.class, colorSensorName) : null;
 
         if (colorSensor != null) {
-            sampleDetector = new SampleDetector(colorSensor, SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD, SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE);
+            sampleDetector = new SampleDetector(colorSensor, SAMPLE_INTAKE_PARAMS.PROXIMITY_THRESHOLD, SAMPLE_INTAKE_PARAMS.PROXIMITY_HISTORY_SIZE, SAMPLE_INTAKE_PARAMS.COLOR_HISTORY_SIZE);
         } else {
             sampleDetector = null; // no detector if sensor is unavailable;
         }
