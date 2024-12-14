@@ -59,8 +59,8 @@ public class NET_Score_5_SHORT_GRAB extends Routes {
     public static final double FAST_ACCELERATION_OVERRIDE = 38;
     public static final double FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
-    public static final double VERY_FAST_VELOCITY_OVERRIDE = 43;
-    public static final double VERY_FAST_ACCELERATION_OVERRIDE = 43;
+    public static final double VERY_FAST_VELOCITY_OVERRIDE = 45;
+    public static final double VERY_FAST_ACCELERATION_OVERRIDE = 45;
     public static final double VERY_FAST_ANGULAR_VELOCITY_OVERRIDE = Math.toRadians(360);
 
 
